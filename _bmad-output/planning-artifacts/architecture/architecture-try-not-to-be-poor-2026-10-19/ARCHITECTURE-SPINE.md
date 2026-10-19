@@ -56,7 +56,7 @@ flowchart TD
 
 - **Binds:** FR-1 bis FR-10 und alle Browser/API-Aufrufe
 - **Prevents:** unabhängig ausgerollte Clients und Server, die unterschiedliche Datenformen oder Verhalten erwarten.
-- **Rule:** `api-contract/openapi.yaml` ist die gemeinsame Quelle für JSON-Anfragen, Antworten und Fehler. Die API liegt unter `/api/v1`. Änderungen in v1 bleiben rückwärtskompatibel; inkompatible Änderungen erhalten eine neue Hauptversion. Das CI validiert die OpenAPI-Datei, prüft die Angular-Typen und die Spring-API gegen den Vertrag und blockiert inkompatible v1-Änderungen. Kein Artefakt ist freigabefähig, solange diese Prüfungen fehlschlagen. Die konkrete Werkzeugkette wird vor dem ersten Implementierungs-Story festgelegt.
+- **Rule:** `api-contract/openapi.yaml` ist die gemeinsame Quelle für JSON-Anfragen, Antworten und Fehler und verwendet OpenAPI 3.0.4 unter `/api/v1`. Die ursprüngliche Vorgabe 3.2.1 wird durch 3.0.4 ersetzt, damit die festgelegte Vertragswerkzeugkette stabile OAS-3.0-Unterstützung hat. Änderungen in v1 bleiben rückwärtskompatibel; inkompatible Änderungen erhalten eine neue Hauptversion. GitHub Actions führt `openapi-generator-cli` 7.26.0 (Validierung, Angular-22-Client und Spring-Boot-4-Interfaces) sowie `oasdiff` 1.30.0 (Kompatibilitätsprüfung) bei jedem Pull Request aus. Generierte Typen und Interfaces werden mit Frontend und Backend kompiliert; inkompatible v1-Änderungen blockieren den Pull Request.
 
 ### AD-3 — Anmeldung mit kurzlebigem Access-JWT [ADOPTED]
 
@@ -104,7 +104,7 @@ Versionen am 2026-10-19 gegen offizielle Projektquellen geprüft.
 | Java | [25 LTS](https://www.oracle.com/java/technologies/java-se-support-roadmap.html) |
 | Maven-Distribution über Maven Wrapper | [3.10.0](https://maven.apache.org/download.cgi) |
 | PostgreSQL | [18.6](https://www.postgresql.org/support/versioning/) |
-| OpenAPI Specification | [3.2.1](https://spec.openapis.org/oas/v3.2.1.html) |
+| OpenAPI Specification | [3.0.4](https://spec.openapis.org/oas/v3.0.4.html) |
 | Docker Engine | [29.9.1](https://docs.docker.com/engine/release-notes/29/) |
 | Docker Compose | [5.6.0](https://github.com/docker/compose/releases/latest) |
 | Caddy | [2.11.7](https://github.com/caddyserver/caddy/releases/latest) |
@@ -152,4 +152,4 @@ flowchart LR
 - Vor der Umsetzungsplanung: negative Restbudgetdarstellung bestätigen und die in der UX aufgeführten Smartphone-/Desktop-Viewports samt Kernaufgaben als Prüfpunkte festlegen.
 - Vor Authentifizierungsstories: die konkrete Access-JWT-Laufzeit innerhalb des 15-Minuten-Maximums, Refresh-Laufzeit und -Wiederverwendung sowie die konkrete CSRF-Mechanik festlegen.
 - Vor Produktionsdaten: VPS-Größe, Domain/DNS, Backup-Ziel, Häufigkeit, Aufbewahrung, Wiederherstellungsziele und Monitoring festlegen.
-- Vor dem ersten Implementierungs-Story: konkrete OpenAPI-Prüf-/Generierungswerkzeuge und CI/CD festlegen; ihre Unterstützung für die gewählte OAS-Version sowie die Prüf-/Generierungskompatibilität mit Angular 22 und Spring Boot 4.1.1 nachweisen. Wenn die Werkzeugkette OAS 3.2.1 nicht zuverlässig unterstützt, eine interoperable OAS-Version festlegen. API- und Client-Änderungen müssen danach die AD-2-Prüfungen bestehen. Die konkrete Persistenzbibliothek bleibt code-owned.
+- Erledigt: OpenAPI-Vertragswerkzeuge und CI/CD sind auf OpenAPI Generator 7.26.0, oasdiff 1.30.0 und GitHub Actions festgelegt. OAS 3.0.4 ersetzt 3.2.1; damit sind Angular 22 und Spring Boot 4.1.1 durch dokumentierte Generatoroptionen abgedeckt. API- und Client-Änderungen müssen die AD-2-Prüfungen bestehen. Die konkrete Persistenzbibliothek bleibt code-owned.

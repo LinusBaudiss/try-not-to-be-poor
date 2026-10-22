@@ -15,7 +15,7 @@ import tools.jackson.databind.cfg.CoercionAction;
 import tools.jackson.databind.cfg.CoercionInputShape;
 
 @Configuration
-@EnableConfigurationProperties(RegistrationLink.class)
+@EnableConfigurationProperties({RegistrationLink.class, SessionSettings.class})
 class AccessConfiguration {
     @Bean
     JsonMapperBuilderCustomizer strictJsonStrings() {
@@ -36,13 +36,52 @@ class AccessConfiguration {
     }
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain securityFilterChain(HttpSecurity http, SessionSettings settings, SessionJwt jwt) throws Exception {
+        var csrfRepository = new org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository();
+        csrfRepository.setHeaderName("X-CSRF-TOKEN");
+        var origin = new org.springframework.web.filter.OncePerRequestFilter() {
+            @Override protected void doFilterInternal(jakarta.servlet.http.HttpServletRequest request,
+                    jakarta.servlet.http.HttpServletResponse response, jakarta.servlet.FilterChain chain)
+                    throws java.io.IOException, jakarta.servlet.ServletException {
+                String path = request.getServletPath();
+                if (path.startsWith("/api/v1/access/") && !path.equals("/api/v1/access/registrations")) {
+                    response.setHeader("Cache-Control", "no-store");
+                    if (request.getMethod().equals("POST")) {
+                        if (!jwt.available()) {
+                            SessionHttp.error(response, 503);
+                            return;
+                        }
+                        if (!settings.origin().equals(request.getHeader("Origin"))) {
+                            SessionHttp.error(response, 403);
+                            return;
+                        }
+                    }
+                }
+                chain.doFilter(request, response);
+            }
+        };
+        // Die HttpSession enthält ausschließlich CSRF-Zustand, keine Anmeldung.
+        // Bearer-GETs dürfen fremde CSRF-Handshakes weder durch Session-Fixation noch Tokenlöschung verändern.
+        var noSessionAuthentication = new org.springframework.security.web.authentication.session.NullAuthenticatedSessionStrategy();
         return http
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .csrf(csrf -> csrf.ignoringRequestMatchers("/api/v1/access/registrations"))
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .sessionAuthenticationStrategy(noSessionAuthentication))
+            .csrf(csrf -> csrf.csrfTokenRepository(csrfRepository)
+                .sessionAuthenticationStrategy(noSessionAuthentication)
+                .ignoringRequestMatchers("/api/v1/access/registrations"))
+            .addFilterBefore(origin, org.springframework.security.web.csrf.CsrfFilter.class)
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers(HttpMethod.POST, "/api/v1/access/registrations").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/v1/access/registrations", "/api/v1/access/login",
+                    "/api/v1/access/refresh", "/api/v1/access/logout").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/access/csrf").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/access/me").authenticated()
                 .anyRequest().denyAll())
+            .oauth2ResourceServer(oauth -> oauth.jwt(config -> config.decoder(jwt))
+                .authenticationEntryPoint((request, response, failure) -> SessionHttp.error(response, 401)))
+            .exceptionHandling(errors -> errors
+                .authenticationEntryPoint((request, response, failure) -> SessionHttp.error(response,
+                    request.getServletPath().equals("/api/v1/access/me") ? 401 : 403))
+                .accessDeniedHandler((request, response, failure) -> SessionHttp.error(response, 403)))
             .requestCache(cache -> cache.disable())
             .formLogin(form -> form.disable())
             .httpBasic(basic -> basic.disable())

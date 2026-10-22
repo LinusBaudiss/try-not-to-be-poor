@@ -1,5 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, HostListener, inject, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { timeout } from 'rxjs';
 import { AccessService } from '../api/api/access.service';
@@ -7,7 +8,7 @@ import { ApiError } from '../api/model/apiError';
 
 @Component({
   selector: 'app-registration',
-  imports: [FormsModule],
+  imports: [FormsModule, RouterLink],
   template: `
     <section class="auth-card" aria-labelledby="registration-title">
       <h1 id="registration-title">Eigenes Konto anlegen</h1>
@@ -41,6 +42,7 @@ import { ApiError } from '../api/model/apiError';
           </button>
         </form>
       }
+      <a routerLink="/anmelden">Zur Anmeldung</a>
     </section>`
 })
 export class Registration {

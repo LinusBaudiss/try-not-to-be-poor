@@ -1,13 +1,13 @@
 # Try Not to Be Poor
 
-Private Ausgabenübersicht. Implementiert ist Story 1.1: ein eigenes Konto mit
+Private Ausgabenübersicht. Implementiert sind Kontoanlage und Sitzungen (Story 1.1/1.2): ein eigenes Konto mit
 E-Mail und Passwort über einen aktiven Registrierungslink anlegen. Jede Person
 mit diesem Link kann ein unabhängiges Konto erstellen. Eine Registrierung meldet
-nicht an; Anmeldung/Sitzungen folgen in Story 1.2.
+nicht an. Danach führt die Anmeldung zur geschützten Ansicht „Monat“, zunächst ohne Finanzwerte.
 
 ## Voraussetzungen
 
-- Node **24.22.0**, npm (mit Node geliefert), Java **25**.
+- Node **24.22.0**, npm (mit Node geliefert), JDK **25** einschließlich `javac`.
 - Maven **3.10.0** wird durch `backend/mvnw` geladen; kein globales Maven nötig.
 - Für die manuelle lokale Anwendung: Docker mit Compose und PostgreSQL **18.6**.
 - Für Prüfungen: Linux x86_64, Python 3, curl, Git, sha256sum und **unzip**.
@@ -43,17 +43,19 @@ with os.fdopen(descriptor, 'w') as output:
         output.write(name + '=' + secrets.token_urlsafe(32) + '\n')
 PY
 docker compose --env-file .local/database.env -f deploy/compose.local.yaml up -d --wait
-python3 scripts/create-registration-link.py --base-url http://localhost:4200
+python3 scripts/create-registration-link.py --base-url https://localhost:4200
 ```
 
 Die Datenbank ist nur auf `127.0.0.1:5432` gebunden. Das Initialisierungsskript
 legt `tnbp_migrator` und `tnbp_runtime` mit getrennten Kennwörtern an. Die
 Laufzeitrolle ist weder Superuser noch Tabellenbesitzer und besitzt kein
-`BYPASSRLS`. Für diese Story darf sie nur Konten einfügen; ein Startcheck lehnt
+`BYPASSRLS`. Sie darf Konten einfügen, die für Anmeldung notwendigen Spalten lesen und Sitzungsfamilien/Tokenhistorie pflegen; ein Startcheck lehnt
 privilegierte Laufzeitrollen ab. Flyway verwendet ausschließlich die
 Migrationsrolle. Der benannte Compose-Datenträger erhält Konten bei Neustarts.
 Geänderte Kennwörter in der lokalen Datei ändern keine bereits initialisierte
 Datenbank; Rollenkennwörter müssen dann gezielt in PostgreSQL angepasst werden.
+
+Vor dem Backendstart zuerst [Sitzungsschlüssel und HTTPS](#sitzungsschlüssel-und-https) einrichten; dabei wird die benötigte `.local/session.env` angelegt.
 
 Backend in einem Terminal starten:
 
@@ -61,6 +63,7 @@ Backend in einem Terminal starten:
 set -a
 . .local/database.env
 . .local/registration.env
+. .local/session.env
 set +a
 ./backend/mvnw -f backend/pom.xml spring-boot:run
 ```
@@ -69,15 +72,14 @@ Frontend in einem zweiten Terminal starten:
 
 ```bash
 npm --prefix frontend ci
-npm --prefix frontend start
+npm --prefix frontend start -- --host localhost --ssl
 ```
 
 Die Datei `.local/registration-link.txt` lokal öffnen und den Link im Browser
 aufrufen. Das zufällige 256-Bit-Geheimnis steht ausschließlich im URL-Fragment,
 wird von der SPA direkt aus der Adresszeile entfernt und nur im JSON-Body der
 Registrierung übertragen. Es bleibt im Speicher des offenen Tabs. Nach einem
-Neuladen muss der ursprüngliche Link erneut geöffnet werden. Keine Zugangsdaten
-werden in LocalStorage, SessionStorage, IndexedDB oder Cookies geschrieben.
+Neuladen muss der ursprüngliche Link erneut geöffnet werden. E-Mail, Passwort, JWT, CSRF-Token und persönliche Daten werden ausschließlich im Arbeitsspeicher gehalten. Das Refresh-Geheimnis und die opaque CSRF-Sitzungskennung stehen ausschließlich in geschützten HttpOnly-Cookies. LocalStorage, SessionStorage und IndexedDB bleiben frei.
 
 Der lokale Proxy leitet `/api/**` an `127.0.0.1:8080` weiter. Der statische
 Produktionsbuild liegt unter `frontend/dist/tnbp/browser`; ein späterer Webserver
@@ -105,10 +107,10 @@ zeitkonstant. Für die Kontoanlage gibt es keine Einladungsliste.
 
 ```bash
 # Rotation: erzeugt ein neues Geheimnis und ersetzt beide geschützten Dateien.
-python3 scripts/create-registration-link.py --base-url http://localhost:4200
+python3 scripts/create-registration-link.py --base-url https://localhost:4200
 
 # Optional früher ablaufen lassen (Datum mit Zeitzone innerhalb der nächsten 30 Tage).
-python3 scripts/create-registration-link.py --expires-at 2026-10-23T18:00:00Z
+python3 scripts/create-registration-link.py --base-url https://localhost:4200 --expires-at 2026-10-23T18:00:00Z
 
 # Widerruf: Registrierung deaktivieren und die lokale Linkdatei entfernen.
 python3 scripts/create-registration-link.py --revoke
@@ -133,6 +135,60 @@ keine externen Passwortanfragen statt. E-Mails werden getrimmt und kleingeschrie
 ein Unique-Constraint verhindert auch parallele doppelte Konten. Kontoanlage ist
 transaktional; ein Erfolg wird erst nach Commit zurückgegeben.
 
+
+## Sitzungsschlüssel und HTTPS
+
+Vor dem ersten Backendstart einen zufälligen lokalen Schlüssel einmalig erzeugen:
+
+```bash
+python3 - <<'PYKEY'
+from pathlib import Path
+import base64, os, secrets
+folder = Path('.local')
+folder.mkdir(mode=0o700, exist_ok=True)
+fd = os.open(folder / 'session.env', os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+with os.fdopen(fd, 'w') as output:
+    output.write('SESSION_SIGNING_KEY=' + base64.b64encode(secrets.token_bytes(32)).decode() + '\n')
+    output.write('SESSION_ISSUER=tnbp-local\nSESSION_AUDIENCE=tnbp-spa-local\n')
+    output.write('SESSION_ORIGIN=https://localhost:4200\n')
+PYKEY
+```
+
+`SESSION_SIGNING_KEY` ist ein externes Base64-Geheimnis mit mindestens 32 Bytes;
+`SESSION_ISSUER`, `SESSION_AUDIENCE` und `SESSION_ORIGIN` müssen gesetzt sein.
+Origin ist die exakte HTTPS-Origin ohne abschließenden Slash. Unvollständige
+Konfiguration sperrt Sitzungsbetrieb (503), ohne die Registrierung zu öffnen.
+Derselbe Schlüssel muss einen API-Neustart überleben; ein neuer Schlüssel macht
+bestehende JWTs ungültig. Geheimnisse außerhalb versionierter Dateien verwahren.
+
+Die SPA lokal über **https://localhost:4200** öffnen und das lokale Zertifikat
+vertrauen. Angular erzeugt mit `--ssl` ein lokales Entwicklungszertifikat; dies
+ist ausschließlich für synthetische Daten. Für ein eigenes vertrauenswürdiges
+Zertifikat `--ssl-cert` und `--ssl-key` aus geschützter lokaler Ablage verwenden.
+HTTP, abweichende Hosts und abweichende Origins sind keine unterstützte
+Sitzungskonfiguration. Der lokale Proxy behält Secure-Cookie-Attribute bei.
+
+`GET /api/v1/access/csrf` liefert Spring Securitys CSRF-Token (`no-store`). Vor jeder Cookie-Mutation holt der Tab einen frischen Token und
+sendet ihn als `X-CSRF-TOKEN` bei Login, Refresh und Logout. Die serverseitige
+CSRF-Sitzung verwendet `__Host-tnbp-csrf` (HttpOnly, Secure, SameSite=Strict,
+Path=/, keine Domain), der Token selbst bleibt nur im Tabspeicher. Nach einem
+API-Neustart lädt ein neuer Tab/Reload einen neuen CSRF-Token. Auf 403 wird keine
+Mutation automatisch wiederholt.
+
+`__Host-tnbp-refresh` hat dieselben Cookie-Schutzattribute. Es enthält 256
+Zufallsbits; PostgreSQL speichert ausschließlich SHA-256-Hashes. Jeder Refresh
+rotiert atomar. Alte Hashes bleiben für Replay-Erkennung erhalten. Die Familie
+wird bei Wiederverwendung (auch parallel), Logout und Erreichen der exklusiven
+Grenze von 30 Tagen Inaktivität oder 90 Tagen seit Anmeldung widerrufen. Eine
+nicht bestätigte Rotation wird im Browser niemals automatisch wiederholt.
+
+Access-JWTs gelten zehn Minuten und prüfen HS256-Signatur, Aussteller,
+Zielgruppe, Zeitgrenzen und kanonischen UUID-`sub`. Logout widerruft die
+Refresh-Familie; ausgestellte JWTs bleiben bis Ablauf gültig. Die SPA verwirft
+bei Sitzungsende und Kontowechsel alle persönlichen Speicherwerte und schließt
+die persönliche Ansicht. Laufende Cookie-Mutationen werden vor Logout beendet,
+damit eine späte Refreshantwort die Abmeldung oder einen bereits eingetretenen Sitzungsablauf nicht rückgängig macht. Kontowechsel und Sitzungsende schließen persönliche Ansichten auch in anderen offenen Tabs über BroadcastChannel; dabei werden keine Geheimnisse übertragen.
+
 ## Prüfen
 
 ```bash
@@ -153,7 +209,7 @@ Erstvertrag. Bei vorhandenem Basisvertrag blockiert oasdiff 1.30.0 mit
 `--fail-on ERR` inkompatible Änderungen; diese benötigen `/api/v2`. CI verwendet
 die PR-Basis beziehungsweise den vorherigen Push-Commit.
 
-`verify` führt die Unitfälle und die `RegistrationIT`-HTTP-Tests mit einer echten,
+`verify` führt die Unitfälle und die `RegistrationIT`-/`SessionIT`-HTTP-Tests mit einer echten,
 temporären PostgreSQL-18.6-Instanz aus. Dafür wird **kein Docker** benötigt.
 Die Binärdateien werden als gepinnte Maven-Testabhängigkeiten geladen; PostgreSQL
 muss als unprivilegierter Benutzer laufen. Die Tests verwenden die getrennten
@@ -163,7 +219,7 @@ Unicode/NFC, vollständig verifizierbare gesalzene Hashes, Commitfehler, Logs un
 Persistenz über Linkrotation und API-Neustart.
 
 Playwright startet selbst eine temporäre Test-API mit PostgreSQL und den
-Frontend-Entwicklungsserver. Die Ports **8080 und 4200 müssen frei sein**.
+HTTPS-Frontend-Entwicklungsserver. Die Ports **8080 und 4200 müssen frei sein**.
 Die Tests benutzen ausschließlich synthetische Konten und ein festes Testgeheimnis.
 Browserfälle prüfen echten HTTP-Zugriff, Fehlerretry, Offlinezustand,
 Doppelsendesperre, Browserpersistenz und axe sowie Tastatur/200-%-Text bei
@@ -176,3 +232,5 @@ vollständige manuelle Screenreader-Prüfung.
 
 Die GitHub-Action prüft Vertrag, Backend und Browser getrennt. Sie ist lokal
 nachgebildet; ein tatsächlicher GitHub-Lauf erfolgt erst nach einem späteren Push.
+
+Die Browserprüfungen prüfen die echten Secure-Cookies über HTTPS einschließlich Reload/Rotation, Logout, späten Antworten und axe. Playwright vertraut ausschließlich im Test dem lokalen Entwicklungszertifikat. Die Test-API hat einen festen synthetischen Schlüssel; Anwendungsschlüssel werden nicht eingebaut.

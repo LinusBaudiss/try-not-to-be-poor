@@ -14,6 +14,10 @@ public final class E2eServer {
         settings.add("--server.address=127.0.0.1");
         settings.add("--server.port=8080");
         settings.add("--registration.link.enabled=true");
+        settings.add("--access.session.signing-key=" + java.util.Base64.getEncoder().encodeToString(new byte[32]));
+        settings.add("--access.session.issuer=tnbp-test");
+        settings.add("--access.session.audience=tnbp-spa-test");
+        settings.add("--access.session.origin=https://localhost:4200");
         settings.add("--registration.link.sha256=" + RegistrationTest.sha256(RegistrationTest.TOKEN));
         settings.add("--registration.link.issued-at=" + Instant.now());
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {

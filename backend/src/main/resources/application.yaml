@@ -1,0 +1,44 @@
+spring:
+  application:
+    name: try-not-to-be-poor
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/tnbp}
+    username: ${DB_RUNTIME_USER:tnbp_runtime}
+    password: ${DB_RUNTIME_PASSWORD}
+    hikari:
+      maximum-pool-size: 8
+  flyway:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/tnbp}
+    user: ${DB_MIGRATION_USER:tnbp_migrator}
+    password: ${DB_MIGRATION_PASSWORD}
+    default-schema: access
+    schemas: access
+  mvc:
+    log-request-details: false
+  jackson:
+    factory:
+      constraints:
+        read:
+          max-document-length: 32768
+          max-string-length: 32768
+    deserialization:
+      fail-on-unknown-properties: true
+server:
+  error:
+    include-message: never
+    include-binding-errors: never
+    include-stacktrace: never
+  tomcat:
+    max-http-form-post-size: 32KB
+registration:
+  link:
+    enabled: ${REGISTRATION_LINK_ENABLED:false}
+    sha256: ${REGISTRATION_LINK_SHA256:}
+    issued-at: ${REGISTRATION_LINK_ISSUED_AT:}
+    expires-at: ${REGISTRATION_LINK_EXPIRES_AT:}
+logging:
+  level:
+    org.springframework.web: WARN
+    org.springframework.jdbc: WARN
+    org.springframework.security: WARN
+    org.apache.coyote.http11: WARN

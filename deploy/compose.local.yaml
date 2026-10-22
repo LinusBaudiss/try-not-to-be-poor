@@ -1,0 +1,22 @@
+name: tnbp-local
+services:
+  postgres:
+    image: postgres:18.6
+    environment:
+      POSTGRES_USER: tnbp_admin
+      POSTGRES_DB: tnbp
+      POSTGRES_PASSWORD: ${DB_ADMIN_PASSWORD:?Lokales DB_ADMIN_PASSWORD setzen}
+      DB_MIGRATION_PASSWORD: ${DB_MIGRATION_PASSWORD:?Lokales DB_MIGRATION_PASSWORD setzen}
+      DB_RUNTIME_PASSWORD: ${DB_RUNTIME_PASSWORD:?Lokales DB_RUNTIME_PASSWORD setzen}
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql
+      - ./init-db.sh:/docker-entrypoint-initdb.d/10-roles.sh:ro
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U tnbp_admin -d tnbp"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+volumes:
+  postgres-data:

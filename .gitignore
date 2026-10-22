@@ -1,0 +1,19 @@
+# Lokale Geheimnisse und Daten
+.env
+.env.*
+!.env.example
+*.secrets
+registration-link.txt
+.local/
+
+# Reproduzierbare Build-/Testartefakte
+.cache/
+backend/target/
+frontend/node_modules/
+frontend/dist/
+frontend/out-tsc/
+frontend/.angular/
+frontend/src/app/api/
+frontend/test-results/
+frontend/playwright-report/
+__pycache__/

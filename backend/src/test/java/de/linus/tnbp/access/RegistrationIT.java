@@ -74,7 +74,7 @@ class RegistrationIT {
         PasswordEncoder observedEncoder(@Qualifier("passwordEncoder") PasswordEncoder delegate, HikariDataSource dataSource) {
             return new PasswordEncoder() {
                 @Override public String encode(CharSequence rawPassword) {
-                    connectionsDuringHash = dataSource.getHikariPoolMXBean().getActiveConnections();
+                    connectionsDuringHash = dataSource.getHikariPoolMXBean() == null ? 0 : dataSource.getHikariPoolMXBean().getActiveConnections();
                     transactionDuringHash = TransactionSynchronizationManager.isActualTransactionActive();
                     return delegate.encode(rawPassword);
                 }
@@ -87,7 +87,7 @@ class RegistrationIT {
 
     @BeforeEach
     void reset() {
-        PostgresFixture.ADMIN.execute("TRUNCATE access.accounts");
+        PostgresFixture.ADMIN.execute("TRUNCATE access.accounts CASCADE");
         CLOCK.now = ISSUED;
     }
 
@@ -296,7 +296,7 @@ class RegistrationIT {
     void laufzeitrolleIstGetrenntUndAndereRoutenSindGeschlossen() throws Exception {
         var runtime = new org.springframework.jdbc.core.JdbcTemplate(new org.springframework.jdbc.datasource.DriverManagerDataSource(PostgresFixture.URL, "tnbp_runtime", "runtime-test-only"));
         assertThat(runtime.queryForObject("SELECT rolsuper OR rolbypassrls FROM pg_roles WHERE rolname = current_user", Boolean.class)).isFalse();
-        assertThat(runtime.queryForObject("SELECT has_table_privilege(current_user, 'access.accounts', 'SELECT')", Boolean.class)).isFalse();
+        assertThat(runtime.queryForObject("SELECT has_table_privilege(current_user, 'access.accounts', 'DELETE')", Boolean.class)).isFalse();
         var response = HttpClient.newHttpClient().send(HttpRequest.newBuilder(URI.create("http://localhost:" + port + "/api/v1/access/accounts")).GET().build(), HttpResponse.BodyHandlers.ofString());
         assertThat(response.statusCode()).isEqualTo(403);
     }

@@ -1,4 +1,4 @@
-name: Registrierung prüfen
+name: Zugang und Sitzungen prüfen
 on:
   push:
   pull_request:

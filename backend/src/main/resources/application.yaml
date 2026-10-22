@@ -23,7 +23,21 @@ spring:
           max-string-length: 32768
     deserialization:
       fail-on-unknown-properties: true
+access:
+  session:
+    signing-key: ${SESSION_SIGNING_KEY:}
+    issuer: ${SESSION_ISSUER:}
+    audience: ${SESSION_AUDIENCE:}
+    origin: ${SESSION_ORIGIN:}
 server:
+  servlet:
+    session:
+      cookie:
+        name: __Host-tnbp-csrf
+        path: /
+        secure: true
+        http-only: true
+        same-site: strict
   error:
     include-message: never
     include-binding-errors: never

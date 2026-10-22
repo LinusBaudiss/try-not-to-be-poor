@@ -37,8 +37,201 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiError'
+  /access/csrf:
+    get:
+      tags: [Sessions]
+      operationId: sessionCsrf
+      security: []
+      summary: CSRF-Token nur für den Arbeitsspeicher des Tabs beziehen
+      responses:
+        '200':
+          description: no-store; setzt ein hostgebundenes HttpOnly Secure SameSite=Strict CSRF-Sitzungscookie.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CsrfResponse'
+  /access/login:
+    post:
+      tags: [Sessions]
+      operationId: login
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/Origin'
+        - $ref: '#/components/parameters/CsrfHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/SessionCreated'
+        '401':
+          $ref: '#/components/responses/SessionRejected'
+        '403':
+          $ref: '#/components/responses/SessionForbidden'
+        '500':
+          $ref: '#/components/responses/SessionUnavailable'
+        '503':
+          $ref: '#/components/responses/SessionUnavailable'
+  /access/refresh:
+    post:
+      tags: [Sessions]
+      operationId: refreshSession
+      security:
+        - RefreshCookie: []
+      parameters:
+        - $ref: '#/components/parameters/Origin'
+        - $ref: '#/components/parameters/CsrfHeader'
+      responses:
+        '200':
+          $ref: '#/components/responses/SessionCreated'
+        '401':
+          $ref: '#/components/responses/SessionRejected'
+        '403':
+          $ref: '#/components/responses/SessionForbidden'
+        '500':
+          $ref: '#/components/responses/SessionUnavailable'
+        '503':
+          $ref: '#/components/responses/SessionUnavailable'
+  /access/logout:
+    post:
+      tags: [Sessions]
+      operationId: logoutSession
+      security:
+        - RefreshCookie: []
+      parameters:
+        - $ref: '#/components/parameters/Origin'
+        - $ref: '#/components/parameters/CsrfHeader'
+      responses:
+        '204':
+          description: Familie widerrufen und Cookie gelöscht; vorhandene Access-JWTs laufen regulär ab. no-store.
+        '403':
+          $ref: '#/components/responses/SessionForbidden'
+        '500':
+          $ref: '#/components/responses/SessionUnavailable'
+  /access/me:
+    get:
+      tags: [Sessions]
+      operationId: sessionIdentity
+      security:
+        - AccessBearer: []
+      responses:
+        '200':
+          description: Identität ausschließlich aus verifiziertem JWT-sub; no-store.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionIdentity'
+        '401':
+          $ref: '#/components/responses/SessionRejected'
 components:
+  securitySchemes:
+    AccessBearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    RefreshCookie:
+      type: apiKey
+      in: cookie
+      name: __Host-tnbp-refresh
+      description: 256 Zufallsbits, HttpOnly; Secure; SameSite=Strict; Path=/; kein Domain. Jede Erneuerung rotiert. 30 Tage inaktiv / 90 Tage seit Anmeldung, Grenzen exklusiv.
+  parameters:
+    Origin:
+      name: Origin
+      in: header
+      required: true
+      schema:
+        type: string
+      description: Muss exakt der extern konfigurierten HTTPS-SPA-Origin entsprechen.
+    CsrfHeader:
+      name: X-CSRF-TOKEN
+      in: header
+      required: true
+      schema:
+        type: string
+      description: Spring-Security-CSRF-Token aus GET /access/csrf; nur im Arbeitsspeicher halten.
+  responses:
+    SessionCreated:
+      description: Erst nach Commit; no-store. Set-Cookie rotiert __Host-tnbp-refresh (HttpOnly; Secure; SameSite=Strict; Path=/; kein Domain).
+      headers:
+        Set-Cookie:
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SessionResponse'
+    SessionRejected:
+      description: Neutraler Fehler; Refreshfehler löschen Cookie. no-store.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SessionError'
+    SessionForbidden:
+      description: CSRF oder Origin fehlt/falsch; keine Mutation. no-store.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SessionError'
+    SessionUnavailable:
+      description: Keine bestätigte Mutation; eine unbestätigte Rotation nicht automatisch wiederholen. no-store.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SessionError'
   schemas:
+    CsrfResponse:
+      type: object
+      additionalProperties: false
+      required: [token]
+      properties:
+        token:
+          type: string
+    LoginRequest:
+      type: object
+      additionalProperties: false
+      required: [email, password]
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+          writeOnly: true
+    SessionResponse:
+      type: object
+      additionalProperties: false
+      required: [accessToken, expiresAt, userId]
+      properties:
+        accessToken:
+          type: string
+          description: HS256, externer Schlüssel, exakt zehn Minuten. Nur im Arbeitsspeicher.
+        expiresAt:
+          type: string
+          format: date-time
+        userId:
+          type: string
+          format: uuid
+    SessionIdentity:
+      type: object
+      additionalProperties: false
+      required: [userId]
+      properties:
+        userId:
+          type: string
+          format: uuid
+    SessionError:
+      type: object
+      additionalProperties: false
+      required: [code, message]
+      properties:
+        code:
+          type: string
+          enum: [SESSION_REJECTED, SESSION_FORBIDDEN, SESSION_UNAVAILABLE]
+        message:
+          type: string
+
     RegistrationRequest:
       type: object
       additionalProperties: false

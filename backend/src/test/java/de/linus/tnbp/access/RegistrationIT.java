@@ -2,7 +2,12 @@ package de.linus.tnbp.access;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.classic.spi.ThrowableProxyUtil;
+import ch.qos.logback.core.AppenderBase;
 import de.linus.tnbp.TnbpApplication;
+import io.zonky.test.db.postgres.embedded.EmbeddedPostgres;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -20,6 +25,7 @@ import java.util.concurrent.Executors;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringApplication;
@@ -264,13 +270,14 @@ class RegistrationIT {
             CREATE CONSTRAINT TRIGGER reject_test_commit AFTER INSERT ON access.accounts
             DEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION access.reject_test_commit()
             """);
-        try {
+        try (var applicationLogs = new ApplicationLogs()) {
             var result = register(TOKEN, "commit@example.org", PASSWORD);
             assertThat(result.statusCode()).isEqualTo(500);
             assertThat(result.body()).contains("SERVER_ERROR").doesNotContain("wurde angelegt");
             assertThat(count()).isZero();
-            assertThat(logs.getAll()).contains("Fehlerkategorie=DATENBANK")
+            assertThat(applicationLogs.output()).contains("Fehlerkategorie=DATENBANK")
                 .doesNotContain("InterneGeheimeDatenbankNachricht", "commit@example.org", TOKEN, PASSWORD);
+            assertThat(logs.getAll()).doesNotContain("commit@example.org", TOKEN, PASSWORD);
         } finally {
             PostgresFixture.ADMIN.execute("DROP TRIGGER reject_test_commit ON access.accounts");
             PostgresFixture.ADMIN.execute("DROP FUNCTION access.reject_test_commit()");
@@ -296,10 +303,32 @@ class RegistrationIT {
 
     @Test
     void logsEnthaltenKeinePasswoerterLinkgeheimnisseOderRequestBodys(CapturedOutput logs) throws Exception {
-        register(TOKEN, "protokoll@example.org", PASSWORD);
-        register(TOKEN, "protokoll@example.org", PASSWORD);
-        post("{\"registrationToken\":\"" + TOKEN + "\",\"email\":\"protokoll@example.org\",\"password\":\"LoggeDiesesPasswortNiemals\",\"unbekannt\":true}");
-        assertThat(logs.getAll()).doesNotContain(TOKEN, PASSWORD, "LoggeDiesesPasswortNiemals", "protokoll@example.org", "Using generated security password");
+        try (var applicationLogs = new ApplicationLogs()) {
+            assertThat(register(TOKEN, "protokoll@example.org", PASSWORD).statusCode()).isEqualTo(201);
+            assertThat(register(TOKEN, "protokoll@example.org", PASSWORD).statusCode()).isEqualTo(400);
+            var malformed = post("{\"registrationToken\":\"" + TOKEN + "\",\"email\":\"protokoll@example.org\",\"password\":\"LoggeDiesesPasswortNiemals\",\"unbekannt\":true}");
+            assertThat(malformed.statusCode()).isEqualTo(400);
+            assertThat(malformed.body()).contains("VALIDATION_FAILED");
+            assertThat(applicationLogs.output()).doesNotContain(TOKEN, PASSWORD, "LoggeDiesesPasswortNiemals", "protokoll@example.org");
+            assertThat(logs.getAll()).doesNotContain(TOKEN, PASSWORD, "LoggeDiesesPasswortNiemals", "Using generated security password");
+        }
+    }
+
+    @Test
+    void logPruefungUnterscheidetDatenbankprozessUndAnwendung(CapturedOutput console) {
+        String marker = "SynthetischeLogquellenProbe";
+        try (var applicationLogs = new ApplicationLogs()) {
+            LoggerFactory.getLogger(EmbeddedPostgres.class).error(marker);
+            assertThat(console.getAll()).contains(marker);
+            assertThat(applicationLogs.output()).doesNotContain(marker);
+
+            LoggerFactory.getLogger(RegistrationErrors.class).error(marker);
+            assertThat(applicationLogs.output()).contains(marker);
+
+            LoggerFactory.getLogger(org.springframework.jdbc.core.JdbcTemplate.class)
+                .error("SynthetischeFrameworkProbe", new IllegalStateException("SynthetischeExceptionProbe"));
+            assertThat(applicationLogs.output()).contains("SynthetischeFrameworkProbe", "SynthetischeExceptionProbe");
+        }
     }
 
     @Test
@@ -363,6 +392,37 @@ class RegistrationIT {
             org.assertj.core.api.Assertions.assertThatThrownBy(() -> app.run(args.toArray(String[]::new)))
                 .isInstanceOf(IllegalStateException.class)
                 .hasStackTraceContaining("Die Laufzeitrolle darf weder privilegiert noch Tabellenbesitzer sein.");
+        }
+    }
+
+    /** Erfasst Anwendungs- und Frameworklogs; PostgreSQL-Prozesslogs bleiben getrennt. */
+    private static final class ApplicationLogs extends AppenderBase<ILoggingEvent> implements AutoCloseable {
+        private final Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
+        private final StringBuilder messages = new StringBuilder();
+
+        ApplicationLogs() {
+            setContext(root.getLoggerContext());
+            start();
+            root.addAppender(this);
+        }
+
+        @Override
+        protected void append(ILoggingEvent event) {
+            if (event.getLoggerName().startsWith("io.zonky.test.db.postgres.embedded.")) return;
+            messages.append(event.getFormattedMessage()).append('\n');
+            if (event.getThrowableProxy() != null) {
+                messages.append(ThrowableProxyUtil.asString(event.getThrowableProxy()));
+            }
+        }
+
+        synchronized String output() {
+            return messages.toString();
+        }
+
+        @Override
+        public void close() {
+            root.detachAppender(this);
+            stop();
         }
     }
 

@@ -1,0 +1,83 @@
+openapi: 3.0.4
+info:
+  title: Try Not to Be Poor API
+  version: 1.0.0
+  description: Persönliche Kontoanlage. Eine Registrierung erzeugt keine Sitzung.
+servers:
+  - url: /api/v1
+paths:
+  /access/registrations:
+    post:
+      tags: [Access]
+      operationId: register
+      summary: Eigenes Konto über einen aktiven Registrierungslink anlegen
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegistrationRequest'
+      responses:
+        '201':
+          description: Das Konto wurde verbindlich gespeichert; keine Sitzung.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegistrationCreated'
+        '400':
+          description: Feldfehler oder neutraler Registrierungsfehler ohne Kontobestätigung.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        '500':
+          description: Speicherung fehlgeschlagen. Es wird kein Erfolg bestätigt.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+components:
+  schemas:
+    RegistrationRequest:
+      type: object
+      additionalProperties: false
+      required: [registrationToken, email, password]
+      description: E-Mail wird getrimmt und kleingeschrieben. Passwort wird ausschließlich NFC-normalisiert und in Unicode-Codepunkten geprüft (15–64); keine Zeichenklassenpflicht.
+      properties:
+        registrationToken:
+          type: string
+          minLength: 43
+          maxLength: 43
+          pattern: '^[A-Za-z0-9_-]{43}$'
+          writeOnly: true
+          description: Ungepaddetes Base64url-Geheimnis (256 Bit) aus dem URL-Fragment.
+        email:
+          type: string
+          description: Gültige E-Mail-Syntax, nach Normalisierung höchstens 254 Zeichen.
+        password:
+          type: string
+          writeOnly: true
+          description: 15–64 druckbare Unicode-Codepunkte nach NFC; Leerzeichen erlaubt, kein Trimmen oder Abschneiden. Lokale Sperrliste.
+    RegistrationCreated:
+      type: object
+      additionalProperties: false
+      required: [message]
+      properties:
+        message:
+          type: string
+          example: Dein Konto wurde angelegt.
+    ApiError:
+      type: object
+      additionalProperties: false
+      required: [code, message, fieldErrors]
+      properties:
+        code:
+          type: string
+          enum: [VALIDATION_FAILED, REGISTRATION_FAILED, SERVER_ERROR]
+        message:
+          type: string
+        fieldErrors:
+          type: object
+          additionalProperties:
+            type: string

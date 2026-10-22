@@ -34,3 +34,18 @@ Private Ausgabenübersicht mit fortlaufendem Monatsbudget und Sparzielen, vorran
 - Führe das Monatsbudget über Monatsgrenzen fort. Berechne den Rest ausschließlich aus eigenen Ausgaben des laufenden Monats; die Ausgabenliste umfasst dagegen alle Monate.
 
 <!-- /bmad:context -->
+
+## Verifizierte Implementierungsbefehle (Story 1.1)
+
+- Voraussetzungen: Java 25 und Node 24.22.0; Maven 3.10.0 lädt der Wrapper.
+- Vertrag und beide generierten Schnittstellen kompilieren: `./scripts/check-contract.sh`;
+  `CONTRACT_BASE_REF` setzt die PR-Basis, ein fehlender Basisvertrag gilt als Erstvertrag.
+- Backend einschließlich echter temporärer PostgreSQL-18.6-Integrationstests:
+  `./backend/mvnw -f backend/pom.xml verify` (kein Docker, unprivilegierter Benutzer).
+- Statische SPA: `npm --prefix frontend ci && npm --prefix frontend run build`.
+- Browser: einmalig `npx --prefix frontend playwright install chromium`, danach
+  `npm --prefix frontend run e2e`; Ports 8080/4200 freihalten. Ein vorhandenes Chromium
+  kann über `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` verwendet werden.
+- Lokale Datenbank und geschützte Linkkonfiguration: siehe `README.md` und
+  `deploy/compose.local.yaml`. Echte Nutzerdaten und Produktionsdeployment bleiben außerhalb Story 1.1.
+- Generierte Dateien unter `frontend/src/app/api/` und `backend/target/` nicht manuell bearbeiten.

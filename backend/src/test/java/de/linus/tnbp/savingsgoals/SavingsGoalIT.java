@@ -145,6 +145,27 @@ class SavingsGoalIT {
             assertThat(call("POST", body, token(first)).statusCode()).isEqualTo(400);
         assertThat(count(first)).isZero(); assertThat(count(second)).isZero();
     }
+    @Test void bearbeitenPrueftRohJsonOhneMutationOderRundung() throws Exception {
+        String id = goal(first);
+        var before = call("GET", null, token(first)).body();
+        for (String value : List.of("null", "0", "-1", "9007199254740992", "9223372036854775808", "1.01", "1.0", "1e2", "\"100\"", "true", "[]", "{}")) {
+            var rejected = update(id, "{\"name\":\"Reise\",\"targetAmountCents\":" + value + "}", token(first));
+            assertThat(rejected.statusCode()).as(value).isEqualTo(400); fields(rejected, "targetAmountCents");
+        }
+        for (String value : List.of("null", "\"\"", "\"   \"", "\"\\u00a0\"", "\"Rei\\u0000se\"", "12", "1.5", "true", "[]", "{}")) {
+            var rejected = update(id, "{\"name\":" + value + ",\"targetAmountCents\":1}", token(first));
+            assertThat(rejected.statusCode()).as(value).isEqualTo(400); fields(rejected, "name");
+        }
+        for (String value : List.of("\"2026-02-29\"", "\"1900-02-29\"", "\"2028-02-30\"", "\"2026-04-31\"", "\"2026-1-01\"", "\"2026-01-1\"", "\"2026-01-01T00:00:00Z\"", "\"0000-01-01\"", "\"+10000-01-01\"", "\"\"", "123", "[2028,2,29]", "true", "{}")) {
+            var rejected = update(id, "{\"name\":\"Reise\",\"targetAmountCents\":1,\"targetDate\":" + value + "}", token(first));
+            assertThat(rejected.statusCode()).as(value).isEqualTo(400); fields(rejected, "targetDate");
+        }
+        for (String field : List.of("id", "userId", "user_id", "progressCents"))
+            assertThat(update(id, "{\"name\":\"Reise\",\"targetAmountCents\":1,\"" + field + "\":1}", token(first)).statusCode()).isEqualTo(400);
+        for (String body : List.of("{}", "null", "{", "{\"name\":\"Reise\"}", "{\"targetAmountCents\":1}"))
+            assertThat(update(id, body, token(first)).statusCode()).isEqualTo(400);
+        assertThat(call("GET", null, token(first)).body()).isEqualTo(before); assertThat(count(second)).isZero();
+    }
     void fields(HttpResponse<String> response, String... expected) {
         var fields = JSON.readTree(response.body()).get("fieldErrors");
         assertThat(fields.size()).as(response.body()).isEqualTo(expected.length);
@@ -217,7 +238,7 @@ class SavingsGoalIT {
         assertThat(PostgresFixture.ADMIN.queryForObject("SELECT relrowsecurity AND relforcerowsecurity FROM pg_class WHERE oid = 'savings_goals.goals'::regclass", Boolean.class)).isTrue();
         assertThat(runtime.queryForObject("SELECT rolsuper OR rolbypassrls OR rolcreaterole OR rolcreatedb FROM pg_roles WHERE rolname = current_user", Boolean.class)).isFalse();
         assertThat(runtime.queryForObject("SELECT pg_has_role(current_user, relowner, 'MEMBER') FROM pg_class WHERE oid = 'savings_goals.goals'::regclass", Boolean.class)).isFalse();
-        for (String sql : List.of("DELETE FROM savings_goals.goals", "UPDATE savings_goals.goals SET name = name", "ALTER TABLE savings_goals.goals DISABLE ROW LEVEL SECURITY", "CREATE TABLE savings_goals.forbidden (id integer)",
+        for (String sql : List.of("UPDATE savings_goals.goals SET id = id", "UPDATE savings_goals.goals SET user_id = user_id", "ALTER TABLE savings_goals.goals DISABLE ROW LEVEL SECURITY", "CREATE TABLE savings_goals.forbidden (id integer)",
             "INSERT INTO savings_goals.goals (id, user_id, name, target_amount_cents) VALUES ('" + UUID.randomUUID() + "', '" + first + "', 'Kontextlos', 1)"))
             assertThatThrownBy(() -> runtime.execute(sql)).isInstanceOf(DataAccessException.class);
         for (String name : List.of("", " ", "\t", "\n\r", "\u00a0", "\u1680", "\u2003", "\u2007", "\u2028", "\u2029", "\u202f", "\u205f", "\u3000", "\uFEFF"))
@@ -327,7 +348,7 @@ class SavingsGoalIT {
                 connection.commit();
                 assertThat(statement.executeUpdate("UPDATE savings_goals.goals SET progress_cents = 4")).isZero();
                 connection.rollback();
-                for (String column : List.of("id", "user_id", "name", "target_amount_cents", "target_date")) {
+                for (String column : List.of("id", "user_id")) {
                     context(connection, first);
                     assertThatThrownBy(() -> statement.executeUpdate("UPDATE savings_goals.goals SET " + column + " = " + column))
                         .as(column).isInstanceOf(java.sql.SQLException.class);
@@ -344,6 +365,126 @@ class SavingsGoalIT {
         assertThat(JSON.readTree(call("GET", null, token(first)).body()).get(0).get("progressCents").asLong()).isEqualTo(3);
         service.progress(first, UUID.fromString(id), 4L);
         try (Connection connection = source.getConnection()) { assertThat(count(connection)).isZero(); }
+    }
+
+    HttpResponse<String> update(String id, String body, String bearer) throws Exception {
+        return call("PUT", body, bearer, "/" + id);
+    }
+    @Test void bearbeitenErhaeltFortschrittUndAndereZieleUndEntferntFehlendesOderNullDatum() throws Exception {
+        String id = goal(first);
+        var untouched = JSON.readTree(save(first, 4321).body());
+        var foreign = JSON.readTree(save(second, 8765).body());
+        progress(id, "{\"progressCents\":15000}", token(first));
+        for (String date : List.of(",\"targetDate\":\"0001-01-01\"", ",\"targetDate\":\"9999-12-31\"", ",\"targetDate\":null", "")) {
+            var result = update(id, "{\"name\":\"  Korrigiert  \",\"targetAmountCents\":9007199254740991" + date + "}", token(first));
+            assertThat(result.statusCode()).as(result.body()).isEqualTo(200);
+            var value = JSON.readTree(result.body());
+            assertThat(value.get("id").asText()).isEqualTo(id);
+            assertThat(value.get("name").asText()).isEqualTo("Korrigiert");
+            assertThat(value.get("targetAmountCents").asLong()).isEqualTo(9007199254740991L);
+            assertThat(value.get("progressCents").asLong()).isEqualTo(15000);
+            if (date.isEmpty() || date.endsWith("null")) assertThat(value.path("targetDate").isNull() || value.path("targetDate").isMissingNode()).isTrue();
+            else assertThat(value.path("targetDate").asText()).isEqualTo(date.contains("0001") ? "0001-01-01" : "9999-12-31");
+            var all = JSON.readTree(call("GET", null, token(first)).body());
+            assertThat(all).contains(value, untouched);
+            assertThat(JSON.readTree(call("GET", null, token(second)).body()).get(0)).isEqualTo(foreign);
+        }
+        var smaller = update(id, "{\"name\":\"Klein\",\"targetAmountCents\":10000}", token(first));
+        assertThat(JSON.readTree(smaller.body()).get("progressCents").asLong()).isEqualTo(15000);
+        assertThat(call("DELETE", null, token(first), "/" + id).statusCode()).isEqualTo(204);
+        assertThat(JSON.readTree(call("GET", null, token(first)).body())).containsExactly(untouched);
+        assertThat(JSON.readTree(call("GET", null, token(second)).body())).containsExactly(foreign);
+    }
+    @Test void mutationenSindIsoliertUndOhneBearerNichtErreichbar() throws Exception {
+        String own = goal(first), other = goal(second);
+        for (String method : List.of("PUT", "DELETE")) {
+            String body = method.equals("PUT") ? "{\"name\":\"Geändert\",\"targetAmountCents\":1}" : null;
+            var foreign = call(method, body, token(first), "/" + other);
+            var missing = call(method, body, token(first), "/" + UUID.randomUUID());
+            assertThat(foreign.statusCode()).isEqualTo(404);
+            assertThat(missing.statusCode()).isEqualTo(404);
+            assertThat(foreign.body()).isEqualTo(missing.body()).doesNotContain(other, second.toString());
+            assertThat(call(method, body, token(first), "/ungueltig").body()).isEqualTo(missing.body());
+            for (String bearer : Arrays.asList(null, "ungueltig")) assertThat(call(method, body, bearer, "/" + own).statusCode()).isEqualTo(401);
+        }
+        assertThat(count(first)).isEqualTo(1); assertThat(count(second)).isEqualTo(1);
+        var deleted = call("DELETE", null, token(first), "/" + own);
+        assertThat(deleted.statusCode()).isEqualTo(204); assertThat(deleted.body()).isEmpty();
+        assertThat(call("DELETE", null, token(first), "/" + own).statusCode()).isEqualTo(404);
+    }
+    @Test void bearbeitenUndLoeschenBestaetigenCommitfehlerNicht(CapturedOutput output) throws Exception {
+        String id = goal(first);
+        var before = call("GET", null, token(first)).body();
+        PostgresFixture.ADMIN.execute("CREATE FUNCTION savings_goals.reject_mutation() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'GeheimeMutation'; RETURN NEW; END $$");
+        PostgresFixture.ADMIN.execute("CREATE CONSTRAINT TRIGGER reject_mutation AFTER UPDATE OR DELETE ON savings_goals.goals DEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION savings_goals.reject_mutation()");
+        try {
+            for (String method : List.of("PUT", "DELETE")) {
+                var result = call(method, method.equals("PUT") ? "{\"name\":\"GeheimerEntwurf\",\"targetAmountCents\":876543210}" : null, token(first), "/" + id);
+                assertThat(result.statusCode()).isEqualTo(500);
+                assertThat(result.body()).contains("SAVINGS_GOAL_UNAVAILABLE").doesNotContain("GeheimeMutation", "GeheimerEntwurf", "876543210");
+                assertThat(call("GET", null, token(first)).body()).isEqualTo(before);
+            }
+        } finally {
+            PostgresFixture.ADMIN.execute("DROP TRIGGER reject_mutation ON savings_goals.goals");
+            PostgresFixture.ADMIN.execute("DROP FUNCTION savings_goals.reject_mutation()");
+        }
+        assertThat(output.getAll()).doesNotContain("GeheimeMutation", "GeheimerEntwurf", "876543210");
+    }
+    @Test void neueMutationenErzwingenRlsAuchOhneSqlEigentuemerfilter() throws Exception {
+        goal(first);
+        var runtime = new DriverManagerDataSource(PostgresFixture.URL, "tnbp_runtime", "runtime-test-only");
+        try (Connection connection = runtime.getConnection(); var statement = connection.createStatement()) {
+            connection.setAutoCommit(false);
+            for (UUID user : Arrays.asList(null, second)) {
+                if (user != null) context(connection, user);
+                assertThat(statement.executeUpdate("UPDATE savings_goals.goals SET name = 'Fremd', target_amount_cents = 2, target_date = NULL")).isZero();
+                assertThat(statement.executeUpdate("DELETE FROM savings_goals.goals")).isZero();
+                connection.rollback();
+            }
+            context(connection, first);
+            assertThat(statement.executeUpdate("UPDATE savings_goals.goals SET name = 'Eigen', target_amount_cents = 2, target_date = NULL")).isEqualTo(1);
+            connection.commit();
+            assertThat(statement.executeUpdate("DELETE FROM savings_goals.goals")).isZero();
+            context(connection, first);
+            assertThat(statement.executeUpdate("DELETE FROM savings_goals.goals")).isEqualTo(1);
+            connection.commit();
+        }
+        assertThat(count(first)).isZero();
+    }
+    @Test void paralleleFortschrittsUndZielaenderungUeberschreibenKeineFremdenFelder() throws Exception {
+        UUID id = UUID.fromString(goal(first));
+        var runtime = new DriverManagerDataSource(PostgresFixture.URL, "tnbp_runtime", "runtime-test-only");
+        try (var executor = java.util.concurrent.Executors.newVirtualThreadPerTaskExecutor(); Connection connection = runtime.getConnection(); var statement = connection.createStatement()) {
+            connection.setAutoCommit(false); context(connection, first);
+            int holderPid;
+            try (var result = statement.executeQuery("SELECT pg_backend_pid()")) { result.next(); holderPid = result.getInt(1); }
+            statement.executeUpdate("UPDATE savings_goals.goals SET progress_cents = 15000 WHERE id = '" + id + "'");
+            var updated = executor.submit(() -> service.update(first, id, "Parallel", 10000L, null));
+            awaitRowLock(holderPid); assertThat(updated.isDone()).isFalse();
+            connection.commit();
+            assertThat(updated.get(5, java.util.concurrent.TimeUnit.SECONDS).progressCents()).isEqualTo(15000);
+            context(connection, first);
+            statement.executeUpdate("UPDATE savings_goals.goals SET name = 'Noch einmal', target_amount_cents = 20000 WHERE id = '" + id + "'");
+            var progress = executor.submit(() -> service.progress(first, id, 16000L));
+            awaitRowLock(holderPid); assertThat(progress.isDone()).isFalse();
+            connection.commit();
+            var result = progress.get(5, java.util.concurrent.TimeUnit.SECONDS);
+            assertThat(result.name()).isEqualTo("Noch einmal"); assertThat(result.targetAmountCents()).isEqualTo(20000); assertThat(result.progressCents()).isEqualTo(16000);
+        }
+    }
+
+    void awaitRowLock(int holderPid) throws Exception {
+        long deadline = System.nanoTime() + java.util.concurrent.TimeUnit.SECONDS.toNanos(5);
+        boolean waiting = false;
+        while (!waiting && System.nanoTime() < deadline) {
+            waiting = Boolean.TRUE.equals(PostgresFixture.ADMIN.queryForObject("""
+                SELECT EXISTS (SELECT 1 FROM pg_stat_activity
+                WHERE wait_event_type = 'Lock' AND query LIKE '%UPDATE savings_goals.goals%'
+                  AND ? = ANY(pg_blocking_pids(pid)))
+                """, Boolean.class, holderPid));
+            if (!waiting) Thread.sleep(10);
+        }
+        assertThat(waiting).as("UPDATE wartet nachweislich auf die gehaltene Zeilensperre").isTrue();
     }
 
 }

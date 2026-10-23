@@ -21,6 +21,7 @@ class SavingsGoalTest {
         var manager = org.mockito.Mockito.mock(org.springframework.transaction.PlatformTransactionManager.class);
         var service = new SavingsGoalService(repository, manager);
         assertThatThrownBy(() -> service.save(UUID.randomUUID(), "Rei\0se", 1L, null)).isInstanceOf(SavingsGoalService.InvalidGoal.class);
+        assertThatThrownBy(() -> service.update(UUID.randomUUID(), UUID.randomUUID(), "Rei\0se", 1L, null)).isInstanceOf(SavingsGoalService.InvalidGoal.class);
         org.mockito.Mockito.verifyNoInteractions(repository, manager);
         assertThat(SavingsGoalService.trimName(" \u00a0\uFEFFReise 🧳\u2003 ")).isEqualTo("Reise 🧳");
     }

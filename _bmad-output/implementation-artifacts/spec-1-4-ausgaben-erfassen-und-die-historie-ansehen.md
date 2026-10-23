@@ -125,3 +125,8 @@ Vorgegebene Prüfkommandos:
 - Der Hauptagent hat den korrigierten Diff vollständig gegen Aufgaben, Matrix und Abnahmen geprüft und alle vollständigen Prüfungen anschließend selbst ausgeführt: **Vertragscheck mit Kompatibilitätsvergleich und beiden generierten Builds erfolgreich; 36 Unit-Tests, 52 PostgreSQL-Integrationstests und 62 Browserfälle erfolgreich, keine Fehler oder übersprungenen Fälle.** Darunter 4 neue Unit-, 11 Integrations- und 12 Browserfälle für Ausgaben.
 - Finale Protokolle: `/tmp/story14-root-contract.log`, `/tmp/story14-root-backend.log`, `/tmp/story14-root-browser.log`. Zusätzlich gezielte Korrekturprüfungen: `/tmp/story14-fixes-backend.log`, `/tmp/story14-fixes-browser.log`. `git diff --check` erfolgreich.
 - Spezifikation abgeschlossen; Sprintstatus bleibt für menschliche Abnahme auf `review`. Kein Push und keine Änderung an Produktionsdaten.
+
+
+### CI-Korrektur in PR #5
+
+Die ersten Push-/PR-Läufe fanden bei 200-%-Text einen echten horizontalen Überlauf langer Feldlabels. Lokal ließ sich die Schriftabhängigkeit mit DejaVu Sans reproduzieren: Seite 342 statt 320 Pixel, Ausgabenlabel 261 statt 158 Pixel. `overflow-wrap: anywhere` für Labels korrigiert dies ohne Abschneiden oder Verbergen; anschließend bleiben Seite und Labels exakt in ihrem Bereich. Die vorhandenen Budget-/Ausgaben-Responsive-Tests prüfen nun zusätzlich jedes Label auf inneren Überlauf, sodass auch die lokale Standardschrift die frühere Lücke erkennt. Vollständige Browserregression nach der Korrektur: 62 Fälle erfolgreich; Protokoll `/tmp/story14-pr5-browser-fixed.log`. Der freigegebene Umfang bleibt unverändert.

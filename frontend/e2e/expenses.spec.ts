@@ -260,6 +260,9 @@ test('Tastatur, 200-Prozent-Text und axe bestehen mobil mit Labels und am Deskto
     for (const size of ['100%', '200%']) {
       await page.evaluate(value => { document.documentElement.style.fontSize = value; }, size);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
+      for (const label of await page.locator('label').all()) {
+        expect(await label.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
+      }
       const history = width === 320 ? page.locator('.expense-cards') : page.getByRole('table', { name: 'Alle Ausgaben' });
       await expect(history).toBeVisible(); await expect(history).toContainText('90.071.992.547.409,91 €');
       expect(await history.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);

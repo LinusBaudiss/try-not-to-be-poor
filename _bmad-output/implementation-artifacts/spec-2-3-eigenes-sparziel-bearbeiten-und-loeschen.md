@@ -73,6 +73,8 @@ context:
 
 - CI-Nachprüfung für PR #10: Chromium konnte trotz unmittelbarer response.json-Lesung den POST-Body im bestehenden Anlagetest sporadisch nicht bereitstellen. Test liest nun die echte Serverantwort über route.fetch vor unveränderter Weitergabe an die Oberfläche; Status-, Werte-, Persistenz- und UI-Assertions bleiben erhalten. Betroffene Testdatei dreimal erfolgreich: 39/39 (`/tmp/story23-ci-create-response.log`).
 
+- Derselbe CI-Fehler betraf danach den bestehenden Kontowechsel-/Refresh-Test. Login- und Refresh-Identität werden nun vor Weitergabe der echten Antwort über route.fetch gelesen; ursprüngliche Sperr-, CSRF-, Cookie- und Identitätsassertions bleiben erhalten. Sitzungstestdatei dreimal erfolgreich: 51/51 (`/tmp/story23-ci-session-response.log`).
+
 ## Spec Change Log
 
 ## Review Triage Log

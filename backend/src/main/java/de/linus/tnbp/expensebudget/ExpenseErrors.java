@@ -1,6 +1,7 @@
 package de.linus.tnbp.expensebudget;
 
 import de.linus.tnbp.contract.model.ExpenseError;
+import de.linus.tnbp.contract.model.ExpenseNotFoundError;
 import java.util.Map;
 import java.util.LinkedHashMap;
 import org.slf4j.LoggerFactory;
@@ -22,6 +23,11 @@ import tools.jackson.core.JacksonException;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @RestControllerAdvice(assignableTypes = ExpenseController.class)
 class ExpenseErrors {
+    @ExceptionHandler({ExpenseService.NotFound.class, org.springframework.web.method.annotation.MethodArgumentTypeMismatchException.class})
+    ResponseEntity<ExpenseNotFoundError> missing() {
+        return ResponseEntity.status(404).header("Cache-Control", "no-store").body(new ExpenseNotFoundError(
+            ExpenseNotFoundError.CodeEnum.EXPENSE_NOT_FOUND, "Die Ausgabe wurde nicht gefunden.", Map.of()));
+    }
     @ExceptionHandler(ExpenseService.InvalidExpense.class)
     ResponseEntity<ExpenseError> invalid(ExpenseService.InvalidExpense failure) {
         return bad(ExpenseError.CodeEnum.VALIDATION_FAILED, "Prüfe die Ausgabe.", failure.fields);

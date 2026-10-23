@@ -22,6 +22,16 @@ class ExpenseTest {
                 assertThat(failure.fields).containsOnlyKeys("name").containsValue("Entferne das Nullzeichen aus dem Namen der Ausgabe."));
         org.mockito.Mockito.verifyNoInteractions(repository, manager);
     }
+    @Test void bearbeitungValidiertEbenfallsVorJedemDatenbankzugriff() {
+        var repository = org.mockito.Mockito.mock(ExpenseRepository.class);
+        var manager = org.mockito.Mockito.mock(org.springframework.transaction.PlatformTransactionManager.class);
+        var service = new ExpenseService(repository, Clock.systemUTC(), manager);
+        assertThatThrownBy(() -> service.update(java.util.UUID.randomUUID(), java.util.UUID.randomUUID(), "  ", 1L))
+            .isInstanceOf(ExpenseService.InvalidExpense.class);
+        assertThatThrownBy(() -> service.update(java.util.UUID.randomUUID(), java.util.UUID.randomUUID(), "Brot", 0L))
+            .isInstanceOf(ExpenseService.InvalidExpense.class);
+        org.mockito.Mockito.verifyNoInteractions(repository, manager);
+    }
     @Test void nameWirdWieInDerEuroOberflaecheGetrimmt() {
         assertThat(ExpenseService.trimName(" \u00a0\uFEFFBrot 🥖\u2003 ")).isEqualTo("Brot 🥖");
     }

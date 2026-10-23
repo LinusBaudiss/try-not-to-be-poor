@@ -79,7 +79,9 @@ class AccessConfiguration {
                 .ignoringRequestMatchers(request -> (request.getMethod().equals("PUT")
                     && request.getServletPath().equals("/api/v1/expense-budget/budget"))
                     || (request.getMethod().equals("POST")
-                    && request.getServletPath().equals("/api/v1/expense-budget/expenses"))))
+                    && request.getServletPath().equals("/api/v1/expense-budget/expenses"))
+                    || ((request.getMethod().equals("PUT") || request.getMethod().equals("DELETE"))
+                    && request.getServletPath().matches("/api/v1/expense-budget/expenses/[^/]+"))))
             .addFilterBefore(origin, org.springframework.security.web.csrf.CsrfFilter.class)
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.POST, "/api/v1/access/registrations", "/api/v1/access/login",
@@ -88,6 +90,8 @@ class AccessConfiguration {
                 .requestMatchers(HttpMethod.GET, "/api/v1/access/me", "/api/v1/expense-budget/budget", "/api/v1/expense-budget/expenses", "/api/v1/expense-budget/month-summary").authenticated()
                 .requestMatchers(HttpMethod.PUT, "/api/v1/expense-budget/budget").authenticated()
                 .requestMatchers(HttpMethod.POST, "/api/v1/expense-budget/expenses").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/v1/expense-budget/expenses/*").authenticated()
+                .requestMatchers(HttpMethod.DELETE, "/api/v1/expense-budget/expenses/*").authenticated()
                 .anyRequest().denyAll())
             .oauth2ResourceServer(oauth -> oauth.jwt(config -> config.decoder(jwt))
                 .authenticationEntryPoint((request, response, failure) -> SessionHttp.error(response, 401)))
@@ -96,6 +100,7 @@ class AccessConfiguration {
                     request.getServletPath().equals("/api/v1/access/me")
                         || request.getServletPath().equals("/api/v1/expense-budget/budget")
                         || request.getServletPath().equals("/api/v1/expense-budget/expenses")
+                        || request.getServletPath().matches("/api/v1/expense-budget/expenses/[^/]+")
                         || request.getServletPath().equals("/api/v1/expense-budget/month-summary") ? 401 : 403))
                 .accessDeniedHandler((request, response, failure) -> SessionHttp.error(response, 403)))
             .requestCache(cache -> cache.disable())

@@ -22,6 +22,14 @@ public class ExpenseController implements ExpensesApi {
         return ResponseEntity.status(201).header("Cache-Control", "no-store")
             .body(response(expenses.save(userId(), input.getName(), input.getAmountCents())));
     }
+    @Override public ResponseEntity<ExpenseResponse> putExpense(UUID expenseId, ExpenseRequest input) {
+        return ResponseEntity.ok().header("Cache-Control", "no-store")
+            .body(response(expenses.update(userId(), expenseId, input.getName(), input.getAmountCents())));
+    }
+    @Override public ResponseEntity<Void> deleteExpense(UUID expenseId) {
+        expenses.delete(userId(), expenseId);
+        return ResponseEntity.noContent().header("Cache-Control", "no-store").build();
+    }
     private UUID userId() { return UUID.fromString(SecurityContextHolder.getContext().getAuthentication().getName()); }
     private ExpenseResponse response(ExpenseRepository.Expense expense) {
         return new ExpenseResponse(expense.id(), expense.name(), expense.amountCents(), expense.recordedOn());

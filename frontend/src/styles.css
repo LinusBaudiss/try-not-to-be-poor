@@ -79,3 +79,13 @@ h3 { font-size: 1rem; margin: 0 0 1rem; overflow-wrap: anywhere; }
 .summary-details div + div { margin-top: .75rem; }
 .summary-details dt { color: var(--text-secondary); overflow-wrap: anywhere; }
 .summary-details dd { margin: 0; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+
+.expense-actions { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1rem; }
+.expense-actions button { flex: 1 1 8rem; min-width: 0; }
+.expense-editor { border: 2px solid var(--primary); border-radius: .5rem; padding: 1rem; margin-top: 1.5rem; }
+.expense-delete-dialog { width: min(32rem, calc(100% - 2rem)); max-height: calc(100dvh - 2rem); overflow-y: auto; padding: 1rem; border: 2px solid var(--primary); border-radius: .5rem; color: var(--text-primary); background: var(--surface-raised); }
+.expense-delete-dialog::backdrop { background: rgb(24 33 30 / .6); }
+.expense-delete-dialog .expense-actions { flex-direction: column; }
+.expense-delete-dialog .expense-actions button { flex-basis: auto; }
+.expense-table .expense-actions { margin-top: 0; }
+#history-title:focus { outline: 3px solid var(--focus-ring); outline-offset: 3px; }

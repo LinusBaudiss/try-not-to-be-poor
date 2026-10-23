@@ -37,6 +37,25 @@ public class ExpenseRepository {
                 row.getLong("amount_cents"), row.getObject("recorded_on", LocalDate.class)), userId);
     }
 
+    Expense find(UUID userId, UUID expenseId) {
+        return jdbc.query("""
+            SELECT id, name, amount_cents, recorded_on FROM expense_budget.expenses
+            WHERE user_id = ? AND id = ?
+            """, (row, index) -> new Expense(row.getObject("id", UUID.class), row.getString("name"),
+                row.getLong("amount_cents"), row.getObject("recorded_on", LocalDate.class)), userId, expenseId)
+            .stream().findFirst().orElseThrow(ExpenseService.NotFound::new);
+    }
+
+    void update(UUID userId, Expense expense) {
+        if (jdbc.update("UPDATE expense_budget.expenses SET name = ?, amount_cents = ? WHERE user_id = ? AND id = ?",
+            expense.name(), expense.amountCents(), userId, expense.id()) != 1) throw new ExpenseService.NotFound();
+    }
+
+    void delete(UUID userId, UUID expenseId) {
+        if (jdbc.update("DELETE FROM expense_budget.expenses WHERE user_id = ? AND id = ?", userId, expenseId) != 1)
+            throw new ExpenseService.NotFound();
+    }
+
     void insert(UUID userId, Expense expense) {
         jdbc.update("INSERT INTO expense_budget.expenses (id, user_id, name, amount_cents, recorded_on) VALUES (?, ?, ?, ?, ?)",
             expense.id(), userId, expense.name(), expense.amountCents(), expense.recordedOn());

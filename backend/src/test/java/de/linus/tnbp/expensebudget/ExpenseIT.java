@@ -40,6 +40,8 @@ class ExpenseIT {
     @Autowired DataSource source;
     @Autowired JdbcTemplate jdbc;
     @Autowired ExpenseService service;
+    @Autowired BudgetService budgets;
+    @Autowired MonthSummaryService summaries;
     UUID first, second;
 
     @DynamicPropertySource static void properties(DynamicPropertyRegistry registry) {
@@ -322,7 +324,10 @@ class ExpenseIT {
         assertThat(PostgresFixture.ADMIN.queryForObject("SELECT relrowsecurity AND relforcerowsecurity FROM pg_class WHERE oid = 'expense_budget.expenses'::regclass", Boolean.class)).isTrue();
         assertThat(runtime.queryForObject("SELECT rolsuper OR rolbypassrls OR rolcreaterole OR rolcreatedb FROM pg_roles WHERE rolname = current_user", Boolean.class)).isFalse();
         assertThat(runtime.queryForObject("SELECT pg_has_role(current_user, relowner, 'MEMBER') FROM pg_class WHERE oid = 'expense_budget.expenses'::regclass", Boolean.class)).isFalse();
-        for (String sql : List.of("DELETE FROM expense_budget.expenses", "UPDATE expense_budget.expenses SET name = name",
+        assertThat(runtime.update("DELETE FROM expense_budget.expenses")).isZero();
+        assertThat(runtime.update("UPDATE expense_budget.expenses SET name = name")).isZero();
+        for (String sql : List.of("UPDATE expense_budget.expenses SET id = id", "UPDATE expense_budget.expenses SET user_id = user_id",
+            "UPDATE expense_budget.expenses SET recorded_on = recorded_on",
             "ALTER TABLE expense_budget.expenses DISABLE ROW LEVEL SECURITY", "CREATE TABLE expense_budget.forbidden (id integer)",
             "INSERT INTO expense_budget.expenses VALUES ('" + UUID.randomUUID() + "', '" + first + "', 'Kontextlos', 1, CURRENT_DATE)"))
             assertThatThrownBy(() -> runtime.execute(sql)).isInstanceOf(DataAccessException.class);
@@ -334,5 +339,269 @@ class ExpenseIT {
                 .as("Nur Trimzeichen im Namen").isInstanceOf(DataAccessException.class);
         assertThatThrownBy(() -> PostgresFixture.ADMIN.execute("INSERT INTO expense_budget.expenses VALUES ('" + UUID.randomUUID() + "', '" + UUID.randomUUID() + "', 'Unbekannt', 1, CURRENT_DATE)"))
             .isInstanceOf(DataAccessException.class);
+    }
+
+    String expenseId(HttpResponse<String> response) { return JSON.readTree(response.body()).get("id").asText(); }
+    HttpResponse<String> update(UUID user, String id, String name, long cents) throws Exception {
+        return call("PUT", JSON.writeValueAsString(Map.of("name", name, "amountCents", cents)), token(user), "/" + id);
+    }
+
+    @Test void bearbeitungUndLoeschungBewahrenMetadatenUndVerwendenDenUrspruenglichenMonat() throws Exception {
+        CLOCK.now = Instant.parse("2026-10-31T22:59:59Z");
+        String oldId = expenseId(save(first, 123));
+        String otherOld = expenseId(save(first, BudgetService.MAX_CENTS - 123));
+        CLOCK.now = Instant.parse("2026-10-31T23:00:00Z");
+        budgets.save(first, 1000L);
+        String currentId = expenseId(save(first, 250));
+        assertThat(update(first, oldId, "Erhöhung", 124).statusCode()).isEqualTo(400);
+        assertThat(summaries.current(first).remainingCents()).isEqualTo(750);
+        var edited = update(first, oldId, "  Korrigiert  ", 100);
+        assertThat(edited.statusCode()).isEqualTo(200);
+        var value = JSON.readTree(edited.body());
+        assertThat(value.get("id").asText()).isEqualTo(oldId);
+        assertThat(value.get("recordedOn").asText()).isEqualTo("2026-10-31");
+        assertThat(value.get("name").asText()).isEqualTo("Korrigiert");
+        assertThat(value.get("amountCents").asLong()).isEqualTo(100);
+        assertThat(update(first, otherOld, "Rest alter Monat", BudgetService.MAX_CENTS - 100).statusCode()).isEqualTo(200);
+        assertThat(summaries.current(first).remainingCents()).isEqualTo(750);
+        assertThat(call("DELETE", null, token(first), "/" + oldId).statusCode()).isEqualTo(204);
+        assertThat(summaries.current(first).remainingCents()).isEqualTo(750);
+        assertThat(update(first, currentId, "Neuer Betrag", 400).statusCode()).isEqualTo(200);
+        assertThat(summaries.current(first).remainingCents()).isEqualTo(600);
+        var deleted = call("DELETE", null, token(first), "/" + currentId);
+        assertThat(deleted.statusCode()).isEqualTo(204); assertThat(deleted.body()).isEmpty();
+        assertThat(summaries.current(first).remainingCents()).isEqualTo(1000);
+        assertThat(count(first)).isEqualTo(1);
+    }
+
+    @Test void fremdeUndFehlendeIdsSindIdentischNeutralOhneMutation() throws Exception {
+        String own = expenseId(save(first, 100)), foreign = expenseId(save(second, 987654));
+        String foreignHistory = call("GET", null, token(second)).body();
+        for (String method : List.of("PUT", "DELETE")) {
+            String body = method.equals("PUT") ? "{\"name\":\"Korrektur\",\"amountCents\":1}" : null;
+            var hidden = call(method, body, token(first), "/" + foreign);
+            var absent = call(method, body, token(first), "/" + UUID.randomUUID());
+            assertThat(hidden.statusCode()).isEqualTo(404);
+            assertThat(absent.statusCode()).isEqualTo(404);
+            assertThat(hidden.body()).isEqualTo(absent.body()).doesNotContain(foreign, own, "987654", second.toString());
+            assertThat(hidden.body()).contains("EXPENSE_NOT_FOUND");
+            assertThat(call("GET", null, token(second)).body()).isEqualTo(foreignHistory);
+        }
+        assertThat(count(first)).isEqualTo(1); assertThat(count(second)).isEqualTo(1);
+        assertThat(call("DELETE", null, token(first), "/" + own).statusCode()).isEqualTo(204);
+        assertThat(update(first, own, "Weg", 1).statusCode()).isEqualTo(404);
+        assertThat(call("DELETE", null, token(first), "/" + own).statusCode()).isEqualTo(404);
+    }
+
+    @Test void putLehntStriktesJsonUndUngueltigeFelderOhneRundungAb() throws Exception {
+        String id = expenseId(save(first, 123));
+        String before = call("GET", null, token(first)).body();
+        for (String value : List.of("null", "0", "-1", "9007199254740992", "9223372036854775808", "1.01", "1.0", "1e2", "\"100\"", "true", "[]", "{}")) {
+            var rejected = call("PUT", "{\"name\":\"Brot\",\"amountCents\":" + value + "}", token(first), "/" + id);
+            assertThat(rejected.statusCode()).as(value).isEqualTo(400); fields(rejected, "amountCents");
+        }
+        for (String value : List.of("null", "\"\"", "\"   \"", "\"\\u00a0\"", "\"Bro\\u0000t\"", "12", "1.5", "true", "[]", "{}")) {
+            var rejected = call("PUT", "{\"name\":" + value + ",\"amountCents\":1}", token(first), "/" + id);
+            assertThat(rejected.statusCode()).as(value).isEqualTo(400); fields(rejected, "name");
+        }
+        for (String field : List.of("id", "userId", "user_id", "recordedOn")) {
+            var rejected = call("PUT", "{\"name\":\"Brot\",\"amountCents\":1,\"" + field + "\":\"" + id + "\"}", token(first), "/" + id);
+            assertThat(rejected.statusCode()).isEqualTo(400);
+        }
+        for (String body : List.of("{}", "null", "{", "{\"name\":\"Brot\"}", "{\"amountCents\":1}"))
+            assertThat(call("PUT", body, token(first), "/" + id).statusCode()).isEqualTo(400);
+        assertThat(call("GET", null, token(first)).body()).isEqualTo(before);
+    }
+
+    @Test void mutationsRoutenPruefenJwtUndAkzeptierenKeineCookiesAllein() throws Exception {
+        String id = expenseId(save(first, 123));
+        var claims = SignedJWT.parse(token(first)).getJWTClaimsSet();
+        byte[] wrongKey = KEY.clone(); wrongKey[0] = 1;
+        var invalid = Arrays.asList(null, "ungueltig", sign(claims, wrongKey),
+            sign(new JWTClaimsSet.Builder(claims).issuer("fremd").build(), KEY),
+            sign(new JWTClaimsSet.Builder(claims).audience("fremd").build(), KEY),
+            sign(new JWTClaimsSet.Builder(claims).subject("1-1-1-1-1").build(), KEY),
+            sign(new JWTClaimsSet.Builder(claims).expirationTime(Date.from(CLOCK.now)).build(), KEY));
+        for (String method : List.of("PUT", "DELETE")) {
+            String body = method.equals("PUT") ? "{\"name\":\"Brot\",\"amountCents\":1}" : null;
+            for (String bearer : invalid) assertThat(call(method, body, bearer, "/" + id).statusCode()).isEqualTo(401);
+            var request = HttpRequest.newBuilder(URI.create("http://localhost:" + port + PATH + "/" + id))
+                .header("Cookie", "__Host-tnbp-refresh=synthetisch; __Host-tnbp-csrf=synthetisch")
+                .header("Content-Type", "application/json").method(method, body == null ? HttpRequest.BodyPublishers.noBody() : HttpRequest.BodyPublishers.ofString(body)).build();
+            var rejected = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+            assertThat(rejected.statusCode()).isEqualTo(401);
+            assertThat(rejected.headers().firstValue("Cache-Control")).hasValue("no-store");
+        }
+        assertThat(count(first)).isEqualTo(1);
+        assertThat(update(first, id, "Bearer allein", 1).statusCode()).isEqualTo(200);
+        assertThat(call("DELETE", null, token(first), "/" + id).statusCode()).isEqualTo(204);
+    }
+
+    @Test void commitFehlerBeiPutUndDeleteBestaetigtNichtsUndRolltZurueck(CapturedOutput output) throws Exception {
+        String id = expenseId(save(first, 123));
+        String before = call("GET", null, token(first)).body();
+        PostgresFixture.ADMIN.execute("CREATE FUNCTION expense_budget.reject_mutation_commit() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'GeheimeKorrektur'; RETURN NEW; END $$");
+        PostgresFixture.ADMIN.execute("CREATE CONSTRAINT TRIGGER reject_mutation_commit AFTER UPDATE OR DELETE ON expense_budget.expenses DEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION expense_budget.reject_mutation_commit()");
+        try {
+            for (String method : List.of("PUT", "DELETE")) {
+                var rejected = call(method, method.equals("PUT") ? "{\"name\":\"GeheimerEntwurf\",\"amountCents\":876543210}" : null, token(first), "/" + id);
+                assertThat(rejected.statusCode()).isEqualTo(500);
+                assertThat(rejected.body()).contains("EXPENSE_UNAVAILABLE").doesNotContain("GeheimeKorrektur", "GeheimerEntwurf", "876543210");
+                assertThat(call("GET", null, token(first)).body()).isEqualTo(before);
+            }
+        } finally {
+            PostgresFixture.ADMIN.execute("DROP TRIGGER reject_mutation_commit ON expense_budget.expenses");
+            PostgresFixture.ADMIN.execute("DROP FUNCTION expense_budget.reject_mutation_commit()");
+        }
+        assertThat(output.getAll()).doesNotContain("GeheimeKorrektur", "GeheimerEntwurf", "876543210");
+    }
+
+    @Test void parallelePostPutDeleteHaltenDieErsatzsummeAtomarInnerhalbDerGrenze() throws Exception {
+        save(first, BudgetService.MAX_CENTS - 5);
+        String editId = expenseId(save(first, 1)), deleteId = expenseId(save(first, 1));
+        String bearer = token(first);
+        try (var executor = java.util.concurrent.Executors.newFixedThreadPool(12)) {
+            var gate = new java.util.concurrent.CountDownLatch(1);
+            var results = new ArrayList<java.util.concurrent.Future<Integer>>();
+            for (int index = 0; index < 10; index++) results.add(executor.submit(() -> {
+                gate.await(); return call("POST", "{\"name\":\"Parallel\",\"amountCents\":1}", bearer).statusCode();
+            }));
+            results.add(executor.submit(() -> { gate.await(); return update(first, editId, "Ersetzt", 4).statusCode(); }));
+            results.add(executor.submit(() -> { gate.await(); return call("DELETE", null, bearer, "/" + deleteId).statusCode(); }));
+            gate.countDown();
+            var codes = new ArrayList<Integer>();
+            for (var result : results) codes.add(result.get(30, java.util.concurrent.TimeUnit.SECONDS));
+            assertThat(codes.subList(0, 10)).allSatisfy(code -> assertThat(code).isIn(201, 400));
+            assertThat(codes.get(10)).isIn(200, 400);
+            assertThat(codes.get(11)).isEqualTo(204);
+            long actual = PostgresFixture.ADMIN.queryForObject("SELECT sum(amount_cents) FROM expense_budget.expenses WHERE user_id = ?", java.math.BigDecimal.class, first).longValueExact();
+            assertThat(actual).isLessThanOrEqualTo(BudgetService.MAX_CENTS);
+            assertThat(summaries.current(first).expensesCents()).isEqualTo(actual);
+            assertThat(actual).isEqualTo(BudgetService.MAX_CENTS - 5 + (codes.get(10) == 200 ? 4 : 1)
+                + codes.subList(0, 10).stream().filter(code -> code == 201).count());
+        }
+    }
+
+    @Test void wartendesPutLiestErstUnterKontosperreUndDeleteVerwendetDieselbeSperre() throws Exception {
+        CLOCK.now = Instant.parse("2026-10-31T22:59:59Z");
+        String id = expenseId(save(first, 1));
+        String bearer = token(first);
+        try (var executor = java.util.concurrent.Executors.newFixedThreadPool(2)) {
+            try (Connection holder = source.getConnection()) {
+                holder.setAutoCommit(false);
+                try (var statement = holder.prepareStatement("SELECT pg_advisory_xact_lock(hashtextextended(?, 14))")) {
+                    statement.setString(1, first.toString()); statement.execute();
+                }
+                var put = executor.submit(() -> call("PUT", "{\"name\":\"Nach Sperre\",\"amountCents\":2}", bearer, "/" + id));
+                var delete = executor.submit(() -> call("DELETE", null, bearer, "/" + id));
+                long deadline = System.nanoTime() + java.util.concurrent.TimeUnit.SECONDS.toNanos(5);
+                int waiting = 0;
+                while (waiting < 2 && System.nanoTime() < deadline) {
+                    waiting = PostgresFixture.ADMIN.queryForObject("SELECT count(*) FROM pg_stat_activity WHERE wait_event_type = 'Lock' AND wait_event = 'advisory'", Integer.class);
+                    if (waiting < 2) Thread.sleep(10);
+                }
+                assertThat(waiting).isEqualTo(2);
+                assertThat(put.isDone()).isFalse(); assertThat(delete.isDone()).isFalse();
+                CLOCK.now = Instant.parse("2026-10-31T23:00:00Z");
+                holder.commit();
+                var edited = put.get(10, java.util.concurrent.TimeUnit.SECONDS);
+                assertThat(edited.statusCode()).isIn(200, 404);
+                if (edited.statusCode() == 200) assertThat(JSON.readTree(edited.body()).get("recordedOn").asText()).isEqualTo("2026-10-31");
+                assertThat(delete.get(10, java.util.concurrent.TimeUnit.SECONDS).statusCode()).isEqualTo(204);
+                assertThat(count(first)).isZero();
+            }
+        }
+    }
+
+    @Test void rlsErlaubtNurEigeneKorrekturenUndZweiAenderbareSpalten() throws Exception {
+        String own = expenseId(save(first, 123)), foreign = expenseId(save(second, 456));
+        String foreignHistory = call("GET", null, token(second)).body();
+        var runtimeSource = new DriverManagerDataSource(PostgresFixture.URL, "tnbp_runtime", "runtime-test-only");
+        try (Connection connection = runtimeSource.getConnection()) {
+            connection.setAutoCommit(false);
+            for (UUID owner : List.of(second, first)) {
+                context(connection, owner);
+                String hidden = owner.equals(first) ? foreign : own;
+                try (var statement = connection.prepareStatement("UPDATE expense_budget.expenses SET name = 'Fremd', amount_cents = 1 WHERE id = ?")) {
+                    statement.setObject(1, UUID.fromString(hidden)); assertThat(statement.executeUpdate()).isZero();
+                }
+                try (var statement = connection.prepareStatement("DELETE FROM expense_budget.expenses WHERE id = ?")) {
+                    statement.setObject(1, UUID.fromString(hidden)); assertThat(statement.executeUpdate()).isZero();
+                }
+                connection.commit();
+            }
+            context(connection, first);
+            try (var statement = connection.prepareStatement("UPDATE expense_budget.expenses SET name = 'Erlaubt', amount_cents = 321 WHERE id = ?")) {
+                statement.setObject(1, UUID.fromString(own)); assertThat(statement.executeUpdate()).isEqualTo(1);
+            }
+            connection.commit();
+            assertThat(count(connection)).isZero();
+            context(connection, first);
+            try (var statement = connection.prepareStatement("DELETE FROM expense_budget.expenses WHERE id = ?")) {
+                statement.setObject(1, UUID.fromString(own)); assertThat(statement.executeUpdate()).isEqualTo(1);
+            }
+            connection.commit(); assertThat(count(connection)).isZero();
+        }
+        assertThat(count(first)).isZero(); assertThat(count(second)).isEqualTo(1);
+        assertThat(call("GET", null, token(second)).body()).isEqualTo(foreignHistory);
+    }
+
+    @Test void ungueltigeIdsVerwendenBeiPutUndDeleteDenselbenNeutralen404() throws Exception {
+        String id = expenseId(save(first, 123));
+        for (String method : List.of("PUT", "DELETE")) {
+            String body = method.equals("PUT") ? "{\"name\":\"Korrektur\",\"amountCents\":1}" : null;
+            var absent = call(method, body, token(first), "/" + UUID.randomUUID());
+            for (String malformed : List.of("keine-uuid", "1-1-1-1-1", "00000000-0000-4000-8000-00000000000x")) {
+                var rejected = call(method, body, token(first), "/" + malformed);
+                assertThat(rejected.statusCode()).isEqualTo(404);
+                assertThat(rejected.body()).isEqualTo(absent.body());
+            }
+        }
+        assertThat(count(first)).isEqualTo(1);
+        assertThat(JSON.readTree(call("GET", null, token(first)).body()).get(0).get("id").asText()).isEqualTo(id);
+    }
+
+    @Test void wartendesPutVerwendetDenBetragNachErhaltDerKontosperreFuerDieErsatzsumme() throws Exception {
+        long max = BudgetService.MAX_CENTS;
+        String id = expenseId(save(first, 10));
+        save(first, max - 10);
+        String bearer = token(first);
+        try (var executor = java.util.concurrent.Executors.newSingleThreadExecutor()) {
+            try (Connection holder = source.getConnection()) {
+                holder.setAutoCommit(false);
+                int holderPid;
+                try (var statement = holder.createStatement(); var result = statement.executeQuery("SELECT pg_backend_pid()")) {
+                    result.next(); holderPid = result.getInt(1);
+                }
+                context(holder, first);
+                try (var statement = holder.prepareStatement("SELECT pg_advisory_xact_lock(hashtextextended(?, 14))")) {
+                    statement.setString(1, first.toString()); statement.execute();
+                }
+                var pending = executor.submit(() -> call("PUT", "{\"name\":\"Zu groß\",\"amountCents\":19}", bearer, "/" + id));
+                long deadline = System.nanoTime() + java.util.concurrent.TimeUnit.SECONDS.toNanos(5);
+                boolean waiting = false;
+                while (!waiting && System.nanoTime() < deadline) {
+                    waiting = Boolean.TRUE.equals(PostgresFixture.ADMIN.queryForObject("""
+                        SELECT EXISTS (SELECT 1 FROM pg_stat_activity
+                        WHERE wait_event_type = 'Lock' AND wait_event = 'advisory'
+                          AND ? = ANY(pg_blocking_pids(pid)))
+                        """, Boolean.class, holderPid));
+                    if (!waiting) Thread.sleep(10);
+                }
+                assertThat(waiting).as("PUT wartet nachweislich auf die gehaltene Kontosperre").isTrue();
+                assertThat(pending.isDone()).isFalse();
+                try (var statement = holder.prepareStatement("UPDATE expense_budget.expenses SET amount_cents = 1 WHERE user_id = ? AND id = ?")) {
+                    statement.setObject(1, first); statement.setObject(2, UUID.fromString(id));
+                    assertThat(statement.executeUpdate()).isEqualTo(1);
+                }
+                holder.commit();
+                var rejected = pending.get(10, java.util.concurrent.TimeUnit.SECONDS);
+                assertThat(rejected.statusCode()).isEqualTo(400);
+                assertThat(rejected.body()).contains("MONTH_LIMIT_EXCEEDED");
+                assertThat(PostgresFixture.ADMIN.queryForObject("SELECT sum(amount_cents) FROM expense_budget.expenses WHERE user_id = ?", java.math.BigDecimal.class, first))
+                    .isEqualByComparingTo(java.math.BigDecimal.valueOf(max - 9));
+                assertThat(PostgresFixture.ADMIN.queryForObject("SELECT amount_cents FROM expense_budget.expenses WHERE id = ?", Long.class, UUID.fromString(id))).isEqualTo(1);
+            }
+        }
     }
 }

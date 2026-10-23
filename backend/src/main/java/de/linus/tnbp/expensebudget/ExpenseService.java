@@ -40,6 +40,30 @@ public class ExpenseService {
         }); // Erst nach erfolgreichem Commit wird der Eintrag zurückgegeben.
     }
 
+    ExpenseRepository.Expense update(UUID userId, UUID expenseId, String name, Long amountCents) {
+        validate(name, amountCents);
+        return transaction.execute(status -> {
+            expenses.context(userId);
+            expenses.lock(userId);
+            var previous = expenses.find(userId, expenseId);
+            BigDecimal replacementTotal = expenses.monthTotal(userId, previous.recordedOn().withDayOfMonth(1))
+                .subtract(BigDecimal.valueOf(previous.amountCents())).add(BigDecimal.valueOf(amountCents));
+            if (replacementTotal.compareTo(BigDecimal.valueOf(BudgetService.MAX_CENTS)) > 0) throw new MonthLimit();
+            var updated = new ExpenseRepository.Expense(previous.id(), trimName(name), amountCents, previous.recordedOn());
+            expenses.update(userId, updated);
+            return updated;
+        });
+    }
+
+    void delete(UUID userId, UUID expenseId) {
+        transaction.executeWithoutResult(status -> {
+            expenses.context(userId);
+            expenses.lock(userId);
+            expenses.find(userId, expenseId);
+            expenses.delete(userId, expenseId);
+        });
+    }
+
     static LocalDate recordedOn(Clock clock) { return LocalDate.now(clock.withZone(ZoneId.of("Europe/Berlin"))); }
     static void validate(String name, Long amountCents) {
         Map<String, String> errors = new LinkedHashMap<>();
@@ -63,4 +87,5 @@ public class ExpenseService {
         InvalidExpense(Map<String, String> fields) { this.fields = fields; }
     }
     static final class MonthLimit extends RuntimeException {}
+    static final class NotFound extends RuntimeException {}
 }

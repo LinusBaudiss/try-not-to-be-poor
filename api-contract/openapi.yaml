@@ -246,6 +246,62 @@ paths:
           $ref: '#/components/responses/SessionRejected'
         '500':
           $ref: '#/components/responses/ExpenseUnavailable'
+  /expense-budget/expenses/{expenseId}:
+    parameters:
+      - name: expenseId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    put:
+      tags: [Expenses]
+      operationId: putExpense
+      summary: Name und Betrag einer eigenen Ausgabe ändern
+      description: ID, Eigentümer und ursprüngliches Kalenderdatum bleiben unverändert. Ersatzsumme im ursprünglichen Monat atomar prüfen; Erfolg erst nach Commit. Ausschließlich geprüftes Bearer-sub bestimmt den Eigentümer.
+      security:
+        - AccessBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExpenseRequest'
+      responses:
+        '200':
+          description: Verbindlich geändert; no-store.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExpenseResponse'
+        '400':
+          description: Ungültige Eingabe oder sichere Monatssumme überschritten; keine Mutation, no-store.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExpenseError'
+        '401':
+          $ref: '#/components/responses/SessionRejected'
+        '404':
+          $ref: '#/components/responses/ExpenseNotFound'
+        '500':
+          $ref: '#/components/responses/ExpenseUnavailable'
+    delete:
+      tags: [Expenses]
+      operationId: deleteExpense
+      summary: Eine eigene Ausgabe endgültig löschen
+      description: Ausschließlich geprüftes Bearer-sub bestimmt den Eigentümer. Erfolg erst nach Commit.
+      security:
+        - AccessBearer: []
+      responses:
+        '204':
+          description: Verbindlich gelöscht; leerer Antwortkörper, no-store.
+        '401':
+          $ref: '#/components/responses/SessionRejected'
+        '404':
+          $ref: '#/components/responses/ExpenseNotFound'
+        '500':
+          $ref: '#/components/responses/ExpenseUnavailable'
 components:
   securitySchemes:
     AccessBearer:
@@ -273,6 +329,12 @@ components:
         type: string
       description: Spring-Security-CSRF-Token aus GET /access/csrf; nur im Arbeitsspeicher halten.
   responses:
+    ExpenseNotFound:
+      description: Ausgabe nicht gefunden; identisch für fehlende und fremde IDs, no-store.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ExpenseNotFoundError'
     ExpenseUnavailable:
       description: Speicherung oder Lesen nicht bestätigt; neutraler Fehler, no-store.
       content:
@@ -314,6 +376,20 @@ components:
           schema:
             $ref: '#/components/schemas/SessionError'
   schemas:
+    ExpenseNotFoundError:
+      type: object
+      additionalProperties: false
+      required: [code, message, fieldErrors]
+      properties:
+        code:
+          type: string
+          enum: [EXPENSE_NOT_FOUND]
+        message:
+          type: string
+        fieldErrors:
+          type: object
+          additionalProperties:
+            type: string
     MonthSummaryResponse:
       type: object
       additionalProperties: false

@@ -1,10 +1,10 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Component, DestroyRef, HostListener, effect, inject, output, signal } from '@angular/core';
+import { Component, DestroyRef, ElementRef, HostListener, ViewChild, effect, inject, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { firstValueFrom, timeout } from 'rxjs';
 import { ExpenseResponse } from '../api/model/expenseResponse';
 import { Session } from '../session/session';
-import { MAX_CENTS, formatEuro, parseEuro } from '../shared/money';
+import { MAX_CENTS, euroInput, formatEuro, parseEuro } from '../shared/money';
 
 @Component({
   selector: 'app-expenses',
@@ -29,10 +29,47 @@ import { MAX_CENTS, formatEuro, parseEuro } from '../shared/money';
         @if (amountError()) { <p id="expense-amount-error" class="field-error">{{ amountError() }}</p> }
       </div>
       @if (!online()) { <p class="error">Du bist offline. Dein Entwurf bleibt in diesem Tab erhalten. Speichern ist erst online möglich.</p> }
-      <button type="submit" [disabled]="pending() || loading() || !loaded() || !online()">{{ pending() ? 'Ausgabe wird gespeichert …' : 'Ausgabe speichern' }}</button>
+      <button type="submit" [disabled]="pending() || loading() || !loaded() || !online()">{{ creating() ? 'Ausgabe wird gespeichert …' : 'Ausgabe speichern' }}</button>
     </form>
+    @if (editing(); as expense) {
+      <form class="expense-editor" (ngSubmit)="update()" novalidate [attr.aria-busy]="pending()" aria-labelledby="expense-edit-title">
+        <h3 id="expense-edit-title">Ausgabe bearbeiten</h3>
+        <p>Erfasst am {{ date(expense.recordedOn) }}. Das Datum bleibt unverändert.</p>
+        <div class="field">
+          <label for="expense-edit-name">Name bearbeiten</label>
+          <input id="expense-edit-name" name="editName" type="text" autocomplete="off" required
+            [readOnly]="pending()" [ngModel]="editName" (ngModelChange)="editMutation('name', $event)"
+            [attr.aria-invalid]="!!editNameError()" [attr.aria-describedby]="editNameError() ? 'expense-edit-name-error' : null">
+          @if (editNameError()) { <p id="expense-edit-name-error" class="field-error">{{ editNameError() }}</p> }
+        </div>
+        <div class="field">
+          <label for="expense-edit-amount">Betrag bearbeiten in Euro</label>
+          <input id="expense-edit-amount" name="editAmount" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" required
+            [readOnly]="pending()" [ngModel]="editAmount" (ngModelChange)="editMutation('amount', $event)"
+            [attr.aria-invalid]="!!editAmountError()" [attr.aria-describedby]="editAmountError() ? 'expense-edit-hint expense-edit-amount-error' : 'expense-edit-hint'">
+          <p id="expense-edit-hint" class="hint">Positiver Eurobetrag ohne Tausendertrennzeichen, mit höchstens zwei Nachkommastellen.</p>
+          @if (editAmountError()) { <p id="expense-edit-amount-error" class="field-error">{{ editAmountError() }}</p> }
+        </div>
+        <div class="expense-actions">
+          <button type="submit" [disabled]="pending() || loading() || !loaded() || !online()">Änderungen speichern</button>
+          <button type="button" (click)="cancelEdit()" [disabled]="pending()">Bearbeitung abbrechen</button>
+        </div>
+      </form>
+    }
+    <dialog #deleteDialog class="expense-delete-dialog" aria-labelledby="expense-delete-title" aria-describedby="expense-delete-description" (cancel)="cancelDelete($event)" (keydown)="trapDeleteFocus($event)" [attr.aria-busy]="pending()">
+      @if (deleting(); as expense) {
+        <h2 id="expense-delete-title">Ausgabe löschen?</h2>
+        <p id="expense-delete-description">„{{ expense.name }}“ mit {{ money(expense.amountCents) }} vom {{ date(expense.recordedOn) }} wird endgültig gelöscht. Die Historie und dein Restbudget werden anschließend aktualisiert. Diese Aktion kann nicht rückgängig gemacht werden.</p>
+        @if (!online()) { <p class="error">Du bist offline. Löschen ist erst online möglich.</p> }
+        <p id="expense-delete-status" tabindex="-1" role="status" aria-live="polite" [class.error]="failed()">{{ deleteStatus() }}</p>
+        <div class="expense-actions">
+          <button id="expense-delete-cancel" type="button" autofocus (click)="cancelDelete()" [disabled]="pending()">Abbrechen</button>
+          <button type="button" (click)="remove()" [disabled]="pending() || !online()">{{ pending() ? 'Ausgabe wird gelöscht …' : 'Endgültig löschen' }}</button>
+        </div>
+      }
+    </dialog>
     <p id="expense-status" tabindex="-1" role="status" aria-live="polite" [class.error]="failed()" [class.success]="saved()">{{ status() }}</p>
-    <h3 id="history-title">Alle Ausgaben</h3>
+    <h3 id="history-title" tabindex="-1">Alle Ausgaben</h3>
     @if (loaded()) {
       <button type="button" (click)="load()" [disabled]="pending() || !online()">Ausgaben aktualisieren</button>
     }
@@ -52,13 +89,19 @@ import { MAX_CENTS, formatEuro, parseEuro } from '../shared/money';
               <div><dt>Name</dt><dd>{{ expense.name }}</dd></div>
               <div><dt>Betrag</dt><dd class="expense-amount">{{ money(expense.amountCents) }}</dd></div>
               <div><dt>Datum</dt><dd>{{ date(expense.recordedOn) }}</dd></div>
-            </dl></li>
+            </dl><div class="expense-actions">
+              <button type="button" [attr.aria-label]="expense.name + ' bearbeiten'" [attr.data-expense-action]="expense.id" (click)="startEdit(expense, $event)" [disabled]="pending() || loading() || !!editing()">Bearbeiten</button>
+              <button type="button" [attr.aria-label]="expense.name + ' löschen'" [attr.data-expense-action]="expense.id" (click)="startDelete(expense, $event)" [disabled]="pending() || loading()">Löschen</button>
+            </div></li>
           }
         </ul>
         <table class="expense-table" aria-labelledby="history-title">
-          <thead><tr><th scope="col">Name</th><th scope="col">Betrag</th><th scope="col">Datum</th></tr></thead>
+          <thead><tr><th scope="col">Name</th><th scope="col">Betrag</th><th scope="col">Datum</th><th scope="col">Aktionen</th></tr></thead>
           <tbody>@for (expense of items(); track expense.id) {
-            <tr><td>{{ expense.name }}</td><td class="expense-amount">{{ money(expense.amountCents) }}</td><td>{{ date(expense.recordedOn) }}</td></tr>
+            <tr><td>{{ expense.name }}</td><td class="expense-amount">{{ money(expense.amountCents) }}</td><td>{{ date(expense.recordedOn) }}</td><td><div class="expense-actions">
+              <button type="button" [attr.aria-label]="expense.name + ' bearbeiten'" [attr.data-expense-action]="expense.id" (click)="startEdit(expense, $event)" [disabled]="pending() || loading() || !!editing()">Bearbeiten</button>
+              <button type="button" [attr.aria-label]="expense.name + ' löschen'" [attr.data-expense-action]="expense.id" (click)="startDelete(expense, $event)" [disabled]="pending() || loading()">Löschen</button>
+            </div></td></tr>
           }</tbody>
         </table>
       }
@@ -72,6 +115,17 @@ export class Expenses {
   private readonly owner = this.session.userId();
   private readonly version = this.session.generation();
   private active = true;
+  @ViewChild('deleteDialog') private deleteDialog?: ElementRef<HTMLDialogElement>;
+  private editTrigger: HTMLElement | null = null;
+  private deleteTrigger: HTMLElement | null = null;
+  protected readonly creating = signal(false);
+  protected readonly editing = signal<ExpenseResponse | null>(null);
+  protected readonly deleting = signal<ExpenseResponse | null>(null);
+  protected editName = '';
+  protected editAmount = '';
+  protected readonly editNameError = signal('');
+  protected readonly editAmountError = signal('');
+  protected readonly deleteStatus = signal('');
   protected name = '';
   protected amount = '';
   protected readonly items = signal<ExpenseResponse[]>([]);
@@ -123,7 +177,7 @@ export class Expenses {
       this.failed.set(true); this.status.set('Prüfe Name und Betrag.');
       this.focus(this.nameError() ? 'expense-name' : 'expense-amount'); return;
     }
-    this.pending.set(true); this.status.set('Ausgabe wird gespeichert …');
+    this.pending.set(true); this.creating.set(true); this.status.set('Ausgabe wird gespeichert …');
     try {
       const result = await firstValueFrom(this.http.post<ExpenseResponse>('/api/v1/expense-budget/expenses', { name, amountCents }).pipe(timeout(30_000)));
       if (!this.accepts()) return;
@@ -144,6 +198,128 @@ export class Expenses {
         this.status.set('Die Speicherung wurde nicht bestätigt. Die Ausgabe wurde möglicherweise bereits gespeichert. Dein Entwurf bleibt erhalten. Aktualisiere und prüfe vor erneutem Speichern die Historie, um Duplikate zu vermeiden.');
         this.focus('expense-status');
       }
+    } finally { if (this.accepts()) { this.pending.set(false); this.creating.set(false); } }
+  }
+  protected startEdit(expense: ExpenseResponse, event: Event): void {
+    if (!this.accepts() || this.pending() || this.loading() || this.editing()) return;
+    this.editTrigger = event.currentTarget as HTMLElement;
+    this.editing.set(expense); this.editName = expense.name; this.editAmount = euroInput(expense.amountCents);
+    this.editNameError.set(''); this.editAmountError.set(''); this.status.set(''); this.failed.set(false); this.saved.set(false);
+    this.focus('expense-edit-name');
+  }
+  protected editMutation(field: 'name' | 'amount', value: string): void {
+    if (field === 'name') { this.editName = value; this.editNameError.set(''); }
+    else { this.editAmount = value; this.editAmountError.set(''); }
+    this.status.set(''); this.failed.set(false); this.saved.set(false);
+  }
+  protected cancelEdit(): void {
+    if (this.pending()) return;
+    this.resetEditor(); this.failed.set(false); this.saved.set(false); this.status.set('Bearbeitung abgebrochen.'); this.restoreTrigger('edit');
+  }
+  private resetEditor(): void {
+    this.editing.set(null); this.editName = ''; this.editAmount = ''; this.editNameError.set(''); this.editAmountError.set('');
+  }
+  protected startDelete(expense: ExpenseResponse, event: Event): void {
+    if (!this.accepts() || this.pending() || this.loading()) return;
+    this.deleteTrigger = event.currentTarget as HTMLElement;
+    this.deleting.set(expense); this.deleteStatus.set(''); this.status.set(''); this.failed.set(false); this.saved.set(false);
+    requestAnimationFrame(() => {
+      if (!this.accepts() || this.deleting()?.id !== expense.id) return;
+      this.deleteDialog?.nativeElement.showModal(); this.focus('expense-delete-cancel');
+    });
+  }
+  protected cancelDelete(event?: Event): void {
+    event?.preventDefault();
+    if (this.pending()) return;
+    this.closeDelete(); this.failed.set(false); this.saved.set(false); this.status.set('Löschen abgebrochen.'); this.restoreTrigger('delete');
+  }
+  protected trapDeleteFocus(event: KeyboardEvent): void {
+    if (event.key !== 'Tab') return;
+    const buttons = [...(this.deleteDialog?.nativeElement.querySelectorAll<HTMLButtonElement>('button:not(:disabled)') ?? [])];
+    const first = buttons[0], last = buttons.at(-1), active = document.activeElement;
+    if (!first || !last) {
+      event.preventDefault(); this.focus('expense-delete-status');
+    } else if (!buttons.some(button => button === active) || (event.shiftKey ? active === first : active === last)) {
+      event.preventDefault(); (event.shiftKey ? last : first).focus();
+    }
+  }
+  private closeDelete(): void {
+    this.deleteDialog?.nativeElement.close(); this.deleting.set(null); this.deleteStatus.set('');
+  }
+  private restoreTrigger(kind: 'edit' | 'delete'): void {
+    const trigger = kind === 'edit' ? this.editTrigger : this.deleteTrigger;
+    if (kind === 'edit') this.editTrigger = null; else this.deleteTrigger = null;
+    requestAnimationFrame(() => {
+      if (!this.accepts()) return;
+      if (trigger?.isConnected && trigger.getClientRects().length) trigger.focus();
+      else document.getElementById('history-title')?.focus();
+    });
+  }
+  protected async update(): Promise<void> {
+    const expense = this.editing();
+    if (!expense || !this.accepts() || this.pending() || this.loading() || !this.loaded() || !this.online()) return;
+    const name = this.editName.trim(), amountCents = parseEuro(this.editAmount);
+    this.editNameError.set(!name ? 'Gib einen Namen für die Ausgabe ein.' : '');
+    this.editAmountError.set(amountCents === null || amountCents === 0 ? this.positiveAmount : '');
+    this.failed.set(false); this.saved.set(false);
+    if (this.editNameError() || this.editAmountError()) {
+      this.failed.set(true); this.status.set('Prüfe Name und Betrag.');
+      this.focus(this.editNameError() ? 'expense-edit-name' : 'expense-edit-amount'); return;
+    }
+    this.pending.set(true); this.status.set('Änderungen werden gespeichert …');
+    try {
+      const response = await firstValueFrom(this.http.put<ExpenseResponse>(`/api/v1/expense-budget/expenses/${expense.id}`, { name, amountCents }, { observe: 'response' }).pipe(timeout(30_000)));
+      if (!this.accepts()) return;
+      const result = response.body;
+      if (response.status !== 200 || !this.valid(result) || result.id !== expense.id || result.recordedOn !== expense.recordedOn || result.name !== name || result.amountCents !== amountCents)
+        throw new Error('Änderung nicht bestätigt.');
+      this.items.set(this.sort(this.items().map(value => value.id === result.id ? result : value)));
+      this.resetEditor(); this.status.set('Deine Ausgabe wurde geändert.'); this.saved.set(true); this.changed.emit(); this.restoreTrigger('edit');
+    } catch (failure) {
+      if (!this.accepts()) return;
+      this.failed.set(true);
+      if (failure instanceof HttpErrorResponse && failure.status === 400) {
+        const fields = failure.error?.fieldErrors;
+        if (typeof fields?.name === 'string') this.editNameError.set(fields.name);
+        if (typeof fields?.amountCents === 'string') this.editAmountError.set(fields.amountCents);
+        this.status.set('Die Ausgabe wurde nicht geändert. Prüfe die Eingaben.');
+        this.focus(this.editNameError() ? 'expense-edit-name' : this.editAmountError() ? 'expense-edit-amount' : 'expense-status');
+      } else {
+        this.status.set(failure instanceof HttpErrorResponse && failure.status === 404
+          ? 'Die Ausgabe wurde nicht gefunden. Dein Bearbeitungsentwurf bleibt erhalten. Aktualisiere die Historie.'
+          : 'Die Änderung wurde nicht bestätigt. Sie wurde möglicherweise bereits gespeichert. Dein Bearbeitungsentwurf bleibt erhalten. Aktualisiere und prüfe vor erneutem Speichern die Historie.');
+        this.focus('expense-status');
+      }
+    } finally { if (this.accepts()) this.pending.set(false); }
+  }
+  protected async remove(): Promise<void> {
+    const expense = this.deleting();
+    if (!expense || !this.accepts() || this.pending() || !this.online()) return;
+    this.pending.set(true); this.failed.set(false); this.saved.set(false); this.deleteStatus.set('Ausgabe wird gelöscht …');
+    this.focus('expense-delete-status');
+    try {
+      const response = await firstValueFrom(this.http.delete(`/api/v1/expense-budget/expenses/${expense.id}`, { observe: 'response', responseType: 'text' }).pipe(timeout(30_000)));
+      if (!this.accepts()) return;
+      if (response.status !== 204 || response.body) throw new Error('Löschung nicht bestätigt.');
+      const index = this.items().findIndex(value => value.id === expense.id);
+      const remaining = this.items().filter(value => value.id !== expense.id);
+      this.items.set(remaining);
+      if (this.editing()?.id === expense.id) { this.resetEditor(); this.editTrigger = null; }
+      this.closeDelete(); this.deleteTrigger = null;
+      this.status.set('Deine Ausgabe wurde gelöscht.'); this.saved.set(true); this.changed.emit();
+      const next = remaining[index] ?? remaining[index - 1];
+      requestAnimationFrame(() => {
+        if (!this.accepts()) return;
+        const action = next ? [...document.querySelectorAll<HTMLElement>('[data-expense-action]')]
+          .find(element => element.dataset['expenseAction'] === next.id && element.matches(':enabled') && element.getClientRects().length > 0) : null;
+        (action ?? document.getElementById('history-title'))?.focus();
+      });
+    } catch (failure) {
+      if (!this.accepts()) return;
+      this.failed.set(true);
+      this.deleteStatus.set(failure instanceof HttpErrorResponse && failure.status === 404
+        ? 'Die Ausgabe wurde nicht gefunden. Schließe den Dialog und aktualisiere die Historie.'
+        : 'Die Löschung wurde nicht bestätigt. Die Ausgabe wurde möglicherweise bereits gelöscht. Schließe den Dialog und aktualisiere die Historie, bevor du es erneut versuchst.');
     } finally { if (this.accepts()) this.pending.set(false); }
   }
   protected focusName(): void { this.focus('expense-name'); }
@@ -166,6 +342,7 @@ export class Expenses {
     return year > 0 && month > 0 && month <= 12 && day > 0 && day <= [31, leap ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month - 1];
   }
   private clear(): void {
+    this.closeDelete(); this.resetEditor(); this.editTrigger = null; this.deleteTrigger = null; this.creating.set(false);
     this.name = ''; this.amount = ''; this.items.set([]); this.loaded.set(false); this.loading.set(false);
     this.pending.set(false); this.status.set(''); this.nameError.set(''); this.amountError.set(''); this.saved.set(false); this.failed.set(false);
   }

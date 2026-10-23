@@ -73,6 +73,8 @@ context:
 
 - CI-Nachprüfung für PR #9: Der Anlagehelfer las den POST-Body erst nach dem UI-Erfolg; Chromium meldete dabei sporadisch einen nicht mehr verfügbaren Antwortinhalt. Body nun unmittelbar im Response-Handler lesen und gemeinsam mit dem Klick abwarten; die UI-Erfolgsprüfung bleibt erhalten. Betroffene Datei dreimal vollständig erfolgreich geprüft: 39/39 (`/tmp/story22-ci-sync-browser.log`).
 
+- Derselbe CI-Befund trat anschließend im bestehenden Anlagetest von Story 2.1 auf. Identische sofortige Body-Lesung ergänzt, alle ursprünglichen Assertions erhalten. Beide Sparziel-Dateien gemeinsam erfolgreich: 26/26 (`/tmp/story22-ci-sync-all-savings.log`).
+
 ## Spec Change Log
 
 ## Review Triage Log

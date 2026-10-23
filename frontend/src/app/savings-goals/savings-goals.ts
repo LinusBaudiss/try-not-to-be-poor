@@ -3,8 +3,9 @@ import { Component, DestroyRef, HostListener, computed, effect, inject, signal }
 import { FormsModule } from '@angular/forms';
 import { firstValueFrom, timeout } from 'rxjs';
 import { SavingsGoalResponse } from '../api/model/savingsGoalResponse';
+import { savingsProgress } from '../shared/savings-progress';
 import { Session } from '../session/session';
-import { MAX_CENTS, formatEuro, parseEuro } from '../shared/money';
+import { MAX_CENTS, euroInput, formatEuro, parseEuro } from '../shared/money';
 
 @Component({
   selector: 'app-savings-goals',
@@ -22,15 +23,49 @@ import { MAX_CENTS, formatEuro, parseEuro } from '../shared/money';
         } @else {
           <ul class="savings-cards" aria-labelledby="goals-list-title">
             @for (goal of items(); track goal.id) {
-              <li><h3>{{ goal.name }}</h3><dl>
+              <li><h3 [id]="'goal-title-' + goal.id">{{ goal.name }}</h3><dl>
                 <div><dt>Zielbetrag</dt><dd class="money">{{ money(goal.targetAmountCents) }}</dd></div>
-                <div><dt>Fortschritt</dt><dd>{{ money(goal.progressCents) }}</dd></div>
+                <div><dt>Fortschritt</dt><dd class="money">{{ money(goal.progressCents) }}</dd></div>
+                <div><dt>Anteil am Zielbetrag</dt><dd>{{ progress(goal.progressCents, goal.targetAmountCents).percent }}</dd></div>
                 @if (goal.targetDate) { <div><dt>Zieldatum</dt><dd>{{ date(goal.targetDate) }}</dd></div> }
-              </dl></li>
+              </dl>
+                <div class="savings-progress" role="progressbar" [attr.aria-labelledby]="'goal-title-' + goal.id"
+                  aria-valuemin="0" aria-valuemax="100" [attr.aria-valuenow]="progress(goal.progressCents, goal.targetAmountCents).barPercent"
+                  [attr.aria-valuetext]="money(goal.progressCents) + ' von ' + money(goal.targetAmountCents) + ', ' + progress(goal.progressCents, goal.targetAmountCents).percent">
+                  <span [style.width.%]="progress(goal.progressCents, goal.targetAmountCents).barPercent"></span>
+                </div>
+                @if (goal.progressCents > goal.targetAmountCents) {
+                  <p class="savings-excess">Zielbetrag überschritten um {{ money(progress(goal.progressCents, goal.targetAmountCents).excessCents) }}.</p>
+                }
+                <button [id]="'goal-progress-' + goal.id" class="secondary" type="button" [disabled]="pending() || loading() || !!editing() && editing()?.id !== goal.id"
+                  [attr.aria-describedby]="editing() ? 'goal-progress-draft-hint' : null" [attr.aria-label]="'Fortschritt aktualisieren: ' + goal.name" (click)="openProgress(goal)">Fortschritt aktualisieren</button>
+              </li>
             }
           </ul>
         }
       }
+      @if (!online()) { <p class="error" role="status">Du bist offline. Dein Entwurf bleibt in diesem Tab erhalten. Speichern ist erst online möglich.</p> }
+      @if (editing(); as goal) {
+        <section class="savings-editor" aria-labelledby="progress-title">
+          <h2 id="progress-title">Fortschritt für {{ goal.name }}</h2>
+          <p id="goal-progress-draft-hint" class="hint">Speichere den offenen Fortschrittsentwurf oder brich ihn ab, bevor du ein anderes Sparziel auswählst.</p>
+          <form (ngSubmit)="saveProgress()" novalidate [attr.aria-busy]="pending()">
+            <div class="field">
+              <label for="goal-progress-amount">Gesamtfortschritt in Euro</label>
+              <input id="goal-progress-amount" name="progressAmount" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" required
+                [readOnly]="pending()" [ngModel]="progressAmount" (ngModelChange)="editProgress($event)"
+                [attr.aria-invalid]="!!progressError()" [attr.aria-describedby]="progressError() ? 'goal-progress-hint goal-progress-error' : 'goal-progress-hint'">
+              <p id="goal-progress-hint" class="hint">Ersetzt den bisherigen Gesamtbetrag. Euro ohne Tausendertrennzeichen, höchstens zwei Nachkommastellen. Null und Beträge über dem Zielbetrag sind erlaubt.</p>
+              @if (progressError()) { <p id="goal-progress-error" class="field-error">{{ progressError() }}</p> }
+            </div>
+            <div class="savings-actions">
+              <button type="submit" [disabled]="pending() || loading() || !loaded() || !online()">{{ progressPending() ? 'Fortschritt wird gespeichert …' : 'Fortschritt speichern' }}</button>
+              <button type="button" [disabled]="pending()" (click)="cancelProgress()">Abbrechen</button>
+            </div>
+          </form>
+        </section>
+      }
+      <p id="goal-progress-status" tabindex="-1" role="status" aria-live="polite" aria-atomic="true" [class.error]="progressFailed()" [class.success]="progressSaved()">{{ progressStatus() }}</p>
       <button id="goals-refresh" class="secondary" type="button" (click)="load()" [disabled]="pending() || !online()" [attr.aria-disabled]="loading() || pending() || !online()">{{ loading() ? 'Sparziele laden …' : loadFailed() ? 'Sparziele erneut laden' : 'Sparziele aktualisieren' }}</button>
       <h2 class="savings-form-title">Neues Sparziel</h2>
       <form (ngSubmit)="save()" novalidate [attr.aria-busy]="pending()">
@@ -57,8 +92,7 @@ import { MAX_CENTS, formatEuro, parseEuro } from '../shared/money';
           <p id="goal-date-hint" class="hint">Kalenderdatum im Format JJJJ-MM-TT, z. B. 2028-02-29. Vergangene Daten sind erlaubt.</p>
           @if (dateError()) { <p id="goal-date-error" class="field-error">{{ dateError() }}</p> }
         </div>
-        @if (!online()) { <p class="error" role="status">Du bist offline. Dein Entwurf bleibt in diesem Tab erhalten. Speichern ist erst online möglich.</p> }
-        <button type="submit" [disabled]="pending() || loading() || !loaded() || !online()">{{ pending() ? 'Sparziel wird gespeichert …' : 'Sparziel speichern' }}</button>
+        <button type="submit" [disabled]="pending() || loading() || !loaded() || !online()">{{ pending() && !progressPending() ? 'Sparziel wird gespeichert …' : 'Sparziel speichern' }}</button>
       </form>
       <p id="goal-status" tabindex="-1" role="status" aria-live="polite" [class.error]="failed()" [class.success]="saved()">{{ status() }}</p>
     }
@@ -74,6 +108,14 @@ export class SavingsGoals {
   protected name = '';
   protected amount = '';
   protected targetDate = '';
+  protected progressAmount = '';
+  protected readonly editing = signal<SavingsGoalResponse | null>(null);
+  protected readonly progressError = signal('');
+  protected readonly progressStatus = signal('');
+  protected readonly progressFailed = signal(false);
+  protected readonly progressSaved = signal(false);
+  protected readonly progressPending = signal(false);
+  protected readonly progress = savingsProgress;
   protected readonly identityStatus = signal('Sitzung wird geprüft …');
   protected readonly identityFailed = signal(false);
   protected readonly identityConfirmed = signal(false);
@@ -171,10 +213,66 @@ export class SavingsGoals {
       }
     } finally { if (this.accepts()) this.pending.set(false); }
   }
+  protected openProgress(goal: SavingsGoalResponse): void {
+    if (!this.accepts() || this.pending() || this.loading()) return;
+    if (this.editing()) { this.focus('goal-progress-amount'); return; }
+    this.editing.set(goal); this.progressAmount = euroInput(goal.progressCents); this.resetProgressStatus();
+    this.focus('goal-progress-amount');
+  }
+  protected cancelProgress(): void {
+    if (this.pending()) return;
+    const id = this.editing()?.id;
+    this.editing.set(null); this.progressAmount = ''; this.resetProgressStatus();
+    if (id) this.focus('goal-progress-' + id, 'goals-refresh');
+  }
+  protected editProgress(value: string): void { this.progressAmount = value; this.resetProgressStatus(); }
+  private resetProgressStatus(): void {
+    this.progressError.set(''); this.progressStatus.set(''); this.progressSaved.set(false); this.progressFailed.set(false);
+  }
+  protected async saveProgress(): Promise<void> {
+    const goal = this.editing();
+    if (!goal || !this.accepts() || !this.identityConfirmed() || this.pending() || this.loading() || !this.loaded() || !this.online()) return;
+    this.resetProgressStatus();
+    const progressCents = parseEuro(this.progressAmount);
+    if (progressCents === null) {
+      this.progressError.set('Gib einen Fortschritt von 0 bis 90071992547409,91 Euro ohne Tausendertrennzeichen mit höchstens zwei Nachkommastellen ein.');
+      this.progressStatus.set('Prüfe den Gesamtfortschritt.'); this.progressFailed.set(true); this.focus('goal-progress-amount'); return;
+    }
+    this.pending.set(true); this.progressPending.set(true); this.progressStatus.set('Fortschritt wird gespeichert …');
+    try {
+      const response = await firstValueFrom(this.http.put<SavingsGoalResponse>(`/api/v1/savings-goals/${goal.id}/progress`,
+        { progressCents }, { observe: 'response' }).pipe(timeout(30_000)));
+      if (!this.accepts()) return;
+      const result = response.body;
+      if (response.status !== 200 || !this.valid(result) || result.id !== goal.id || result.progressCents !== progressCents
+        || result.name !== goal.name || result.targetAmountCents !== goal.targetAmountCents || (result.targetDate ?? null) !== (goal.targetDate ?? null))
+        throw new Error('Fortschritt nicht bestätigt.');
+      this.items.update(values => values.map(value => value.id === goal.id ? result : value));
+      this.editing.set(null); this.progressAmount = ''; this.progressSaved.set(true);
+      this.progressStatus.set(`Der Gesamtfortschritt für „${result.name}“ wurde mit ${formatEuro(result.progressCents)} gespeichert.`); this.focus('goal-progress-' + goal.id);
+    } catch (failure) {
+      if (!this.accepts()) return;
+      this.progressFailed.set(true);
+      if (failure instanceof HttpErrorResponse && failure.status === 400) {
+        const message = failure.error?.fieldErrors?.progressCents;
+        this.progressError.set(typeof message === 'string' ? message : 'Prüfe den Gesamtfortschritt in Euro.');
+        this.progressStatus.set('Der Fortschritt wurde nicht gespeichert. Prüfe die Eingabe.'); this.focus('goal-progress-amount');
+      } else {
+        this.progressStatus.set(failure instanceof HttpErrorResponse && failure.status === 404
+          ? 'Das Sparziel wurde nicht gefunden. Dein Entwurf bleibt erhalten. Lade die Sparziele erneut.'
+          : 'Die Speicherung wurde nicht bestätigt. Dein Entwurf bleibt erhalten. Lade die Sparziele erneut und prüfe den bestätigten Fortschritt.');
+        this.focus('goal-progress-status');
+      }
+    } finally { if (this.accepts()) { this.pending.set(false); this.progressPending.set(false); } }
+  }
   protected focusName(): void { this.focus('goal-name'); }
   private focusError(): void { this.focus(this.nameError() ? 'goal-name' : this.amountError() ? 'goal-amount' : this.dateError() ? 'goal-date' : 'goal-status'); }
   private accepts(): boolean { return this.active && !!this.owner && this.owner === this.session.userId() && this.version === this.session.generation(); }
-  private focus(id: string): void { requestAnimationFrame(() => { if (this.accepts()) document.getElementById(id)?.focus(); }); }
+  private focus(id: string, fallback?: string): void {
+    requestAnimationFrame(() => {
+      if (this.accepts()) (document.getElementById(id) ?? (fallback ? document.getElementById(fallback) : null))?.focus();
+    });
+  }
   private sort(values: SavingsGoalResponse[]): SavingsGoalResponse[] { return [...values].sort((a, b) => a.id.localeCompare(b.id)); }
   private valid(value: unknown): value is SavingsGoalResponse {
     if (!value || typeof value !== 'object') return false;
@@ -192,7 +290,7 @@ export class SavingsGoals {
     return year > 0 && month > 0 && month <= 12 && day > 0 && day <= [31, leap ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month - 1];
   }
   private clear(): void {
-    this.name = ''; this.amount = ''; this.targetDate = ''; this.items.set([]); this.loaded.set(false); this.loading.set(false);
+    this.name = ''; this.amount = ''; this.targetDate = ''; this.progressAmount = ''; this.editing.set(null); this.resetProgressStatus(); this.progressPending.set(false); this.items.set([]); this.loaded.set(false); this.loading.set(false);
     this.pending.set(false); this.opening.set(false); this.identityConfirmed.set(false); this.identityFailed.set(false); this.identityStatus.set('');
     this.status.set(''); this.nameError.set(''); this.amountError.set(''); this.dateError.set(''); this.saved.set(false); this.failed.set(false); this.loadFailed.set(false);
   }

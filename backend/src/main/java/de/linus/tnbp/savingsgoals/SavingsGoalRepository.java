@@ -2,6 +2,7 @@ package de.linus.tnbp.savingsgoals;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -20,6 +21,14 @@ public class SavingsGoalRepository {
             WHERE user_id = ? ORDER BY id
             """, (row, index) -> new Goal(row.getObject("id", UUID.class), row.getString("name"),
                 row.getLong("target_amount_cents"), row.getLong("progress_cents"), row.getObject("target_date", LocalDate.class)), userId);
+    }
+    Optional<Goal> progress(UUID userId, UUID id, long progressCents) {
+        return jdbc.query("""
+            UPDATE savings_goals.goals SET progress_cents = ? WHERE user_id = ? AND id = ?
+            RETURNING id, name, target_amount_cents, progress_cents, target_date
+            """, (row, index) -> new Goal(row.getObject("id", UUID.class), row.getString("name"),
+                row.getLong("target_amount_cents"), row.getLong("progress_cents"), row.getObject("target_date", LocalDate.class)),
+            progressCents, userId, id).stream().findFirst();
     }
     void insert(UUID userId, Goal goal) {
         jdbc.update("INSERT INTO savings_goals.goals (id, user_id, name, target_amount_cents, target_date) VALUES (?, ?, ?, ?, ?)",

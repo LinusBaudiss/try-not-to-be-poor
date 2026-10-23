@@ -29,6 +29,15 @@ public class SavingsGoalService {
             return goal;
         }); // Erst nach erfolgreichem Commit wird das Ziel bestätigt.
     }
+    SavingsGoalRepository.Goal progress(UUID userId, UUID id, Long progressCents) {
+        if (progressCents == null || progressCents < 0 || progressCents > MAX_CENTS)
+            throw new InvalidGoal(Map.of("progressCents", "Gib einen Fortschritt von 0 bis 90.071.992.547.409,91 Euro in ganzen Cent ein."));
+        return transaction.execute(status -> {
+            goals.context(userId);
+            return goals.progress(userId, id, progressCents).orElseThrow(NotFound::new);
+        }); // Auch ein erfolgreiches UPDATE wird erst nach erfolgreichem Commit bestätigt.
+    }
+    static final class NotFound extends RuntimeException {}
     static void validate(String name, Long amountCents, LocalDate date) {
         Map<String, String> errors = new LinkedHashMap<>();
         if (name == null || trimName(name).isEmpty()) errors.put("name", "Gib einen Namen für das Sparziel ein.");

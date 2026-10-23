@@ -2,6 +2,7 @@ package de.linus.tnbp.savingsgoals;
 
 import de.linus.tnbp.contract.api.SavingsGoalsApi;
 import de.linus.tnbp.contract.model.SavingsGoalRequest;
+import de.linus.tnbp.contract.model.SavingsGoalProgressRequest;
 import de.linus.tnbp.contract.model.SavingsGoalResponse;
 import java.util.List;
 import java.util.UUID;
@@ -21,6 +22,10 @@ public class SavingsGoalController implements SavingsGoalsApi {
     @Override public ResponseEntity<SavingsGoalResponse> postSavingsGoal(SavingsGoalRequest input) {
         return ResponseEntity.status(201).header("Cache-Control", "no-store")
             .body(response(goals.save(userId(), input.getName(), input.getTargetAmountCents(), input.getTargetDate())));
+    }
+    @Override public ResponseEntity<SavingsGoalResponse> putSavingsGoalProgress(UUID id, SavingsGoalProgressRequest input) {
+        return ResponseEntity.ok().header("Cache-Control", "no-store")
+            .body(response(goals.progress(userId(), id, input.getProgressCents())));
     }
     private UUID userId() { return UUID.fromString(SecurityContextHolder.getContext().getAuthentication().getName()); }
     private SavingsGoalResponse response(SavingsGoalRepository.Goal goal) {

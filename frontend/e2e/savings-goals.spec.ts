@@ -47,9 +47,9 @@ test('geschützte Navigation, eigene persistente Ziele und unveränderte Kalende
   await expect(page.getByLabel('Zieldatum (optional)')).toHaveAttribute('inputmode', 'text');
   await page.getByRole('button', { name: 'Sparziel anlegen', exact: true }).click();
   await expect(page.getByLabel('Name des Sparziels')).toBeFocused();
-  const response = page.waitForResponse(response => response.url().endsWith('/savings-goals') && response.request().method() === 'POST');
-  await save(page, '  Reise 🧳  ', '1.15', '2000-02-29');
-  const entry = await (await response).json();
+  const responseBody = page.waitForResponse(response => response.url().endsWith('/savings-goals') && response.request().method() === 'POST')
+    .then(response => { expect(response.status()).toBe(201); return response.json(); });
+  const [, entry] = await Promise.all([save(page, '  Reise 🧳  ', '1.15', '2000-02-29'), responseBody]);
   expect(entry.name).toBe('Reise 🧳'); expect(entry.targetAmountCents).toBe(115); expect(entry.progressCents).toBe(0); expect(entry.targetDate).toBe('2000-02-29');
   await expect(page.locator('.savings-cards')).toContainText('Reise 🧳');
   await expect(page.locator('.savings-cards')).toContainText('1,15 €');

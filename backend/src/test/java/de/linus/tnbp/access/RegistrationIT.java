@@ -378,20 +378,36 @@ class RegistrationIT {
 
     @Test
     void privilegierteUndBesitzendeLaufzeitrollenVerhindernDenStart() {
-        for (String role : List.of("postgres", "tnbp_migrator")) {
-            var app = new SpringApplication(TnbpApplication.class);
-            List<String> args = new ArrayList<>(List.of("--server.port=0", "--spring.main.banner-mode=off"));
-            PostgresFixture.configure((key, value) -> {
-                String setting = switch (key) {
-                    case "spring.datasource.username" -> role;
-                    case "spring.datasource.password" -> role.equals("postgres") ? "postgres" : "migration-test-only";
-                    default -> value;
-                };
-                args.add("--" + key + "=" + setting);
-            });
-            org.assertj.core.api.Assertions.assertThatThrownBy(() -> app.run(args.toArray(String[]::new)))
-                .isInstanceOf(IllegalStateException.class)
-                .hasStackTraceContaining("Die Laufzeitrolle darf weder privilegiert noch Tabellenbesitzer sein.");
+        PostgresFixture.ADMIN.execute("CREATE ROLE tnbp_budget_owner_test LOGIN PASSWORD 'budget-role-test-only' NOSUPERUSER NOBYPASSRLS NOCREATEDB NOCREATEROLE");
+        try {
+            PostgresFixture.ADMIN.execute("CREATE ROLE tnbp_budget_member_test LOGIN PASSWORD 'budget-role-test-only' NOSUPERUSER NOBYPASSRLS NOCREATEDB NOCREATEROLE");
+            PostgresFixture.ADMIN.execute("CREATE TABLE expense_budget.role_owner_probe (id INTEGER)");
+            PostgresFixture.ADMIN.execute("ALTER TABLE expense_budget.role_owner_probe OWNER TO tnbp_budget_owner_test");
+            PostgresFixture.ADMIN.execute("GRANT tnbp_budget_owner_test TO tnbp_budget_member_test");
+            for (String role : List.of("postgres", "tnbp_migrator", "tnbp_budget_owner_test", "tnbp_budget_member_test")) {
+                var app = new SpringApplication(TnbpApplication.class);
+                List<String> args = new ArrayList<>(List.of("--server.port=0", "--spring.main.banner-mode=off"));
+                PostgresFixture.configure((key, value) -> {
+                    String setting = switch (key) {
+                        case "spring.datasource.username" -> role;
+                        case "spring.datasource.password" -> switch (role) {
+                            case "postgres" -> "postgres";
+                            case "tnbp_migrator" -> "migration-test-only";
+                            default -> "budget-role-test-only";
+                        };
+                        default -> value;
+                    };
+                    args.add("--" + key + "=" + setting);
+                });
+                org.assertj.core.api.Assertions.assertThatThrownBy(() -> {
+                    try (var unexpected = app.run(args.toArray(String[]::new))) { /* Schließt einen irrtümlich erlaubten Start. */ }
+                }).isInstanceOf(IllegalStateException.class)
+                    .hasStackTraceContaining("Die Laufzeitrolle darf weder privilegiert noch Tabellenbesitzer sein.");
+            }
+        } finally {
+            PostgresFixture.ADMIN.execute("DROP TABLE IF EXISTS expense_budget.role_owner_probe");
+            PostgresFixture.ADMIN.execute("DROP ROLE IF EXISTS tnbp_budget_member_test");
+            PostgresFixture.ADMIN.execute("DROP ROLE tnbp_budget_owner_test");
         }
     }
 

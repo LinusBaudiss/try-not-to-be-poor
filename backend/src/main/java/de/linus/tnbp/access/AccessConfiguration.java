@@ -75,23 +75,27 @@ class AccessConfiguration {
             .csrf(csrf -> csrf.csrfTokenRepository(csrfRepository)
                 .sessionAuthenticationStrategy(noSessionAuthentication)
                 .ignoringRequestMatchers("/api/v1/access/registrations")
-                // Diese Route akzeptiert ausschließlich Bearer; Refresh-/CSRF-Cookies erteilen keinen Zugang.
-                .ignoringRequestMatchers(request -> request.getMethod().equals("PUT")
-                    && request.getServletPath().equals("/api/v1/expense-budget/budget")))
+                // Diese Routen akzeptieren ausschließlich Bearer; Refresh-/CSRF-Cookies erteilen keinen Zugang.
+                .ignoringRequestMatchers(request -> (request.getMethod().equals("PUT")
+                    && request.getServletPath().equals("/api/v1/expense-budget/budget"))
+                    || (request.getMethod().equals("POST")
+                    && request.getServletPath().equals("/api/v1/expense-budget/expenses"))))
             .addFilterBefore(origin, org.springframework.security.web.csrf.CsrfFilter.class)
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.POST, "/api/v1/access/registrations", "/api/v1/access/login",
                     "/api/v1/access/refresh", "/api/v1/access/logout").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/access/csrf").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/v1/access/me", "/api/v1/expense-budget/budget").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/v1/access/me", "/api/v1/expense-budget/budget", "/api/v1/expense-budget/expenses").authenticated()
                 .requestMatchers(HttpMethod.PUT, "/api/v1/expense-budget/budget").authenticated()
+                .requestMatchers(HttpMethod.POST, "/api/v1/expense-budget/expenses").authenticated()
                 .anyRequest().denyAll())
             .oauth2ResourceServer(oauth -> oauth.jwt(config -> config.decoder(jwt))
                 .authenticationEntryPoint((request, response, failure) -> SessionHttp.error(response, 401)))
             .exceptionHandling(errors -> errors
                 .authenticationEntryPoint((request, response, failure) -> SessionHttp.error(response,
                     request.getServletPath().equals("/api/v1/access/me")
-                        || request.getServletPath().equals("/api/v1/expense-budget/budget") ? 401 : 403))
+                        || request.getServletPath().equals("/api/v1/expense-budget/budget")
+                        || request.getServletPath().equals("/api/v1/expense-budget/expenses") ? 401 : 403))
                 .accessDeniedHandler((request, response, failure) -> SessionHttp.error(response, 403)))
             .requestCache(cache -> cache.disable())
             .formLogin(form -> form.disable())

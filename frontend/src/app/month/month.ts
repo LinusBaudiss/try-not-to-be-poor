@@ -4,11 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { firstValueFrom, timeout } from 'rxjs';
 import { BudgetResponse } from '../api/model/budgetResponse';
 import { Session } from '../session/session';
+import { Expenses } from './expenses';
 import { MAX_CENTS, euroInput, formatEuro, parseEuro } from '../shared/money';
 
 @Component({
   selector: 'app-month',
-  imports: [FormsModule],
+  imports: [FormsModule, Expenses],
   template: `<section class="auth-card" aria-labelledby="month-title">
     <h1 id="month-title">Monat</h1>
     <p id="identity-status" role="status" aria-live="polite" [class.error]="identityFailed()">{{ identityStatus() }}</p>
@@ -40,6 +41,7 @@ import { MAX_CENTS, euroInput, formatEuro, parseEuro } from '../shared/money';
         </form>
       }
       <p id="budget-status" tabindex="-1" role="status" aria-live="polite" [class.error]="failed()" [class.success]="saved()">{{ status() }}</p>
+      <app-expenses />
     }
     <button type="button" class="secondary" (click)="session.logout()">Abmelden</button>
   </section>`

@@ -207,7 +207,8 @@ test('verlorene Antwort, Serverfehler und Offline erhalten den Entwurf für bewu
   expect(sends).toBe(1);
   await context.setOffline(true);
   await expect(page.getByRole('button', { name: 'Budget speichern', exact: true })).toBeDisabled();
-  await expect(page.getByText('Du bist offline.', { exact: false })).toBeVisible();
+  await expect(page.locator('form').filter({ has: page.getByLabel('Monatsbudget in Euro') })
+    .getByText('Du bist offline.', { exact: false })).toBeVisible();
   await page.getByLabel('Monatsbudget in Euro').press('Enter');
   expect(sends).toBe(1);
   await context.setOffline(false); await page.unroute(endpoint);
@@ -336,6 +337,9 @@ test('320 Pixel, Tastatur, 200-Prozent-Text, Geldgrenzen und axe in Formular-/Fe
     for (const size of ['100%', '200%']) {
       await page.evaluate(value => { document.documentElement.style.fontSize = value; }, size);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
+      for (const label of await page.locator('label').all()) {
+        expect(await label.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
+      }
       await expect(page.locator('.money')).toHaveText('90.071.992.547.409,91 €');
       expect(await page.locator('.money').evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
       const input = await page.getByLabel('Monatsbudget in Euro').boundingBox();

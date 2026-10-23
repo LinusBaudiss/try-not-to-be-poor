@@ -71,6 +71,8 @@ context:
 
 - Abschließende Gesamtverifikation nach allen Patches erfolgreich: Vertrag/Produktionsbuild (`/tmp/story23-root-contract.log`), 42 Unit- und 85 Integrationstests ohne Fehler/Auslassungen (`/tmp/story23-root-backend.log`), 141/141 Browserfälle (`/tmp/story23-root-browser.log`). Vollständigen aktualisierten Diff erneut gelesen, Aufgaben/Abnahmen und jede Matrixzeile nochmals abgeglichen; keine offenen Befunde oder Vertagungen. `git diff --check` sauber.
 
+- CI-Nachprüfung für PR #10: Chromium konnte trotz unmittelbarer response.json-Lesung den POST-Body im bestehenden Anlagetest sporadisch nicht bereitstellen. Test liest nun die echte Serverantwort über route.fetch vor unveränderter Weitergabe an die Oberfläche; Status-, Werte-, Persistenz- und UI-Assertions bleiben erhalten. Betroffene Testdatei dreimal erfolgreich: 39/39 (`/tmp/story23-ci-create-response.log`).
+
 ## Spec Change Log
 
 ## Review Triage Log

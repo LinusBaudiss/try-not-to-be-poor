@@ -18,7 +18,7 @@ class DatabaseRoleVerifier implements ApplicationRunner {
         Boolean unsafe = jdbc.queryForObject("""
             SELECT r.rolsuper OR r.rolbypassrls OR r.rolcreaterole OR r.rolcreatedb
                 OR EXISTS (SELECT 1 FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
-                           WHERE n.nspname IN ('access', 'expense_budget') AND pg_has_role(current_user, c.relowner, 'MEMBER'))
+                           WHERE n.nspname IN ('access', 'expense_budget', 'savings_goals') AND pg_has_role(current_user, c.relowner, 'MEMBER'))
             FROM pg_roles r WHERE r.rolname = current_user
             """, Boolean.class);
         if (!Boolean.FALSE.equals(unsafe)) {

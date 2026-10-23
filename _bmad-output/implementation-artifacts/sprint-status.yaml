@@ -29,7 +29,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 # - Retrospective appends its action items to action_items; the status view surfaces open ones
 generated: 10-22-2026 11:51
-last_updated: 10-23-2026 13:11
+last_updated: 10-23-2026 14:10
 project: try-not-to-be-poor
 project_key: NOKEY
 tracking_system: file-system
@@ -45,8 +45,8 @@ development_status:
   1-6-eigene-ausgaben-bearbeiten-und-löschen: review
   epic-1-retrospective: optional
 
-  epic-2: backlog
-  2-1-sparziel-anlegen-und-eigene-ziele-ansehen: backlog
+  epic-2: in-progress
+  2-1-sparziel-anlegen-und-eigene-ziele-ansehen: review
   2-2-sparzielfortschritt-aktualisieren-und-ansehen: backlog
   2-3-eigenes-sparziel-bearbeiten-und-löschen: backlog
   epic-2-retrospective: optional

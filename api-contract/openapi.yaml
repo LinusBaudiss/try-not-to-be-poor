@@ -302,6 +302,54 @@ paths:
           $ref: '#/components/responses/ExpenseNotFound'
         '500':
           $ref: '#/components/responses/ExpenseUnavailable'
+  /savings-goals:
+    get:
+      tags: [SavingsGoals]
+      operationId: getSavingsGoals
+      summary: Eigene Sparziele stabil nach ID sortiert lesen
+      security:
+        - AccessBearer: []
+      responses:
+        '200':
+          description: Eigene Ziele; no-store.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SavingsGoalResponse'
+        '400':
+          $ref: '#/components/responses/SavingsGoalInvalid'
+        '401':
+          $ref: '#/components/responses/SessionRejected'
+        '500':
+          $ref: '#/components/responses/SavingsGoalUnavailable'
+    post:
+      tags: [SavingsGoals]
+      operationId: postSavingsGoal
+      summary: Ein eigenes Sparziel mit null Cent Fortschritt anlegen
+      description: Ausschließlich geprüftes Bearer-sub bestimmt den Eigentümer. Erfolg erst nach Commit. Zieldatum bleibt ein unverändertes Kalenderdatum, auch vergangene Daten sind zulässig.
+      security:
+        - AccessBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SavingsGoalRequest'
+      responses:
+        '201':
+          description: Verbindlich gespeichert; no-store.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SavingsGoalResponse'
+        '400':
+          $ref: '#/components/responses/SavingsGoalInvalid'
+        '401':
+          $ref: '#/components/responses/SessionRejected'
+        '500':
+          $ref: '#/components/responses/SavingsGoalUnavailable'
 components:
   securitySchemes:
     AccessBearer:
@@ -329,6 +377,18 @@ components:
         type: string
       description: Spring-Security-CSRF-Token aus GET /access/csrf; nur im Arbeitsspeicher halten.
   responses:
+    SavingsGoalInvalid:
+      description: Ungültige Eingabe; keine Mutation, no-store.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SavingsGoalError'
+    SavingsGoalUnavailable:
+      description: Speicherung oder Lesen nicht bestätigt; neutraler Fehler, no-store.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SavingsGoalError'
     ExpenseNotFound:
       description: Ausgabe nicht gefunden; identisch für fehlende und fremde IDs, no-store.
       content:
@@ -376,6 +436,66 @@ components:
           schema:
             $ref: '#/components/schemas/SessionError'
   schemas:
+    SavingsGoalRequest:
+      type: object
+      additionalProperties: false
+      required: [name, targetAmountCents]
+      properties:
+        name:
+          type: string
+          minLength: 1
+          description: Wird getrimmt; darf danach nicht leer sein oder NUL enthalten.
+        targetAmountCents:
+          type: integer
+          format: int64
+          minimum: 1
+          maximum: 9007199254740991
+          description: Positive ganze EUR-Cent; keine Rundung oder Typumwandlung.
+        targetDate:
+          type: string
+          format: date
+          nullable: true
+          description: Optionales striktes ISO-Kalenderdatum YYYY-MM-DD, Jahr 0001 bis 9999.
+    SavingsGoalResponse:
+      type: object
+      additionalProperties: false
+      required: [id, name, targetAmountCents, progressCents]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          minLength: 1
+        targetAmountCents:
+          type: integer
+          format: int64
+          minimum: 1
+          maximum: 9007199254740991
+        progressCents:
+          type: integer
+          format: int64
+          minimum: 0
+          maximum: 9007199254740991
+          description: Neue Ziele beginnen bei 0.
+        targetDate:
+          type: string
+          format: date
+          nullable: true
+    SavingsGoalError:
+      type: object
+      additionalProperties: false
+      required: [code, message, fieldErrors]
+      properties:
+        code:
+          type: string
+          enum: [VALIDATION_FAILED, SAVINGS_GOAL_UNAVAILABLE]
+        message:
+          type: string
+        fieldErrors:
+          type: object
+          additionalProperties:
+            type: string
     ExpenseNotFoundError:
       type: object
       additionalProperties: false

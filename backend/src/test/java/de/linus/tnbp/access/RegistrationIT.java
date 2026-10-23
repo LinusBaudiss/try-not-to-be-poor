@@ -384,7 +384,12 @@ class RegistrationIT {
             PostgresFixture.ADMIN.execute("CREATE TABLE expense_budget.role_owner_probe (id INTEGER)");
             PostgresFixture.ADMIN.execute("ALTER TABLE expense_budget.role_owner_probe OWNER TO tnbp_budget_owner_test");
             PostgresFixture.ADMIN.execute("GRANT tnbp_budget_owner_test TO tnbp_budget_member_test");
-            for (String role : List.of("postgres", "tnbp_migrator", "tnbp_budget_owner_test", "tnbp_budget_member_test")) {
+            PostgresFixture.ADMIN.execute("CREATE ROLE tnbp_savings_owner_test LOGIN PASSWORD 'budget-role-test-only' NOSUPERUSER NOBYPASSRLS NOCREATEDB NOCREATEROLE");
+            PostgresFixture.ADMIN.execute("CREATE ROLE tnbp_savings_member_test LOGIN PASSWORD 'budget-role-test-only' NOSUPERUSER NOBYPASSRLS NOCREATEDB NOCREATEROLE");
+            PostgresFixture.ADMIN.execute("CREATE TABLE savings_goals.role_owner_probe (id INTEGER)");
+            PostgresFixture.ADMIN.execute("ALTER TABLE savings_goals.role_owner_probe OWNER TO tnbp_savings_owner_test");
+            PostgresFixture.ADMIN.execute("GRANT tnbp_savings_owner_test TO tnbp_savings_member_test");
+            for (String role : List.of("postgres", "tnbp_migrator", "tnbp_budget_owner_test", "tnbp_budget_member_test", "tnbp_savings_owner_test", "tnbp_savings_member_test")) {
                 var app = new SpringApplication(TnbpApplication.class);
                 List<String> args = new ArrayList<>(List.of("--server.port=0", "--spring.main.banner-mode=off"));
                 PostgresFixture.configure((key, value) -> {
@@ -405,6 +410,9 @@ class RegistrationIT {
                     .hasStackTraceContaining("Die Laufzeitrolle darf weder privilegiert noch Tabellenbesitzer sein.");
             }
         } finally {
+            PostgresFixture.ADMIN.execute("DROP TABLE IF EXISTS savings_goals.role_owner_probe");
+            PostgresFixture.ADMIN.execute("DROP ROLE IF EXISTS tnbp_savings_member_test");
+            PostgresFixture.ADMIN.execute("DROP ROLE IF EXISTS tnbp_savings_owner_test");
             PostgresFixture.ADMIN.execute("DROP TABLE IF EXISTS expense_budget.role_owner_probe");
             PostgresFixture.ADMIN.execute("DROP ROLE IF EXISTS tnbp_budget_member_test");
             PostgresFixture.ADMIN.execute("DROP ROLE tnbp_budget_owner_test");

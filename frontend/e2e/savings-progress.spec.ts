@@ -23,10 +23,13 @@ async function create(page: Page, amount = '100', name = 'Reise', date = '2028-0
   await page.getByLabel('Name des Sparziels').fill(name);
   await page.getByLabel('Zielbetrag in Euro').fill(amount);
   await page.getByLabel('Zieldatum (optional)').fill(date);
-  const response = page.waitForResponse(response => response.url().endsWith('/savings-goals') && response.request().method() === 'POST');
-  await page.getByRole('button', { name: 'Sparziel speichern', exact: true }).click();
+  const responseBody = page.waitForResponse(response => response.url().endsWith('/savings-goals') && response.request().method() === 'POST')
+    .then(response => { expect(response.status()).toBe(201); return response.json(); });
+  const [, goal] = await Promise.all([
+    page.getByRole('button', { name: 'Sparziel speichern', exact: true }).click(), responseBody
+  ]);
   await expect(page.locator('#goal-status')).toHaveText('Dein Sparziel wurde gespeichert.');
-  return (await response).json();
+  return goal;
 }
 async function edit(page: Page, value: string): Promise<void> {
   await page.getByRole('button', { name: 'Fortschritt aktualisieren:', exact: false }).click();

@@ -71,6 +71,8 @@ context:
 - Reviewpatches B1/B2/B5/B8/E1/V1/V2 umgesetzt: andere Ziele während offenem Entwurf erklärt gesperrt, stabiler Fokusfallback, bestätigter Betrag in Live-Meldung, Datum-null-Roundtrip, gemessene Balkenbreite und isoliertes Update einer von zwei Karten. Kein offener Befund und keine Vertagung.
 - Abschließende Gesamtverifikation nach allen Patches: Vertragsprüfung/SPA erfolgreich (`/tmp/story22-root-contract.log`), 42 Unit- und 79 Integrationstests ohne Fehler oder Auslassungen (`/tmp/story22-root-backend.log`), 119/119 Browserfälle einschließlich 13 Fortschrittsfällen (`/tmp/story22-root-browser.log`). Matrix erneut vollständig abgedeckt; `git diff --check` sauber.
 
+- CI-Nachprüfung für PR #9: Der Anlagehelfer las den POST-Body erst nach dem UI-Erfolg; Chromium meldete dabei sporadisch einen nicht mehr verfügbaren Antwortinhalt. Body nun unmittelbar im Response-Handler lesen und gemeinsam mit dem Klick abwarten; die UI-Erfolgsprüfung bleibt erhalten. Betroffene Datei dreimal vollständig erfolgreich geprüft: 39/39 (`/tmp/story22-ci-sync-browser.log`).
+
 ## Spec Change Log
 
 ## Review Triage Log

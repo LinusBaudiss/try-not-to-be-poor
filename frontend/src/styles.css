@@ -70,3 +70,12 @@ h3 { font-size: 1rem; margin: 0 0 1rem; overflow-wrap: anywhere; }
   .expense-table { display: table; width: 100%; border-collapse: collapse; table-layout: fixed; }
   .expense-table th, .expense-table td { text-align: left; vertical-align: top; padding: .75rem .375rem; border-bottom: 1px solid var(--border); overflow-wrap: anywhere; }
 }
+
+.month-summary { margin-bottom: 2rem; padding: 1rem; border: 2px solid var(--primary); border-radius: .5rem; background: var(--success-surface); }
+.summary-month { color: var(--text-secondary); margin-bottom: 1rem; }
+.remaining { font-weight: 600; margin-bottom: 1rem; }
+.summary-money { display: block; font-size: 2rem; line-height: 1.25; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.summary-details { margin: 0 0 1rem; }
+.summary-details div + div { margin-top: .75rem; }
+.summary-details dt { color: var(--text-secondary); overflow-wrap: anywhere; }
+.summary-details dd { margin: 0; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }

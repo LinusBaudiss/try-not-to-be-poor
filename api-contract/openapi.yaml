@@ -174,6 +174,56 @@ paths:
           $ref: '#/components/responses/SessionRejected'
         '500':
           $ref: '#/components/responses/BudgetUnavailable'
+  /expense-budget/expenses:
+    get:
+      tags: [Expenses]
+      operationId: getExpenses
+      summary: Eigene vollständige Ausgabenhistorie nach Datum absteigend, dann ID lesen
+      security:
+        - AccessBearer: []
+      responses:
+        '200':
+          description: Alle eigenen Monate; no-store.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ExpenseResponse'
+        '401':
+          $ref: '#/components/responses/SessionRejected'
+        '500':
+          $ref: '#/components/responses/ExpenseUnavailable'
+    post:
+      tags: [Expenses]
+      operationId: postExpense
+      summary: Eine eigene Ausgabe am aktuellen Berlin-Kalendertag erfassen
+      description: Ausschließlich geprüftes Bearer-sub bestimmt den Eigentümer. Monatssummen über der sicheren Centgrenze werden atomar abgelehnt. Erfolg erst nach Commit.
+      security:
+        - AccessBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExpenseRequest'
+      responses:
+        '201':
+          description: Verbindlich gespeichert; no-store.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExpenseResponse'
+        '400':
+          description: Feldfehler oder sichere Monatssumme überschritten; keine Mutation, no-store.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExpenseError'
+        '401':
+          $ref: '#/components/responses/SessionRejected'
+        '500':
+          $ref: '#/components/responses/ExpenseUnavailable'
 components:
   securitySchemes:
     AccessBearer:
@@ -201,6 +251,12 @@ components:
         type: string
       description: Spring-Security-CSRF-Token aus GET /access/csrf; nur im Arbeitsspeicher halten.
   responses:
+    ExpenseUnavailable:
+      description: Speicherung oder Lesen nicht bestätigt; neutraler Fehler, no-store.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ExpenseError'
     BudgetUnavailable:
       description: Speicherung oder Lesen nicht bestätigt; neutraler Fehler, no-store.
       content:
@@ -236,6 +292,55 @@ components:
           schema:
             $ref: '#/components/schemas/SessionError'
   schemas:
+    ExpenseRequest:
+      type: object
+      additionalProperties: false
+      required: [name, amountCents]
+      properties:
+        name:
+          type: string
+          minLength: 1
+          description: Wird getrimmt; darf danach nicht leer sein.
+        amountCents:
+          type: integer
+          format: int64
+          minimum: 1
+          maximum: 9007199254740991
+          description: Positive ganze EUR-Cent; keine Rundung oder Typumwandlung.
+    ExpenseResponse:
+      type: object
+      additionalProperties: false
+      required: [id, name, amountCents, recordedOn]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          minLength: 1
+        amountCents:
+          type: integer
+          format: int64
+          minimum: 1
+          maximum: 9007199254740991
+        recordedOn:
+          type: string
+          format: date
+          description: Serverseitiges Kalenderdatum in Europe/Berlin ohne Zeitpunktumrechnung.
+    ExpenseError:
+      type: object
+      additionalProperties: false
+      required: [code, message, fieldErrors]
+      properties:
+        code:
+          type: string
+          enum: [VALIDATION_FAILED, MONTH_LIMIT_EXCEEDED, EXPENSE_UNAVAILABLE]
+        message:
+          type: string
+        fieldErrors:
+          type: object
+          additionalProperties:
+            type: string
     BudgetRequest:
       type: object
       additionalProperties: false

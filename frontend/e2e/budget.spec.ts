@@ -207,7 +207,8 @@ test('verlorene Antwort, Serverfehler und Offline erhalten den Entwurf für bewu
   expect(sends).toBe(1);
   await context.setOffline(true);
   await expect(page.getByRole('button', { name: 'Budget speichern', exact: true })).toBeDisabled();
-  await expect(page.getByText('Du bist offline.', { exact: false })).toBeVisible();
+  await expect(page.locator('form').filter({ has: page.getByLabel('Monatsbudget in Euro') })
+    .getByText('Du bist offline.', { exact: false })).toBeVisible();
   await page.getByLabel('Monatsbudget in Euro').press('Enter');
   expect(sends).toBe(1);
   await context.setOffline(false); await page.unroute(endpoint);

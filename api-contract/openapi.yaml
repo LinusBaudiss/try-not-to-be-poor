@@ -350,6 +350,60 @@ paths:
           $ref: '#/components/responses/SessionRejected'
         '500':
           $ref: '#/components/responses/SavingsGoalUnavailable'
+  /savings-goals/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    put:
+      tags: [SavingsGoals]
+      operationId: putSavingsGoal
+      summary: Editierbare Felder eines eigenen Sparziels ersetzen
+      description: Name, Zielbetrag und Datum ersetzen; fehlendes oder null Datum entfernt es. ID, Eigentümer und Fortschritt bleiben erhalten. Erfolg erst nach Commit; no-store.
+      security:
+        - AccessBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SavingsGoalRequest'
+      responses:
+        '200':
+          description: Verbindlich ersetzt; no-store.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SavingsGoalResponse'
+        '400':
+          $ref: '#/components/responses/SavingsGoalInvalid'
+        '401':
+          $ref: '#/components/responses/SessionRejected'
+        '404':
+          $ref: '#/components/responses/SavingsGoalNotFound'
+        '500':
+          $ref: '#/components/responses/SavingsGoalUnavailable'
+    delete:
+      tags: [SavingsGoals]
+      operationId: deleteSavingsGoal
+      summary: Ein eigenes Sparziel endgültig löschen
+      description: Ausschließlich geprüftes Bearer-sub bestimmt den Eigentümer. Erfolg erst nach Commit; no-store.
+      security:
+        - AccessBearer: []
+      responses:
+        '204':
+          description: Verbindlich gelöscht; leerer Antwortkörper; no-store.
+        '400':
+          $ref: '#/components/responses/SavingsGoalInvalid'
+        '401':
+          $ref: '#/components/responses/SessionRejected'
+        '404':
+          $ref: '#/components/responses/SavingsGoalNotFound'
+        '500':
+          $ref: '#/components/responses/SavingsGoalUnavailable'
   /savings-goals/{id}/progress:
     parameters:
       - name: id

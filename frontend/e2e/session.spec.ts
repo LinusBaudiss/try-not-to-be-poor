@@ -247,17 +247,26 @@ test('verzögertes Refresh hält Kontowechsel einschließlich CSRF zurück und �
   other.on('request', request => {
     if (/\/access\/(csrf|login)$/.test(request.url())) mutations.push(request.url());
   });
-  const replacementResponse = other.waitForResponse('**/api/v1/access/login');
+  let replacementUserId: string | undefined, restoredUserId: string | undefined;
+  await other.route(/\/api\/v1\/access\/(login|refresh)$/, async route => {
+    // Identität aus der echten Serverantwort lesen, bevor Chromium sie erhält.
+    const response = await route.fetch(); expect(response.status()).toBe(200);
+    const session = await response.json();
+    if (route.request().url().endsWith('/login')) replacementUserId = session.userId;
+    else restoredUserId = session.userId;
+    await route.fulfill({ response });
+  });
   await other.getByRole('button', { name: 'Anmelden', exact: true }).click();
   await expect(page).toHaveURL('/anmelden');
   expect(mutations).toEqual([]);
   release();
-  const newSession = await (await replacementResponse).json();
   await expect(other.getByText('Du bist angemeldet. Deine persönliche Monatsübersicht ist geöffnet.')).toBeVisible();
+  expect(replacementUserId).toEqual(expect.any(String));
   const restored = other.waitForResponse('**/api/v1/access/refresh');
   await other.reload();
-  expect((await (await restored).json()).userId).toBe(newSession.userId);
+  expect((await restored).status()).toBe(200);
   await expect(other.getByText('Du bist angemeldet. Deine persönliche Monatsübersicht ist geöffnet.')).toBeVisible();
+  expect(restoredUserId).toBe(replacementUserId);
   await expect(page.getByRole('status')).toContainText('anderen Tab');
 });
 

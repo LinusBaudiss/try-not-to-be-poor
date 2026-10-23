@@ -27,6 +27,14 @@ public class SavingsGoalController implements SavingsGoalsApi {
         return ResponseEntity.ok().header("Cache-Control", "no-store")
             .body(response(goals.progress(userId(), id, input.getProgressCents())));
     }
+    @Override public ResponseEntity<SavingsGoalResponse> putSavingsGoal(UUID id, SavingsGoalRequest input) {
+        return ResponseEntity.ok().header("Cache-Control", "no-store")
+            .body(response(goals.update(userId(), id, input.getName(), input.getTargetAmountCents(), input.getTargetDate())));
+    }
+    @Override public ResponseEntity<Void> deleteSavingsGoal(UUID id) {
+        goals.delete(userId(), id);
+        return ResponseEntity.noContent().header("Cache-Control", "no-store").build();
+    }
     private UUID userId() { return UUID.fromString(SecurityContextHolder.getContext().getAuthentication().getName()); }
     private SavingsGoalResponse response(SavingsGoalRepository.Goal goal) {
         return new SavingsGoalResponse(goal.id(), goal.name(), goal.targetAmountCents(), goal.progressCents()).targetDate(goal.targetDate());

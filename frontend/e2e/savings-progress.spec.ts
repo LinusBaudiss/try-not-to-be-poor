@@ -157,7 +157,6 @@ test('nur passende geprüfte 200-Antworten bestätigen den Fortschritt; Fehler e
     { status: 200, json: { ...goal, id: crypto.randomUUID(), progressCents: 3000 } },
     { status: 200, json: { ...goal, progressCents: 2999 } },
     { status: 200, json: { ...goal, progressCents: '3000' } },
-    { status: 200, json: { ...goal, progressCents: 3000, name: 'Anderes Ziel' } },
     { status: 200, json: { ...goal, progressCents: 3000, targetAmountCents: 0 } },
     { status: 200, json: { ...goal, progressCents: 3000, targetDate: '2026-02-29' } },
     { status: 404, json: { code: 'SAVINGS_GOAL_NOT_FOUND' } },
@@ -172,6 +171,23 @@ test('nur passende geprüfte 200-Antworten bestätigen den Fortschritt; Fehler e
     await expect(page.getByRole('progressbar')).toHaveAttribute('aria-valuenow', '0');
     await expect(page.getByRole('button', { name: 'Fortschritt speichern', exact: true })).toBeEnabled(); await page.unroute(endpoint);
   }
+});
+
+test('ein offener Fortschrittsentwurf akzeptiert zwischenzeitlich in anderem Tab geänderte Zielfelder', async ({ page, context, request }) => {
+  await login(page, await account(request)); await create(page); await edit(page, '150');
+  const other = await context.newPage();
+  await other.goto('/sparziele'); await expect(other.getByRole('button', { name: 'Sparziel bearbeiten: Reise', exact: true })).toBeEnabled();
+  await other.getByRole('button', { name: 'Sparziel bearbeiten: Reise', exact: true }).click();
+  await other.locator('#goal-edit-name').fill('Korrigiert'); await other.locator('#goal-edit-amount').fill('75'); await other.locator('#goal-edit-date').fill('');
+  await other.getByRole('button', { name: 'Änderungen speichern', exact: true }).click();
+  await expect(other.locator('#goal-mutation-status')).toHaveClass(/success/);
+  await expect(page.getByLabel('Gesamtfortschritt in Euro')).toHaveValue('150');
+  await page.getByRole('button', { name: 'Fortschritt speichern', exact: true }).click();
+  await expect(page.locator('#goal-progress-status')).toHaveClass(/success/); await expect(page.locator('#goal-progress-status')).toContainText('Korrigiert');
+  await expect(page.getByLabel('Gesamtfortschritt in Euro')).toHaveCount(0);
+  await expect(page.locator('.savings-cards')).toContainText('75,00 €'); await expect(page.locator('.savings-cards')).toContainText('150,00 €');
+  await expect(page.locator('.savings-cards')).toContainText('200 %'); await expect(page.locator('.savings-cards')).not.toContainText('Zieldatum');
+  await page.reload(); await expect(page.locator('.savings-cards')).toContainText('Korrigiert'); await expect(page.locator('.savings-cards')).toContainText('150,00 €');
 });
 
 for (const boundary of ['Abmeldung', 'Kontowechsel', 'Tokenablauf']) {
@@ -258,7 +274,7 @@ test('offener Entwurf erklärt gesperrte andere Ziele; bestätigtes Speichern ä
   const carAction = page.getByRole('button', { name: 'Fortschritt aktualisieren: Auto', exact: true });
   await travelAction.click(); await page.getByLabel('Gesamtfortschritt in Euro').fill('12,34');
   await expect(carAction).toBeDisabled(); await expect(carAction).toHaveAttribute('aria-describedby', 'goal-progress-draft-hint');
-  await expect(page.locator('#goal-progress-draft-hint')).toHaveText('Speichere den offenen Fortschrittsentwurf oder brich ihn ab, bevor du ein anderes Sparziel auswählst.');
+  await expect(page.locator('#goal-progress-draft-hint')).toHaveText('Speichere den offenen Fortschrittsentwurf oder brich ihn ab, bevor du Zielwerte bearbeitest, ein anderes Sparziel auswählst oder ein Ziel löschst.');
   await travelAction.click();
   await expect(page.getByLabel('Gesamtfortschritt in Euro')).toHaveValue('12,34'); await expect(page.getByLabel('Gesamtfortschritt in Euro')).toBeFocused();
   await expect(page.getByRole('heading', { name: 'Fortschritt für Reise', exact: true })).toBeVisible();

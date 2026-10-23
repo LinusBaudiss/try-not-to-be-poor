@@ -108,9 +108,16 @@ nav a.active { color: var(--on-primary); background: var(--primary); }
 .savings-progress { height: 1rem; margin-top: 1rem; overflow: hidden; border: 1px solid var(--border); border-radius: .25rem; background: var(--surface-base); }
 .savings-progress span { display: block; height: 100%; background: var(--primary); }
 .savings-excess { margin-top: .75rem; margin-bottom: 0; font-variant-numeric: tabular-nums; }
-.savings-editor { min-width: 0; border: 2px solid var(--primary); border-radius: .5rem; padding: 1rem; margin-top: 1.5rem; }
+.savings-editor { min-width: 0; border: 2px solid var(--primary); border-radius: .5rem; padding: min(1rem, 16px); margin-top: 1.5rem; }
 .savings-actions { display: flex; flex-wrap: wrap; gap: .5rem; }
-.savings-actions button { flex: 1 1 8rem; min-width: 0; }
+.savings-actions button { flex: 1 1 8rem; min-width: 0; scroll-margin-block: .5rem; }
 #goal-progress-status { margin-top: 1rem; }
 #goal-progress-status:empty { margin: 0; }
 #goal-progress-status:focus { outline: 3px solid var(--focus-ring); outline-offset: 3px; }
+
+.savings-delete-dialog { width: min(32rem, calc(100% - 2rem)); max-height: calc(100dvh - 2rem); overflow-y: auto; overflow-wrap: anywhere; padding: 1rem; border: 2px solid var(--primary); border-radius: .5rem; color: var(--text-primary); background: var(--surface-raised); }
+.savings-delete-dialog::backdrop { background: rgb(24 33 30 / .6); }
+.savings-delete-dialog .savings-actions { flex-direction: column; }
+.savings-delete-dialog .savings-actions button { flex-basis: auto; }
+
+#goal-mutation-status:focus, #goal-delete-status:focus { outline: 3px solid var(--focus-ring); outline-offset: 3px; }

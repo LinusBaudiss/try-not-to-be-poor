@@ -47,10 +47,16 @@ test('geschützte Navigation, eigene persistente Ziele und unveränderte Kalende
   await expect(page.getByLabel('Zieldatum (optional)')).toHaveAttribute('inputmode', 'text');
   await page.getByRole('button', { name: 'Sparziel anlegen', exact: true }).click();
   await expect(page.getByLabel('Name des Sparziels')).toBeFocused();
-  const responseBody = page.waitForResponse(response => response.url().endsWith('/savings-goals') && response.request().method() === 'POST')
-    .then(response => { expect(response.status()).toBe(201); return response.json(); });
-  const [, entry] = await Promise.all([save(page, '  Reise 🧳  ', '1.15', '2000-02-29'), responseBody]);
-  expect(entry.name).toBe('Reise 🧳'); expect(entry.targetAmountCents).toBe(115); expect(entry.progressCents).toBe(0); expect(entry.targetDate).toBe('2000-02-29');
+  let entry: unknown;
+  await page.route(endpoint, async route => {
+    if (route.request().method() !== 'POST') return route.continue();
+    // Echte Serverantwort vor der Weitergabe lesen, unabhängig vom Chromium-Antwortcache.
+    const response = await route.fetch(); expect(response.status()).toBe(201);
+    entry = await response.json(); await route.fulfill({ response });
+  });
+  await save(page, '  Reise 🧳  ', '1.15', '2000-02-29');
+  expect(entry).toMatchObject({ name: 'Reise 🧳', targetAmountCents: 115, progressCents: 0, targetDate: '2000-02-29' });
+  await page.unroute(endpoint);
   await expect(page.locator('.savings-cards')).toContainText('Reise 🧳');
   await expect(page.locator('.savings-cards')).toContainText('1,15 €');
   await expect(page.locator('.savings-cards')).toContainText('0,00 €');

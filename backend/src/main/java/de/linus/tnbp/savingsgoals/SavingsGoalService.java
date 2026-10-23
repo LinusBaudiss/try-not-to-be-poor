@@ -37,6 +37,19 @@ public class SavingsGoalService {
             return goals.progress(userId, id, progressCents).orElseThrow(NotFound::new);
         }); // Auch ein erfolgreiches UPDATE wird erst nach erfolgreichem Commit bestätigt.
     }
+    SavingsGoalRepository.Goal update(UUID userId, UUID id, String name, Long targetAmountCents, LocalDate targetDate) {
+        validate(name, targetAmountCents, targetDate);
+        return transaction.execute(status -> {
+            goals.context(userId);
+            return goals.update(userId, id, trimName(name), targetAmountCents, targetDate).orElseThrow(NotFound::new);
+        }); // Bestätigung erst nach Commit; Fortschritt wird im UPDATE nicht geschrieben.
+    }
+    void delete(UUID userId, UUID id) {
+        transaction.executeWithoutResult(status -> {
+            goals.context(userId);
+            if (!goals.delete(userId, id)) throw new NotFound();
+        });
+    }
     static final class NotFound extends RuntimeException {}
     static void validate(String name, Long amountCents, LocalDate date) {
         Map<String, String> errors = new LinkedHashMap<>();

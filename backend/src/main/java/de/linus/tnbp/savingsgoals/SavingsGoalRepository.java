@@ -30,6 +30,18 @@ public class SavingsGoalRepository {
                 row.getLong("target_amount_cents"), row.getLong("progress_cents"), row.getObject("target_date", LocalDate.class)),
             progressCents, userId, id).stream().findFirst();
     }
+    Optional<Goal> update(UUID userId, UUID id, String name, long targetAmountCents, LocalDate targetDate) {
+        return jdbc.query("""
+            UPDATE savings_goals.goals SET name = ?, target_amount_cents = ?, target_date = ?
+            WHERE user_id = ? AND id = ?
+            RETURNING id, name, target_amount_cents, progress_cents, target_date
+            """, (row, index) -> new Goal(row.getObject("id", UUID.class), row.getString("name"),
+                row.getLong("target_amount_cents"), row.getLong("progress_cents"), row.getObject("target_date", LocalDate.class)),
+            name, targetAmountCents, targetDate, userId, id).stream().findFirst();
+    }
+    boolean delete(UUID userId, UUID id) {
+        return jdbc.update("DELETE FROM savings_goals.goals WHERE user_id = ? AND id = ?", userId, id) == 1;
+    }
     void insert(UUID userId, Goal goal) {
         jdbc.update("INSERT INTO savings_goals.goals (id, user_id, name, target_amount_cents, target_date) VALUES (?, ?, ?, ?, ?)",
             goal.id(), userId, goal.name(), goal.targetAmountCents(), goal.targetDate());

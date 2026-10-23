@@ -5,16 +5,18 @@ import { firstValueFrom, timeout } from 'rxjs';
 import { BudgetResponse } from '../api/model/budgetResponse';
 import { Session } from '../session/session';
 import { Expenses } from './expenses';
+import { MonthSummary } from './month-summary';
 import { MAX_CENTS, euroInput, formatEuro, parseEuro } from '../shared/money';
 
 @Component({
   selector: 'app-month',
-  imports: [FormsModule, Expenses],
+  imports: [FormsModule, Expenses, MonthSummary],
   template: `<section class="auth-card" aria-labelledby="month-title">
     <h1 id="month-title">Monat</h1>
     <p id="identity-status" role="status" aria-live="polite" [class.error]="identityFailed()">{{ identityStatus() }}</p>
     @if (identityFailed()) { <button type="button" (click)="open()" [disabled]="opening() || !online()">Zugang erneut prüfen</button> }
     @if (identityConfirmed()) {
+      <app-month-summary [revision]="summaryRevision()" (confirmedBudget)="reconcileBudget($event)" />
       <h2>Monatsbudget</h2>
       @if (loadFailed()) {
         <p class="error">Dein Monatsbudget konnte nicht geladen werden.</p>
@@ -41,7 +43,7 @@ import { MAX_CENTS, euroInput, formatEuro, parseEuro } from '../shared/money';
         </form>
       }
       <p id="budget-status" tabindex="-1" role="status" aria-live="polite" [class.error]="failed()" [class.success]="saved()">{{ status() }}</p>
-      <app-expenses />
+      <app-expenses (changed)="refreshSummary()" />
     }
     <button type="button" class="secondary" (click)="session.logout()">Abmelden</button>
   </section>`
@@ -52,7 +54,17 @@ export class Month {
   private readonly owner = this.session.userId();
   private readonly version = this.session.generation();
   private active = true;
+  protected readonly summaryRevision = signal(0);
+  protected refreshSummary(): void { this.summaryRevision.update(value => value + 1); }
   protected draft = '';
+  private draftEdited = false;
+  private confirmedRevision = 0;
+  protected reconcileBudget(amount: number | null): void {
+    if (!this.accepts()) return;
+    ++this.confirmedRevision;
+    this.amountCents.set(amount);
+    if (this.loaded() && !this.draftEdited && !this.pending()) this.draft = amount === null ? '' : euroInput(amount);
+  }
   protected readonly money = formatEuro;
   protected readonly identityStatus = signal('Sitzung wird geprüft …');
   protected readonly identityFailed = signal(false);
@@ -71,7 +83,7 @@ export class Month {
   private readonly amountError = 'Gib einen Betrag von 0 bis 90071992547409,91 Euro ohne Tausendertrennzeichen und mit höchstens zwei Nachkommastellen ein.';
 
   constructor() {
-    effect(() => { if (this.session.userId() !== this.owner) this.clear(); });
+    effect(() => { if (this.session.userId() !== this.owner || this.session.generation() !== this.version) this.clear(); });
     inject(DestroyRef).onDestroy(() => { this.active = false; this.clear(); });
     void this.open();
   }
@@ -87,7 +99,7 @@ export class Month {
   }
 
   protected editDraft(value: string): void {
-    this.draft = value;
+    this.draft = value; this.draftEdited = true;
     this.saved.set(false); this.failed.set(false); this.fieldError.set(''); this.status.set('');
   }
 
@@ -109,13 +121,15 @@ export class Month {
 
   protected async loadBudget(): Promise<void> {
     if (this.loading() || !this.accepts()) return;
+    const revision = this.confirmedRevision;
     this.loading.set(true); this.loadFailed.set(false); this.failed.set(false); this.saved.set(false); this.status.set('Dein Monatsbudget wird geladen …');
     try {
       const result = await firstValueFrom(this.http.get<BudgetResponse>('/api/v1/expense-budget/budget').pipe(timeout(30_000)));
       if (!this.accepts()) return;
       if (!this.valid(result.amountCents)) throw new Error('Ungültige Budgetantwort.');
-      this.amountCents.set(result.amountCents);
-      this.draft = result.amountCents === null ? '' : euroInput(result.amountCents);
+      if (revision === this.confirmedRevision) this.amountCents.set(result.amountCents);
+      const confirmed = this.amountCents();
+      this.draft = confirmed === null ? '' : euroInput(confirmed); this.draftEdited = false;
       this.loaded.set(true); this.status.set('');
     } catch {
       if (this.accepts()) { this.loadFailed.set(true); this.status.set('Budget nicht geladen. Versuche es erneut.'); this.failed.set(true); }
@@ -135,8 +149,8 @@ export class Month {
       const result = await firstValueFrom(this.http.put<BudgetResponse>('/api/v1/expense-budget/budget', { amountCents }).pipe(timeout(30_000)));
       if (!this.accepts()) return;
       if (result.amountCents !== amountCents) throw new Error('Speicherung nicht bestätigt.');
-      this.amountCents.set(amountCents); this.draft = euroInput(amountCents);
-      this.status.set('Dein Monatsbudget wurde gespeichert.'); this.saved.set(true);
+      this.amountCents.set(amountCents); this.draft = euroInput(amountCents); this.draftEdited = false;
+      this.status.set('Dein Monatsbudget wurde gespeichert.'); this.saved.set(true); this.refreshSummary();
     } catch (failure) {
       if (!this.accepts()) return;
       this.failed.set(true);
@@ -153,7 +167,7 @@ export class Month {
   private valid(value: unknown): value is number | null { return value === null || typeof value === 'number' && Number.isSafeInteger(value) && value >= 0 && value <= MAX_CENTS; }
   private focus(id: string): void { requestAnimationFrame(() => { if (this.accepts()) document.getElementById(id)?.focus(); }); }
   private clear(): void {
-    this.draft = ''; this.amountCents.set(null); this.status.set(''); this.fieldError.set('');
+    this.draft = ''; this.draftEdited = false; this.amountCents.set(null); this.status.set(''); this.fieldError.set('');
     this.loaded.set(false); this.loading.set(false); this.pending.set(false); this.identityConfirmed.set(false);
   }
 }

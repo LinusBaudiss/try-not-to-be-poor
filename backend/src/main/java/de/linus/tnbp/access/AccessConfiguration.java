@@ -85,7 +85,7 @@ class AccessConfiguration {
                 .requestMatchers(HttpMethod.POST, "/api/v1/access/registrations", "/api/v1/access/login",
                     "/api/v1/access/refresh", "/api/v1/access/logout").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/access/csrf").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/v1/access/me", "/api/v1/expense-budget/budget", "/api/v1/expense-budget/expenses").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/v1/access/me", "/api/v1/expense-budget/budget", "/api/v1/expense-budget/expenses", "/api/v1/expense-budget/month-summary").authenticated()
                 .requestMatchers(HttpMethod.PUT, "/api/v1/expense-budget/budget").authenticated()
                 .requestMatchers(HttpMethod.POST, "/api/v1/expense-budget/expenses").authenticated()
                 .anyRequest().denyAll())
@@ -95,7 +95,8 @@ class AccessConfiguration {
                 .authenticationEntryPoint((request, response, failure) -> SessionHttp.error(response,
                     request.getServletPath().equals("/api/v1/access/me")
                         || request.getServletPath().equals("/api/v1/expense-budget/budget")
-                        || request.getServletPath().equals("/api/v1/expense-budget/expenses") ? 401 : 403))
+                        || request.getServletPath().equals("/api/v1/expense-budget/expenses")
+                        || request.getServletPath().equals("/api/v1/expense-budget/month-summary") ? 401 : 403))
                 .accessDeniedHandler((request, response, failure) -> SessionHttp.error(response, 403)))
             .requestCache(cache -> cache.disable())
             .formLogin(form -> form.disable())

@@ -1,5 +1,5 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Component, DestroyRef, HostListener, effect, inject, signal } from '@angular/core';
+import { Component, DestroyRef, HostListener, effect, inject, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { firstValueFrom, timeout } from 'rxjs';
 import { ExpenseResponse } from '../api/model/expenseResponse';
@@ -66,6 +66,7 @@ import { MAX_CENTS, formatEuro, parseEuro } from '../shared/money';
   </section>`
 })
 export class Expenses {
+  readonly changed = output<void>();
   private readonly session = inject(Session);
   private readonly http = inject(HttpClient);
   private readonly owner = this.session.userId();
@@ -91,7 +92,7 @@ export class Expenses {
   constructor() {
     effect(() => { if (this.session.userId() !== this.owner || this.session.generation() !== this.version) this.clear(); });
     inject(DestroyRef).onDestroy(() => { this.active = false; this.clear(); });
-    void this.load();
+    void this.load(false);
   }
   @HostListener('window:online') connected(): void { this.online.set(true); }
   @HostListener('window:offline') disconnected(): void { this.online.set(false); }
@@ -100,7 +101,7 @@ export class Expenses {
     this.saved.set(false); this.failed.set(false); this.status.set('');
     (field === 'name' ? this.nameError : this.amountError).set('');
   }
-  protected async load(): Promise<void> {
+  protected async load(notify = true): Promise<void> {
     if (!this.accepts() || this.loading() || this.pending()) return;
     this.items.set([]); this.loaded.set(false); this.loading.set(true); this.loadFailed.set(false);
     try {
@@ -108,7 +109,7 @@ export class Expenses {
       if (!this.accepts()) return;
       if (!Array.isArray(result) || !result.every(value => this.valid(value)) || new Set(result.map(value => value.id)).size !== result.length)
         throw new Error('Ungültige Ausgabenantwort.');
-      this.items.set(this.sort(result)); this.loaded.set(true);
+      this.items.set(this.sort(result)); this.loaded.set(true); if (notify) this.changed.emit();
     } catch { if (this.accepts()) this.loadFailed.set(true); }
     finally { if (this.accepts()) this.loading.set(false); }
   }
@@ -129,7 +130,7 @@ export class Expenses {
       if (!this.valid(result) || result.name !== name || result.amountCents !== amountCents || this.items().some(value => value.id === result.id))
         throw new Error('Speicherung nicht bestätigt.');
       this.items.set(this.sort([...this.items(), result])); this.name = ''; this.amount = '';
-      this.status.set('Deine Ausgabe wurde gespeichert.'); this.saved.set(true); this.focus('expense-name');
+      this.status.set('Deine Ausgabe wurde gespeichert.'); this.saved.set(true); this.changed.emit(); this.focus('expense-name');
     } catch (failure) {
       if (!this.accepts()) return;
       this.failed.set(true);

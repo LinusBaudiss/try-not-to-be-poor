@@ -23,3 +23,9 @@ function exactCents(amountCents: number): bigint {
   if (!Number.isSafeInteger(amountCents) || amountCents < 0 || amountCents > MAX_CENTS) throw new RangeError('Ungültiger Centbetrag.');
   return BigInt(amountCents);
 }
+
+/** Signierte Anzeige; Eingaben bleiben ausschließlich nichtnegativ. */
+export function formatSignedEuro(amountCents: number): string {
+  if (!Number.isSafeInteger(amountCents) || Math.abs(amountCents) > MAX_CENTS) throw new RangeError('Ungültiger Centbetrag.');
+  return `${amountCents < 0 ? '−' : ''}${formatEuro(Math.abs(amountCents))}`;
+}

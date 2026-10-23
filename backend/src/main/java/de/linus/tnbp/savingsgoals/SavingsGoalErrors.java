@@ -1,6 +1,7 @@
 package de.linus.tnbp.savingsgoals;
 
 import de.linus.tnbp.contract.model.SavingsGoalError;
+import de.linus.tnbp.contract.model.SavingsGoalNotFoundError;
 import java.util.Map;
 import java.util.LinkedHashMap;
 import org.slf4j.LoggerFactory;
@@ -22,6 +23,11 @@ import tools.jackson.core.JacksonException;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @RestControllerAdvice(assignableTypes = SavingsGoalController.class)
 class SavingsGoalErrors {
+    @ExceptionHandler({SavingsGoalService.NotFound.class, org.springframework.web.method.annotation.MethodArgumentTypeMismatchException.class})
+    ResponseEntity<SavingsGoalNotFoundError> missing() {
+        return ResponseEntity.status(404).header("Cache-Control", "no-store").body(new SavingsGoalNotFoundError(
+            SavingsGoalNotFoundError.CodeEnum.SAVINGS_GOAL_NOT_FOUND, "Das Sparziel wurde nicht gefunden.", Map.of()));
+    }
     @ExceptionHandler(SavingsGoalService.InvalidGoal.class)
     ResponseEntity<SavingsGoalError> invalid(SavingsGoalService.InvalidGoal failure) {
         return bad(SavingsGoalError.CodeEnum.VALIDATION_FAILED, "Prüfe das Sparziel.", failure.fields);
@@ -44,6 +50,7 @@ class SavingsGoalErrors {
         return bad(SavingsGoalError.CodeEnum.VALIDATION_FAILED, "Die Anfrage konnte nicht verarbeitet werden. Prüfe die Eingaben.", fields);
     }
     private void field(Map<String, String> fields, String name) {
+        if ("progressCents".equals(name)) fields.put("progressCents", "Gib einen Fortschritt von 0 bis 90.071.992.547.409,91 Euro in ganzen Cent ein.");
         if ("name".equals(name)) fields.put("name", "Gib einen Namen als Text ein.");
         if ("targetDate".equals(name)) fields.put("targetDate", "Gib ein gültiges Kalenderdatum im Format JJJJ-MM-TT ein.");
         if ("targetAmountCents".equals(name)) fields.put("targetAmountCents", "Gib einen positiven Betrag bis 90.071.992.547.409,91 Euro in ganzen Cent ein.");

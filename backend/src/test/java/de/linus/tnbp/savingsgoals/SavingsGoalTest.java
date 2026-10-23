@@ -24,4 +24,16 @@ class SavingsGoalTest {
         org.mockito.Mockito.verifyNoInteractions(repository, manager);
         assertThat(SavingsGoalService.trimName(" \u00a0\uFEFFReise 🧳\u2003 ")).isEqualTo("Reise 🧳");
     }
+    @Test void ungueltigerFortschrittWirdVorTransaktionUndDatenbankAbgewiesen() {
+        var repository = org.mockito.Mockito.mock(SavingsGoalRepository.class);
+        var manager = org.mockito.Mockito.mock(org.springframework.transaction.PlatformTransactionManager.class);
+        var service = new SavingsGoalService(repository, manager);
+        for (Long value : new Long[] {null, -1L, 9007199254740992L, Long.MIN_VALUE, Long.MAX_VALUE}) {
+            assertThatThrownBy(() -> service.progress(UUID.randomUUID(), UUID.randomUUID(), value))
+                .isInstanceOfSatisfying(SavingsGoalService.InvalidGoal.class,
+                    failure -> assertThat(failure.fields).containsOnlyKeys("progressCents"));
+        }
+        org.mockito.Mockito.verifyNoInteractions(repository, manager);
+    }
+
 }

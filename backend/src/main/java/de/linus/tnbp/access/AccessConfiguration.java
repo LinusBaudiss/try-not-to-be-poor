@@ -49,7 +49,8 @@ class AccessConfiguration {
                     jakarta.servlet.http.HttpServletResponse response, jakarta.servlet.FilterChain chain)
                     throws java.io.IOException, jakarta.servlet.ServletException {
                 String path = request.getServletPath();
-                if (path.startsWith("/api/v1/expense-budget/") || path.equals("/api/v1/savings-goals")) response.setHeader("Cache-Control", "no-store");
+                if (path.startsWith("/api/v1/expense-budget/") || path.equals("/api/v1/savings-goals")
+                    || path.matches("/api/v1/savings-goals/[^/]+/progress")) response.setHeader("Cache-Control", "no-store");
                 if (path.startsWith("/api/v1/access/") && !path.equals("/api/v1/access/registrations")) {
                     response.setHeader("Cache-Control", "no-store");
                     if (request.getMethod().equals("POST")) {
@@ -77,7 +78,8 @@ class AccessConfiguration {
                 .ignoringRequestMatchers("/api/v1/access/registrations")
                 // Diese Routen akzeptieren ausschließlich Bearer; Refresh-/CSRF-Cookies erteilen keinen Zugang.
                 .ignoringRequestMatchers(request -> (request.getMethod().equals("PUT")
-                    && request.getServletPath().equals("/api/v1/expense-budget/budget"))
+                    && (request.getServletPath().equals("/api/v1/expense-budget/budget")
+                        || request.getServletPath().matches("/api/v1/savings-goals/[^/]+/progress")))
                     || (request.getMethod().equals("POST")
                     && (request.getServletPath().equals("/api/v1/expense-budget/expenses")
                         || request.getServletPath().equals("/api/v1/savings-goals")))
@@ -89,7 +91,7 @@ class AccessConfiguration {
                     "/api/v1/access/refresh", "/api/v1/access/logout").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/access/csrf").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/access/me", "/api/v1/expense-budget/budget", "/api/v1/expense-budget/expenses", "/api/v1/expense-budget/month-summary", "/api/v1/savings-goals").authenticated()
-                .requestMatchers(HttpMethod.PUT, "/api/v1/expense-budget/budget").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/v1/expense-budget/budget", "/api/v1/savings-goals/*/progress").authenticated()
                 .requestMatchers(HttpMethod.POST, "/api/v1/expense-budget/expenses", "/api/v1/savings-goals").authenticated()
                 .requestMatchers(HttpMethod.PUT, "/api/v1/expense-budget/expenses/*").authenticated()
                 .requestMatchers(HttpMethod.DELETE, "/api/v1/expense-budget/expenses/*").authenticated()
@@ -103,7 +105,8 @@ class AccessConfiguration {
                         || request.getServletPath().equals("/api/v1/expense-budget/expenses")
                         || request.getServletPath().matches("/api/v1/expense-budget/expenses/[^/]+")
                         || request.getServletPath().equals("/api/v1/expense-budget/month-summary")
-                        || request.getServletPath().equals("/api/v1/savings-goals") ? 401 : 403))
+                        || request.getServletPath().equals("/api/v1/savings-goals")
+                        || request.getServletPath().matches("/api/v1/savings-goals/[^/]+/progress") ? 401 : 403))
                 .accessDeniedHandler((request, response, failure) -> SessionHttp.error(response, 403)))
             .requestCache(cache -> cache.disable())
             .formLogin(form -> form.disable())

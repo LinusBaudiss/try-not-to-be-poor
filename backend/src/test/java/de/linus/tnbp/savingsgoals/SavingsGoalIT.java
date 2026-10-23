@@ -226,4 +226,124 @@ class SavingsGoalIT {
         for (long value : new long[] {-1, 9007199254740992L}) assertThatThrownBy(() -> PostgresFixture.ADMIN.update("INSERT INTO savings_goals.goals (id, user_id, name, target_amount_cents, progress_cents) VALUES (?, ?, 'Ziel', 1, ?)", UUID.randomUUID(), first, value)).isInstanceOf(DataAccessException.class);
         assertThatThrownBy(() -> PostgresFixture.ADMIN.update("INSERT INTO savings_goals.goals (id, user_id, name, target_amount_cents) VALUES (?, ?, 'Unbekannt', 1)", UUID.randomUUID(), UUID.randomUUID())).isInstanceOf(DataAccessException.class);
     }
+    String goal(UUID user) throws Exception {
+        return JSON.readTree(call("POST", "{\"name\":\"Reise\",\"targetAmountCents\":10000,\"targetDate\":\"2028-02-29\"}", token(user)).body()).get("id").asText();
+    }
+    HttpResponse<String> progress(String id, String body, String bearer) throws Exception {
+        return call("PUT", body, bearer, "/" + id + "/progress");
+    }
+    @Test void fortschrittErsetztGesamtbetragIdempotentUndErhaeltAlleZielfelder() throws Exception {
+        String id = goal(first);
+        for (long value : new long[] {2000, 3000, 3000, 15000, 0, 9007199254740991L, 17}) {
+            var response = progress(id, "{\"progressCents\":" + value + "}", token(first));
+            assertThat(response.statusCode()).as(response.body()).isEqualTo(200);
+            var updated = JSON.readTree(response.body());
+            assertThat(updated.get("id").asText()).isEqualTo(id);
+            assertThat(updated.get("progressCents").asLong()).isEqualTo(value);
+            assertThat(updated.get("name").asText()).isEqualTo("Reise");
+            assertThat(updated.get("targetAmountCents").asLong()).isEqualTo(10000);
+            assertThat(updated.get("targetDate").asText()).isEqualTo("2028-02-29");
+            var loaded = JSON.readTree(call("GET", null, token(first)).body());
+            assertThat(loaded.size()).isEqualTo(1);
+            assertThat(loaded.get(0)).isEqualTo(updated);
+        }
+        var undated = JSON.readTree(save(first, 5000).body());
+        String undatedId = undated.get("id").asText();
+        assertThat(undated.path("targetDate").isNull() || undated.path("targetDate").isMissingNode()).isTrue();
+        for (long value : new long[] {1234, 1234, 0}) {
+            var response = progress(undatedId, "{\"progressCents\":" + value + "}", token(first));
+            assertThat(response.statusCode()).isEqualTo(200);
+            var updated = JSON.readTree(response.body());
+            assertThat(updated.get("id").asText()).isEqualTo(undatedId);
+            assertThat(updated.get("name")).isEqualTo(undated.get("name"));
+            assertThat(updated.get("targetAmountCents")).isEqualTo(undated.get("targetAmountCents"));
+            assertThat(updated.get("progressCents").asLong()).isEqualTo(value);
+            assertThat(updated.path("targetDate").isNull() || updated.path("targetDate").isMissingNode()).isTrue();
+            var loaded = JSON.readTree(call("GET", null, token(first)).body());
+            assertThat(loaded.size()).isEqualTo(2);
+            assertThat(loaded).anySatisfy(saved -> {
+                assertThat(saved.get("id").asText()).isEqualTo(undatedId);
+                assertThat(saved).isEqualTo(updated);
+                assertThat(saved.path("targetDate").isNull() || saved.path("targetDate").isMissingNode()).isTrue();
+            });
+        }
+    }
+    @Test void fortschrittPrueftRohJsonOhneMutationOderRundung() throws Exception {
+        String id = goal(first);
+        for (String value : List.of("null", "-1", "9007199254740992", "9223372036854775808", "1.01", "1.0", "1e2", "\"100\"", "true", "[]", "{}")) {
+            var rejected = progress(id, "{\"progressCents\":" + value + "}", token(first));
+            assertThat(rejected.statusCode()).as(value).isEqualTo(400); fields(rejected, "progressCents");
+        }
+        var missing = progress(id, "{}", token(first));
+        assertThat(missing.statusCode()).isEqualTo(400); fields(missing, "progressCents");
+        for (String field : List.of("id", "userId", "user_id", "name", "targetAmountCents", "targetDate"))
+            assertThat(progress(id, "{\"progressCents\":1,\"" + field + "\":1}", token(first)).statusCode()).as(field).isEqualTo(400);
+        for (String body : List.of("null", "{", "[]", "1"))
+            assertThat(progress(id, body, token(first)).statusCode()).isEqualTo(400);
+        assertThat(JSON.readTree(call("GET", null, token(first)).body()).get(0).get("progressCents").asLong()).isZero();
+    }
+    @Test void fortschrittTrenntKontenUndGibtIdentischeNeutraleNichtgefundenAntwort() throws Exception {
+        String id = goal(first), other = goal(second);
+        var foreign = progress(other, "{\"progressCents\":999}", token(first));
+        var missing = progress(UUID.randomUUID().toString(), "{\"progressCents\":999}", token(first));
+        assertThat(foreign.statusCode()).isEqualTo(404); assertThat(missing.statusCode()).isEqualTo(404);
+        assertThat(foreign.body()).isEqualTo(missing.body()).doesNotContain(other, second.toString());
+        assertThat(JSON.readTree(foreign.body()).get("code").asText()).isEqualTo("SAVINGS_GOAL_NOT_FOUND");
+        assertThat(progress("ungueltig", "{\"progressCents\":999}", token(first)).body()).isEqualTo(missing.body());
+        for (String bearer : Arrays.asList(null, "ungueltig"))
+            assertThat(progress(id, "{\"progressCents\":999}", bearer).statusCode()).isEqualTo(401);
+        var request = HttpRequest.newBuilder(URI.create("http://localhost:" + port + PATH + "/" + id + "/progress"))
+            .header("Cookie", "__Host-tnbp-refresh=synthetisch").header("Content-Type", "application/json")
+            .PUT(HttpRequest.BodyPublishers.ofString("{\"progressCents\":999}")).build();
+        assertThat(HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString()).statusCode()).isEqualTo(401);
+        assertThat(JSON.readTree(call("GET", null, token(second)).body()).get(0).get("progressCents").asLong()).isZero();
+    }
+    @Test void fortschrittBestaetigtCommitFehlerNichtUndVeraendertKeineDaten(CapturedOutput output) throws Exception {
+        String id = goal(first);
+        PostgresFixture.ADMIN.execute("CREATE FUNCTION savings_goals.reject_progress_commit() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'GeheimerFortschritt'; RETURN NEW; END $$");
+        PostgresFixture.ADMIN.execute("CREATE CONSTRAINT TRIGGER reject_progress_commit AFTER UPDATE ON savings_goals.goals DEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION savings_goals.reject_progress_commit()");
+        try {
+            var rejected = progress(id, "{\"progressCents\":876543210}", token(first));
+            assertThat(rejected.statusCode()).isEqualTo(500);
+            assertThat(rejected.body()).contains("SAVINGS_GOAL_UNAVAILABLE").doesNotContain("GeheimerFortschritt", "876543210", "Reise");
+            assertThat(JSON.readTree(call("GET", null, token(first)).body()).get(0).get("progressCents").asLong()).isZero();
+        } finally {
+            PostgresFixture.ADMIN.execute("DROP TRIGGER reject_progress_commit ON savings_goals.goals");
+            PostgresFixture.ADMIN.execute("DROP FUNCTION savings_goals.reject_progress_commit()");
+        }
+        assertThat(output.getAll()).contains("Sparzielanfrage fehlgeschlagen; Fehlerkategorie=DATENBANK").doesNotContain("GeheimerFortschritt", "876543210");
+    }
+    @Test void updateRechteBeschraenkenSpalteUndRlsAuchOhneSqlEigentuemerfilter() throws Exception {
+        String id = goal(first);
+        var runtime = new DriverManagerDataSource(PostgresFixture.URL, "tnbp_runtime", "runtime-test-only");
+        try (Connection connection = runtime.getConnection()) {
+            connection.setAutoCommit(false);
+            try (var statement = connection.createStatement()) {
+                assertThat(statement.executeUpdate("UPDATE savings_goals.goals SET progress_cents = 3")).isZero();
+                context(connection, second);
+                assertThat(statement.executeUpdate("UPDATE savings_goals.goals SET progress_cents = 3")).isZero();
+                context(connection, first);
+                assertThat(statement.executeUpdate("UPDATE savings_goals.goals SET progress_cents = 3")).isEqualTo(1);
+                connection.commit();
+                assertThat(statement.executeUpdate("UPDATE savings_goals.goals SET progress_cents = 4")).isZero();
+                connection.rollback();
+                for (String column : List.of("id", "user_id", "name", "target_amount_cents", "target_date")) {
+                    context(connection, first);
+                    assertThatThrownBy(() -> statement.executeUpdate("UPDATE savings_goals.goals SET " + column + " = " + column))
+                        .as(column).isInstanceOf(java.sql.SQLException.class);
+                    connection.rollback();
+                }
+                for (long value : new long[] {-1, 9007199254740992L}) {
+                    context(connection, first);
+                    assertThatThrownBy(() -> statement.executeUpdate("UPDATE savings_goals.goals SET progress_cents = " + value))
+                        .isInstanceOf(java.sql.SQLException.class);
+                    connection.rollback();
+                }
+            }
+        }
+        assertThat(JSON.readTree(call("GET", null, token(first)).body()).get(0).get("progressCents").asLong()).isEqualTo(3);
+        service.progress(first, UUID.fromString(id), 4L);
+        try (Connection connection = source.getConnection()) { assertThat(count(connection)).isZero(); }
+    }
+
 }

@@ -350,6 +350,42 @@ paths:
           $ref: '#/components/responses/SessionRejected'
         '500':
           $ref: '#/components/responses/SavingsGoalUnavailable'
+  /savings-goals/{id}/progress:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    put:
+      tags: [SavingsGoals]
+      operationId: putSavingsGoalProgress
+      summary: Gesamtfortschritt eines eigenen Sparziels ersetzen
+      description: Idempotenter Ersatz in ganzen EUR-Cent; übrige Zielfelder bleiben unverändert. Ausschließlich geprüftes Bearer-sub bestimmt den Eigentümer. Erfolg erst nach Commit.
+      security:
+        - AccessBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SavingsGoalProgressRequest'
+      responses:
+        '200':
+          description: Verbindlich ersetzt; no-store.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SavingsGoalResponse'
+        '400':
+          $ref: '#/components/responses/SavingsGoalInvalid'
+        '401':
+          $ref: '#/components/responses/SessionRejected'
+        '404':
+          $ref: '#/components/responses/SavingsGoalNotFound'
+        '500':
+          $ref: '#/components/responses/SavingsGoalUnavailable'
 components:
   securitySchemes:
     AccessBearer:
@@ -383,6 +419,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/SavingsGoalError'
+    SavingsGoalNotFound:
+      description: Sparziel nicht gefunden; identisch für fehlende und fremde IDs, no-store.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SavingsGoalNotFoundError'
     SavingsGoalUnavailable:
       description: Speicherung oder Lesen nicht bestätigt; neutraler Fehler, no-store.
       content:
@@ -456,6 +498,31 @@ components:
           format: date
           nullable: true
           description: Optionales striktes ISO-Kalenderdatum YYYY-MM-DD, Jahr 0001 bis 9999.
+    SavingsGoalProgressRequest:
+      type: object
+      additionalProperties: false
+      required: [progressCents]
+      properties:
+        progressCents:
+          type: integer
+          format: int64
+          minimum: 0
+          maximum: 9007199254740991
+          description: Neuer Gesamtfortschritt in ganzen EUR-Cent; keine Rundung oder Typumwandlung.
+    SavingsGoalNotFoundError:
+      type: object
+      additionalProperties: false
+      required: [code, message, fieldErrors]
+      properties:
+        code:
+          type: string
+          enum: [SAVINGS_GOAL_NOT_FOUND]
+        message:
+          type: string
+        fieldErrors:
+          type: object
+          additionalProperties:
+            type: string
     SavingsGoalResponse:
       type: object
       additionalProperties: false

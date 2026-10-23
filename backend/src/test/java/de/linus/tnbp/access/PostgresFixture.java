@@ -6,10 +6,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 /** Echte PostgreSQL-18.6-Instanz ausschließlich mit synthetischen Testdaten. */
-final class PostgresFixture {
-    static final EmbeddedPostgres POSTGRES = start();
-    static final String URL = "jdbc:postgresql://localhost:" + POSTGRES.getPort() + "/tnbp";
-    static final JdbcTemplate ADMIN = new JdbcTemplate(new DriverManagerDataSource(URL, "postgres", "postgres"));
+public final class PostgresFixture {
+    public static final EmbeddedPostgres POSTGRES = start();
+    public static final String URL = "jdbc:postgresql://localhost:" + POSTGRES.getPort() + "/tnbp";
+    public static final JdbcTemplate ADMIN = new JdbcTemplate(new DriverManagerDataSource(URL, "postgres", "postgres"));
 
     private static EmbeddedPostgres start() {
         try {
@@ -24,7 +24,7 @@ final class PostgresFixture {
         }
     }
 
-    static void configure(java.util.function.BiConsumer<String, String> property) {
+    public static void configure(java.util.function.BiConsumer<String, String> property) {
         property.accept("spring.datasource.url", URL);
         property.accept("spring.datasource.username", "tnbp_runtime");
         property.accept("spring.datasource.password", "runtime-test-only");

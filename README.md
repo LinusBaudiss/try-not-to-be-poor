@@ -1,9 +1,9 @@
 # Try Not to Be Poor
 
-Private Ausgabenübersicht. Implementiert sind Kontoanlage und Sitzungen (Story 1.1/1.2): ein eigenes Konto mit
+Private Ausgabenübersicht. Implementiert sind Kontoanlage, Sitzungen und Monatsbudget (Story 1.1–1.3): ein eigenes Konto mit
 E-Mail und Passwort über einen aktiven Registrierungslink anlegen. Jede Person
 mit diesem Link kann ein unabhängiges Konto erstellen. Eine Registrierung meldet
-nicht an. Danach führt die Anmeldung zur geschützten Ansicht „Monat“, zunächst ohne Finanzwerte.
+nicht an. Danach führt die Anmeldung zur geschützten Ansicht „Monat“ mit dem persönlichen fortlaufenden Monatsbudget.
 
 ## Voraussetzungen
 
@@ -50,7 +50,7 @@ Die Datenbank ist nur auf `127.0.0.1:5432` gebunden. Das Initialisierungsskript
 legt `tnbp_migrator` und `tnbp_runtime` mit getrennten Kennwörtern an. Die
 Laufzeitrolle ist weder Superuser noch Tabellenbesitzer und besitzt kein
 `BYPASSRLS`. Sie darf Konten einfügen, die für Anmeldung notwendigen Spalten lesen und Sitzungsfamilien/Tokenhistorie pflegen; ein Startcheck lehnt
-privilegierte Laufzeitrollen ab. Flyway verwendet ausschließlich die
+privilegierte Laufzeitrollen ab. Budgetzeilen werden zusätzlich durch SQL-Nutzerfilter und erzwungene PostgreSQL-RLS geschützt; jeder Budgetzugriff setzt `app.user_id` ausschließlich transaktionslokal aus dem geprüften JWT-`sub`. Ohne Kontext sind keine Zeilen sichtbar oder schreibbar. Die Laufzeitrolle darf Budgetbeträge lesen, anlegen und ändern, jedoch keine Budgetzeilen löschen oder Eigentümer/Monate ändern. Flyway verwendet ausschließlich die
 Migrationsrolle. Der benannte Compose-Datenträger erhält Konten bei Neustarts.
 Geänderte Kennwörter in der lokalen Datei ändern keine bereits initialisierte
 Datenbank; Rollenkennwörter müssen dann gezielt in PostgreSQL angepasst werden.
@@ -189,6 +189,35 @@ bei Sitzungsende und Kontowechsel alle persönlichen Speicherwerte und schließt
 die persönliche Ansicht. Laufende Cookie-Mutationen werden vor Logout beendet,
 damit eine späte Refreshantwort die Abmeldung oder einen bereits eingetretenen Sitzungsablauf nicht rückgängig macht. Kontowechsel und Sitzungsende schließen persönliche Ansichten auch in anderen offenen Tabs über BroadcastChannel; dabei werden keine Geheimnisse übertragen.
 
+## Monatsbudget verwenden
+
+Nach der Anmeldung unter „Monat“ den Betrag in **Euro ohne Tausendertrennzeichen**
+eingeben, z. B. `1200,50` oder `1200.50`, und „Budget speichern“ wählen.
+Höchstens zwei Nachkommastellen sind erlaubt; es wird niemals gerundet.
+Der zulässige Bereich ist `0` bis `90071992547409,91` Euro
+(`0…9007199254740991` ganze Cent). Auch der Maximalbetrag wird exakt deutsch
+formatiert. „Noch kein Monatsbudget“ unterscheidet sich von einem gespeicherten
+Nullbudget (`0,00 €`).
+
+Der Betrag gilt ab dem laufenden **Berlin-Kalendermonat** und wird in Folgemonate
+übernommen. Änderungen wirken sofort im laufenden Monat. Pro Nutzer und Monat
+wird ein Eintrag angelegt beziehungsweise aktualisiert; frühere Monatswerte
+bleiben erhalten. Ausgaben, Restbudget und Budgetlöschung folgen in späteren
+Stories.
+
+Die Anzeige bestätigt erst eine erfolgreich abgeschlossene Speicherung.
+Währenddessen ist Doppelsenden gesperrt. Bei Fehlern und offline bleibt der
+Entwurf im offenen Tab erhalten; offline ist Speichern blockiert. Bei einer
+verlorenen Antwort kann der Server bereits gespeichert haben. Ein bewusster
+Retry setzt denselben Monatswert erneut. Neuladen lädt den bestätigten
+Serverbestand; Entwürfe werden nicht im Browser gespeichert. Abmeldung,
+Sitzungsende und Kontowechsel verwerfen Beträge und Entwürfe sowie später
+eintreffende Antworten.
+
+`GET`/`PUT /api/v1/expense-budget/budget` akzeptieren ausschließlich ein
+verifiziertes Bearer-JWT; Cookies und Eigentümerangaben bestimmen keinen
+Budgetzugriff. Alle Finanzantworten tragen `Cache-Control: no-store`.
+
 ## Prüfen
 
 ```bash
@@ -209,19 +238,24 @@ Erstvertrag. Bei vorhandenem Basisvertrag blockiert oasdiff 1.30.0 mit
 `--fail-on ERR` inkompatible Änderungen; diese benötigen `/api/v2`. CI verwendet
 die PR-Basis beziehungsweise den vorherigen Push-Commit.
 
-`verify` führt die Unitfälle und die `RegistrationIT`-/`SessionIT`-HTTP-Tests mit einer echten,
+`verify` führt die Unitfälle und die `RegistrationIT`-/`SessionIT`-/`BudgetIT`-HTTP-Tests mit einer echten,
 temporären PostgreSQL-18.6-Instanz aus. Dafür wird **kein Docker** benötigt.
 Die Binärdateien werden als gepinnte Maven-Testabhängigkeiten geladen; PostgreSQL
 muss als unprivilegierter Benutzer laufen. Die Tests verwenden die getrennten
 Migrations-/Laufzeitrollen. Sie prüfen unter anderem die exakte Ablaufgrenze,
 normalisierte parallele Duplikate, Feldfehler unabhängig vom Kontobestand,
 Unicode/NFC, vollständig verifizierbare gesalzene Hashes, Commitfehler, Logs und
-Persistenz über Linkrotation und API-Neustart.
+Persistenz über Linkrotation und API-Neustart. Budgetfälle prüfen zusätzlich
+Centgrenzen und JSON-Typen, Berlin-Monatswechsel, zwei Konten, fehlende/ungültige
+JWTs, Commitfehler sowie direkte RLS-/Rechteprüfungen und Kontextfreiheit nach
+Transaktionsende.
 
 Playwright startet selbst eine temporäre Test-API mit PostgreSQL und den
 HTTPS-Frontend-Entwicklungsserver. Die Ports **8080 und 4200 müssen frei sein**.
 Die Tests benutzen ausschließlich synthetische Konten und ein festes Testgeheimnis.
-Browserfälle prüfen echten HTTP-Zugriff, Fehlerretry, Offlinezustand,
+Browserfälle prüfen zusätzlich die exakte Budgeteingabe/-ausgabe bis zum Maximum,
+Nullbudget, Reload, zurückgehaltene/verlorene Antworten und Entwurfsverwerfung. Sie
+prüfen echten HTTP-Zugriff, Fehlerretry, Offlinezustand,
 Doppelsendesperre, Browserpersistenz und axe sowie Tastatur/200-%-Text bei
 320, 390, 768 und 1280 CSS-Pixeln. Mit
 `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/google-chrome` lässt sich ein

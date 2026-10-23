@@ -1,8 +1,7 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, DestroyRef, HostListener, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { firstValueFrom, timeout } from 'rxjs';
 import { Session } from '../session/session';
 
 @Component({
@@ -96,43 +95,4 @@ export class Login {
     } finally { this.pending.set(false); }
   }
   private focus(id: string): void { requestAnimationFrame(() => document.getElementById(id)?.focus()); }
-}
-
-@Component({
-  selector: 'app-month',
-  template: `<section class="auth-card" aria-labelledby="month-title">
-    <h1 id="month-title">Monat</h1>
-    <p role="status">{{ identityStatus() }}</p>
-    <p>Budget und Ausgaben sind hier noch nicht verfügbar.</p>
-    @if (identityFailed()) { <button type="button" (click)="verifyIdentity()">Zugang erneut prüfen</button> }
-    <button type="button" (click)="session.logout()">Abmelden</button>
-  </section>`
-})
-export class Month {
-  protected readonly session = inject(Session);
-  private readonly http = inject(HttpClient);
-  protected readonly identityStatus = signal('Sitzung wird geprüft …');
-  protected readonly identityFailed = signal(false);
-  private active = true;
-
-  constructor() {
-    inject(DestroyRef).onDestroy(() => { this.active = false; });
-    void this.verifyIdentity();
-  }
-
-  async verifyIdentity(): Promise<boolean> {
-    try {
-      const identity = await firstValueFrom(this.http.get<{ userId: string }>('/api/v1/access/me').pipe(timeout(30_000)));
-      if (!this.active || identity.userId !== this.session.userId()) return false;
-      this.identityFailed.set(false);
-      this.identityStatus.set('Du bist angemeldet. Deine persönliche Monatsübersicht ist geöffnet.');
-      return true;
-    } catch {
-      if (this.active) {
-        this.identityFailed.set(true);
-        this.identityStatus.set('Der Zugang konnte nicht geprüft werden.');
-      }
-      return false;
-    }
-  }
 }

@@ -43,3 +43,11 @@ button:disabled { cursor: default; opacity: .7; }
 
 a { display: inline-flex; align-items: center; min-height: 44px; padding: .5rem 0; margin-top: 1rem; color: var(--primary); overflow-wrap: anywhere; }
 .secondary { margin-top: 1rem; }
+
+h2 { font-size: 1.25rem; line-height: 1.3; margin: 0 0 1rem; overflow-wrap: anywhere; }
+.budget-value { margin-bottom: 1rem; }
+.money { display: block; font-size: 1.5rem; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.budget-scope { margin-bottom: 1.5rem; }
+#budget-status { margin-top: 1rem; }
+#budget-status:empty { margin: 0; }
+#budget-status:focus { outline: 3px solid var(--focus-ring); outline-offset: 3px; }

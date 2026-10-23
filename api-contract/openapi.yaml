@@ -2,7 +2,7 @@ openapi: 3.0.4
 info:
   title: Try Not to Be Poor API
   version: 1.0.0
-  description: Persönliche Kontoanlage. Eine Registrierung erzeugt keine Sitzung.
+  description: Persönliche Kontoanlage, Sitzungen und fortlaufendes Monatsbudget. Eine Registrierung erzeugt keine Sitzung.
 servers:
   - url: /api/v1
 paths:
@@ -126,6 +126,54 @@ paths:
                 $ref: '#/components/schemas/SessionIdentity'
         '401':
           $ref: '#/components/responses/SessionRejected'
+  /expense-budget/budget:
+    get:
+      tags: [Budget]
+      operationId: getBudget
+      summary: Eigenes fortlaufendes Budget für den aktuellen Berlin-Kalendermonat lesen
+      security:
+        - AccessBearer: []
+      responses:
+        '200':
+          description: no-store; null bedeutet noch kein Budget, 0 ein gesetztes Nullbudget.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BudgetResponse'
+        '401':
+          $ref: '#/components/responses/SessionRejected'
+        '500':
+          $ref: '#/components/responses/BudgetUnavailable'
+    put:
+      tags: [Budget]
+      operationId: putBudget
+      summary: Eigenes Budget ab aktuellem Berlin-Monat fortlaufend festlegen oder ändern
+      description: Ausschließlich Bearer-Authentifizierung; Cookies bestimmen weder Zugang noch Eigentümer. Frühere Monate bleiben erhalten. Keine Budgetlöschung.
+      security:
+        - AccessBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BudgetRequest'
+      responses:
+        '200':
+          description: Erst nach Commit bestätigt; no-store.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BudgetResponse'
+        '400':
+          description: Ungültige Eingabe, unveränderter Bestand; no-store.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BudgetError'
+        '401':
+          $ref: '#/components/responses/SessionRejected'
+        '500':
+          $ref: '#/components/responses/BudgetUnavailable'
 components:
   securitySchemes:
     AccessBearer:
@@ -153,6 +201,12 @@ components:
         type: string
       description: Spring-Security-CSRF-Token aus GET /access/csrf; nur im Arbeitsspeicher halten.
   responses:
+    BudgetUnavailable:
+      description: Speicherung oder Lesen nicht bestätigt; neutraler Fehler, no-store.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BudgetError'
     SessionCreated:
       description: Erst nach Commit; no-store. Set-Cookie rotiert __Host-tnbp-refresh (HttpOnly; Secure; SameSite=Strict; Path=/; kein Domain).
       headers:
@@ -182,6 +236,42 @@ components:
           schema:
             $ref: '#/components/schemas/SessionError'
   schemas:
+    BudgetRequest:
+      type: object
+      additionalProperties: false
+      required: [amountCents]
+      properties:
+        amountCents:
+          type: integer
+          format: int64
+          minimum: 0
+          maximum: 9007199254740991
+          description: Ganze EUR-Cent; Strings, Bruchteile und Überlauf werden ohne Rundung abgelehnt.
+    BudgetResponse:
+      type: object
+      additionalProperties: false
+      required: [amountCents]
+      properties:
+        amountCents:
+          type: integer
+          format: int64
+          nullable: true
+          minimum: 0
+          maximum: 9007199254740991
+    BudgetError:
+      type: object
+      additionalProperties: false
+      required: [code, message, fieldErrors]
+      properties:
+        code:
+          type: string
+          enum: [VALIDATION_FAILED, BUDGET_UNAVAILABLE]
+        message:
+          type: string
+        fieldErrors:
+          type: object
+          additionalProperties:
+            type: string
     CsrfResponse:
       type: object
       additionalProperties: false

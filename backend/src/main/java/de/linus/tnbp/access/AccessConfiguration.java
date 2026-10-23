@@ -22,7 +22,12 @@ class AccessConfiguration {
         return builder -> builder.withCoercionConfig(String.class, coercion -> coercion
             .setCoercion(CoercionInputShape.Integer, CoercionAction.Fail)
             .setCoercion(CoercionInputShape.Float, CoercionAction.Fail)
-            .setCoercion(CoercionInputShape.Boolean, CoercionAction.Fail));
+            .setCoercion(CoercionInputShape.Boolean, CoercionAction.Fail))
+            .withCoercionConfig(Long.class, coercion -> coercion
+                .setCoercion(CoercionInputShape.String, CoercionAction.Fail)
+                .setCoercion(CoercionInputShape.Float, CoercionAction.Fail)
+                .setCoercion(CoercionInputShape.Boolean, CoercionAction.Fail)
+                .setCoercion(CoercionInputShape.EmptyString, CoercionAction.Fail));
     }
 
     @Bean
@@ -44,6 +49,7 @@ class AccessConfiguration {
                     jakarta.servlet.http.HttpServletResponse response, jakarta.servlet.FilterChain chain)
                     throws java.io.IOException, jakarta.servlet.ServletException {
                 String path = request.getServletPath();
+                if (path.startsWith("/api/v1/expense-budget/")) response.setHeader("Cache-Control", "no-store");
                 if (path.startsWith("/api/v1/access/") && !path.equals("/api/v1/access/registrations")) {
                     response.setHeader("Cache-Control", "no-store");
                     if (request.getMethod().equals("POST")) {
@@ -68,19 +74,24 @@ class AccessConfiguration {
                 .sessionAuthenticationStrategy(noSessionAuthentication))
             .csrf(csrf -> csrf.csrfTokenRepository(csrfRepository)
                 .sessionAuthenticationStrategy(noSessionAuthentication)
-                .ignoringRequestMatchers("/api/v1/access/registrations"))
+                .ignoringRequestMatchers("/api/v1/access/registrations")
+                // Diese Route akzeptiert ausschließlich Bearer; Refresh-/CSRF-Cookies erteilen keinen Zugang.
+                .ignoringRequestMatchers(request -> request.getMethod().equals("PUT")
+                    && request.getServletPath().equals("/api/v1/expense-budget/budget")))
             .addFilterBefore(origin, org.springframework.security.web.csrf.CsrfFilter.class)
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.POST, "/api/v1/access/registrations", "/api/v1/access/login",
                     "/api/v1/access/refresh", "/api/v1/access/logout").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/access/csrf").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/v1/access/me").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/v1/access/me", "/api/v1/expense-budget/budget").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/v1/expense-budget/budget").authenticated()
                 .anyRequest().denyAll())
             .oauth2ResourceServer(oauth -> oauth.jwt(config -> config.decoder(jwt))
                 .authenticationEntryPoint((request, response, failure) -> SessionHttp.error(response, 401)))
             .exceptionHandling(errors -> errors
                 .authenticationEntryPoint((request, response, failure) -> SessionHttp.error(response,
-                    request.getServletPath().equals("/api/v1/access/me") ? 401 : 403))
+                    request.getServletPath().equals("/api/v1/access/me")
+                        || request.getServletPath().equals("/api/v1/expense-budget/budget") ? 401 : 403))
                 .accessDeniedHandler((request, response, failure) -> SessionHttp.error(response, 403)))
             .requestCache(cache -> cache.disable())
             .formLogin(form -> form.disable())

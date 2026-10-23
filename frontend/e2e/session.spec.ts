@@ -21,7 +21,7 @@ async function login(page: Page, email: string): Promise<void> {
 test('echte Secure-Cookies, CSRF, Reload und Logout; persönliche Werte bleiben im Arbeitsspeicher', async ({ page, context, request }) => {
   const email = await account(request);
   await login(page, email);
-  await expect(page.getByText('Budget und Ausgaben sind hier noch nicht verfügbar.')).toBeVisible();
+  await expect(page.getByText('Noch kein Monatsbudget festgelegt. Lege deinen fortlaufenden Betrag fest.')).toBeVisible();
   const cookies = await context.cookies();
   expect(cookies.map(cookie => cookie.name).sort()).toEqual(['__Host-tnbp-csrf', '__Host-tnbp-refresh']);
   for (const cookie of cookies) {

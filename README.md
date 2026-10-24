@@ -1,9 +1,23 @@
 # Try Not to Be Poor
 
-Private Ausgabenübersicht. Implementiert sind Kontoanlage, Sitzungen und Monatsbudget (Story 1.1–1.3): ein eigenes Konto mit
-E-Mail und Passwort über einen aktiven Registrierungslink anlegen. Jede Person
-mit diesem Link kann ein unabhängiges Konto erstellen. Eine Registrierung meldet
-nicht an. Danach führt die Anmeldung zur geschützten Ansicht „Monat“ mit dem persönlichen fortlaufenden Monatsbudget.
+Private Ausgabenübersicht mit fortlaufendem Monatsbudget und persönlichen
+Sparzielen, vorrangig für Smartphones. Implementiert sind:
+
+- Kontoanlage über einen aktiven Registrierungslink, Anmeldung, Sitzungserneuerung und Abmeldung.
+- Fortlaufendes Monatsbudget und Restbudget für den aktuellen Kalendermonat nach `Europe/Berlin`.
+- Ausgaben erfassen, die Historie aller Monate ansehen sowie eigene Einträge bearbeiten und löschen.
+- Sparziele mit optionalem Zieldatum anlegen, ihren Gesamtfortschritt aktualisieren sowie Ziele bearbeiten und löschen.
+
+Jede Person mit dem Registrierungslink kann ein unabhängiges Konto mit E-Mail
+und Passwort erstellen und sieht ausschließlich die eigenen Daten. Eine
+Registrierung meldet nicht an. Nach der Anmeldung öffnet sich „Monat“;
+„Sparziele“ ist über die Hauptnavigation erreichbar.
+
+Laut [Sprintstatus](_bmad-output/implementation-artifacts/sprint-status.yaml)
+sind beide Epics und alle neun Stories (1.1–1.6 und 2.1–2.3) `done`.
+Die Retrospektiven sind noch offen und optional. Die Implementierung des
+geplanten Funktionsumfangs ist abgeschlossen; die
+[Voraussetzungen für Produktivbetrieb](#vor-echten-nutzerdaten) sind noch offen.
 
 ## Voraussetzungen
 
@@ -23,8 +37,8 @@ generiert, nicht von Hand geändert oder versioniert.
 
 ## Lokal starten
 
-Nur synthetische Daten verwenden. Produktionsdeployment und echte Nutzerdaten
-sind nicht Teil dieser Story. Vor echten Nutzerdaten müssen Datenschutz und
+Nur synthetische Daten verwenden. Eine Produktionskonfiguration ist noch nicht
+vorhanden; `deploy/compose.local.yaml` startet nur PostgreSQL. Vor echten Nutzerdaten müssen Datenschutz und
 Betrieb geklärt sowie verschlüsselte Backups außerhalb des VPS und eine geprüfte
 Wiederherstellung vorhanden sein.
 
@@ -50,8 +64,19 @@ Die Datenbank ist nur auf `127.0.0.1:5432` gebunden. Das Initialisierungsskript
 legt `tnbp_migrator` und `tnbp_runtime` mit getrennten Kennwörtern an. Die
 Laufzeitrolle ist weder Superuser noch Tabellenbesitzer und besitzt kein
 `BYPASSRLS`. Sie darf Konten einfügen, die für Anmeldung notwendigen Spalten lesen und Sitzungsfamilien/Tokenhistorie pflegen; ein Startcheck lehnt
-privilegierte Laufzeitrollen ab. Budgetzeilen werden zusätzlich durch SQL-Nutzerfilter und erzwungene PostgreSQL-RLS geschützt; jeder Budgetzugriff setzt `app.user_id` ausschließlich transaktionslokal aus dem geprüften JWT-`sub`. Ohne Kontext sind keine Zeilen sichtbar oder schreibbar. Die Laufzeitrolle darf Budgetbeträge lesen, anlegen und ändern, jedoch keine Budgetzeilen löschen oder Eigentümer/Monate ändern. Flyway verwendet ausschließlich die
-Migrationsrolle. Der benannte Compose-Datenträger erhält Konten bei Neustarts.
+privilegierte Laufzeitrollen ab. Budgets, Ausgaben und Sparziele werden zusätzlich
+durch SQL-Nutzerfilter und erzwungene PostgreSQL-RLS geschützt; jeder Finanzzugriff
+setzt `app.user_id` ausschließlich transaktionslokal aus dem geprüften JWT-`sub`.
+Ohne Kontext sind keine Finanzzeilen sichtbar oder schreibbar. Die Laufzeitrolle
+darf Budgetbeträge lesen, anlegen und ändern, jedoch keine Budgetzeilen löschen
+oder Eigentümer/Monate ändern. Ausgaben dürfen angelegt, gelesen, gelöscht und
+in Name/Betrag geändert werden; Eigentümer und Erfassungsdatum bleiben geschützt.
+Sparziele dürfen angelegt, gelesen, gelöscht sowie in Name, Zielbetrag,
+Zieldatum und Fortschritt geändert werden; Ziel- und Fortschrittsänderungen
+schreiben nur ihre jeweiligen Felder. Flyway verwendet ausschließlich die
+Migrationsrolle und führt die versionierten Migrationen unter
+`backend/src/main/resources/db/migration/` aus. Der benannte Compose-Datenträger
+erhält Konten und Finanzdaten bei Neustarts.
 Geänderte Kennwörter in der lokalen Datei ändern keine bereits initialisierte
 Datenbank; Rollenkennwörter müssen dann gezielt in PostgreSQL angepasst werden.
 
@@ -110,7 +135,7 @@ zeitkonstant. Für die Kontoanlage gibt es keine Einladungsliste.
 python3 scripts/create-registration-link.py --base-url https://localhost:4200
 
 # Optional früher ablaufen lassen (Datum mit Zeitzone innerhalb der nächsten 30 Tage).
-python3 scripts/create-registration-link.py --base-url https://localhost:4200 --expires-at 2026-10-23T18:00:00Z
+python3 scripts/create-registration-link.py --base-url https://localhost:4200 --expires-at "$(date -u -d '+7 days' +%Y-%m-%dT%H:%M:%SZ)"
 
 # Widerruf: Registrierung deaktivieren und die lokale Linkdatei entfernen.
 python3 scripts/create-registration-link.py --revoke
@@ -202,8 +227,14 @@ Nullbudget (`0,00 €`).
 Der Betrag gilt ab dem laufenden **Berlin-Kalendermonat** und wird in Folgemonate
 übernommen. Änderungen wirken sofort im laufenden Monat. Pro Nutzer und Monat
 wird ein Eintrag angelegt beziehungsweise aktualisiert; frühere Monatswerte
-bleiben erhalten. Ausgaben, Restbudget und Budgetlöschung folgen in späteren
-Stories.
+bleiben erhalten. Eine Budgetlöschung ist nicht implementiert.
+
+Die Monatsübersicht zeigt Budget, Summe der Ausgaben im laufenden Monat und
+`Restbudget = Monatsbudget − Monatsausgaben` aus einem gemeinsamen Datenstand.
+Ein negatives Ergebnis bleibt sichtbar und trägt den Hinweis „Budget überschritten“.
+Ohne festgelegtes Budget wird kein Restbetrag als Nullwert vorgetäuscht;
+Ausgaben lassen sich trotzdem erfassen. Bestätigte Budget- und Ausgabenänderungen
+aktualisieren die Übersicht.
 
 Die Anzeige bestätigt erst eine erfolgreich abgeschlossene Speicherung.
 Währenddessen ist Doppelsenden gesperrt. Bei Fehlern und offline bleibt der
@@ -217,6 +248,46 @@ eintreffende Antworten.
 `GET`/`PUT /api/v1/expense-budget/budget` akzeptieren ausschließlich ein
 verifiziertes Bearer-JWT; Cookies und Eigentümerangaben bestimmen keinen
 Budgetzugriff. Alle Finanzantworten tragen `Cache-Control: no-store`.
+
+## Ausgaben erfassen, bearbeiten und löschen
+
+Unter „Monat“ einen Namen und einen positiven Eurobetrag eingeben, z. B.
+`12,50`, und „Ausgabe speichern“ wählen. Komma oder Punkt sind erlaubt,
+Tausendertrennzeichen und mehr als zwei Nachkommastellen werden abgelehnt.
+Einzelbeträge und die Ausgabensumme jedes Monats dürfen höchstens
+`9007199254740991` Cent betragen; überschreitende Änderungen werden abgelehnt.
+Das Erfassungsdatum setzt der Server nach `Europe/Berlin`.
+
+„Alle Ausgaben“ zeigt die eigene Historie über alle Monate, mobil als
+beschriftete Einträge und auf breiten Ansichten als Tabelle. „Bearbeiten“ ändert
+Name und Betrag; das Erfassungsdatum bleibt erhalten. „Löschen“ verlangt eine
+Bestätigung und entfernt den Eintrag endgültig. Änderungen aktualisieren
+Historie und Monatsübersicht; nur Ausgaben des laufenden Monats fließen in das
+aktuelle Restbudget ein. „Ausgaben aktualisieren“ lädt die Historie erneut.
+
+## Sparziele verwenden
+
+Unter „Sparziele“ einen Namen und einen positiven Zielbetrag in Euro angeben.
+Das optionale Zieldatum wird als Kalenderdatum im Format `JJJJ-MM-TT` eingegeben;
+vergangene Daten sind erlaubt. Neue Ziele beginnen mit `0,00 €` Fortschritt.
+
+„Fortschritt aktualisieren“ setzt den **gesamten bisher erreichten Betrag** neu;
+es werden keine einzelnen Beiträge oder Verläufe gespeichert. Null und Beträge
+über dem Zielbetrag sind erlaubt. Die Anzeige nennt den tatsächlichen Betrag,
+Anteil und gegebenenfalls die Überschreitung; der Balken endet bei 100 %.
+Zielbetrag und Fortschritt dürfen jeweils höchstens `9007199254740991` Cent
+betragen. Es gelten dieselben Euro-Eingaberegeln wie beim Budget.
+
+„Bearbeiten“ ändert Name, Zielbetrag und Zieldatum; ein leeres Datumsfeld entfernt
+das Datum. Der Fortschritt bleibt dabei erhalten. „Löschen“ verlangt eine
+Bestätigung und entfernt das Ziel endgültig. „Sparziele aktualisieren“ lädt die
+eigenen Ziele erneut. Sparziele beeinflussen das Restbudget nicht.
+
+Für alle Finanzfunktionen gilt: Erfolg wird erst nach bestätigter Speicherung
+angezeigt. Bei Fehlern oder offline bleiben Entwürfe nur im offenen Tab erhalten;
+offline sind Mutationen gesperrt. Bei verlorenen Antworten kann eine Mutation
+bereits gespeichert sein; vor erneutem Anlegen den Serverbestand prüfen.
+Neuladen, Abmeldung, Sitzungsende und Kontowechsel verwerfen offene Entwürfe.
 
 ## Prüfen
 
@@ -238,7 +309,8 @@ Erstvertrag. Bei vorhandenem Basisvertrag blockiert oasdiff 1.30.0 mit
 `--fail-on ERR` inkompatible Änderungen; diese benötigen `/api/v2`. CI verwendet
 die PR-Basis beziehungsweise den vorherigen Push-Commit.
 
-`verify` führt die Unitfälle und die `RegistrationIT`-/`SessionIT`-/`BudgetIT`-HTTP-Tests mit einer echten,
+`verify` führt die Unitfälle und die HTTP-Integrationstests für Registrierung,
+Sitzungen, Budget, Ausgaben, Monatsübersicht und Sparziele mit einer echten,
 temporären PostgreSQL-18.6-Instanz aus. Dafür wird **kein Docker** benötigt.
 Die Binärdateien werden als gepinnte Maven-Testabhängigkeiten geladen; PostgreSQL
 muss als unprivilegierter Benutzer laufen. Die Tests verwenden die getrennten
@@ -248,13 +320,19 @@ Unicode/NFC, vollständig verifizierbare gesalzene Hashes, Commitfehler, Logs un
 Persistenz über Linkrotation und API-Neustart. Budgetfälle prüfen zusätzlich
 Centgrenzen und JSON-Typen, Berlin-Monatswechsel, zwei Konten, fehlende/ungültige
 JWTs, Commitfehler sowie direkte RLS-/Rechteprüfungen und Kontextfreiheit nach
-Transaktionsende.
+Transaktionsende. Ausgaben- und Sparzieltests decken außerdem Bearbeiten/Löschen,
+parallele Änderungen, Feldrechte und den Erhalt unveränderlicher Daten ab;
+Monatsübersichtstests prüfen die konsistente Berechnung einschließlich fehlendem
+Budget, Nullbudget und Überschreitung. Sparzielfälle prüfen Kalenderdaten,
+Gesamtfortschritt, Übererfüllung und die Trennung von Ziel- und Fortschrittsänderungen.
 
 Playwright startet selbst eine temporäre Test-API mit PostgreSQL und den
 HTTPS-Frontend-Entwicklungsserver. Die Ports **8080 und 4200 müssen frei sein**.
 Die Tests benutzen ausschließlich synthetische Konten und ein festes Testgeheimnis.
 Browserfälle prüfen zusätzlich die exakte Budgeteingabe/-ausgabe bis zum Maximum,
-Nullbudget, Reload, zurückgehaltene/verlorene Antworten und Entwurfsverwerfung. Sie
+Nullbudget, Ausgabenhistorie, Monatsübersicht und Monatswechsel sowie Sparzielanlage,
+Fortschritt, Bearbeiten und Löschen. Sie decken Reload,
+zurückgehaltene/verlorene/späte Antworten und Entwurfsverwerfung ab und
 prüfen echten HTTP-Zugriff, Fehlerretry, Offlinezustand,
 Doppelsendesperre, Browserpersistenz und axe sowie Tastatur/200-%-Text bei
 320, 390, 768 und 1280 CSS-Pixeln. Mit
@@ -264,7 +342,26 @@ nicht als Traceartefakt abgelegt werden. Fehler-Screenshots enthalten nur
 synthetische Testdaten. Automatische Zugänglichkeitsprüfungen ersetzen keine
 vollständige manuelle Screenreader-Prüfung.
 
-Die GitHub-Action prüft Vertrag, Backend und Browser getrennt. Sie ist lokal
-nachgebildet; ein tatsächlicher GitHub-Lauf erfolgt erst nach einem späteren Push.
+Die [GitHub-Action](.github/workflows/ci.yml) läuft bei Push und Pull Request mit
+separaten Jobs für Linkgenerator, Vertrag, Backend und Browser. Die oben genannten
+Befehle bilden diese Prüfungen lokal ab.
 
 Die Browserprüfungen prüfen die echten Secure-Cookies über HTTPS einschließlich Reload/Rotation, Logout, späten Antworten und axe. Playwright vertraut ausschließlich im Test dem lokalen Entwicklungszertifikat. Die Test-API hat einen festen synthetischen Schlüssel; Anwendungsschlüssel werden nicht eingebaut.
+
+## Vor echten Nutzerdaten
+
+Die lokale Anwendung ist für synthetische Daten vorgesehen. Vor dem Einsatz
+echter Finanzdaten sind laut [Architektur](_bmad-output/planning-artifacts/architecture/architecture-try-not-to-be-poor-2026-10-19/ARCHITECTURE-SPINE.md)
+und [Epics](_bmad-output/planning-artifacts/epics.md) noch folgende Punkte zu klären
+und umzusetzen:
+
+- Export, Löschung, Aufbewahrung und Kontowiederherstellung.
+- VPS-Größe, Domain/DNS, Monitoring und geschützte Produktionskonfiguration.
+- Backup-Ziel außerhalb des VPS, Verschlüsselung, Häufigkeit, Aufbewahrung und
+  Wiederherstellungsziele sowie ein tatsächlich getesteter Wiederherstellungsweg.
+- Bewertung von Anmeldedrosselung und begrenzter paralleler Argon2-Prüfung anhand
+  des Produktionslastprofils; siehe [zurückgestellte Arbeiten](_bmad-output/implementation-artifacts/deferred-work.md).
+
+Die geplante Produktionsform ist ein deutscher VPS mit Compose, Caddy, API und
+PostgreSQL; nur Caddy soll öffentlich erreichbar sein. Die dafür benötigte
+Produktionskonfiguration liegt noch nicht vor.

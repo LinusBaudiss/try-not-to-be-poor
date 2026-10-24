@@ -17,3 +17,7 @@ frontend/src/app/api/
 frontend/test-results/
 frontend/playwright-report/
 __pycache__/
+
+# Intellij
+
+.idea/

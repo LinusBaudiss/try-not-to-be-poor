@@ -1,175 +1,261 @@
 ---
 name: try-not-to-be-poor
 status: final
-updated: 2026-10-19
+updated: 2026-10-25
 sources:
   - '{planning_artifacts}/briefs/brief-try-not-to-be-poor-2026-10-18/brief.md'
   - '{planning_artifacts}/briefs/brief-try-not-to-be-poor-2026-10-18/addendum.md'
   - '{planning_artifacts}/prds/prd-try-not-to-be-poor-2026-10-19/prd.md'
+  - '{planning_artifacts}/prds/prd-try-not-to-be-poor-2026-10-19/addendum.md'
   - '{planning_artifacts}/prds/prd-try-not-to-be-poor-2026-10-19/reconcile-product-brief.md'
   - '{planning_artifacts}/prds/prd-try-not-to-be-poor-2026-10-19/reconcile-data-isolation-addendum.md'
   - '{planning_artifacts}/prds/prd-try-not-to-be-poor-2026-10-19/review-privacy-boundary.md'
   - '{planning_artifacts}/prds/prd-try-not-to-be-poor-2026-10-19/review-rubric.md'
+  - '{project-root}/_bmad-output/specs/spec-try-not-to-be-poor/SPEC.md'
+  - '{project-root}/_bmad-output/specs/spec-oberflaeche-und-monatsueberschuss/SPEC.md'
+  - '{project-root}/_bmad-output/specs/spec-oberflaeche-und-monatsueberschuss/monatsueberschuesse.md'
+  - '{project-root}/_bmad-output/specs/spec-oberflaeche-und-monatsueberschuss/brownfield.md'
+  - '{planning_artifacts}/architecture/architecture-try-not-to-be-poor-2026-10-19/ARCHITECTURE-SPINE.md'
+  - '{planning_artifacts}/epics.md'
 ---
 
 # Try Not to Be Poor — Experience Spine
 
 ## Foundation
 
-Responsive Browser-Erfahrung mit Mobile-first-Priorität. [ASSUMPTION] „Mobile“ bedeutet zunächst Nutzung der responsiven Website im mobilen Browser; eine native App ist nicht bestätigt. Ein UI-System ist nicht festgelegt. [DESIGN.md](./DESIGN.md) definiert die visuelle Identität; diese Spine legt das Verhalten fest.
+Responsive Website mit Priorität für Smartphones, ebenso am Rechner bedienbar. Ein UI-System ist nicht festgelegt. [DESIGN.md](./DESIGN.md) definiert die visuelle Identität; diese Spine legt Informationsarchitektur, Verhalten und Zustände fest. Die Oberfläche zeigt private manuelle Angaben und rechnerische Monatswirkungen; sie verifiziert keine Kontostände und überweist kein Geld.
 
-Das Produkt unterstützt Linus, Familie und Freunde dabei, persönliche Ausgaben manuell festzuhalten, das Monatsbudget zu überblicken und persönliche Sparziele zu pflegen. Alle Werte sind nutzerseitig eingegebene Angaben, keine verifizierten Kontostände. Mehr Geld am Monatsende ist ein gewünschtes, aber nicht garantiertes Ergebnis. Bei manueller Erfassung zählt auch der Erfassungsaufwand: [SM-C1 — Erfassungsaufwand](../../prds/prd-try-not-to-be-poor-2026-10-19/prd.md#L216).
+**Zielzustand und Quellenrangfolge:** Das [PRD vom 25.10.2026](../../prds/prd-try-not-to-be-poor-2026-10-19/prd.md), die [Änderungsspezifikation](../../../specs/spec-oberflaeche-und-monatsueberschuss/SPEC.md) und deren [Monatsfachregeln](../../../specs/spec-oberflaeche-und-monatsueberschuss/monatsueberschuesse.md) bestimmen den neuen Umfang. Das PRD übernimmt die Präzisierungen der [Architektur AD-7 bis AD-10](../../architecture/architecture-try-not-to-be-poor-2026-10-19/ARCHITECTURE-SPINE.md) zu Nullüberschüssen, gelöschten Zielen, Konsistenz und Übergang. Ältere Brief-, Review-, Epic- und Story-Aussagen gelten für unveränderte Regeln und als historische Herkunft. Zweiernavigation, ausschließlich manueller und nichtnegativer Fortschritt sowie frühere offene Betrags-/Lebenszyklusfragen sind abgelöst. Der [Quellenabgleich](./reconcile-update-2026-10-25.md) hält diese Übernahme fest.
 
-**Quellenrangfolge:** Das aktuelle PRD mit `status: final` ist maßgeblich für v1. Der Text FR-5 sagt ausdrücklich, dass die Ausgabenliste alle bisher erfassten Ausgaben einschließlich früherer Monate und das Erfassungsdatum umfasst ([PRD, FR-5](../../prds/prd-try-not-to-be-poor-2026-10-19/prd.md#L120)). Damit ist die gegenteilige, offenbar veraltete Unklarheit im [Review-Rubric](../../prds/prd-try-not-to-be-poor-2026-10-19/review-rubric.md#L61) für diese UX-Ausarbeitung erledigt. Ebenso ist der Statushinweis „draft“ im [Reconcile-Produktbrief](../../prds/prd-try-not-to-be-poor-2026-10-19/reconcile-product-brief.md#L5) gegenüber der aktuellen PRD-Frontmatter überholt.
+Die neue Navigation und Automatik sind noch umzusetzen. Dieses Dokument ist keine Produktionsfreigabe. Die technischen Freigaben aus PRD §8.4 und Architektur AD-10 gelten vor Bereitstellung der neuen Oberfläche; der normale Produktfluss enthält keine API- oder Infrastrukturbegriffe.
 
 ## Information Architecture
 
-| Oberfläche | Erreicht über | Zweck |
+Die Hauptnavigation lautet in dieser Reihenfolge **Monat**, **Ausgaben**, **Sparziele**. Monat bleibt Startansicht nach Anmeldung. In allen drei Bereichen steht derselbe rote Button **Abmelden**. Zugang ist kein vierter Hauptbereich.
+
+| Oberfläche | Erreicht über | Zweck und zugehöriger Flow |
 |---|---|---|
-| Registrierung und Anmeldung | Registrierungslink oder erneuter Besuch | Konto anlegen oder anmelden. Jede Person mit dem Link darf registrieren; die Reichweite hängt davon ab, mit wem Linus ihn teilt. |
-| Monatsübersicht | Nach Anmeldung; [ASSUMPTION] Hauptnavigation „Monat“ | Monatsbudget und Restbudget, manuelle Erfassung sowie die vollständige eigene Ausgabenliste mit Name, Betrag und Erfassungsdatum. Bearbeiten und Löschen eigener Ausgaben. |
-| Sparziele | [ASSUMPTION] Hauptnavigation „Sparziele“ | Eigene Ziele mit Name, Zielbetrag, optionalem Datum und manuell gepflegtem Gesamtfortschritt ansehen und ergänzen. |
+| Registrierung / Anmeldung | Aktiver Registrierungslink oder erneuter Besuch | Eigenes Konto mit E-Mail/Passwort anlegen beziehungsweise anmelden. Flow 1. |
+| Monat | Nach Anmeldung oder Navigation „Monat“ | Budget festlegen/ändern, laufenden Monat mit Budget, Ausgabensumme und Restbudget prüfen. Kein Ausgabenformular. Flow 1. |
+| Ausgaben | Navigation „Ausgaben“ | Ausgabe erfassen und vollständige eigene Historie aller Monate mit Name, Betrag und Erfassungsdatum lesen. [ASSUMPTION aus SPEC/PRD] Auch Bearbeiten und Löschen ziehen hierher. Flows 1 und 4. |
+| Sparziele | Navigation „Sparziele“ | Ziele anlegen, bearbeiten, löschen und tatsächlichen Gesamtfortschritt lesen/ersetzen. Flows 2 und 5. |
+| Monatsautomatik innerhalb Sparziele | [ASSUMPTION] Abschnitt im Bereich „Sparziele“ | Aktivieren, Startmonat und Status erkennen, eigenes Ziel auswählen/wechseln, vorgemerkte Summe lesen. Auch ohne vorhandenes Ziel zugänglich. Flows 3 und 5. |
+| Löschbestätigung | „Löschen“ an eigener Ausgabe oder eigenem Ziel | Folgen verstehen und ausdrücklich bestätigen oder abbrechen. Flows 4 und 5. |
 
-[ASSUMPTION] Die Hauptnavigation hat die zwei Einträge „Monat“ und „Sparziele“; Anmeldung und Registrierung bleiben getrennte Zugangszustände. Nicht definierte Kontoverwaltung, Export oder Einstellungen werden nicht als fertige v1-Oberflächen angenommen.
-
-### Funktionale Verträge
-
-Die FR-Namen bleiben identisch zum PRD; Zahlen und Währungen verwenden die dort festgelegte Europe/Berlin-Zeitbasis und Euro-Währung.
-
-| Anforderung | UX-Vertrag |
-|---|---|
-| **FR-1: Nutzerkonto über den Registrierungslink anlegen** | Linkinhaber:innen können registrieren und sich danach anmelden. Bei späterem Besuch führt der Zugang zur Anmeldung. Linkablauf und Widerruf bleiben offen. |
-| **FR-2: Eigene Finanzdaten ansehen** | Angemeldete Person sieht nur eigene Ausgaben, eigenes Monatsbudget und eigene Sparziele. |
-| **FR-3: Daten anderer Personen schützen** | Kein Lesen oder Ändern fremder Datensätze; keine gemeinsame Ansicht. Wenn eine Ressource fremd oder nicht verfügbar ist, werden weder ihre Daten noch ihre Existenz offengelegt. |
-| **FR-4: Ausgabe manuell erfassen** | Name und Betrag in Euro manuell erfassen. Das System setzt das Erfassungsdatum automatisch auf das aktuelle Datum in der Zeitzone Europe/Berlin; es ist nicht frei wählbar. |
-| **FR-5: Alle bisher erfassten Ausgaben tabellarisch ansehen** | Eigene Ausgaben aller Monate zeigen, einschließlich Name, Betrag und Erfassungsdatum. Auf schmalen Ansichten bleibt die gleiche Information linear lesbar. |
-| **FR-6: Eigene Ausgabe bearbeiten oder löschen** | Name und Betrag bearbeiten oder eigenen Eintrag löschen; danach Restbudget mit den verbleibenden Monatsausgaben neu berechnen. [ASSUMPTION] Vor dem Löschen wird eine bestätigende Aktion verlangt. |
-| **FR-7: Monatsbudget festlegen** | Eigenes fortlaufendes Monatsbudget in Euro festlegen oder ändern. [ASSUMPTION] Eine Änderung gilt sofort im laufenden und in den folgenden Monaten, wie im PRD markiert. |
-| **FR-8: Restbudget anzeigen** | `Restbudget = Monatsbudget − Summe der eigenen Ausgaben im laufenden Kalendermonat nach Europe/Berlin`. Einnahmen werden nicht erfasst und nicht angerechnet. Nach Erfassung, Änderung oder Löschung aktualisieren. Negative Werte sind laut PRD-Annahme möglich. [ASSUMPTION] Vorläufig als signierter negativer Betrag mit ausdrücklicher Überschreitungsbezeichnung darstellen; die endgültige Darstellung bleibt zu bestätigen. |
-| **FR-9: Sparziel festlegen** | Eigenes Ziel mit selbst gewähltem Namen, Zielbetrag in Euro und optionalem Zieldatum anlegen. |
-| **FR-10: Fortschritt eines Sparziels aktualisieren und ansehen** | Aktuellen erreichten Gesamtbetrag manuell pflegen und im Verhältnis zum Zielbetrag anzeigen. Neue Eingabe ersetzt den bisherigen Gesamtbetrag; einzelne Sparbeiträge oder Verlauf werden nicht erfasst. |
-| **FR-11: Website responsiv nutzen** | Kernfunktionen auf Smartphone und Rechner bedienbar. Die unten genannten Prüfbreiten und Kernaufgaben sind vorläufige UX-Annahmen. |
+Die drei Hauptbereiche besitzen statische visuelle Referenzen: [Monat](./mockups/key-monat.html) für Budget und Monatsübersicht, [Ausgaben](./mockups/key-ausgaben.html) für Erfassung und Historie sowie [Sparziele](./mockups/key-sparziele.html) für Aktivierung, Vormerkung und negativen Fortschritt. Zugang und Löschbestätigungen werden aus den Spine-Verträgen gebaut; Linus hat Mockups für die drei Hauptbereiche gewählt. Nicht definierte Kontoverwaltung, Export oder Einstellungen erhalten hier keine zusätzliche Oberfläche.
 
 ## Voice and Tone
 
-[ASSUMPTION] Finanztexte sind sachlich, kurz und nicht wertend. Sie benennen Betrag, Zeitraum und Konsequenz klar; sie erteilen keine Finanzberatung und versprechen keine Ersparnis. „Noch keine Ausgaben erfasst“ statt einer Bewertung wie „Du gibst zu viel aus“.
+Deutsche Systemtexte und deutsche Euro-/Datumsformate bleiben erhalten (`1.234,56 €`, `25.10.2026`). [ASSUMPTION] Die Mikrocopy bleibt kurz, sachlich und nicht wertend. Finanzberatung, garantierte Ersparnis und Bankübertragung werden nicht suggeriert.
 
-[ASSUMPTION] Deutsche Beschriftungen und deutsches Euro-Format (`1.234,56 €`) bilden die erste Ausprägung. Der Produktname ist bewusst provokativ, legt aber allein keine provokative Mikrocopy fest.
+**Textregel CAP-1 / FR-13:** Sichtbare Texte, Labels, Tooltips, Fehlermeldungen und zugängliche Hilfstexte enthalten keine systemseitige Zeitzonenerläuterung. Interne Datumssetzung und Monatsgrenzen bleiben `Europe/Berlin`; diese Implementierungsregel erscheint nicht als Produkttext. Nutzereigene Angaben wie „Berlin-Fahrt“ bleiben unverändert.
 
-| Do | Don't |
+Die folgenden Formulierungen sind [ASSUMPTION] für die konkrete Mikrocopy; die darin beschriebenen Folgen sind verbindlich.
+
+| Situation | Textmuster |
 |---|---|
-| „Restbudget: 126,40 €“ | „Du hast diesen Monat gut/schlecht gewirtschaftet.“ |
-| „Noch keine Sparziele“ | „Du musst mehr sparen.“ |
-| „12,00 € über dem Monatsbudget“ bei negativer Rechnung [ASSUMPTION] | Sparerfolg oder Kontostand als garantiert darstellen. |
-| „Änderungen noch nicht gespeichert“ bei einem fehlgeschlagenen Speichern [ASSUMPTION] | Einen Erfolg anzeigen, bevor die Speicherung bestätigt wurde. |
+| Budget | „Dein Budget gilt für den laufenden Monat und danach, bis du es änderst.“ |
+| Ausgabe | „Das Datum wird automatisch gesetzt.“ |
+| Überschreitung | „Restbudget: −12,00 €“ und „12,00 € über dem Monatsbudget“. |
+| Vor Aktivierung | „Monatsüberschüsse automatisch berücksichtigen“; erklären: ab diesem Monat, erstmals nach Monatsende, frühere Monate bleiben unberücksichtigt. |
+| Aktiv, ohne Ziel | „Automatik aktiv seit Oktober 2026. Kein Ziel ausgewählt. Überschüsse werden vorgemerkt.“ |
+| Vormerkung | „Vorgemerkt: 300,00 €. Bei der Zielauswahl wird der gesamte vorgemerkte Betrag angerechnet.“ |
+| Negativer Fortschritt | „Fortschritt: −30,00 € von 100,00 € · −30 %“. Keine separate „Korrekturschuld“. |
+| Manuelle Eingabe | „Gesamtfortschritt ersetzen“; erklären, dass die Eingabe den aktuellen Gesamtbetrag ersetzt und spätere Monatswirkungen ihn weiter ändern. |
+| Fehlgeschlagene Auswahl | „Auswahl nicht gespeichert. Vorgemerkte Beträge bleiben erhalten.“ Nur verwenden, wenn der Fehlschlag sicher feststeht. |
+| Ungewisser Ausgang | „Speicherung noch nicht bestätigt. Aktuellen Stand neu laden.“ |
 
 ## Component Patterns
 
-Verhalten hier; visuelle Ausprägung in [DESIGN.md → Components](./DESIGN.md#components). Visuelle Tokens werden über `{colors.text-primary}`, `{colors.primary}`, `{colors.error}`, `{components.money-field}` und `{typography.body}` referenziert.
+Visuelle Verträge stehen in [DESIGN.md → Components](./DESIGN.md#components). Verhalten und zugängliche Namen gelten unabhängig von Farbe; Text nutzt `{colors.text-primary}` und `{typography.body}`, Fehler `{colors.error}`, Fokus `{colors.focus-ring}`.
 
 | Baustein | Verhalten |
 |---|---|
-| `auth-form` | Registrierung über den Registrierungslink und Anmeldung bleiben eindeutig unterscheidbar. Die konkrete Authentifizierungsmethode kommt aus der Umsetzungsvorgabe. [ASSUMPTION] Fehlermeldungen verraten keine fremden Konten. |
-| `primary-button` | Führt die beschriftete Primäraktion des aktuellen Bereichs aus. [ASSUMPTION] Während des Speicherns verhindert der Button versehentliche Doppelsendungen und meldet den Zustand. |
-| `money-field` | Sichtbar beschriftete Felder für Ausgabe, Budget und Sparziel; Euro-Währung ist kenntlich. [ASSUMPTION] Eingaben bleiben nach Fehlern erhalten. Wertebereich und Genauigkeit werden nicht durch UX erfunden. |
-| `budget-summary` | Benennt Monatsbudget, Ausgaben und Restbudget klar. Eine Budgetänderung wird erst nach bestätigtem Speichern in der Übersicht wirksam dargestellt. |
-| `expense-table` / `expense-row` | Zeigt eigene Ausgaben aller Monate mit Name, Betrag und Erfassungsdatum. Auf breiten Ansichten ist die Liste eine semantische Tabelle; mobil stehen dieselben Angaben linear. Bearbeiten und Löschen haben beschriftete Aktionen, die nicht von Hover oder Gesten abhängen. |
-| `goal-progress-track` / `goal-progress-fill` | Zeigt den manuell gepflegten Gesamtbetrag neben dem Zielbetrag. Neue Eingabe ersetzt den vorherigen Gesamtbetrag; einzelne Beiträge und Verlauf werden nicht suggeriert. |
-| `save-status` | Gibt Bearbeiten, Speichern und bestätigten Erfolg textlich zurück. [ASSUMPTION] Ein Statuswechsel wird assistiven Technologien angekündigt. |
-| `delete-confirmation` | [ASSUMPTION] Vor dem Löschen ist die Folge eindeutig benannt; Dialogfokus bleibt eingeschlossen und kehrt nach Abschluss zum Auslöser zurück. |
+| `main-navigation` | Drei beschriftete Navigationsziele, aktueller Bereich programmatisch und sichtbar erkennbar. Routewechsel funktionieren per Tastatur und Touch; neue Hauptüberschrift wird fokussiert beziehungsweise angekündigt. Keine bloß visuelle Tab-Auswahl ohne geänderten Inhalt. |
+| `logout-button` | `{components.logout-button}` beendet die Sitzung und entfernt persönliche Ansichten samt Entwürfen. Während des Versuchs kein Doppelsenden; ein fehlgeschlagener Widerruf wird nicht als erfolgreiche Serverabmeldung bestätigt. Lokale Daten werden dennoch verworfen, geschützte Ansichten bleiben geschlossen. |
+| `auth-form` | Registrierung nur mit gültigem geteiltem Link; E-Mail/Passwort und Anmeldung klar unterscheiden. Zugangsfehler bleiben neutral. Erneute Anmeldung nach Ablauf führt in einen frischen Kontozustand. |
+| `primary-button` | Explizit beschriftete Aktion. Während des zugehörigen Speicherns Doppelsenden blockieren und „Wird gespeichert …“ melden; andere unabhängige Korrekturmöglichkeiten nicht pauschal sperren. Erfolg erst nach Commit. |
+| `money-field` | Sichtbares Label und EUR. Höchstens zwei Euro-Nachkommastellen; exakte Centwerte, keine stille Rundung. Ausgabe/Zielbetrag positiv, Budget ab null. Fortschritt ist signiert [ASSUMPTION aus SPEC/PRD auch für manuelle Eingabe]. Mobile Eingabe muss beim Fortschritt ein Minus ermöglichen; eine nur positive Dezimaltastatur darf negative Eingabe nicht verhindern. Fehler bleibt am Feld, Entwurf im offenen Tab erhalten. |
+| `budget-summary` | `{components.budget-summary}` benennt Monatsbudget, laufende Ausgaben und tatsächliches Restbudget. Fehlendes Budget ist von null verschieden. Budgetänderung gilt nach Bestätigung im laufenden und folgenden Monaten, nicht rückwirkend in abgeschlossenen Monaten. |
+| `expense-table` | Eigene Ausgaben aller Monate mit semantischen Spalten für Name, Datum, Betrag. Monatswechsel kürzt die Historie nicht. Erfassungsdatum ist automatisch gesetzt und nicht editierbar. |
+| `expense-row` | Explizite Aktionen Bearbeiten/Löschen; Editieren erhält Datum und Eigentümer. Die Bestätigung einer historischen Betragsänderung oder Löschung umfasst deren notwendige Monatskorrektur. Eine reine Namensänderung hat keine Geldwirkung. |
+| `automation-panel` | `{components.automation-panel}` bietet vor Erstaktivierung eine explizite Aktivierung, auch ohne Ziel. Startmonat und Folge sind vor Bestätigung erklärt. Nach Commit: „aktiv seit …“, Zielstatus und Vormerkung. Kein offener Tab, Login oder manueller Abschlussknopf ist Voraussetzung der Verarbeitung. Eine Deaktivierung ist nicht spezifiziert. |
+| `goal-selection` | Nur eigene vorhandene Ziele; kein erstes Ziel vorbelegen. Neue Zielanlage allein wählt es nicht aus. Vor „Auswahl speichern“ vollständige Übernahme aller offenen Vormerkungen erklären. Auswahl/Wechsel, Übernahme und neuer Fortschritt werden erst nach gemeinsamer Bestätigung angezeigt. Ein Wechsel verschiebt keine alten Zuordnungen. |
+| `pending-surplus` | `{components.pending-surplus}` zeigt die erkennbare nichtnegative offene Gesamtsumme, auch null, getrennt vom Zielfortschritt. Ohne Auswahl verständlichen Hinweis und Zielauswahl beziehungsweise Zielanlage anbieten. Summe ist erst nach bestätigter vollständiger Übernahme null; kein Nutzer-Beitragsverlauf wird eingeführt. |
+| `goal-progress-value` | `{components.goal-progress-value}` zeigt aktuellen Gesamtbetrag, positiven Zielbetrag und tatsächlichen Prozentwert einschließlich negativer Werte und Übererfüllung. Manuelle Änderung ersetzt den Gesamtstand und erhält Monatsbindungen. Zielbearbeitung erhält Fortschritt; leeres Zieldatum entfernt das Datum. Neue Ziele starten mit null. |
+| `goal-progress-track` | Visuelle Skala von 0 bis 100 %. Zusammen mit den benannten Werten lesen lassen; der Balken ist keine zweite finanzielle Größe. |
+| `goal-progress-fill` | Nur Füllung auf 0–100 % begrenzen. Assistive Ausgabe darf das visuelle Minimum/Maximum nicht als tatsächlichen Fortschritt ausgeben; signierter Betrag und echter Prozentwert bleiben zugänglich. |
+| `save-status` | Speichern, bestätigten Erfolg und Fehler verständlich ankündigen. Bei unbekanntem Ausgang weder Erfolg noch sicheren Rollback behaupten; aktuellen Stand ermitteln, bevor eine Wiederholung als neue Mutation angeboten wird. |
+| `delete-confirmation` | Objekt und Folgen nennen. Bei Ziel: Ziel und tatsächlicher Fortschritt entfallen, alte Anrechnungen werden nicht übertragen; bei ausgewähltem Ziel werden weitere Überschüsse bis zur nächsten Auswahl vorgemerkt. Bestehende Vormerkungen bleiben erhalten. Dialogfokus einschließen, Abbrechen/Escape erhält Daten. Nach Ende Fokus zum Auslöser, nach dessen Entfernung zum nächsten sinnvollen Eintrag oder zur Anlegeaktion. |
 
 ## State Patterns
 
-Wo das PRD keinen Zustand beschreibt, ist das Verhalten ausdrücklich als [ASSUMPTION] markiert.
+Gemeinsame Lade-, Fehler-, Offline- und Sitzungsregeln gelten auch für den Automatikabschnitt und Löschdialoge.
 
-| Zustand | Verhalten |
-|---|---|
-| Nicht angemeldet | Registrierungslink bietet Registrierung, bestehende Konten melden sich an. Fremde oder gesperrte Bereiche zeigen keine Finanzdaten. |
-| Anmeldung fehlgeschlagen | [ASSUMPTION] Neutrale Fehlermeldung ohne Bestätigung, ob ein Konto existiert; erneuten Versuch oder verfügbare Registrierungsoption anbieten. |
-| Kein Monatsbudget | [ASSUMPTION] Restbudget nicht als `0 €` ausgeben, sondern zur Festlegung eines Monatsbudgets auffordern. |
-| Noch keine Ausgaben | [ASSUMPTION] Leere Liste mit kurzer Erklärung und direkter Aktion „Ausgabe erfassen“. |
-| Noch keine Sparziele | [ASSUMPTION] Leerer Bereich mit „Sparziel anlegen“. |
-| Laden | [ASSUMPTION] Inhaltsskelett in der erwarteten Form; persönliche Werte erst anzeigen, wenn sie für das angemeldete Konto geladen sind. |
-| Eingabefehler | [ASSUMPTION] Feldnaher verständlicher Fehler, programmatisch dem Feld zugeordnet; Fokus zur Zusammenfassung oder zum ersten fehlerhaften Feld. Eingaben bleiben erhalten. Für nicht vereinbarte Wertebereiche wird keine Grenzzahl behauptet. |
-| Speichern fehlgeschlagen | [ASSUMPTION] Kein Erfolgszustand; Entwurf im offenen Formular belassen, Ursache knapp benennen und erneutes Speichern anbieten. |
-| Offline / Verbindung verloren | [ASSUMPTION] Keine neue Finanzänderung als gespeichert ausgeben und keine lokale Offline-Synchronisierung versprechen. Formular im offenen Tab erhalten, Speichern bis zur Verbindung blockieren und erneuten Versuch anbieten. |
-| Sitzung endet | [ASSUMPTION] Persönliche Ansicht schließen und erneute Anmeldung verlangen; geschützte Werte nicht in einer Fehleransicht offenlegen. |
-| Restbudget negativ | Negative Rechnung nicht verbergen. [ASSUMPTION] Vorläufig Betrag mit Minuszeichen und Text zur Überschreitung zeigen; endgültige Darstellung ist offen. |
-| Registrierungslink ungültig / Zugriff nicht erlaubt | [ASSUMPTION] Neutrale Erklärung und nächste verfügbare Aktion zeigen, ohne fremde Konten oder Datensätze offenzulegen. |
+| Zustand | Oberfläche | Verhalten |
+|---|---|---|
+| Nicht angemeldet | Zugang / geschützte Bereiche | Keine Finanzdaten. Anmeldung oder gültige Registrierung anbieten; geschützte direkte Links führen über den Zugang. |
+| Ungültiger/abgelaufener Registrierungslink | Registrierung | Neutrale Erklärung, keine Kontoauskunft. Der bestehende Linkvertrag umfasst 30 Tage und geschützten Ersatz/Widerruf; kein neues Kontoverwaltungsmenü daraus ableiten. |
+| Anmeldung fehlgeschlagen | Zugang | Neutraler Fehler ohne Bestätigung fremder Konten; erneuten Versuch ermöglichen. |
+| Laden / neu laden | Alle Hauptbereiche | Noch nicht geladene Werte als solche kennzeichnen, keine erfundenen Nullwerte. [ASSUMPTION] Inhaltsskelett in erwarteter Form. Nur Daten des aktuellen Kontos einsetzen. |
+| Kein Monatsbudget | Monat | Zur Budgetfestlegung führen; kein Restbudget als null ausgeben. Automatik erzeugt ohne damaliges Budget keinen Betrag. |
+| Budget ausdrücklich null | Monat | Null als gültiges Budget zeigen; Rest exakt berechnen, gegebenenfalls negativ. |
+| Noch keine Ausgaben | Ausgaben | „Noch keine Ausgaben erfasst“ und sichtbare Erfassungsaktion; vollständiges Formular bleibt erreichbar. |
+| Noch keine Sparziele | Sparziele | „Sparziel anlegen“; Automatikaktivierung bleibt möglich. Eine fehlende Auswahl und gegebenenfalls Vormerkung bleiben sichtbar. |
+| Automatik nicht aktiviert | Sparziele | Aktivierung erläutern; keine Vormerkung oder Monatswirkung für frühere Monate suggerieren. |
+| Aktiv, ohne Ziel | Sparziele | Startmonat, „Kein Ziel ausgewählt“ und offene Vormerkung anzeigen. Kein zufälliges Ziel auswählen und Zustand nicht als deaktiviert/pausiert bezeichnen. |
+| Aktiv, mit Ziel | Sparziele | Ausgewähltes Ziel benennen; Anrechnung nach Monatsende erläutern. Offene Vormerkung und aktueller tatsächlicher Fortschritt stammen aus konsistentem bestätigtem Stand. |
+| Zielauswahl / Übernahme läuft | Sparziele | Gewünschte Auswahl als Entwurf behandeln. Gespeicherte Auswahl, Fortschritt und Vormerkung nicht teilweise vorwegnehmen; zugehörige Aktion gegen Doppelsenden sperren. |
+| Übernahme / Korrektur fehlgeschlagen | Sparziele / Ausgaben | Keine Teilbestätigung. Bei sicherem Fehler bleiben gespeicherte Auswahl, Vormerkung und Fortschritt unverändert; erforderliche historische Ausgabenmutation wird ebenfalls nicht bestätigt. Entwurf und erneuten Versuch anbieten. |
+| Betragsgrenze erreicht | Betroffenes Formular / Sparziele | Feldnah beziehungsweise am fehlgeschlagenen Vorgang erklären; nichts runden oder abschneiden. Manuelles Ersetzen des Fortschritts bleibt auch bei grenzbedingt blockiertem Nachhollauf erreichbar. Ziellöschung setzt keinen erfolgreichen Nachhollauf voraus. |
+| Speichern unbestätigt | Alle Mutationen | Ungewissen Ausgang benennen; aktuellen Stand neu laden. Keine blinde Wiederholung und keine vorzeitige Erfolgsmeldung. |
+| Eingabefehler | Alle Formulare | Fehler programmatisch zuordnen, nächsten Schritt nennen, Fokus zum ersten Fehler oder zur Zusammenfassung; Entwurf erhalten. |
+| Offline / Verbindung verloren | Alle Hauptbereiche | Keine lokale Synchronisierung versprechen. Entwürfe nur im offenen Tab erhalten; fehlende Verbindung benennen und Speichern bis zur Wiederverbindung blockieren. |
+| Restbudget negativ | Monat | Tatsächliches Minus und Überschreitungstext zeigen; keine neue Sparbelastung allein aus dem negativen Monatsrest. |
+| Fortschritt negativ / übererfüllt | Sparziele | Tatsächlichen Betrag und Prozentwert zeigen; Balken bei 0 beziehungsweise 100 %. Negative Werte sind kein Eingabe- oder Kontofehler. |
+| Löschbestätigung offen | Ausgaben / Sparziele | Folgen lesbar, Fokus eingeschlossen, Escape/Abbrechen ohne Änderung. Während Bestätigung kein Doppelsenden. |
+| Ausgewähltes Ziel gelöscht | Sparziele | Ziel und Fortschritt entfernt, Auswahl leer, bestehende Vormerkungen erhalten. Künftige Überschüsse werden vorgemerkt; frühere gebundene Monate bleiben verbraucht. |
+| Rückkehr / veraltete Daten | Monat / Sparziele | Nach bestätigter Mutation betroffene Ansichten neu laden. Bei Rückkehr nach Monatswechsel oder Hintergrundverarbeitung konsistente aktuelle Werte laden, alte Werte nicht als frisch ausgeben. Kein Entwurf wird durch Hintergrundantwort stillschweigend ersetzt. |
+| Sitzung endet / Kontowechsel | Überall | Finanzdaten, Auswahl, Vormerkungen und Entwürfe aus dem Browser entfernen. Späte Antworten verwerfen; keine Rückkehr alter Werte nach neuer Anmeldung. Automatik läuft serverseitig unabhängig davon weiter. |
+| Zugriff nicht erlaubt | Direkter Datenzugriff | Fremde und nicht vorhandene Datensätze gleich neutral behandeln; keine Namen, Beträge oder Existenz verraten. |
+| Oberfläche veraltet | Beim notwendigen Versionswechsel | [ASSUMPTION] Verständlicher Hinweis „Bitte lade die Seite neu“ mit Aktualisierungsaktion. Geschützte Altansichten schließen und gegebenenfalls neu anmelden; keine API-Versionsdiagnose im Produktfluss. |
 
 ## Interaction Primitives
 
-- Alle Kernaufgaben funktionieren per Tastatur, Touch und Screenreader; Hover ist nie der einzige Weg zu einer Aktion. [ASSUMPTION]
-- Formularfelder besitzen sichtbare Labels, sinnvolle Eingabetypen und mobile Tastaturen für Beträge. [ASSUMPTION]
-- Nach Speichern wird der Status als Text angekündigt; dynamische Änderungen des Restbudgets sind für assistive Technik erkennbar. [ASSUMPTION]
-- Bearbeiten öffnet den vorhandenen Eintrag mit Name und Betrag. Datum bleibt systemseitig gesetzt. Löschen folgt der bestätigenden Aktion in Component Patterns. [ASSUMPTION]
-- Keine versteckte Wischgeste als einzige Bearbeitungs- oder Löschmöglichkeit. [ASSUMPTION]
-- Budget- und Zieländerungen wirken nur im eigenen Konto. Die technische Durchsetzung bleibt Architekturaufgabe; ein Kontowechsel darf den alten Datenbestand nicht anzeigen.
+- Tastatur, Touch und Screenreader erreichen alle Kernaktionen; Hover und Wischgesten sind kein alleiniger Zugangsweg. Navigation, Labels und Fokus bleiben beim Wechsel des Bereichs eindeutig.
+- Speichern erfolgt ausdrücklich. Erfolg gilt erst nach Commit; zusammengehörige Werte erscheinen gemeinsam. Nach Ausgabeänderungen ist die nächste Monatsansicht aktuell, nach Monatskorrekturen die nächste Sparzielansicht. Ein offenes Formular behält bei Fehlern seinen Entwurf ausschließlich im Arbeitsspeicher des offenen Tabs.
+- Während einer Mutation wird Doppelsenden verhindert. Späte Antworten nach Sitzungsende oder Kontowechsel können weder Werte noch Erfolgsstatus zurückbringen. Ein aktueller Gesamtfortschritt darf nicht durch eine ältere Leseantwort ersetzt werden.
+- Formularfelder sind beschriftet. Betrag und Prozentwert behalten das Vorzeichen; native mobile Eingabehilfen dürfen die signierte Fortschrittseingabe nicht einschränken. Zieldaten sind Kalenderdaten ohne Uhrzeit; Ausgabedaten bleiben serverseitig gesetzt.
+- Löschdialoge lassen sich mit Escape abbrechen. Nach bestätigtem Löschen bleibt eine sinnvolle Fokusposition erhalten; keine verdeckte zweite Bestätigung oder verschachtelte Dialogkette.
 
 ## Accessibility Floor
 
-[ASSUMPTION] Als prüfbarer Ausgangsstandard gilt **WCAG 2.2 AA** für die responsive Weboberfläche ([W3C, WCAG 2.2](https://www.w3.org/TR/WCAG22/)). Das ist ein Produktziel für Entwurf und Prüfung, keine Behauptung einer rechtlichen Konformitätszertifizierung. Visuelle Kontrastpaare stehen in [DESIGN.md → Colors](./DESIGN.md#colors).
+**WCAG 2.2 AA ist das Prüfziel** aus PRD FR-11, keine Behauptung einer Zertifizierung. Visuelle Kontraste definiert [DESIGN.md → Colors](./DESIGN.md#colors).
 
-- Semantische Überschriften, Formulare, Links, Buttons und Tabelle; Beschriftungen und Fehlermeldungen sind programmatisch zugeordnet. [ASSUMPTION]
-- Vollständige Tastaturbedienung mit sichtbarem, nicht verdecktem Fokus und logischer Lesereihenfolge. Dialoge verwalten Fokus und geben ihn an den Auslöser zurück. [ASSUMPTION]
-- Status- und Fehlermeldungen werden für assistive Technologien als Meldungen angekündigt; Farbe ist nie alleiniger Bedeutungsträger. [ASSUMPTION]
-- Text lässt sich auf 200 % vergrößern und die Oberfläche bei 320 CSS-Pixel Breite ohne horizontales Scrollen für Kernaufgaben nutzen. [ASSUMPTION]
-- [ASSUMPTION] Zusätzliches UX-Ziel: Touch-Ziele sind mindestens 44 × 44 CSS-Pixel groß; Systemschrift und vergrößerte Textdarstellung dürfen keine Finanzwerte oder Aktionen abschneiden.
-- Bewegungen sind entbehrlich; `prefers-reduced-motion` wird berücksichtigt. [ASSUMPTION]
-- Eingabefehler nennen das betroffene Feld und einen hilfreichen nächsten Schritt. Vor Änderungen oder Löschungen persönlicher Finanzdaten ist die Aktion eindeutig. [ASSUMPTION]
+- Semantische Navigation, Überschriften, Formulare, Links, Buttons und Tabellen; sichtbare Labels und zugeordnete Fehler. Der aktuelle Hauptbereich ist programmatisch erkennbar.
+- Vollständige Tastaturbedienung mit logischem, sichtbarem und nicht verdecktem Fokus. Der rote Abmeldebutton bleibt auch in Fokus-, Hover- und laufendem Zustand lesbar.
+- Statusänderungen nach Speichern, Übernahme und Korrektur verständlich ankündigen. Automatikstatus, fehlende Zielauswahl und vorgemerkter Betrag sind auch ohne Farbe wahrnehmbar.
+- Tatsächlichen signierten Fortschritt und Prozentwert zugänglich ausgeben. [ASSUMPTION] Der rein visuelle Balken kann vor assistiver Technik verborgen werden, wenn die zugehörige vollständige Textangabe den Stand vermittelt; kein widersprüchliches „0 %“ bei tatsächlichen −30 %.
+- 200 % Textgröße und Reflow bei 320 CSS-Pixeln ohne horizontales Scrollen für Kernaufgaben. Mindestens 44 CSS-Pixel hohe Aktionen und 48 CSS-Pixel hohe Geldfelder; Touch-Zielbreite ebenfalls mindestens 44 CSS-Pixel.
+- Fehler nennen Feld und nächsten Schritt. Die Bedeutung von Vorzeichen, Vormerkung und bestätigter Auswahl bleibt beim Screenreader erhalten. Zugängliche Hilfstexte enthalten keine Zeitzonenerläuterung.
+- [ASSUMPTION] Bewegung ist entbehrlich; `prefers-reduced-motion` wird berücksichtigt.
+
+## Monatswirkungen und Darstellung
+
+Die [Monatsfachregeln mit 17 Abnahmefällen](../../../specs/spec-oberflaeche-und-monatsueberschuss/monatsueberschuesse.md) und PRD FR-14 bis FR-17 bestimmen die Berechnung; diese UX-Regeln legen ihre sichtbare Bedeutung fest.
+
+| Situation | Für die Oberfläche verbindliche Bedeutung |
+|---|---|
+| Aktivierung im Oktober | Gesamter Oktober wird erstmals nach Monatsende berücksichtigt; September nie. Spätere erste Zielwahl verändert den Start nicht. Kein genauer Ausführungszeitpunkt wird versprochen. |
+| Abgeschlossener Monat | Mit damaligem Budget: `max(0, Budget − eigene Monatsausgaben)`. Ohne Budget kein erfundener Betrag. Sparanrechnung ist keine Ausgabe und verändert das Restbudget nicht. |
+| Keine Auswahl / spätere Auswahl | Überschuss vorgemerkt; bei bestätigter Auswahl sämtliche offenen Vormerkungen einmal übernehmen, einschließlich fälliger bisher unverarbeiteter Monate nach deren historischen Regeln. |
+| Auswahlwechsel | Offener und folgende Monate verwenden das neue Ziel. Bereits zugeordnete Monate samt Korrekturen bleiben beim ursprünglichen Ziel; offene Vormerkungen werden dem neuen Ziel vollständig angerechnet. |
+| Budget mit Überschuss null | Vormerkungssumme kann null sein, ohne dass eine historische Zielbindung entfällt. Auch Nullmonate werden bei späterer Auswahl gebunden; eine spätere positive Korrektur geht an dieses Ziel. Fehlendes Budget ist davon verschieden. Kein zusätzlicher Nutzerverlauf nötig. |
+| Historische Betragsänderung / Löschung | Vor Zuordnung die betroffene Vormerkung korrigieren; danach nur `neuer Überschuss − zuletzt berücksichtigter Überschuss` auf den aktuellen Stand des ursprünglichen vorhandenen Ziels anwenden. Ausgabe und Korrektur zusammen bestätigen. |
+| Manueller Gesamtstand | Ersetzt den aktuellen Fortschritt, erhält historische Bindungen. Bei manuell 300 € und Korrektur −50 € bleiben 250 €; keine Rekonstruktion allein aus Monatsüberschüssen. |
+| Gelöschtes Ziel | Frühere gebundene Monate bleiben verbraucht, auch noch unverarbeitete abgeschlossene Monate mit damaliger Auswahl dieses Ziels. Keine Wiederanlage, neue Vormerkung oder Umleitung durch spätere Korrekturen. Löschen wartet nicht auf einen Nachhollauf. |
+| Nachholen | Läuft ohne geöffnete Seite/Sitzung, bewahrt historische Zielauswahl und wirkt nicht doppelt. Bei späterem Besuch aktuelle bestätigte Werte laden; fehlgeschlagene Vorgänge nicht als Erfolg zeigen. |
+
+Alle Geldwerte beruhen auf exakten ganzzahligen EUR-Cent. Gespeicherte und berechnete Werte bleiben innerhalb ±9.007.199.254.740.991 Cent. Ausgabe und Zielbetrag sind positiv; Budget darf null sein. Fortschritt darf negativ sein und den Zielbetrag übersteigen; der signierte manuelle Bereich bleibt eine ausdrücklich übernommene Quellenannahme. Höchstens zwei Euro-Nachkommastellen, keine stille Rundung oder Teilübernahme.
+
+| Tatsächlicher Stand bei 100 € Ziel | Sichtbarer / zugänglicher Text | Visuelle Füllung |
+|---|---|---|
+| −30 € | −30,00 € von 100,00 € · −30 % | 0 % |
+| 70 € | 70,00 € von 100,00 € · 70 % | 70 % |
+| 150 € | 150,00 € von 100,00 € · 150 % | 100 % |
 
 ## Inspiration & Anti-patterns
 
-Die bestätigten Planungsquellen nennen keine Vorbildprodukte. Als v1-Ausschlüsse gelten geteilte Finanzansichten, Einnahmen, automatische Bankimporte, Kategorien, wiederkehrende Ausgaben und betriebliche Finanzen. Diese Funktionen werden weder in der Navigation noch in leeren Zuständen vorgeschlagen.
+Es sind keine Vorbildprodukte bestätigt. Keine gemeinsame Finanzansicht, Einnahmenerfassung, Bankimporte/-überweisungen, Kategorien, wiederkehrenden Ausgaben oder betrieblichen Finanzen ergänzen. Aus Monatsnachweisen folgt kein Nutzer-Beitragsverlauf. Vormerkungen werden nicht verworfen, automatisch auf zufällige Ziele verteilt oder als separate Korrekturschuld dargestellt. Ein negativer Fortschritt wird nicht auf null gekürzt.
 
 ## Responsive & Platform
 
-[ASSUMPTION] Ziel ist eine responsive Browseroberfläche auf Smartphone und Rechner. Die folgenden Viewports sind konkrete Prüfanker aus FR-11, keine bereits bestätigten Geräteanforderungen. Ein nativer iOS- oder Android-Client ist nicht festgelegt.
+Die vier Viewports und 200-%-Textprüfung sind verbindliche Prüfanker aus PRD FR-11. [ASSUMPTION] Unter 768 px bleiben Flächen einspaltig; ab 768 px dürfen Inhalte desselben Bereichs nebeneinanderstehen. Lesereihenfolge und Bereichstrennung bleiben erhalten. Ein nativer Client ist nicht Teil dieser UX.
 
-| Viewport (CSS Pixel) | Zu prüfende Aufgaben |
+| Viewport (CSS-Pixel) | Zu prüfende Aufgaben |
 |---|---|
-| 320 × 568 | Anmelden, eine Ausgabe erfassen, Restbudget lesen, Name/Betrag/Datum eines Listeneintrags erkennen und bearbeiten. Keine horizontale Kernansicht. |
-| 390 × 844 | Eine Ausgabe hinzufügen und löschen; Ziel erstellen und Fortschritt ändern; mobile Navigation und Bildschirmtastatur prüfen. |
-| 768 × 1024 | Monatsübersicht, vollständige historische Ausgabenliste und Sparziele ohne abgeschnittene Inhalte bedienen. |
-| 1280 × 800 | UJ-1 von Anmeldung bis Budgetprüfung; Sparziel anlegen und prüfen; Datenabstände, Tabelle und Tastaturfluss prüfen. |
-
-[ASSUMPTION] Unter 768 px bleibt jede Oberfläche einspaltig mit kompakter Navigation; ab 768 px kann die Hauptnavigation nebeneinander stehen. Ab breiteren Viewports darf die Budgetzusammenfassung neben der Liste erscheinen, sofern die Reihenfolge für Tastatur und Screenreader gleich verständlich bleibt. Alle Prüfungen schließen Tastaturbedienung und Vergrößerung ein.
+| 320 × 568 | Zugang, drei Navigationseinträge, rote Abmeldung, Budget/Rest und Ausgabenerfassung; signierte Eingabe, Vormerkung und Zielauswahl ohne horizontales Scrollen. |
+| 390 × 844 | Ausgaben hinzufügen/bearbeiten/löschen, Ziele erstellen und Fortschritt ersetzen; Bildschirmtastatur, negative Werte, Auswahlübernahme und Löschdialog. |
+| 768 × 1024 | Monatsübersicht, gesamte Historie, Automatikzustände und Ziele ohne abgeschnittene Werte; lange Beträge und sichtbarer Fokus. |
+| 1280 × 800 | Kernreise und alle Sparziel-/Automatikflows mit Tastatur, Tabelle, Dialogen und Statusmeldungen; keine Vermischung der Hauptbereiche. |
 
 ## Key Flows
 
-### Flow 1 — UJ-1. Linus erfasst Ausgaben und prüft sein Monatsbudget.
+Nur UJ-1 ist im PRD als zentrale Nutzerreise benannt. Weitere Flows sind UX-Ableitungen aus den bestätigten Funktionen; die Beispiele legen keine neuen Fachregeln fest. Jeder Flow folgt auch den gemeinsamen Fehler-/Sitzungsregeln unter [State Patterns](#state-patterns).
 
-1. Linus öffnet den Registrierungslink. Beim ersten Besuch legt er ein Konto an; bei späterer Nutzung meldet er sich direkt an.
-2. Nach der Anmeldung landet er auf der Monatsübersicht. [ASSUMPTION] Die Übersicht ist die Startoberfläche.
-3. [ASSUMPTION] Hat Linus noch kein Monatsbudget festgelegt, trägt er es vor der Restbudgetprüfung ein.
-4. Linus erfasst eine oder mehrere Ausgaben mit Name und Betrag in Euro.
-5. Das System setzt den Erfassungstag auf das aktuelle Datum in der Zeitzone Europe/Berlin; Linus kann kein anderes Datum auswählen.
-6. Nach bestätigtem Speichern erscheinen die Einträge in seiner eigenen Liste mit Name, Betrag und Erfassungsdatum. Die Liste umfasst frühere Monate.
-7. **Climax:** Das Restbudget zeigt `Monatsbudget − Summe der eigenen Ausgaben des laufenden Europe/Berlin-Monats`; Linus kann Restbetrag und bisherige Einträge ohne Nebenrechnung prüfen. Bei negativem Ergebnis gilt vorläufig die markierte Annahme eines sichtbaren negativen Betrags.
-8. [ASSUMPTION] Falls er einen Eintrag korrigieren oder entfernen muss, bearbeitet er Name/Betrag oder bestätigt das Löschen; die Monatsberechnung aktualisiert sich danach.
+### Flow 1 — UJ-1 — Linus erfasst Ausgaben und prüft seinen Monatsüberblick.
 
-**Fehlerpfade [ASSUMPTION]:** Eingabe-, Speicher- und Sitzungsfehler folgen den Regeln unter [State Patterns](#state-patterns). Ein ungültiger Registrierungslink zeigt die dort beschriebene neutrale Erklärung; fremde Konten und Datensätze bleiben verborgen.
+1. Linus registriert sich am Smartphone über den gültigen Link mit E-Mail/Passwort oder meldet sich bei späterem Besuch an. Er landet in **Monat**; gegebenenfalls legt er dort zuerst sein Budget fest.
+2. Er öffnet **Ausgaben**, trägt Name und positiven Betrag ein und speichert. Das Datum wird automatisch gesetzt; keine freie Datumswahl oder systemseitige Zeitzonenerläuterung erscheint.
+3. Nach bestätigtem Speichern sieht er den Eintrag mit Name, Betrag und Datum in seiner vollständigen Historie, einschließlich früherer Monate. Bearbeiten und bestätigtes Löschen stehen dort bereit.
+4. **Climax:** Er wechselt zu **Monat** und sieht Budget, laufende Ausgabensumme und dazu konsistentes Restbudget ohne Nebenrechnung. Ein negativer Betrag und seine Überschreitung bleiben ausdrücklich lesbar.
+5. Er meldet sich über den roten Button ab. Persönliche Daten und Entwürfe verschwinden; eine später eintreffende Antwort öffnet die alte Ansicht nicht erneut.
 
-### Flow 2 — [ASSUMPTION] Linus legt ein Sparziel an und aktualisiert dessen Fortschritt.
+**Fehlerpfade:** Ungültiger Link/Zugang neutral; kein Budget → festlegen statt erfundenem Rest. Fehler beim Speichern → Entwurf erhalten, kein Erfolg. Ungewisser Ausgang → Stand neu laden. Fremddaten bleiben verborgen; nach Sitzungsende neu anmelden.
 
-Dieser Ablauf ist aus **FR-9: Sparziel festlegen** und **FR-10: Fortschritt eines Sparziels aktualisieren und ansehen** abgeleitet; im PRD ist nur UJ-1 als Nutzerreise bestätigt.
+### Flow 2 — Linus pflegt Ziel und Gesamtfortschritt (abgeleitet)
 
-1. Linus meldet sich an und öffnet „Sparziele“.
-2. Er legt ein Ziel mit eigenem Namen und Zielbetrag in Euro an; das Zieldatum kann leer bleiben.
-3. [ASSUMPTION] Ein neu angelegtes Ziel startet mit einem Gesamtfortschritt von `0 €`; das PRD legt den Anfangswert nicht fest.
-4. Linus trägt später den aktuellen erreichten Gesamtbetrag ein. Die Eingabe ersetzt den zuvor gespeicherten Gesamtbetrag; einzelne Beiträge werden nicht aufgelistet oder historisiert.
-5. **Climax:** Er sieht den manuell gepflegten aktuellen Betrag im Verhältnis zum Zielbetrag und erkennt den Stand seines persönlichen Ziels.
+1. Linus öffnet **Sparziele** und legt „Notgroschen“ mit positivem Zielbetrag und optionalem Datum an. Das neue Ziel startet mit 0 € und wird nicht automatisch für die Monatsautomatik ausgewählt.
+2. Er bearbeitet Name/Zielbetrag/Datum; der Fortschritt bleibt erhalten, ein geleertes Datum entfällt nach Bestätigung.
+3. Später trägt er den tatsächlichen Gesamtfortschritt ein, bei Bedarf mit Minuszeichen. Der Hinweis erklärt, dass die Eingabe den Gesamtstand ersetzt.
+4. **Climax:** Nach bestätigtem Speichern sieht er bei −30 € und 100 € Ziel **−30 %** mit leerem Balken; bei 150 € sieht er **150 %** mit vollem Balken. Die tatsächlichen Zahlen bleiben auch assistiv lesbar.
 
-**Fehlerpfade [ASSUMPTION]:** Für Eingabe-, Speicher- und Zugriffsfälle gelten die Regeln unter [State Patterns](#state-patterns); die zulässigen Wertebereiche bleiben offen.
+**Fehlerpfade:** Ungültige Werte bleiben im Formular, nichts wird gerundet. Auch bei einem grenzbedingt blockierten Nachhollauf bleibt manuelles Ersetzen erreichbar. Sitzung endet → Daten und Entwurf verwerfen.
 
-## Open Questions
+### Flow 3 — Linus aktiviert ohne Ziel und übernimmt Vormerkungen (abgeleitet)
 
-- **UX-Entscheidung:** Soll ein negatives Restbudget als negativer Betrag oder als gesonderte Überschreitungsmeldung erscheinen? Diese Spine kennzeichnet die negative Darstellung nur vorläufig als [ASSUMPTION].
-- **Eingaben:** Welche Wertebereiche und Genauigkeit gelten für Ausgaben, Monatsbudget, Zielbetrag und Fortschritt? Darf der Fortschritt das Ziel übersteigen?
-- **Sparziel-Lebenszyklus:** Können Name, Zielbetrag und Datum bestehender Ziele geändert oder Ziele gelöscht werden?
-- **Zugangsgrenze:** Wie lange gilt der Registrierungslink, und kann Linus ihn erneuern oder widerrufen? Der bestätigte Zugang bleibt „jede Person mit dem Link“; es wird keine Einladungspflicht unterstellt.
-- **Datenlebenszyklus:** Welche v1-Regeln gelten für Export, Löschung, Aufbewahrung und Kontowiederherstellung, bevor echte Nutzerdaten verwendet werden?
-- **Plattformverständnis:** Bedeutet „Mobile“ nur den mobilen Browser oder soll später eine native Anwendung entstehen?
-- **Barrierefreiheit:** WCAG 2.2 AA und 44-px-Ziele sind explizite UX-Annahmen; die Anforderung einer barrierefreien Anwendung ist bestätigt, konkrete Prüf- und Abnahmekriterien waren in den Produktquellen nicht festgelegt.
-- **Darstellung/Verhalten:** Farbtokens, deutscher Zahlenstil, Lichtmodus, Layout, Breakpoints, offline-Verhalten, Bestätigung beim Löschen und leere Zustände sind vorläufige UX-Annahmen.
-- **Erfolg:** Die Quellen messen derzeit Übersicht und Ziel-Fortschritt; ob „mehr Geld am Monatsende“ als Ergebnis zusätzlich gemessen werden soll, bleibt offen.
+1. Linus öffnet im Oktober **Sparziele** und aktiviert die Monatsautomatik ohne vorhandenes Ziel. Vorher liest er: ab diesem Monat, erster Abschluss nach dessen Ende, keine Anrechnung früherer Monate.
+2. Nach Bestätigung sieht er Startmonat, aktive Automatik und fehlende Auswahl. Er schließt die App. Nach Monatsende wird ein Oktoberüberschuss von 200 € ohne offene Sitzung vorgemerkt; weitere 100 € aus November kommen hinzu.
+3. Beim nächsten Besuch lädt die App den bestätigten Stand: **300 € vorgemerkt**, noch keinem Ziel angerechnet. Linus legt ein Ziel an und setzt dessen Gesamtfortschritt auf 50 €.
+4. Er wählt dieses Ziel für Monatsüberschüsse. Vor dem Speichern ist erkennbar, dass die **gesamte** offene Vormerkung übernommen wird; inzwischen fällige Monate werden nach ihren historischen Regeln berücksichtigt.
+5. **Climax:** Nach gemeinsamer Bestätigung sieht er das ausgewählte Ziel mit **350 € Fortschritt** und **0 € vorgemerkt**. Eine erneute Auswahl rechnet dieselben Beträge nicht noch einmal an.
+
+**Varianten/Fehlerpfade:** Mit bereits ausgewähltem Ziel erhöhen 1.000 € damaliges Budget minus 800 € Ausgaben einen Stand von 50 € auf 250 €. Ohne Budget kein erfundener Betrag; null/negativer Rest keine neue Sparbelastung. Übernahme scheitert → gespeicherte Auswahl, Fortschritt und Vormerkung gemeinsam erhalten. Kein genaues Abschlussdatum versprechen; nach Ausfall historische Auswahl bewahren.
+
+### Flow 4 — Linus korrigiert eine historische Ausgabe (abgeleitet)
+
+1. Linus findet in **Ausgaben** einen Eintrag aus einem abgeschlossenen aktivierten Monat und ändert seinen Betrag oder bestätigt dessen Löschung.
+2. Die App bestätigt die Ausgabe erst zusammen mit ihrer notwendigen Monatskorrektur. Vor Zielzuordnung ändert sich nur die Vormerkung dieses Monats; nach Zuordnung wirkt nur die Differenz auf das ursprüngliche vorhandene Ziel.
+3. Bei zuvor 200 € und neu 150 € Monatsüberschuss beträgt die Korrektur −50 €. Ein inzwischen manuell auf 300 € gesetzter Gesamtfortschritt wird dadurch 250 €.
+4. **Climax:** Linus öffnet **Sparziele** und liest den aktuellen tatsächlichen Stand. War er vorher 20 €, steht dort nach −50 € Korrektur **−30 €**; eine spätere Anrechnung von 100 € ergibt **70 €**. Keine separate Schuld wird angelegt.
+
+**Varianten/Fehlerpfade:** Günstigere oder gelöschte Ausgabe erhöht nur um die entsprechende Differenz. Reine Namensänderung ohne Geldwirkung. Grenz-/Speicherfehler verwerfen den gesamten zusammengehörigen Vorgang. Ein schon gelöschtes Ziel wird nicht wiederhergestellt; seine Monate erzeugen keine neue Vormerkung oder andere Zielanrechnung.
+
+### Flow 5 — Linus wechselt oder löscht das ausgewählte Ziel (abgeleitet)
+
+1. Im November wählt Linus in **Sparziele** Ziel B statt A. Vor dem Speichern liest er, dass der Wechsel den offenen und folgende Monate betrifft; offene Vormerkungen werden vollständig B angerechnet.
+2. Nach Bestätigung bleibt Oktober A zugeordnet, November folgt B. Auch eine spätere Oktoberkorrektur verändert A. Ein historischer Nullmonat behält dieselbe Bindung für spätere Korrekturen.
+3. Will Linus B löschen, erklärt der Dialog: Ziel und tatsächlicher Fortschritt entfallen, alte Anrechnungen werden nicht übertragen, weitere Überschüsse bleiben bis zur nächsten Auswahl vorgemerkt. Bereits offene Vormerkungen bleiben erhalten.
+4. **Climax:** Nach ausdrücklicher Bestätigung ist B entfernt und keine Auswahl gesetzt. Linus erkennt den weiteren Weg zur Zielauswahl; alte gebundene Monate sind weder erneut vorgemerkt noch einem anderen Ziel zugeschlagen.
+
+**Fehlerpfade:** Abbrechen/Escape verändert nichts. Nach erfolgreichem Löschen Fokus zum nächsten sinnvollen Ziel oder zur Anlegeaktion. Löschen ist auch ohne erfolgreichen Nachhollauf möglich; unverarbeitete abgeschlossene Monate mit damaliger Auswahl B bleiben verbraucht. Fehler bestätigt keine Löschung.
+
+### Anforderungsabdeckung
+
+Die Namen entsprechen dem aktuellen PRD; CAP-Bezüge gelten für die Änderungsspezifikation, nicht für gleichnamige IDs anderer Quellen.
+
+| Anforderung | Key Flow / querschnittliche Abnahme |
+|---|---|
+| FR-1: Nutzerkonto über den Registrierungslink anlegen und Zugang nutzen | Flow 1, State Patterns; CAP-3 rotes Abmelden. |
+| FR-2: Eigene Finanzdaten ansehen | Alle Flows mit ausschließlich eigenem Kontozustand; Sitzungsende in Flow 1. |
+| FR-3: Daten anderer Personen schützen | Alle Flows, neutrale Zugriffsfehler; keine fremde Zielauswahl. |
+| FR-4: Ausgabe manuell erfassen | Flow 1. |
+| FR-5: Alle bisher erfassten Ausgaben tabellarisch ansehen | Flows 1 und 4. |
+| FR-6: Eigene Ausgabe bearbeiten oder löschen | Flows 1 und 4. |
+| FR-7: Monatsbudget festlegen | Flow 1. |
+| FR-8: Restbudget anzeigen | Flow 1. |
+| FR-9: Eigenes Sparziel anlegen, bearbeiten und löschen | Flows 2 und 5. |
+| FR-10: Fortschritt eines Sparziels aktualisieren und ansehen | Flows 2 und 4. |
+| FR-11: Website responsiv und zugänglich nutzen | Alle Flows in den vier Viewports, mit Tastatur und 200 % Textgröße. |
+| FR-12: Monat, Ausgaben und Sparziele getrennt aufrufen | Flows 1–5; CAP-2. |
+| FR-13: Deutsche Systemtexte ohne Zeitzonenerläuterungen anzeigen | Alle Flows einschließlich zugänglicher Hilfstexte; CAP-1. |
+| FR-14: Monatsautomatik aktivieren | Flow 3; CAP-4. |
+| FR-15: Monatsüberschuss zuordnen oder vormerken | Flows 3 und 5; CAP-4. |
+| FR-16: Historische Monatsüberschüsse um Differenzen korrigieren | Flows 4 und 5; CAP-4. |
+| FR-17: Monatsabschlüsse ohne offene Sitzung zuverlässig nachholen | Flow 3 und gemeinsame Fehler-/Aktualisierungsregeln; CAP-4. |
+
+## Annahmen und offene Folgearbeit
+
+- **Aus Quellen übernommen:** Gesamte Ausgabenverwaltung unter Ausgaben und signierter Bereich auch bei manueller Fortschrittseingabe bleiben ausdrücklich als Annahmen markiert (PRD §10). Beide sind bereits Grundlage der Zielarchitektur.
+- **UX-Ausgestaltung:** Vorläufige visuelle Tokens, konkrete Mikrocopy, Automatikabschnitt unter Sparziele, Layout ab 768 px und entbehrliche Bewegung sind Annahmen. Sie ändern keine bestätigte Fachregel.
+- **Außerhalb dieses Updates:** Export, Kontolöschung, Aufbewahrung, Kontowiederherstellung und Betrieb folgen den offenen Punkten im PRD §9. Es entstehen daraus hier keine zusätzlichen Einstellungen oder Freigaben.

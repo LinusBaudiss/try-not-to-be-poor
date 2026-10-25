@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Ausgaben · UX-Referenz</title><style>
+/* Governing contracts: DESIGN.md Colors, Typography, Layout & Spacing, Shapes,
+   Components; EXPERIENCE.md Information Architecture, Component Patterns,
+   State Patterns, Accessibility Floor, Responsive & Platform and Key Flows.
+   These static examples illustrate the spines; the spines win on conflict. */
+:root { color-scheme:light; font:16px/1.5 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+ --base:#F7F8F6; --raised:#FFFFFF; --text:#18211E; --muted:#46534D;
+ --border:#68746D; --primary:#155C4A; --on-primary:#FFFFFF; --accent:#805000;
+ --focus:#1B5C80; --error:#842D2D; --on-error:#FFFFFF; --success:#EAF4EF;
+ color:var(--text); background:var(--base); }
+*,*::before,*::after { box-sizing:border-box; }
+body { margin:0; } p,dl,ul { margin:0; } h1,h2,h3 { margin:0; overflow-wrap:anywhere; }
+h1 { font-size:1.75rem;line-height:1.2;font-weight:650; } h2 { font-size:1.25rem;line-height:1.3;font-weight:600; }
+h3 { font-size:1rem;line-height:1.4;font-weight:600; }
+p,dd,dt,label,a,button,output { overflow-wrap:anywhere; }
+.presentation { width:min(100%,1280px); margin:auto; padding:24px; }
+.mock-caption { max-width:65ch; margin:0 auto 24px; color:var(--muted); }
+.mock-caption strong { color:var(--text); display:block; margin-bottom:8px; }
+.screens { display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:24px;align-items:start; }
+.single { grid-template-columns:minmax(0,390px);justify-content:center; }
+.example { min-width:0; }
+.example-label { font-size:.875rem;font-weight:550;color:var(--muted);margin:0 0 12px; }
+.device { min-width:0;max-width:390px;margin:auto;border:1px solid var(--border);border-radius:12px;background:var(--base); }
+.app-header { padding:24px 16px 0; }
+.brand { font-weight:650;font-size:1.25rem;display:block;overflow-wrap:anywhere; }
+.app-header .subline { color:var(--muted);font-size:.875rem;margin-top:4px; }
+nav { display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:24px; }
+nav a { display:flex;align-items:center;justify-content:center;min-height:44px;min-width:44px;padding:8px 4px;border:1px solid var(--border);border-radius:8px;color:var(--text);text-decoration:none;font-size:.875rem;font-weight:550;text-align:center; }
+nav a[aria-current="page"] { color:var(--primary);border:2px solid var(--primary);text-decoration:underline;text-underline-offset:4px;font-weight:650; }
+.session-actions { display:flex;justify-content:flex-end;margin-top:16px; }
+button { min-height:44px;min-width:44px;max-width:100%;padding:12px;border:2px solid transparent;border-radius:8px;background:var(--primary);color:var(--on-primary);font:inherit;font-weight:600;cursor:pointer; }
+button:hover { text-decoration:underline;text-underline-offset:3px; }
+button:active { border-color:currentColor; }
+.logout { background:var(--error);color:var(--on-error); }
+.secondary { color:var(--primary);background:var(--raised);border:1px solid var(--border); }
+.block { width:100%; }
+:focus-visible { outline:3px solid var(--focus);outline-offset:3px; }
+.app-content { padding:24px 16px;display:grid;gap:24px;min-width:0; }
+.page-heading { display:grid;gap:8px; }
+.page-heading p,.hint,.meta { color:var(--muted); }
+.card { padding:24px;min-width:0;border:1px solid var(--border);border-radius:12px;background:var(--raised);display:grid;gap:16px; }
+.card.tight { padding:16px; }
+label { display:block;font-size:.875rem;font-weight:550;line-height:1.4;margin-bottom:8px; }
+input,select { width:100%;min-width:0;min-height:48px;padding:12px;border:1px solid var(--border);border-radius:4px;font:inherit;color:var(--text);background:var(--raised); }
+.hint { font-size:.875rem;line-height:1.5;margin-top:8px; }
+form { display:grid;gap:16px;min-width:0; }
+.amount { display:block;font-size:1.5rem;font-weight:650;line-height:1.25;font-variant-numeric:tabular-nums;overflow-wrap:anywhere; }
+.financial-value { font-variant-numeric:tabular-nums;overflow-wrap:anywhere; }
+.summary-list { display:grid;gap:12px; }
+.summary-list div { min-width:0; }
+dt { color:var(--muted);font-size:.875rem; } dd { margin:4px 0 0;min-width:0;font-variant-numeric:tabular-nums; }
+.separator { border-top:1px solid var(--border);padding-top:16px; }
+.expense-list { list-style:none;padding:0;display:grid;gap:16px; }
+.expense-list li { border-top:1px solid var(--border);padding-top:16px;display:grid;gap:12px;min-width:0; }
+.expense-data { display:grid;gap:8px; }
+.actions { display:flex;flex-wrap:wrap;gap:8px; }
+.actions button { flex:1 1 7rem;min-width:0; }
+.state { font-size:.875rem;color:var(--muted); }
+.progress-track { height:12px;width:100%;background:var(--success);border:1px solid var(--border);border-radius:9999px; }
+.progress-fill { height:100%;max-width:100%;border-radius:9999px;background:var(--primary); }
+.inline-value { font-variant-numeric:tabular-nums; }
+@media(max-width:599px) { .presentation { padding:0; } .mock-caption { padding:16px;margin-bottom:8px; } .screens { gap:32px; } .example-label { padding:0 16px; } .device { border-left:0;border-right:0;border-radius:0;max-width:100%; } }
+@media(prefers-reduced-motion:reduce) { * { scroll-behavior:auto; } }
+</style></head>
+<body><main class="presentation"><aside class="mock-caption"><strong>UX-Referenz · Ausgaben</strong>Erfassung und vollständige Historie; die drei Oktobereinträge ergeben zusammen 800,00 €. „Berlin-Fahrt“ ist ein unveränderter eigener Eintragsname. Statische Beispielansicht; die Schaltflächen speichern keine Daten. Die Hauptnavigation verlinkt die drei Referenzen.</aside><div class="screens single"><section class="example"><article class="device"><header class="app-header"><span class="brand">Try Not to Be Poor</span><p class="subline">Deine private Ausgabenübersicht</p><nav aria-label="Hauptnavigation"><a href="key-monat.html">Monat</a><a href="key-ausgaben.html" aria-current="page">Ausgaben</a><a href="key-sparziele.html">Sparziele</a></nav><div class="session-actions"><button class="logout" type="button">Abmelden</button></div></header><div class="app-content"><div class="page-heading"><h1>Ausgaben</h1><p>Erfassen und alle bisherigen Einträge ansehen.</p></div><section class="card" aria-labelledby="new-expense"><h2 id="new-expense">Ausgabe erfassen</h2><form><div><label for="expense-name">Name</label><input id="expense-name" type="text" autocomplete="off"></div><div><label for="expense-amount">Betrag in Euro</label><input id="expense-amount" type="text" inputmode="decimal" aria-describedby="expense-hint"><p class="hint" id="expense-hint">Positiver Betrag mit höchstens zwei Nachkommastellen. Das Datum wird automatisch gesetzt.</p></div><button type="button" class="block">Ausgabe speichern</button></form></section><section class="card tight" aria-labelledby="history"><h2 id="history">Alle Ausgaben</h2><p class="meta">Auch Einträge aus früheren Monaten.</p><ul class="expense-list"><li><h3 id="expense-0">Miete</h3><dl class="expense-data"><div><dt>Erfassungsdatum</dt><dd>01.10.2026</dd></div><div><dt>Betrag</dt><dd>650,00&nbsp;€</dd></div></dl><div class="actions"><button type="button" class="secondary" aria-label="Miete bearbeiten">Bearbeiten</button><button type="button" class="secondary" aria-label="Miete löschen">Löschen</button></div></li><li><h3 id="expense-1">Einkauf</h3><dl class="expense-data"><div><dt>Erfassungsdatum</dt><dd>20.10.2026</dd></div><div><dt>Betrag</dt><dd>120,00&nbsp;€</dd></div></dl><div class="actions"><button type="button" class="secondary" aria-label="Einkauf bearbeiten">Bearbeiten</button><button type="button" class="secondary" aria-label="Einkauf löschen">Löschen</button></div></li><li><h3 id="expense-2">Mobilität</h3><dl class="expense-data"><div><dt>Erfassungsdatum</dt><dd>25.10.2026</dd></div><div><dt>Betrag</dt><dd>30,00&nbsp;€</dd></div></dl><div class="actions"><button type="button" class="secondary" aria-label="Mobilität bearbeiten">Bearbeiten</button><button type="button" class="secondary" aria-label="Mobilität löschen">Löschen</button></div></li><li><h3 id="expense-3">Berlin-Fahrt</h3><dl class="expense-data"><div><dt>Erfassungsdatum</dt><dd>18.09.2026</dd></div><div><dt>Betrag</dt><dd>45,00&nbsp;€</dd></div></dl><div class="actions"><button type="button" class="secondary" aria-label="Berlin-Fahrt bearbeiten">Bearbeiten</button><button type="button" class="secondary" aria-label="Berlin-Fahrt löschen">Löschen</button></div></li></ul></section></div></article></section></div></main></body></html>

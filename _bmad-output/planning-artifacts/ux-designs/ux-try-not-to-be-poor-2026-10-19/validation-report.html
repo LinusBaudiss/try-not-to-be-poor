@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>UX-Prüfbericht — try-not-to-be-poor</title><style>
+  :root {
+    --bg: #fafaf9;
+    --surface: #ffffff;
+    --border: #e7e5e4;
+    --text: #1c1917;
+    --muted: #78716c;
+
+    --verdict-strong: #16a34a;
+    --verdict-adequate: #65a30d;
+    --verdict-thin: #d97706;
+    --verdict-broken: #dc2626;
+
+    --sev-low: #64748b;
+    --sev-medium: #ca8a04;
+    --sev-high: #ea580c;
+    --sev-critical: #dc2626;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    font-size: 15px;
+  }
+  .container { max-width: 960px; margin: 0 auto; padding: 32px 24px 64px; }
+
+  header.report-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 24px;
+  }
+  .title h1 { margin: 0; font-size: 22px; font-weight: 600; letter-spacing: -0.01em; }
+  .title .subtitle { color: var(--muted); font-size: 13px; margin-top: 4px; font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+
+  .synthesis {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--muted);
+    border-radius: 8px;
+    padding: 18px 22px;
+    margin-bottom: 24px;
+    font-size: 15.5px;
+  }
+  .synthesis p { margin: 0 0 10px; }
+  .synthesis p:last-child { margin-bottom: 0; }
+
+  .dimension-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+  .dim-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+  }
+  .dim-card .dim-name { font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+  .dim-card .dim-verdict { font-size: 14px; font-weight: 600; }
+
+  section.dimension, section.reviewer-section { margin-bottom: 14px; }
+  section.dimension details, section.reviewer-section details {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  section summary {
+    padding: 14px 20px;
+    cursor: pointer;
+    user-select: none;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  section summary::-webkit-details-marker { display: none; }
+  section summary::before {
+    content: "▸";
+    display: inline-block;
+    color: var(--muted);
+    transition: transform 0.15s ease;
+  }
+  section details[open] summary::before { transform: rotate(90deg); }
+  section summary h2 {
+    display: inline;
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    flex: 1;
+  }
+  .verdict-pill {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: white;
+  }
+  .verdict-strong { background: var(--verdict-strong); }
+  .verdict-adequate { background: var(--verdict-adequate); }
+  .verdict-thin { background: var(--verdict-thin); }
+  .verdict-broken { background: var(--verdict-broken); }
+
+  .dim-body { padding: 4px 20px 18px; }
+  .dim-judgment { color: var(--text); font-size: 14.5px; }
+  .dim-judgment p { margin: 0 0 10px; }
+
+  .findings-list { padding: 0 20px 4px; }
+  article.finding {
+    padding: 14px 0;
+    border-top: 1px solid var(--border);
+  }
+  article.finding:first-child { border-top: none; }
+  article.finding header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 6px;
+  }
+  .badge {
+    font-size: 10.5px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    line-height: 1.4;
+  }
+  .badge-sev-low { background: rgba(100, 116, 139, 0.12); color: var(--sev-low); }
+  .badge-sev-medium { background: rgba(202, 138, 4, 0.14); color: var(--sev-medium); }
+  .badge-sev-high { background: rgba(234, 88, 12, 0.14); color: var(--sev-high); }
+  .badge-sev-critical { background: rgba(220, 38, 38, 0.14); color: var(--sev-critical); }
+  .finding-title { margin: 0; font-size: 15px; font-weight: 500; flex: 1; min-width: 200px; }
+  .finding-location { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12.5px; color: var(--muted); }
+  .finding-note, .finding-fix { margin-top: 6px; font-size: 14px; }
+  .finding-fix strong { color: var(--muted); font-weight: 500; }
+
+  .reviewer-source {
+    font-size: 12px;
+    color: var(--muted);
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  }
+
+  .mechanical {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-top: 24px;
+    font-size: 14px;
+  }
+  .mechanical h3 { margin: 0 0 10px; font-size: 14px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+  .mechanical ul { margin: 0; padding-left: 20px; }
+  .mechanical li { margin-bottom: 4px; color: var(--text); }
+
+  footer.report-footer {
+    margin-top: 40px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--muted);
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  footer .meta { display: flex; gap: 24px; flex-wrap: wrap; }
+</style></head><body><div class="container">
+<header class="report-header"><div class="title"><h1>try-not-to-be-poor — UX-Prüfbericht</h1><div class="subtitle"><a href="DESIGN.md">DESIGN.md</a> · <a href="EXPERIENCE.md">EXPERIENCE.md</a></div><p>Gewählte Prüfungen: Abdeckung, Zugänglichkeit, Monatsregeln.</p></div></header>
+<div class="synthesis"><p>Die beiden Spines bilden einen konsistenten und für die nachfolgende Umsetzung verwendbaren UX-Vertrag. Alle aktuellen Produktanforderungen sind auf benannte Abläufe beziehungsweise querschnittliche Regeln abgebildet; Tokens, Komponenten, Zustände und visuelle Referenzen sind vollständig verbunden. Im statischen Dokument- und HTML-Abgleich wurden keine bestätigten Befunde ermittelt; eine visuelle oder interaktive Browserabnahme ist damit nicht behauptet.</p><p>Die unabhängigen Prüfungen der Zugänglichkeit und Monatsregeln fanden ebenfalls keine bestätigten Befunde. Alle 17 verbindlichen Monatsabnahmefälle, die historische Zielbindung und die tatsächliche signierte Fortschrittsanzeige bleiben erhalten.</p></div>
+<div class="dimension-summary"><div class="dim-card"><div class="dim-name">Abdeckung der Abläufe</div><div class="dim-verdict" style="color:var(--verdict-strong)">strong</div></div><div class="dim-card"><div class="dim-name">Vollständigkeit der Tokens</div><div class="dim-verdict" style="color:var(--verdict-strong)">strong</div></div><div class="dim-card"><div class="dim-name">Abdeckung der Komponenten</div><div class="dim-verdict" style="color:var(--verdict-strong)">strong</div></div><div class="dim-card"><div class="dim-name">Abdeckung der Zustände</div><div class="dim-verdict" style="color:var(--verdict-strong)">strong</div></div><div class="dim-card"><div class="dim-name">Visuelle Referenzen</div><div class="dim-verdict" style="color:var(--verdict-strong)">strong</div></div><div class="dim-card"><div class="dim-name">Umfang und Detailtiefe</div><div class="dim-verdict" style="color:var(--verdict-strong)">strong</div></div><div class="dim-card"><div class="dim-name">Quellen und Begriffe</div><div class="dim-verdict" style="color:var(--verdict-strong)">strong</div></div><div class="dim-card"><div class="dim-name">Dokumentstruktur</div><div class="dim-verdict" style="color:var(--verdict-strong)">strong</div></div></div><section class="dimension"><details><summary><h2>1. Abdeckung der Abläufe</h2><span class="verdict-pill verdict-strong">strong</span></summary><div class="dim-body"><div class="dim-judgment"><p>17 aktuelle FR-Anforderungen und CAP-1 bis CAP-4 sind auf fünf benannte Flows mit nummerierten Schritten, Climax und Fehlerpfaden abgebildet. UJ-1 entspricht dem aktuellen PRD; ergänzende Flows sind als Ableitungen gekennzeichnet.</p></div></div></details></section><section class="dimension"><details><summary><h2>2. Vollständigkeit der Tokens</h2><span class="verdict-pill verdict-strong">strong</span></summary><div class="dim-body"><div class="dim-judgment"><p>Alle 45 unterschiedlichen Tokenreferenzen lösen sich auf. 13 konkrete Farbtokens und fünf Typografierollen sind definiert; tragende Kontrastpaare und Mindestziele sind benannt.</p></div></div></details></section><section class="dimension"><details><summary><h2>3. Abdeckung der Komponenten</h2><span class="verdict-pill verdict-strong">strong</span></summary><div class="dim-body"><div class="dim-judgment"><p>Alle 16 Komponenten besitzen einen visuellen Vertrag in DESIGN.md und Verhaltensregeln in EXPERIENCE.md. Benennungen und Tokenreferenzen stimmen überein.</p></div></div></details></section><section class="dimension"><details><summary><h2>4. Abdeckung der Zustände</h2><span class="verdict-pill verdict-strong">strong</span></summary><div class="dim-body"><div class="dim-judgment"><p>Zugang, Monat, Ausgaben, Sparziele, Automatik und Löschbestätigung haben passende Lade-, Leer-, Fehler-, Offline-, Fokus- und Sitzungsregeln. Sicherer Fehlschlag und ungewisser Speicherausgang bleiben unterscheidbar.</p></div></div></details></section><section class="dimension"><details><summary><h2>5. Visuelle Referenzen</h2><span class="verdict-pill verdict-strong">strong</span></summary><div class="dim-body"><div class="dim-judgment"><p>Alle drei statischen Mockups sind in beiden Spines passend verlinkt. Monat zeigt Budget und Übersicht, Ausgaben Formular und Historie, Sparziele Aktivierung, Vormerkung und negativen Fortschritt. Zugang und Löschdialoge bleiben gemäß Nutzerwahl Spine-only. Keine verwaisten Referenzen oder externen Abhängigkeiten gefunden.</p></div></div></details></section><section class="dimension"><details><summary><h2>6. Umfang und Detailtiefe</h2><span class="verdict-pill verdict-strong">strong</span></summary><div class="dim-body"><div class="dim-judgment"><p>Visuelles und Verhalten sind klar getrennt. Komponenten, Zustände, Monatswirkungstabelle und Flows unterstützen unterschiedliche Nachschlageaufgaben, ohne widersprüchliche Regeln oder neue Oberflächen einzuführen.</p></div></div></details></section><section class="dimension"><details><summary><h2>7. Quellen und Begriffe</h2><span class="verdict-pill verdict-strong">strong</span></summary><div class="dim-body"><div class="dim-judgment"><p>Je Spine lösen sich 14 Quellen auf. Alle 17 FR-Namen und UJ-1 stimmen mit dem aktuellen PRD überein. Neue Produktregeln gehen abgelösten historischen Aussagen vor; die beiden geerbten Annahmen bleiben sichtbar.</p></div></div></details></section><section class="dimension"><details><summary><h2>8. Dokumentstruktur</h2><span class="verdict-pill verdict-strong">strong</span></summary><div class="dim-body"><div class="dim-judgment"><p>DESIGN.md hält die kanonische Abschnittsfolge ein. EXPERIENCE.md enthält alle Pflichtabschnitte und die für Smartphone/Rechner sowie Monatswirkungen erforderlichen Ergänzungen.</p></div></div></details></section><section class="reviewer-section"><details><summary><h2>Zugänglichkeit</h2><span class="reviewer-source"><a href="review-accessibility.md">review-accessibility.md</a></span></summary><div class="dim-body"><div class="dim-judgment"><p>Semantik, sichtbare Labels, Vorzeichen und tatsächliche Prozentwerte, Vormerkungen, Fokusvertrag und rechnerische Farbkontraste sind stimmig. Weiß auf Abmelderot erreicht 8,77:1; der Fokusring auf hellen Flächen 6,82:1 beziehungsweise 7,27:1. Keine bestätigten Befunde.</p></div></div></details></section><section class="reviewer-section"><details><summary><h2>Monatsregeln</h2><span class="reviewer-source"><a href="review-monthly-rules.md">review-monthly-rules.md</a></span></summary><div class="dim-body"><div class="dim-judgment"><p>Alle 17 Monatsabnahmefälle sind erhalten, einschließlich Aktivierung ohne Ziel, vollständiger Übernahme, Nullmonatsbindung, Zielwechsel und Ziellöschung ohne Nachhollauf. Historische Differenzen, negative Werte und manuelle Korrektur bei blockierter Automatik sind konsistent. Keine bestätigten Befunde.</p></div></div></details></section>
+<section class="mechanical"><h2>Befunde nach Schwere</h2><h3>Critical (0)</h3><p>Keine bestätigten Befunde.</p><h3>High (0)</h3><p>Keine bestätigten Befunde.</p><h3>Medium (0)</h3><p>Keine bestätigten Befunde.</p><h3>Low (0)</h3><p>Keine bestätigten Befunde.</p></section>
+<section class="mechanical"><h2>Prüfnachweise</h2><ul><li>YAML, Farbwerte, Tokenpfade, Quellen, lokale Datei- und Abschnittslinks sowie Komponentenpaare geprüft.</li><li>17 FR-Namen, fünf Flows, drei Mockups und ihre relativen Navigationslinks geprüft; IDs und Labelreferenzen eindeutig, keine Skripte oder Remote-Abhängigkeiten.</li><li>Strukturredaktion ohne Befund; die Prosa-Klarstellung zur fehlenden automatischen Zielauswahl wurde übernommen. Das vorausgefüllte Budgetfeld verwendet die bestehende ungruppierte Eingabe 1000,00.</li><li>Keine bestätigten offenen Befunde: Critical 0, High 0, Medium 0, Low 0.</li></ul></section>
+<section class="mechanical"><h2>Prüfgrenze</h2><p>Ausschließlich statische Dokument-, HTML-Quell- und Kontrastprüfung. Die lokale Datei-URL wurde durch eine Browser-Sicherheitsregel blockiert; diese Sperre wurde nicht umgangen. Gerendertes Layout, Reflow bei 320 CSS-Pixeln und 200 % Text, praktische Tastatur-/Screenreaderbedienung und mobile Tastaturen sind hier nicht abgenommen. Die Mockups sind statische Illustrationen. Anwendung, API und Monatsverarbeitung wurden in diesem UX-Update weder geändert noch ausgeführt; dies ist keine Produktionsfreigabe.</p></section>
+<footer class="report-footer"><div class="meta"><span>Rubrik: <a href="review-rubric.md">review-rubric.md</a></span><span>Zusätzlich: <a href="review-accessibility.md">review-accessibility.md</a> · <a href="review-monthly-rules.md">review-monthly-rules.md</a></span><span>Erstellt: 2026-10-25T20:36:31+01:00</span></div><p>Artefakte: DESIGN.md · EXPERIENCE.md · validation-report.md</p></footer>
+</div></body></html>

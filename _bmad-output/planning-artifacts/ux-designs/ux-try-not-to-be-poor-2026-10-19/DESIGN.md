@@ -1,6 +1,6 @@
 ---
 name: try-not-to-be-poor
-description: Visuelle Grundlage für eine private, manuelle Ausgaben- und Sparzielübersicht.
+description: Visuelle Grundlage für private Ausgaben, Monatsbudget und Sparziele mit Monatsautomatik.
 colors:
   surface-base: '#F7F8F6' # [ASSUMPTION]
   surface-raised: '#FFFFFF' # [ASSUMPTION]
@@ -55,7 +55,32 @@ spacing: # [ASSUMPTION]
   '6': 32px
   gutter-mobile: 16px
   gutter-wide: 24px
-components: # [ASSUMPTION]
+components: # Exakte visuelle Ausprägung weiterhin [ASSUMPTION]
+  main-navigation:
+    textColor: '{colors.text-primary}'
+    activeColor: '{colors.primary}'
+    gap: '{spacing.2}'
+  logout-button:
+    backgroundColor: '{colors.error}'
+    textColor: '{colors.on-error}'
+    rounded: '{rounded.md}'
+    padding: '{spacing.3}'
+  automation-panel:
+    backgroundColor: '{colors.surface-raised}'
+    textColor: '{colors.text-primary}'
+    rounded: '{rounded.lg}'
+    padding: '{spacing.5}'
+  goal-selection:
+    backgroundColor: '{colors.surface-raised}'
+    textColor: '{colors.text-primary}'
+    rounded: '{rounded.sm}'
+    padding: '{spacing.3}'
+  pending-surplus:
+    textColor: '{colors.text-primary}'
+    typography: '{typography.amount}'
+  goal-progress-value:
+    textColor: '{colors.text-primary}'
+    typography: '{typography.amount}'
   auth-form:
     backgroundColor: '{colors.surface-raised}'
     textColor: '{colors.text-primary}'
@@ -97,68 +122,105 @@ components: # [ASSUMPTION]
     textColor: '{colors.text-primary}'
     rounded: '{rounded.lg}'
     padding: '{spacing.5}'
-updated: 2026-10-19
+updated: 2026-10-25
 status: final
 sources:
   - '{planning_artifacts}/briefs/brief-try-not-to-be-poor-2026-10-18/brief.md'
   - '{planning_artifacts}/briefs/brief-try-not-to-be-poor-2026-10-18/addendum.md'
   - '{planning_artifacts}/prds/prd-try-not-to-be-poor-2026-10-19/prd.md'
+  - '{planning_artifacts}/prds/prd-try-not-to-be-poor-2026-10-19/addendum.md'
   - '{planning_artifacts}/prds/prd-try-not-to-be-poor-2026-10-19/reconcile-product-brief.md'
   - '{planning_artifacts}/prds/prd-try-not-to-be-poor-2026-10-19/reconcile-data-isolation-addendum.md'
   - '{planning_artifacts}/prds/prd-try-not-to-be-poor-2026-10-19/review-privacy-boundary.md'
   - '{planning_artifacts}/prds/prd-try-not-to-be-poor-2026-10-19/review-rubric.md'
+  - '{project-root}/_bmad-output/specs/spec-try-not-to-be-poor/SPEC.md'
+  - '{project-root}/_bmad-output/specs/spec-oberflaeche-und-monatsueberschuss/SPEC.md'
+  - '{project-root}/_bmad-output/specs/spec-oberflaeche-und-monatsueberschuss/monatsueberschuesse.md'
+  - '{project-root}/_bmad-output/specs/spec-oberflaeche-und-monatsueberschuss/brownfield.md'
+  - '{planning_artifacts}/architecture/architecture-try-not-to-be-poor-2026-10-19/ARCHITECTURE-SPINE.md'
+  - '{planning_artifacts}/epics.md'
 ---
 
 # Try Not to Be Poor — Design Spine
 
 ## Brand & Style
 
-[ASSUMPTION] Die Planungsquellen legen keine visuelle Identität fest. Die folgenden Tokens und Regeln sind daher ein provisorischer, direkt umsetzbarer Entwurf: eine ruhige, sachliche Oberfläche für private Finanzübersicht, mit klarer Typografie und ohne wertende oder alarmistische Inszenierung. Diese vorläufigen Tokens und Regeln bilden kein festgelegtes Markenhandbuch.
+[ASSUMPTION] Die bestehende helle, ruhige Oberfläche mit Systemschrift bleibt die vorläufige visuelle Identität. Lesbare Finanzwerte und sachliche Orientierung haben Vorrang vor Dekoration; ein Markenhandbuch ist nicht beschlossen. Die neue Struktur trennt **Monat**, **Ausgaben** und **Sparziele**. Der rote Abmeldebutton ist eine bestätigte Vorgabe; sein exakter Farbwert nutzt vorläufig das vorhandene Rot.
+
+Diese Spine besitzt die visuellen Regeln; [EXPERIENCE.md](./EXPERIENCE.md) besitzt Verhalten und Zustände. Für den Zielzustand gelten das PRD und die Änderungsspezifikation vom 25.10.2026 samt Monatsfachregeln; ältere Quellen und Epics gelten nur für unveränderte Entscheidungen. Der neue Umfang ist noch umzusetzen. Die beiden Spines haben bei Konflikten Vorrang vor visuellen Referenzen.
 
 ## Colors
 
-[ASSUMPTION] Die helle, zurückhaltende Palette nutzt eine dunkle Primärfarbe für Aktionen und eine warme Akzentfarbe für sparsame Hervorhebungen. Finanzzustände werden immer auch mit Text und Vorzeichen bezeichnet, nie nur durch Farbe.
+[ASSUMPTION] Die vorhandenen Farbwerte bleiben erhalten. Werte, Vorzeichen und Zustände werden immer zusätzlich mit Text bezeichnet.
 
-- Fließtext `{colors.text-primary}` auf `{colors.surface-base}` hat etwa 15,5:1 Kontrast; `{colors.text-secondary}` auf derselben Fläche etwa 7,6:1.
-- Primäraktionen verwenden `{colors.primary}` mit `{colors.on-primary}` (etwa 7,9:1). Akzentaktionen verwenden `{colors.accent}` mit `{colors.on-accent}` (etwa 6,9:1).
-- `{colors.error}` mit `{colors.on-error}` (etwa 8,8:1) kennzeichnet Fehler. Ein Fehler, eine Budgetüberschreitung oder ein Erfolg erhält stets eine Textbezeichnung.
-- [ASSUMPTION] Heller Modus ist die erste Ausprägung. Ein dunkles Farbschema ist nicht spezifiziert.
+| Kombination | Verwendung und Kontrast |
+|---|---|
+| `{colors.text-primary}` auf `{colors.surface-base}` | Haupttext, etwa 15,5:1. |
+| `{colors.text-secondary}` auf `{colors.surface-base}` | Ergänzende Texte, etwa 7,6:1. |
+| `{colors.primary}` mit `{colors.on-primary}` | Primäraktionen, etwa 7,9:1. |
+| `{colors.accent}` mit `{colors.on-accent}` | Sparsame Hervorhebung, etwa 6,9:1. |
+| `{colors.error}` mit `{colors.on-error}` | Fehler und roter Abmeldebutton, etwa 8,8:1. Die Aktionsbeschriftung „Abmelden“ unterscheidet ihn vom Fehlerzustand. |
+
+Text erreicht mindestens 4,5:1, erkennbare Kontrollgrenzen und Fokus mindestens 3:1 zur angrenzenden Fläche. Der Fokus mit `{colors.focus-ring}` erhält einen Abstand zur roten oder grünen Buttonfläche, damit er gegen die helle Umgebung sichtbar bleibt. Hover und gedrückter Zustand erhalten die lesbare rote Abmeldeaktion; Fokus ist auch ohne Hover erkennbar. Ein laufender Vorgang wird zusätzlich beschriftet, nicht allein durch geringere Deckkraft angezeigt.
+
+Eine Vormerkung ist kein Fehler und kein bereits angerechneter Fortschritt. Negativer Fortschritt wird durch Minuszeichen und Zahl sichtbar; die Palette allein vermittelt keine finanzielle Bewertung. [ASSUMPTION] Heller Modus bleibt die erste Ausprägung; ein dunkles Schema ist nicht spezifiziert.
 
 ## Typography
 
-[ASSUMPTION] Die Systemschrift ohne externe Font-Abhängigkeit sorgt für robuste Darstellung im Browser. Fließtext nutzt `{typography.body}`; Titel, Feldbeschriftungen und prominente Eurobeträge nutzen `{typography.page-title}`, `{typography.label}` und `{typography.amount}`. Beträge sollen tabellarische Ziffern verwenden, damit Werte in Listen ruhig untereinander stehen. Keine Kleinbuchstaben- oder Versalien-Dekoration bei Finanzwerten.
+[ASSUMPTION] Die vorhandene Systemschrift bleibt ohne externe Font-Abhängigkeit. Fließtext nutzt `{typography.body}`, Titel `{typography.page-title}` und `{typography.section-title}`, Labels `{typography.label}`, prominente Beträge `{typography.amount}`. Tabellarische Ziffern halten Beträge untereinander ausgerichtet. Minuszeichen, Nachkommastellen und Prozentangaben bleiben auch bei langen Werten und vergrößerter Schrift vollständig erkennbar.
 
 ## Layout & Spacing
 
-[ASSUMPTION] Auf schmalen Ansichten stehen Budget, Eingabe und Ausgabenliste in einer Spalte; auf breiteren Ansichten dürfen Budgetzusammenfassung und Sparziele neben der Liste stehen. Die Inhaltsbreite bleibt lesbar begrenzt, die Liste wird auf Mobilgeräten zu beschrifteten, gestapelten Einträgen statt zu horizontalem Scrollen. Abstände folgen `{spacing.1}` bis `{spacing.6}`; Seitenränder verwenden `{spacing.gutter-mobile}` beziehungsweise `{spacing.gutter-wide}`.
+Die Hauptnavigation zeigt in dieser Reihenfolge **Monat**, **Ausgaben**, **Sparziele**. Abmelden bleibt eine eigene, rot erkennbare Aktion in allen angemeldeten Hauptbereichen. Der aktuelle Bereich ist zusätzlich zur Farbe markiert.
+
+| Hauptbereich | Komposition |
+|---|---|
+| Monat | Budgetverwaltung und Monatsübersicht mit Monatsbudget, laufenden Ausgaben und prominentem Restbudget. Kein Ausgabenformular. |
+| Ausgaben | Erfassungsformular und vollständige Historie mit Bearbeiten und Löschen. [ASSUMPTION aus SPEC] Die gesamte Ausgabenverwaltung zieht in diesen Bereich. |
+| Sparziele | Ziele mit tatsächlichem Fortschritt; [ASSUMPTION] ein eigener Abschnitt für Aktivierung, Zielauswahl und offene Vormerkung innerhalb dieses Bereichs. |
+
+[ASSUMPTION] Schmale Ansichten bleiben einspaltig. Die Ausgabentabelle wird dort zu linear lesbaren, beschrifteten Einträgen. Breitere Ansichten dürfen Inhalte **innerhalb desselben Bereichs** nebeneinander anordnen; die Bereichstrennung bleibt erhalten. Die Inhaltsbreite bleibt lesbar begrenzt. Abstände folgen `{spacing.1}` bis `{spacing.6}`, Seitenränder `{spacing.gutter-mobile}` und `{spacing.gutter-wide}`. Drei Navigationseinträge, rote Abmeldung, lange Beträge und Formulare müssen bei 320 CSS-Pixel und 200 % Textgröße ohne horizontales Scrollen nutzbar bleiben.
+
+Die [Monatsreferenz](./mockups/key-monat.html) zeigt Übersicht und Budgetverwaltung, die [Ausgabenreferenz](./mockups/key-ausgaben.html) Formular und Historie. Die [Sparzielreferenz](./mockups/key-sparziele.html) zeigt drei unabhängige Zustände: vor Aktivierung, aktive Automatik mit Vormerkung ohne Ziel und ausgewähltes Ziel mit negativem Fortschritt. Alle drei illustrieren die gemeinsame Navigation und rote Abmeldung; es sind statische Ansichten.
 
 ## Elevation & Depth
 
-[ASSUMPTION] Flächen werden primär durch Weißraum und leichte Tonunterschiede gegliedert. Dezente Schatten dürfen eine Dialogfläche vom Hintergrund abheben; sie bilden keine zusätzliche Status- oder Datenhierarchie. Trennlinien verwenden `{colors.border}`.
+[ASSUMPTION] Weißraum und Tonunterschiede gliedern die Flächen. Trennlinien nutzen `{colors.border}`. Ein dezenter Schatten darf einen Bestätigungsdialog abheben; Schatten oder Bewegung codieren keinen Finanzzustand.
 
 ## Shapes
 
-[ASSUMPTION] Eingaben erhalten `{rounded.sm}`, Karten `{rounded.lg}` und Standardaktionen `{rounded.md}`. Vollständig runde Formen sind der schmale Fortschrittsbalken vorbehalten. Pillen und dekorative Formen sollen nicht um Finanzdaten konkurrieren.
+[ASSUMPTION] Eingaben nutzen `{rounded.sm}`, Karten und Dialoge `{rounded.lg}`, Aktionen `{rounded.md}`. `{rounded.full}` bleibt dem Fortschrittsbalken vorbehalten.
 
 ## Components
 
-Alle folgenden visuellen Details sind [ASSUMPTION]; Verhaltensregeln stehen in [EXPERIENCE.md](./EXPERIENCE.md).
+Die genaue visuelle Ausprägung ist [ASSUMPTION], sofern sie nicht ausdrücklich als Produktvorgabe bezeichnet ist. Verhalten steht in [EXPERIENCE.md → Component Patterns](./EXPERIENCE.md#component-patterns). Aktionen sind mindestens 44 CSS-Pixel hoch, Geldfelder mindestens 48 CSS-Pixel; alle wachsen mit der Schrift.
 
-- **`primary-button`:** `{components.primary-button}`; Folgeaktionen erhalten eine zurückhaltende Umrandung oder Textdarstellung. [ASSUMPTION] Die Zielhöhe beträgt mindestens 44 CSS-Pixel und wächst bei vergrößerter Schrift mit.
-- **`auth-form`:** `{components.auth-form}` hält Registrierung und Anmeldung visuell verwandt; die unterschiedlichen Aufgaben sind über klare Beschriftungen erkennbar.
-- **`money-field`:** `{components.money-field}` mit sichtbarer Bezeichnung und Euro-Hinweis; Fehlertext steht direkt beim Feld. [ASSUMPTION] Die nutzbare Höhe beträgt mindestens 48 CSS-Pixel und wächst bei vergrößerter Schrift mit.
-- **`budget-summary`:** `{components.budget-summary}` zeigt Budget, Ausgaben und Restbudget mit klar benannten Werten. Der Restbetrag ist prominent, nicht als dekorativer Tachometer.
-- **`expense-table` / `expense-row`:** `{components.expense-table}` ordnet Name, Erfassungsdatum und Betrag; Zeilen verwenden `{components.expense-row}` und Trennlinien `{colors.border}`. Auf schmalen Ansichten bleiben dieselben Werte beschriftet und linear lesbar.
-- **`goal-progress-track` und `goal-progress-fill`:** Die Komposition wird von Betragstexten begleitet, damit der Fortschritt auch ohne Farbe erkennbar bleibt.
-- **`save-status`:** `{components.save-status}` vermittelt Speichern und Erfolg mit Text.
-- **`delete-confirmation`:** `{components.delete-confirmation}` kennzeichnet die Folge des Löschens und trennt Bestätigen klar vom Abbrechen.
-- Fokus- und Fehlerzustände verwenden `{colors.focus-ring}` beziehungsweise `{colors.error}` mit erklärendem Text.
+| Baustein | Visueller Vertrag |
+|---|---|
+| `main-navigation` | `{components.main-navigation}`; drei ausgeschriebene Bereichsnamen, aktueller Bereich zusätzlich markiert, sichtbarer Fokus. Keine vierte Hauptfläche für die Automatik. |
+| `logout-button` | `{components.logout-button}`; bestätigte rote Aktion mit lesbarem Text „Abmelden“. Eigene Aktionsfläche mit Abstand zu Speichern und Löschen. Die Beschriftung bleibt in allen Bereichen konsistent. |
+| `auth-form` | `{components.auth-form}`; Anmeldung und Registrierung sind durch Titel und Aktion unterscheidbar. |
+| `primary-button` | `{components.primary-button}`; Folgeaktionen bleiben zurückhaltend. Speichern, Fortschritt ersetzen und Automatikaktivierung sind klar beschriftet. |
+| `money-field` | `{components.money-field}`; sichtbares Label, EUR-Hinweis und feldnaher Fehler. Vorzeichen darf beim Fortschritt nicht abgeschnitten werden; andere Betragsfelder erhalten keine negative Eingabesemantik. |
+| `budget-summary` | `{components.budget-summary}`; benannte Werte statt Tachometer. Negatives Restbudget zeigt den tatsächlichen Betrag und eine Überschreitungsbezeichnung. |
+| `expense-table` | `{components.expense-table}`; Name, Erfassungsdatum und Betrag mit klaren Spaltenüberschriften. |
+| `expense-row` | `{components.expense-row}` mit Trennlinie `{colors.border}`; auf schmalen Ansichten dieselben beschrifteten Werte und sichtbare Bearbeiten-/Löschen-Aktionen. |
+| `automation-panel` | `{components.automation-panel}`; Status, Startmonat, Zielauswahl und Vormerkung sind als zusammengehöriger Abschnitt erkennbar. Keine Überweisungs- oder Bankkontosymbolik. |
+| `goal-selection` | `{components.goal-selection}`; sichtbares Label „Ziel für Monatsüberschüsse“, benannte aktuelle Auswahl beziehungsweise „Kein Ziel ausgewählt“, erklärender Text und explizite Speicheraktion. |
+| `pending-surplus` | `{components.pending-surplus}`; Betrag mit Bezeichnung „Vorgemerkt“ und Hinweis, dass er noch keinem Ziel angerechnet ist. Text zur vollständigen Übernahme steht direkt bei der Zielauswahl. |
+| `goal-progress-value` | `{components.goal-progress-value}`; tatsächlicher signierter Betrag neben Zielbetrag und tatsächlichem Prozentwert. Keine visuelle Kürzung auf null oder 100 %. |
+| `goal-progress-track` | `{components.goal-progress-track}`; ruhiger Hintergrund für die visuelle Skala 0–100 %. |
+| `goal-progress-fill` | `{components.goal-progress-fill}`; Füllung endet bei 0 beziehungsweise 100 %, ohne die begleitenden Zahlen zu verändern. |
+| `save-status` | `{components.save-status}`; textlich unterscheidbare Zustände für Speichern, bestätigten Erfolg und Fehler. Keine Erfolgsgeste vor bestätigter Speicherung. |
+| `delete-confirmation` | `{components.delete-confirmation}`; benennt Objekt und Folgen. Abbrechen und Löschen sind klar getrennt; bei Ziellöschung bleiben Fortschrittsverlust und gegebenenfalls folgende Vormerkung lesbar. |
 
 ## Do's and Don'ts
 
 | Do | Don't |
 |---|---|
-| [ASSUMPTION] Lesbare Beträge und klare Beschriftungen vor dekorativen Kennzahlen priorisieren. | [ASSUMPTION] Ausgaben als „schlecht“ markieren oder Nutzer:innen beschämen. |
-| [ASSUMPTION] Fehler, Fortschritt und Budgetüberschreitung zusätzlich sprachlich kennzeichnen. | [ASSUMPTION] Bedeutung ausschließlich über Farbe, Animation oder Symbol vermitteln. |
-| [ASSUMPTION] Die Tabellenstruktur auf schmalen Ansichten in eine lineare, beschriftete Darstellung überführen. | [ASSUMPTION] Auf Mobilgeräten horizontales Scrollen für Kernaufgaben voraussetzen. |
-| Die Daten als manuell erfasste persönliche Angaben darstellen. | Bankimport, verifizierte Kontostände oder garantierte Ersparnisse suggerieren. |
+| Drei klar bezeichnete Hauptbereiche und konsistente rote Abmeldung zeigen. | Ausgabenerfassung wieder in Monat einbetten oder Abmelden nur über Farbe kennzeichnen. |
+| Vorgemerkte Summe von bereits angerechnetem Fortschritt unterscheiden. | Vormerkung als Bankguthaben oder schon gesparten Zielbetrag darstellen. |
+| Tatsächlichen Fortschritt mit Vorzeichen und Prozentwert lesen lassen. | Negativen Fortschritt auf null kürzen oder Übererfüllung als 100 % ausgeben. |
+| Sachliche deutsche Texte mit verständlichen Datumsangaben verwenden. | Systemseitige Zeitzonenerläuterungen in Labels, Tooltips oder zugänglichen Hilfstexten ergänzen. |
+| Lange Werte, Fehler und Aktionen auch mobil vollständig erreichbar halten. | Kernaufgaben von Hover, horizontalem Scrollen oder Animation abhängig machen. |
+| Manuelle Angaben und rechnerische Anrechnung benennen. | Verifizierte Kontostände, Geldübertragung oder garantierte Ersparnisse suggerieren. |

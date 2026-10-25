@@ -42,23 +42,22 @@ vorhanden; `deploy/compose.local.yaml` startet nur PostgreSQL. Vor echten Nutzer
 Betrieb geklärt sowie verschlüsselte Backups außerhalb des VPS und eine geprüfte
 Wiederherstellung vorhanden sein.
 
-Einmalig zufällige lokale Datenbankkennwörter in einer geschützten Datei anlegen:
+Lokale Konfiguration vorbereiten und anschließend die Datenbank starten:
 
 ```bash
-python3 - <<'PY'
-from pathlib import Path
-import os, secrets
-folder = Path('.local')
-folder.mkdir(mode=0o700, exist_ok=True)
-folder.chmod(0o700)
-descriptor = os.open(folder / 'database.env', os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
-with os.fdopen(descriptor, 'w') as output:
-    for name in ('DB_ADMIN_PASSWORD', 'DB_MIGRATION_PASSWORD', 'DB_RUNTIME_PASSWORD'):
-        output.write(name + '=' + secrets.token_urlsafe(32) + '\n')
-PY
-docker compose --env-file .local/database.env -f deploy/compose.local.yaml up -d --wait
-python3 scripts/create-registration-link.py --base-url https://localhost:4200
+./scripts/start-local/setup.sh
+./scripts/start-local/start-database.sh
 ```
+
+Die ausführbaren Bash-Skripte unter [`scripts/start-local/`](scripts/start-local/)
+wechseln selbst ins Projektverzeichnis. `setup.sh` erzeugt zufällige lokale
+Datenbankkennwörter, einen Sitzungsschlüssel und den Registrierungslink.
+Neue Konfigurationsdateien erhalten Modus `0600`, `.local/` erhält `0700`.
+Erneutes Ausführen behält bestehende Dateien bei, auch eine widerrufene oder
+abgelaufene Registrierungskonfiguration. Parallele Setup-Aufrufe sind über
+`.local/setup.lock` serialisiert. Fehlt bei aktiver Registrierung die Linkdatei,
+meldet das Skript den nötigen Befehl zur bewussten Rotation. Für Linkrotation oder Widerruf siehe
+[Registrierung konfigurieren](#registrierung-konfigurieren-rotieren-und-widerrufen).
 
 Die Datenbank ist nur auf `127.0.0.1:5432` gebunden. Das Initialisierungsskript
 legt `tnbp_migrator` und `tnbp_runtime` mit getrennten Kennwörtern an. Die
@@ -80,25 +79,25 @@ erhält Konten und Finanzdaten bei Neustarts.
 Geänderte Kennwörter in der lokalen Datei ändern keine bereits initialisierte
 Datenbank; Rollenkennwörter müssen dann gezielt in PostgreSQL angepasst werden.
 
-Vor dem Backendstart zuerst [Sitzungsschlüssel und HTTPS](#sitzungsschlüssel-und-https) einrichten; dabei wird die benötigte `.local/session.env` angelegt.
+`setup.sh` legt auch die benötigte `.local/session.env` an. Beachte vor dem
+Öffnen der Anwendung die Hinweise zu [Sitzungsschlüssel und HTTPS](#sitzungsschlüssel-und-https).
 
 Backend in einem Terminal starten:
 
 ```bash
-set -a
-. .local/database.env
-. .local/registration.env
-. .local/session.env
-set +a
-./backend/mvnw -f backend/pom.xml spring-boot:run
+./scripts/start-local/start-backend.sh
 ```
 
 Frontend in einem zweiten Terminal starten:
 
 ```bash
-npm --prefix frontend ci
-npm --prefix frontend start -- --host localhost --ssl
+./scripts/start-local/start-frontend.sh
 ```
+
+Das Backend-Skript lädt die drei lokalen Konfigurationsdateien bei jedem Start
+neu. Das Frontend-Skript installiert die festgelegten npm-Abhängigkeiten und
+startet den HTTPS-Entwicklungsserver. Zusätzliche Angular-Startoptionen können
+als Argumente übergeben werden, etwa `--ssl-cert` und `--ssl-key`.
 
 Die Datei `.local/registration-link.txt` lokal öffnen und den Link im Browser
 aufrufen. Das zufällige 256-Bit-Geheimnis steht ausschließlich im URL-Fragment,
@@ -141,11 +140,9 @@ python3 scripts/create-registration-link.py --base-url https://localhost:4200 --
 python3 scripts/create-registration-link.py --revoke
 ```
 
-Nach jeder Änderung die neue Konfiguration laden und die API neu starten. Bei
-Widerruf in einem bereits benutzten Terminal zunächst `unset REGISTRATION_LINK_SHA256
-REGISTRATION_LINK_ISSUED_AT REGISTRATION_LINK_EXPIRES_AT` ausführen und dann
-`registration.env` neu laden. Alte Links sind nach Aktivierung der neuen
-Konfiguration gesperrt; vorhandene Konten bleiben erhalten. `--output-dir` erlaubt
+Nach jeder Änderung die API mit `./scripts/start-local/start-backend.sh` neu
+starten; das Skript lädt die aktuelle Konfiguration. Alte Links sind nach
+Aktivierung der neuen Konfiguration gesperrt; vorhandene Konten bleiben erhalten. `--output-dir` erlaubt
 ein Verzeichnis außerhalb des Projekts. Dateien erhalten Modus `0600`, das
 Verzeichnis `0700`; das Werkzeug druckt keine Geheimnisse. `.local/` und `.env*`
 sind von Git ausgeschlossen. Request-Bodys und Linkfragmente auch in späteren
@@ -163,20 +160,11 @@ transaktional; ein Erfolg wird erst nach Commit zurückgegeben.
 
 ## Sitzungsschlüssel und HTTPS
 
-Vor dem ersten Backendstart einen zufälligen lokalen Schlüssel einmalig erzeugen:
+`setup.sh` erzeugt vor dem ersten Backendstart einen zufälligen lokalen Schlüssel
+in `.local/session.env`. Eine vorhandene Datei wird beibehalten:
 
 ```bash
-python3 - <<'PYKEY'
-from pathlib import Path
-import base64, os, secrets
-folder = Path('.local')
-folder.mkdir(mode=0o700, exist_ok=True)
-fd = os.open(folder / 'session.env', os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
-with os.fdopen(fd, 'w') as output:
-    output.write('SESSION_SIGNING_KEY=' + base64.b64encode(secrets.token_bytes(32)).decode() + '\n')
-    output.write('SESSION_ISSUER=tnbp-local\nSESSION_AUDIENCE=tnbp-spa-local\n')
-    output.write('SESSION_ORIGIN=https://localhost:4200\n')
-PYKEY
+./scripts/start-local/setup.sh
 ```
 
 `SESSION_SIGNING_KEY` ist ein externes Base64-Geheimnis mit mindestens 32 Bytes;

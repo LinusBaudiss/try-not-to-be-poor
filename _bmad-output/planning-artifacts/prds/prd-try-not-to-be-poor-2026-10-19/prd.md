@@ -2,241 +2,271 @@
 title: "PRD: Try Not to Be Poor"
 status: final
 created: 2026-10-19
-updated: 2026-10-19
+updated: 2026-10-25
+sources:
+  - ../../../specs/spec-try-not-to-be-poor/SPEC.md
+  - ../../../specs/spec-try-not-to-be-poor/brownfield.md
+  - ../../../specs/spec-oberflaeche-und-monatsueberschuss/monatsueberschuesse.md
+  - ../../architecture/architecture-try-not-to-be-poor-2026-10-19/ARCHITECTURE-SPINE.md
 ---
 
 # PRD: Try Not to Be Poor
 
-## 0. Dokumentzweck
+## 0. Dokumentzweck und Stand
 
-Dieses PRD hält den v1-Umfang für „Try Not to Be Poor“ fest und dient Linus als persönliche Planungsgrundlage sowie als Grundlage für UX, Architektur und Umsetzung. Es baut auf dem finalen [Produktbriefing](../../briefs/brief-try-not-to-be-poor-2026-10-18/brief.md), dessen [Addendum zur Datentrennung](../../briefs/brief-try-not-to-be-poor-2026-10-18/addendum.md) und der mit Linus abgestimmten Nutzerreise UJ-1 auf. Es beschreibt gewünschtes Nutzerverhalten und Qualitätsanforderungen; technische Umsetzung und Datenmodell bleiben Folgeentscheidungen.
+Dieses PRD beschreibt den Produktzielumfang für Linus und die nachfolgende UX-, Architektur- und Umsetzungsplanung. Es aktualisiert die Fassung vom 19.10.2026 anhand der [Produktspezifikation](../../../specs/spec-try-not-to-be-poor/SPEC.md), ihrer [Bestandseinordnung](../../../specs/spec-try-not-to-be-poor/brownfield.md) und der [Architektur vom 25.10.2026](../../architecture/architecture-try-not-to-be-poor-2026-10-19/ARCHITECTURE-SPINE.md). Die verbindlichen Monatsfachregeln und alle 17 zugehörigen Abnahmefälle stehen im [Begleiter zu Monatsüberschüssen](../../../specs/spec-oberflaeche-und-monatsueberschuss/monatsueberschuesse.md).
+
+Die neun abgeschlossenen Stories im [Sprintstatus](../../../implementation-artifacts/sprint-status.yaml) dokumentieren den bisherigen Funktionsstand. Die neue Navigation, Monatsautomatik und Zielarchitektur sind noch umzusetzen; dieses Update erteilt keine Produktionsfreigabe. Neue bestätigte Regeln ersetzen betroffene ältere Aussagen. Unveränderte Produktentscheidungen und konkretisierte Bestandsabnahmen gelten weiter. FR-1 bis FR-11 behalten ihre Identität; FR-12 bis FR-17 ergänzen den Umfang. Technische Entscheidungen und Übergangsbedingungen sind im [Addendum](addendum.md) verortet.
 
 ## 1. Vision
 
-„Try Not to Be Poor“ hilft Linus sowie Familie und Freunden, ihre persönlichen Ausgaben manuell festzuhalten und den Überblick zu behalten. Eine responsive Website stellt die eigenen Ausgaben, den Rest des Monatsbudgets und den Fortschritt persönlicher Sparziele übersichtlich dar.
+Try Not to Be Poor gibt Linus, Familie und Freunden einen privaten Überblick über eigene Ausgaben, das verbleibende Monatsbudget und persönliche Sparziele. Die responsive Website ist vorrangig für das Smartphone gedacht und auch am Rechner bedienbar. Ausgaben werden bewusst manuell erfasst.
 
-Jede Person sieht ausschließlich die eigenen Daten. Ein Monatsbudget gilt für alle erfassten Ausgaben und zeigt, wie viel vom geplanten Betrag im laufenden Monat noch übrig ist. Sparziele machen einen Zielbetrag und den Fortschritt sichtbar; ein Zieldatum ist optional.
+Der Monatsüberblick soll helfen, Ausgaben im Alltag besser einzuschätzen. Abgeschlossene Monatsüberschüsse können automatisch einem eigenen Sparziel zugerechnet oder bis zur Zielwahl vorgemerkt werden. Die App verschiebt dabei kein Geld zwischen Bankkonten. Mehr Geld am Monatsende ist ein erhoffter Nutzen, keine zugesicherte Wirkung.
 
-Der gewünschte Nutzen ist mehr Transparenz über Ausgaben und dadurch am Monatsende mehr Geld übrig. Ob dieser finanzielle Effekt eintritt, muss sich in der tatsächlichen Nutzung zeigen.
+Der provokative Produktname dient der persönlichen Orientierung. Deutsche Systemtexte sollen verständlich sein; ein darüber hinausgehendes Marken- oder Tonkonzept ist nicht beschlossen.
 
-**Name und Ton:** „Try Not to Be Poor“ ist bewusst provokativ benannt. Der Name dient Linus als persönliche Orientierung und Planung; eine weitergehende Tonalität für Texte oder Gestaltung ist noch nicht festgelegt.
+## 2. Umfang
 
-## 2. Umfang von v1
+Enthalten sind private Konten mit Registrierung, Anmeldung, Sitzungsverlängerung und Abmeldung; ausschließlich eigene Finanzdaten; manuelle Ausgaben samt vollständiger Historie, Bearbeiten und Löschen; ein fortlaufendes Monatsbudget und das Restbudget; Sparziele mit manueller Gesamteingabe; sowie aktivierbare automatische Monatsüberschüsse einschließlich Vormerkungen und historischer Korrekturen.
 
-### 2.1 Enthalten
+Die Hauptbereiche heißen **Monat**, **Ausgaben** und **Sparziele**. Monat bleibt die Startansicht. Sämtliche Geldwerte sind EUR. Die Freigabebedingungen in §8.4 sind Teil des Umfangs; die Umsetzung folgt nicht allein aus dem Status dieses Dokuments.
 
-- Anmeldung und getrennte persönliche Datenbereiche.
-- Manuelle Erfassung persönlicher Ausgaben mit Name und Betrag.
-- Tabellarische Übersicht aller eigenen bisher erfassten Ausgaben.
-- Bearbeiten von Ausgabename und -betrag sowie Löschen eigener Ausgaben.
-- Ein fortlaufendes Monatsbudget, das für alle eigenen Ausgaben des laufenden Monats gilt und manuell geändert werden kann.
-- Anzeige des Restbudgets nach der im PRD festgehaltenen Berechnung.
-- Persönliche Sparziele mit Zielbetrag in Euro, Fortschrittsanzeige und optionalem Zieldatum.
-- Euro als gemeinsame Währung für Ausgaben, Monatsbudget und Sparziele.
-- Responsive Website mit Priorität auf Smartphone-Nutzung.
-
-## 3. Zielgruppe
+## 3. Zielgruppe und Nutzung
 
 ### 3.1 Aufgaben der Nutzer:innen
 
-- Eigene Ausgaben zeitnah und ohne großen Aufwand festhalten.
-- Nach einer Erfassung erkennen, wie viel vom Monatsbudget noch übrig ist.
-- Bisherige Ausgaben und den Stand persönlicher Sparziele überblicken.
-- Im Alltag besser nachvollziehen, wofür Geld ausgegeben wird.
+- Eigene Ausgaben zeitnah mit wenig Aufwand festhalten und später korrigieren.
+- Das Restbudget des laufenden Monats ohne Nebenrechnung erkennen.
+- Die gesamte eigene Ausgabenhistorie und persönliche Sparziele überblicken.
+- Überschüsse abgeschlossener Monate nachvollziehbar für ein Sparziel berücksichtigen lassen.
 
-### 3.2 Nicht-Zielgruppe für v1
+Die App richtet sich an einen privaten Personenkreis. Betriebliche Finanzen und gemeinsame Finanzansichten gehören nicht zum Zielumfang.
 
-- Unternehmen oder Personen, die betriebliche Finanzen verwalten.
+### 3.2 Zentrale Nutzerreise
 
-### 3.3 Zentrale Nutzerreise
+**UJ-1 — Linus erfasst Ausgaben und prüft seinen Monatsüberblick.** Linus öffnet den geteilten Registrierungslink und legt bei der ersten Nutzung sein Konto an; später meldet er sich direkt an. Am Smartphone öffnet er Ausgaben, trägt Name und Betrag einer oder mehrerer Ausgaben ein und sieht nach bestätigtem Speichern die aktualisierte Historie. Unter Monat erkennt er das aktuelle Restbudget. Er verlässt die Seite mit einer aktuellen Übersicht oder meldet sich über die sichtbare Abmeldeaktion ab.
 
-- **UJ-1. Linus erfasst Ausgaben und prüft sein Monatsbudget.**
-  - **Person und Kontext:** Linus möchte persönliche Ausgaben im kleinen Kreis manuell nachverfolgen.
-  - **Ausgangszustand:** Linus hat den Registrierungslink erhalten. Bei der ersten Nutzung hat er noch kein Nutzerkonto; bei späterer Nutzung ist er abgemeldet.
-  - **Ablauf:** Bei der ersten Nutzung registriert sich Linus über den Link und meldet sich an. Bei späterer Nutzung meldet er sich direkt an. Anschließend erfasst er eine oder mehrere Ausgaben mit Name und Betrag.
-  - **Wertmoment:** Er sieht den verbleibenden Betrag seines Monatsbudgets und kann die bisherigen Ausgaben tabellarisch prüfen.
-  - **Abschluss:** Linus verlässt die Website mit einer aktuellen Übersicht seiner erfassten Ausgaben und des Restbudgets.
+Die bestätigte Kernreise bleibt erhalten; die neue Aufteilung auf drei Bereiche konkretisiert ihren Weg. Die Automatik ergänzt sie: In den Sparzielen sind Aktivierung, Zielauswahl, tatsächlicher Fortschritt und offene Vormerkungen verständlich sichtbar, auch wenn der Monatsabschluss ohne geöffnete Seite stattgefunden hat.
 
 ## 4. Glossar
 
-- **Nutzerkonto** — Der angemeldeten Person zugeordneter Zugang und Datenbereich.
-- **Ausgabe** — Eine von einer Person manuell erfasste persönliche Ausgabe. Der bestätigte Mindestumfang umfasst Name, Betrag und automatisch gesetztes Erfassungsdatum; weitere Felder sind offen.
-- **Erfassungsdatum** — Der Kalendertag in der Zeitzone Europe/Berlin, an dem eine Ausgabe in der Website erfasst wird.
-- **Monatsbudget** — Der fortlaufende Betrag in Euro für alle Ausgaben einer Person je Kalendermonat nach Europe/Berlin.
-- **Restbudget** — Monatsbudget abzüglich der im laufenden Kalendermonat nach Europe/Berlin erfassten Ausgaben.
-- **Monatsübersicht** — Ansicht des Restbudgets und der tabellarischen Liste eigener bisheriger Ausgaben.
-- **Sparziel** — Ein persönliches Vorhaben mit eigenem Namen, Zielbetrag in Euro, Fortschrittsanzeige und optionalem Zieldatum.
-- **Währung** — Für Beträge in v1 gilt der Euro (€).
+| Begriff | Bedeutung |
+| --- | --- |
+| Nutzerkonto | Zugang und geschützter Datenbereich genau einer Person. |
+| Ausgabe | Eigener Eintrag mit Name, positivem EUR-Betrag und automatisch gesetztem Erfassungsdatum. |
+| Erfassungsdatum | Serverseitig bestimmter Kalendertag nach Europe/Berlin; nicht frei wählbar und beim Bearbeiten unveränderlich. |
+| Monatsbudget | Nichtnegativer EUR-Betrag, der im laufenden und in folgenden Kalendermonaten gilt, bis er geändert wird. Abgeschlossene Budgetstände bleiben erhalten. |
+| Restbudget | Gültiges Monatsbudget minus eigene Ausgaben des laufenden Kalendermonats. Ohne gesetztes Budget nicht berechenbar. |
+| Monatsübersicht | Ansicht unter Monat mit Budgetverwaltung, gültigem Monatsbudget, laufender Monatsausgabensumme und Restbudget; die vollständige Ausgabenhistorie liegt unter Ausgaben. |
+| Sparziel | Eigenes Ziel mit Name, positivem Zielbetrag, tatsächlichem Fortschritt und optionalem Zieldatum. |
+| Fortschritt | Aktueller Gesamtbetrag eines Sparziels; manuell ersetzbar und durch automatische Monatswirkungen veränderbar, auch negativ oder über dem Zielbetrag. |
+| Monatsautomatik | Je Nutzerkonto aktivierbare Berücksichtigung abgeschlossener Monate ab dem unveränderlichen Erstaktivierungsmonat. |
+| Herkunftsmonat | Abgeschlossener Kalendermonat, dessen damaliges Budget und eigene Ausgaben einen Monatsüberschuss bestimmen. |
+| Monatsüberschuss | Bei vorhandenem Budget: Maximum aus null und Budget minus Ausgaben des Herkunftsmonats. Ohne Budget entsteht kein Betrag. |
+| Zielauswahl | Genau ein eigenes Sparziel für die Monatsautomatik; maßgeblich ist die Auswahl zum Ende des jeweiligen Herkunftsmonats. |
+| Vormerkung | Noch keinem Sparziel zugeordneter Monatsüberschuss; Herkunftsmonat und Betrag bleiben erhalten. Auch Monate mit Budget und Überschuss null werden für spätere Korrekturen gebunden. |
+| Monatsnachweis | Dauerhafte fachliche Herkunft und zuletzt berücksichtigter Überschuss eines Monats; unterscheidet ohne Budget, vorgemerkt, zugeordnet und durch Ziellöschung verbraucht. Kein Nutzer-Beitragsverlauf. |
 
 ## 5. Funktionen
 
 ### 5.1 Nutzerkonten und Datentrennung
 
-**Beschreibung:** Die Website unterstützt die private Nutzung durch Linus sowie Familie und Freunde. Jede Person hat ein eigenes Nutzerkonto. Gemeinsame Datenansichten sind nicht vorgesehen. Jede Person mit dem Registrierungslink kann ein Nutzerkonto anlegen; der private Nutzerkreis hängt daher davon ab, mit wem der Link geteilt wird.
+#### FR-1: Nutzerkonto über den Registrierungslink anlegen und Zugang nutzen
 
-**Funktionale Anforderungen:**
-
-#### FR-1: Nutzerkonto über den Registrierungslink anlegen
-
-Jede Person mit dem Registrierungslink kann ein eigenes Nutzerkonto registrieren und sich anschließend anmelden.
+Eine Person mit aktivem geteiltem Registrierungslink kann sich mit E-Mail und Passwort registrieren und anschließend anmelden. Der private Kreis wird durch die Weitergabe des Links bestimmt.
 
 **Prüfbare Folgen:**
-- Jede Person, die den Registrierungslink besitzt, kann darüber ein eigenes Nutzerkonto anlegen.
-- Nach erfolgreicher Registrierung kann sich die Person anmelden.
 
-**Hinweis für die Architektur:** Ablaufzeit, Widerruf oder Erneuerung des Registrierungslinks sind noch nicht festgelegt. Die Registrierung steht jeder Person offen, die den Link besitzt.
+- Der Registrierungslink ist 30 Tage gültig und kann geschützt ersetzt beziehungsweise gesperrt werden; ein abgelöster oder abgelaufener Link ermöglicht keine Registrierung.
+- Angemeldete können ihre Sitzung verlängern und sich abmelden. Zugang gilt zehn Minuten; Sitzungsverlängerung endet nach 30 Tagen Inaktivität oder spätestens 90 Tagen seit Anmeldung. Wiederverwendung eines abgelösten Verlängerungsnachweises widerruft die zugehörige Sitzungsfamilie.
+- Zugangsfehler bleiben neutral und offenbaren keine fremden Konten.
+- Alle angemeldeten Hauptbereiche bieten einen konsistenten roten Abmeldebutton mit lesbarem Text und sichtbarem Tastaturfokus. Abmeldung widerruft die Sitzungsverlängerung und entfernt Sitzung und Finanzdaten aus dem Browser; ein bereits ausgestellter Zugang kann serverseitig höchstens bis zu seinem Ablauf gültig bleiben.
 
 #### FR-2: Eigene Finanzdaten ansehen
 
-Angemeldete Personen können ihre eigenen Ausgaben, ihr Monatsbudget und ihre Sparziele ansehen.
-
-**Prüfbare Folgen:**
-- Linus sieht nur seine eigenen Ausgaben, sein eigenes Monatsbudget und seine eigenen Sparziele.
-- Eine andere angemeldete Person sieht nur ihre eigenen Daten.
+Angemeldete Personen sehen ausschließlich eigene Ausgaben, Budgetstände, Sparziele, Fortschritte und Vormerkungen. Die angezeigten Werte gehören zum aktuellen Nutzerkonto. Bei Abmeldung, Sitzungsablauf oder Kontowechsel werden sie verworfen; späte Antworten dürfen sie nicht wieder einblenden.
 
 #### FR-3: Daten anderer Personen schützen
 
-Das System erlaubt einer Person nicht, Ausgaben, Monatsbudgets oder Sparziele einer anderen Person einzusehen oder zu verändern. Gemeinsame Ansichten gehören nicht zum v1-Umfang.
-
-**Prüfbare Folgen:**
-- Lese- und Änderungszugriffe auf persönliche Daten sind dem jeweiligen Nutzerkonto zugeordnet.
-- Ein Zugriff auf Daten eines fremden Nutzerkontos gibt diese Daten nicht preis.
+Kein Konto kann Finanzdaten eines anderen Kontos lesen oder ändern. Dies gilt für direkte Zugriffe, Zielauswahl, historische Korrekturen und Hintergrundverarbeitung. Zugriffe auf fremde und nicht vorhandene Ressourcen dürfen weder fremde Inhalte noch deren Existenz offenlegen. Es gibt keine gemeinsamen Finanzansichten.
 
 ### 5.2 Ausgaben manuell erfassen und überblicken
 
-**Beschreibung:** Nutzer:innen erfassen eigene Ausgaben manuell und können die bisher erfassten Einträge in einer Tabelle überblicken. UJ-1 beschreibt den Weg von der Anmeldung über die Erfassung bis zur Monatsübersicht.
-
-**Funktionale Anforderungen:**
-
 #### FR-4: Ausgabe manuell erfassen
 
-Angemeldete Personen können eine oder mehrere eigene Ausgaben mit Name und Betrag in Euro erfassen.
-
-**Prüfbare Folgen:**
-- Nach dem Speichern erscheinen die erfassten Ausgaben in der eigenen Ausgabenübersicht.
-- Die erfassten Ausgaben werden dem angemeldeten Nutzerkonto zugeordnet.
-- Jede Ausgabe erhält automatisch den Erfassungstag nach Europe/Berlin; die Person wählt kein abweichendes Datum aus.
+Angemeldete Personen können eine eigene Ausgabe mit Name und positivem EUR-Betrag anlegen. Nach bestätigtem Speichern erscheint sie in ihrer Ausgabenhistorie. Eigentümer ist das angemeldete Konto; das Erfassungsdatum setzt der Server auf den aktuellen Kalendertag nach Europe/Berlin. Eine freie Datumswahl ist ausgeschlossen.
 
 #### FR-5: Alle bisher erfassten Ausgaben tabellarisch ansehen
 
-Angemeldete Personen können alle bisher erfassten eigenen Ausgaben in einer tabellarischen Übersicht ansehen. Die Liste ist nicht auf den laufenden Monat beschränkt.
-
-**Prüfbare Folgen:**
-- Die Übersicht enthält alle Ausgaben des Nutzerkontos, auch aus früheren Monaten.
-- Name, Betrag und automatisch gesetztes Erfassungsdatum sind je Ausgabe erkennbar.
-- Die Übersicht enthält keine Ausgaben anderer Nutzerkonten.
+Unter Ausgaben sind sämtliche eigenen Ausgaben über alle Monate hinweg mit Name, Betrag und Erfassungsdatum tabellarisch sichtbar. Ein Monatswechsel entfernt keine Historie. Die Monatsübersicht beschränkt diese vollständige Historie nicht auf den laufenden Monat.
 
 #### FR-6: Eigene Ausgabe bearbeiten oder löschen
 
-Angemeldete Personen können den Namen und Betrag einer eigenen Ausgabe ändern oder die Ausgabe löschen.
+Nutzer:innen können Name und Betrag einer eigenen Ausgabe ändern oder den Eintrag nach verständlicher Bestätigung löschen. Eigentümer und Erfassungsdatum bleiben beim Bearbeiten unverändert.
 
 **Prüfbare Folgen:**
-- Änderungen an Name oder Betrag werden in der Ausgabenübersicht angezeigt.
-- Gelöschte Ausgaben erscheinen nicht mehr in der Ausgabenübersicht.
-- Änderungen oder Löschungen betreffen nicht die Daten anderer Nutzerkonten.
-- Das Restbudget wird nach einer Änderung oder Löschung entsprechend der verbliebenen Ausgaben neu berechnet.
+
+- Nach bestätigter Mutation zeigt die Ausgabenhistorie den neuen Stand; die nächste Monatsansicht zeigt das dazu konsistente Restbudget.
+- Betragsänderungen und Löschungen in abgeschlossenen aktivierten Herkunftsmonaten lösen die Korrektur nach FR-16 aus. Eine reine Namensänderung verändert keine Geldwerte.
+- Ausgabe und zugehörige Korrektur werden gemeinsam bestätigt oder vollständig verworfen; kein anderer Datenbereich eines anderen Kontos ändert sich.
 
 ### 5.3 Monatsbudget
 
-**Beschreibung:** Das Monatsbudget gilt pauschal für alle Ausgaben und bleibt in Folgemonaten bestehen, bis die Person es manuell ändert. Einnahmen fließen nicht in die Berechnung ein.
-
-**Funktionale Anforderungen:**
-
 #### FR-7: Monatsbudget festlegen
 
-Angemeldete Personen können den Betrag ihres Monatsbudgets festlegen und manuell ändern. Der Betrag gilt in Folgemonaten weiter, bis er geändert wird.
-
-**Prüfbare Folgen:**
-- Das Monatsbudget wird dem eigenen Nutzerkonto zugeordnet.
-- Das Monatsbudget wird in Euro erfasst.
-- **[ASSUMPTION]** Eine Änderung des Monatsbudgets gilt sofort für den laufenden und die folgenden Monate.
-- Alle eigenen Ausgaben des laufenden Monats zählen zum Monatsbudget.
+Eine Person kann ihr Monatsbudget ab null festlegen oder ändern. Es gilt sofort für den laufenden und für folgende Monate bis zur nächsten Änderung. Abgeschlossene Budgetstände bleiben unverändert. Ein fehlendes Budget ist von einem ausdrücklich gesetzten Budget von null unterscheidbar.
 
 #### FR-8: Restbudget anzeigen
 
-Angemeldete Personen können sehen, wie viel vom Monatsbudget nach Abzug der eigenen Ausgaben im laufenden Monat übrig ist.
+Monat zeigt das gültige Monatsbudget, die Summe der eigenen Ausgaben des laufenden Kalendermonats und das Restbudget. Das Restbudget ist deren exakte Differenz; der Kalendermonat richtet sich nach Europe/Berlin. Nach Ausgabenerfassung, Betragsänderung oder Löschung zeigt die nächste Monatsansicht den aktualisierten Stand.
 
-**Prüfbare Folgen:**
-- Restbudget = Monatsbudget − Summe der eigenen Ausgaben im laufenden Kalendermonat nach Europe/Berlin.
-- Einnahmen werden für diese Berechnung nicht berücksichtigt.
-- Der angezeigte Wert wird aktualisiert, wenn eine Ausgabe erfasst, geändert oder gelöscht wird.
+Ohne Budget fordert Monat zur Festlegung auf und zeigt kein erfundenes Restbudget. Bei Überschreitung bleiben der tatsächliche negative Betrag und ein verständlicher Hinweis sichtbar. Einnahmen, Sparfortschritt und Monatsüberschussanrechnungen verändern diese Formel nicht.
 
 ### 5.4 Sparziele
 
-**Beschreibung:** Sparziele helfen, einen Zielbetrag und den erreichten Fortschritt zu überblicken. Nutzer:innen pflegen den aktuell erreichten Gesamtbetrag selbst; einzelne Sparbeiträge und deren Verlauf werden nicht erfasst. Ein Zieldatum ist optional.
+#### FR-9: Eigenes Sparziel anlegen, bearbeiten und löschen
 
-**Funktionale Anforderungen:**
+Eine Person kann ein eigenes Sparziel mit selbst gewähltem Namen, positivem EUR-Zielbetrag und optionalem Zieldatum anlegen. Der Fortschritt startet bei null. Zielanlage allein wählt das Ziel nicht für die Monatsautomatik aus.
 
-#### FR-9: Sparziel festlegen
+Name, Zielbetrag und Zieldatum sind bearbeitbar; der Fortschritt bleibt dabei erhalten. Ein leeres Zieldatum entfernt das bisherige Datum. Das Zieldatum ist ein reines Kalenderdatum.
 
-Angemeldete Personen können ein eigenes Sparziel mit eigenem Namen, Zielbetrag in Euro und optionalem Zieldatum anlegen.
-
-**Prüfbare Folgen:**
-- Das Sparziel wird dem eigenen Nutzerkonto zugeordnet.
-- Das Sparziel hat einen von der Person festgelegten Namen.
-- Ein Sparziel kann ohne Zieldatum bestehen.
+Löschen erfordert eine verständliche Bestätigung und entfernt Ziel und Fortschritt. Der Dialog erklärt den Fortschrittsverlust und bei einem ausgewählten Ziel die spätere Vormerkung neuer Überschüsse. Bestehende Vormerkungen bleiben erhalten. Bereits zugeordnete Monate werden weder umgeleitet noch neu vorgemerkt. Das gilt auch für noch unverarbeitete abgeschlossene Monate, deren historische Zielauswahl dieses Ziel war. Sie bleiben als verbraucht gebunden; Korrekturen stellen das Ziel nicht wieder her. Ein Nachhollauf oder eine letzte Erhöhung des entfallenden Fortschritts ist keine Löschvoraussetzung. Die Auswahl für den offenen Monat wird geleert, falls das gelöschte Ziel ausgewählt war.
 
 #### FR-10: Fortschritt eines Sparziels aktualisieren und ansehen
 
-Angemeldete Personen können den aktuell erreichten Gesamtbetrag eines eigenen Sparziels manuell aktualisieren und im Verhältnis zum Zielbetrag sehen.
+Eine Person kann den tatsächlichen Gesamtfortschritt eines eigenen Sparziels manuell ersetzen. Es gibt keinen Nutzer-Beitragsverlauf. Monatsnachweise bleiben bei manueller Eingabe erhalten; spätere automatische Wirkungen verändern den aktuellen Gesamtbetrag nach FR-16 und FR-17.
 
 **Prüfbare Folgen:**
-- Die Fortschrittsanzeige basiert auf dem manuell gepflegten aktuellen Gesamtbetrag.
-- Das Aktualisieren ersetzt den bisherigen Gesamtbetrag; einzelne Beiträge werden nicht als Verlauf gespeichert.
-- Die Fortschrittsanzeige gehört zum jeweiligen Sparziel.
-- Der Fortschritt eines Sparziels ist nur für dessen Nutzerkonto sichtbar.
 
-### 5.5 Website und Nutzung auf verschiedenen Bildschirmgrößen
+- Fortschritt darf negativ sein oder den Zielbetrag überschreiten. Betrag und Prozentwert zeigen den tatsächlichen Stand; nur der Balken wird auf 0–100 % begrenzt.
+- Bei −30 € Fortschritt und 100 € Ziel zeigt die App −30 € und −30 %, Balken 0 %. Bei 150 € zeigt sie 150 € und 150 %, Balken 100 %.
+- [ASSUMPTION: Der vorzeichenbehaftete Fortschrittsbereich gilt auch für die manuelle Gesamteingabe.] Diese Ableitung stammt aus der SPEC und ist Grundlage der Zielarchitektur.
+- Manuelles Ersetzen bleibt möglich, wenn ein Nachhollauf wegen Betragsgrenzen blockiert ist. Historische Anrechnungen dürfen die manuelle Eingabe nicht durch eine neu errechnete absolute Summe überschreiben.
 
-**Beschreibung:** Die Produktform ist eine responsive Website mit Frontend und Backend. Die Nutzung am Smartphone hat Vorrang; die Website soll auch am Rechner gut bedienbar sein. Konkrete Technologien und deren Aufteilung sind Architekturentscheidungen.
+### 5.5 Website und Orientierung
 
-**Funktionale Anforderungen:**
+#### FR-11: Website responsiv und zugänglich nutzen
 
-#### FR-11: Website responsiv nutzen
+Ausgaben, Budget, Sparziele und sämtliche neuen Automatikzustände sind am Smartphone und Rechner bedienbar. WCAG 2.2 AA ist das Prüfziel: Tastaturbedienung, sichtbarer Fokus, programmatische Beschriftungen und Statusmeldungen, ausreichende Kontraste sowie Beträge, Prozentwerte und Status zusätzlich zur Farbe.
 
-Nutzer:innen können die zentrale Ausgaben-, Monatsbudget- und Sparziel-Funktionalität auf einem Smartphone sowie am Rechner verwenden.
+Abnahmegrößen sind 320×568, 390×844, 768×1024 und 1280×800 CSS-Pixel. Die Kernfunktionen bleiben bei 200 % Textgröße und Reflow auf 320 CSS-Pixel nutzbar. Aktionen sind mindestens 44 CSS-Pixel, Geldfelder mindestens 48 CSS-Pixel hoch. Der rote Abmeldebutton und Vormerkungen unterliegen denselben Anforderungen.
+
+#### FR-12: Monat, Ausgaben und Sparziele getrennt aufrufen
+
+Die Hauptnavigation enthält Monat, Ausgaben und Sparziele. Monat bleibt Startansicht mit Budgetverwaltung und Monatsübersicht, ohne Ausgabenformular. Ausgabenerfassung liegt unter Ausgaben.
+
+[ASSUMPTION: Die gesamte Ausgabenverwaltung einschließlich vollständiger Historie, Bearbeiten und Löschen zieht in den Tab Ausgaben.] Diese Ableitung ist aus der SPEC übernommen und in der Zielarchitektur berücksichtigt. Nach einer bestätigten Ausgabenmutation lädt die nächste Monatsansicht den konsistenten neuen Stand.
+
+#### FR-13: Deutsche Systemtexte ohne Zeitzonenerläuterungen anzeigen
+
+Sichtbare Systemtexte und zugängliche Hilfstexte enthalten keine Zeitzonenerläuterungen wie „in Berlin“, „Kalender in Berlin“ oder „Europe/Berlin“. Deutsche Euro- und Datumsformate sowie die interne Kalendersemantik bleiben erhalten. Nutzereigene Texte wie „Berlin-Fahrt“ werden dadurch nicht verändert.
+
+### 5.6 Automatische Monatsüberschüsse
+
+#### FR-14: Monatsautomatik aktivieren
+
+Eine Person kann die Monatsautomatik für ihr Konto aktivieren, auch ohne vorhandenes oder ausgewähltes Sparziel. Die erste Aktivierung legt den unveränderlichen frühesten Herkunftsmonat fest. Frühere Monate bleiben ausgeschlossen; eine spätere erste Zielwahl verschiebt den Start nicht.
+
+Nach Aktivierung im Oktober wird der gesamte Oktober nach dessen Ende berücksichtigt, September dagegen nicht. Für jeden abgeschlossenen Herkunftsmonat mit Budget gilt: `Monatsüberschuss = max(0, damaliges Monatsbudget − eigene Monatsausgaben)`. Ohne Budget entsteht weder Anrechnung noch Vormerkung. Ein negativer Rest erzeugt keine neue Sparbelastung; eine historische Korrektur kann eine frühere Anrechnung jedoch zurücknehmen. Sparanrechnung ist keine Ausgabe und verändert das Restbudget nicht.
+
+#### FR-15: Monatsüberschuss zuordnen oder vormerken
+
+Genau ein ausgewähltes eigenes Sparziel erhält den Monatsüberschuss vollständig. Maßgeblich ist die Zielauswahl zum Ende des Herkunftsmonats, auch bei verspäteter Verarbeitung. Ohne gültige Auswahl wird der Betrag je Herkunftsmonat vorgemerkt. Kein Ziel wird automatisch oder zufällig gewählt.
 
 **Prüfbare Folgen:**
-- Die genannten Kernfunktionen sind auf einem Smartphone bedienbar.
-- Die genannten Kernfunktionen sind auch am Rechner bedienbar.
-- Die UX-Spezifikation legt vor der Umsetzungsplanung konkrete Bildschirmgrößen und Aufgaben für die Prüfung auf beiden Gerätetypen fest.
 
-## 6. Nicht-Ziele und zurückgestellte Funktionen
+- Die offene vorgemerkte Summe, eine fehlende Zielwahl und die Auswahl eigener Ziele sind verständlich sichtbar.
+- Zielwahl oder Zielwechsel berücksichtigt zuerst fällige, bisher unverarbeitete abgeschlossene Monate nach deren historischen Regeln. Danach werden sämtliche offenen Vormerkungen einschließlich noch nicht zugeordneter Monate mit Budget und Überschuss null dem gewählten Ziel zugeordnet.
+- Übernahme und Auswahl werden nur gemeinsam wirksam. Erst nach bestätigter vollständiger Übernahme leert sich die Vormerkung; bei Fehler bleibt sie erhalten. Wiederholung wirkt nicht doppelt.
+- 200 € aus Oktober und 100 € aus November vorgemerkt, Zielstand 50 €: Nach Übernahme beträgt der Fortschritt 350 €, die offene Summe null. Die beiden Herkunftsmonate bleiben unterscheidbar.
+- Ein Wechsel zu B im November verschiebt keine Oktoberzuordnung von A nach B. Oktoberkorrekturen bleiben bei A, November folgt B; noch offene Vormerkungen werden vollständig nach B übernommen.
+- Auch ein Monat mit Budget und Überschuss null bewahrt seine historische Auswahl. Ohne Auswahl bleibt er für eine spätere Übernahme offen. Ein Monat ohne Budget wird dadurch nicht zur Vormerkung.
+- Für gelöschte Ziele gilt FR-9; deren frühere Bindungen werden nicht erneut verteilt.
 
-- Gemeinsame Ausgaben-, Budget- oder Sparzielansichten.
-- Verwaltung betrieblicher Finanzen.
-- Einnahmen werden in v1 weder erfasst noch in die Berechnung des Restbudgets einbezogen.
-- **[NON-GOAL for MVP]** Automatischer Bankimport; v1 basiert auf manueller Erfassung. Linus prüft einen Bankimport bei der Planung einer späteren Version erneut.
-- Kategorien und wiederkehrende Ausgaben gehören nicht zum v1-Umfang.
+#### FR-16: Historische Monatsüberschüsse um Differenzen korrigieren
+
+Eine Betragsänderung oder Löschung einer Ausgabe aus einem abgeschlossenen Monat ab Erstaktivierung berechnet dessen Monatsüberschuss gemeinsam mit der Ausgabenmutation neu. Fehlt die bisherige Verarbeitung, wird der Monat anhand seiner historischen Budget- und Zielregeln berücksichtigt.
+
+**Prüfbare Folgen:**
+
+- Vor Zielzuordnung verändert sich nur die Vormerkung des betroffenen Herkunftsmonats.
+- Nach Zuordnung zu einem weiterhin vorhandenen Ziel gilt: `neuer Fortschritt = aktueller Fortschritt + (neuer Monatsüberschuss − zuletzt berücksichtigter Monatsüberschuss)`. Die Differenz wirkt einmal auf das ursprüngliche Ziel, auch nach einem Zielwechsel.
+- Beispiel: Ursprünglich 200 € angerechnet, neu 150 €; bei zwischenzeitlich manuell auf 300 € gesetztem Fortschritt bleibt danach 250 €.
+- Negative Ergebnisse bleiben erhalten: 20 € minus 50 € ergibt −30 €; spätere 100 € ergeben 70 €. Es gibt weder Abschneiden bei null noch eine separate Korrekturschuld.
+- Gelöschte Ziele bleiben verbraucht; weder andere Ziele noch neue Vormerkungen erhalten ihre Korrekturen.
+- Eine ungültige oder grenzüberschreitende Korrektur verwirft den gesamten zusammengehörigen Vorgang. Keine Ausgabeänderung wird ohne ihre erforderliche Monatskorrektur bestätigt.
+
+#### FR-17: Monatsabschlüsse ohne offene Sitzung zuverlässig nachholen
+
+Die Monatsautomatik verarbeitet abgeschlossene Monate ohne geöffnete Oberfläche und ohne aktive Sitzung. Nach Ausfällen und Neustarts werden versäumte Monate ab Erstaktivierung chronologisch nachgeholt.
+
+Jeder Herkunftsmonat wirkt höchstens einmal in seinem jeweils gültigen Stand. Wiederholungen und gleichzeitige manuelle oder automatische Änderungen dürfen weder doppelt anrechnen noch bestätigte Änderungen verlieren. Fortschritt und Zuordnung werden gemeinsam wirksam. Fehler führen zu keiner Teilbestätigung; Vormerkungen und wirksame Zuordnungen bleiben erhalten. Ein fehlerhaftes Konto blockiert die Verarbeitung anderer Konten nicht.
+
+## 6. Nicht-Ziele
+
+- Betriebliche Nutzung und gemeinsame Ausgaben-, Budget- oder Sparzielansichten.
+- Einnahmenerfassung, Bankimport, Banküberweisungen, Kategorien und wiederkehrende Ausgaben.
+- Andere Währungen oder eine wählbare Zeitzone.
+- Nutzer-Beitragsverlauf, getrennte sichtbare manuelle/automatische Fortschrittskonten und separate Korrekturschulden. Monatsnachweise und sichtbare Vormerkungen bleiben erforderlich.
+- Offline-Synchronisation oder dauerhafte Speicherung von Finanzdaten im Browser.
+- Produktionsfreigabe allein durch diese Dokumentaktualisierung. Bankimport kann für eine spätere Version erneut geprüft werden.
 
 ## 7. Erfolgskriterien
 
-- **SM-1 — Monatsüberblick:** Linus kann bei der Monatsprüfung die bisherigen Ausgaben und den Rest seines Monatsbudgets ohne eigene Nebenrechnung erkennen. Prüft FR-5 und FR-8.
-- **SM-2 — Zielüberblick:** Linus kann den Fortschritt jedes eigenen Sparziels zum Zielbetrag erkennen. Prüft FR-10.
-- **SM-C1 — Erfassungsaufwand:** Die Übersicht darf nicht durch einen so aufwendigen Erfassungsprozess erkauft werden, dass Linus die manuelle Erfassung nicht mehr nutzt. SM-C1 und SM-1 werden während der privaten Nutzung gemeinsam beobachtet.
+- **SM-1 — Monatsüberblick:** Linus erkennt bei der Monatsprüfung vollständige Ausgabenhistorie unter Ausgaben und aktuelles Restbudget unter Monat ohne Nebenrechnung (FR-5, FR-8, FR-12).
+- **SM-2 — Zielüberblick:** Bei jedem eigenen Sparziel sind tatsächlicher Fortschritt und Verhältnis zum Zielbetrag einschließlich negativer Werte und Übererfüllung erkennbar (FR-10).
+- **SM-3 — Verlässliche Monatsautomatik:** Die 17 Monatsabnahmefälle bestehen; jeder berechtigte Herkunftsmonat wird genau einmal berücksichtigt, Vormerkungen vollständig übernommen und historische Zielbindungen nach Wechsel, Löschung, Korrektur, Ausfall und Parallelität erhalten (FR-14 bis FR-17, FR-9, FR-10).
+- **SM-4 — Durchgängige Bedienung:** Registrierung/Anmeldung, Ausgabenverwaltung, korrekter Monatsüberblick und rotes Abmelden sind in den festgelegten Ansichten und Prüfgrößen durchführbar; keine fremden Daten oder systemseitigen Zeitzonenerläuterungen erscheinen (FR-1 bis FR-3, FR-11 bis FR-13).
+- **SM-C1 — Erfassungsaufwand:** Der Monatsüberblick darf nicht so viel Eingabe- oder Bedienaufwand verursachen, dass Linus die manuelle Erfassung aufgibt. Gemeinsam mit SM-1 während der privaten Nutzung beobachten.
 
-Der übergeordnete gewünschte Effekt — am Monatsende mehr Geld übrig zu haben — lässt sich aus dem Briefing nicht mit einem Ausgangswert oder Ziel messen. Er bleibt ein zu beobachtendes Nutzungsergebnis, keine zugesicherte Produkteigenschaft.
+Eine finanzielle Verbesserung wird nach ein bis zwei Monaten privater Nutzung beobachtet; Vergleich und Messweise sind noch offen. Es gibt kein zugesagtes Sparziel in Euro oder Prozent.
 
-## 8. Datenschutz und Qualitätsanforderungen
+## 8. Datenschutz, Qualität und Freigabe
 
-- Persönliche Ausgaben-, Budget- und Zieldaten sind jeweils einem Nutzerkonto zugeordnet und dürfen anderen Nutzerkonten nicht offengelegt werden.
-- Zugriffe auf persönliche Daten müssen den angemeldeten Nutzer berücksichtigen; die konkrete technische Zugriffskontrolle wird in der Architektur festgelegt.
-- Die Website muss die in FR-11 genannten Kernfunktionen auf Smartphone und Rechner bedienbar machen.
-- Aufbewahrung, Export und Löschung persönlicher Daten sowie Kontowiederherstellung sind vor der Architektur noch zu klären.
+### 8.1 Exakte Geldwerte und Kalender
 
-## 9. Offene Fragen
+Alle gespeicherten und fachlich berechneten Geldwerte sind exakte ganzzahlige EUR-Cent innerhalb ±9.007.199.254.740.991. Mehr als zwei Euro-Nachkommastellen und Mutationen, die eine Grenze überschreiten, werden abgelehnt. Grenzen werden nicht durch Runden oder Abschneiden eingehalten. Ausgaben und Zielbeträge sind positiv; Budget, Monatsausgabensummen, Monatsüberschüsse und Vormerkungen sind nichtnegativ; Restbudget und Fortschritt dürfen negativ sein.
 
-1. **Owner: Linus; entscheiden in der UX-Arbeit an der Monatsübersicht.** Soll ein Restbudget unter null als negativer Betrag oder als gesonderte Überschreitungsmeldung dargestellt werden?
-2. **Owner: Linus; klären vor einer Veröffentlichung mit echten Nutzerdaten.** Welche Anforderungen gelten in v1 für Export, Löschung, Aufbewahrungsdauer und Kontowiederherstellung?
-3. **Owner: Linus; erneut ansehen bei Planung einer späteren Version.** Soll Bankimport nach v1 erwogen werden?
-4. **Owner: Linus; erneut ansehen nach ein bis zwei Monaten privater Nutzung.** Reicht die Nutzung und Transparenz als Erfolgskriterium, oder soll für „am Monatsende mehr übrig“ ein konkreter Vergleich über mehrere Monate erhoben werden?
-5. **Owner: Linus; entscheiden in der Architektur, bevor der Registrierungslink an den Nutzerkreis verteilt wird.** Wie lange ist der Link gültig, und kann Linus ihn erneuern oder widerrufen?
-6. **Owner: Linus; festlegen, bevor Umsetzungsanforderungen für Betragseingaben abgenommen werden.** Welche Wertebereiche und Genauigkeit gelten für Ausgaben, Monatsbudget, Sparziel und Fortschritt; darf der Fortschritt den Zielbetrag überschreiten?
-7. **Owner: Linus; festlegen, bevor Umsetzungsanforderungen für Sparziele abgenommen werden.** Können Name, Zielbetrag und Zieldatum eines bestehenden Sparziels geändert werden, und kann ein Sparziel gelöscht werden?
-8. **Owner: Linus; mit der UX-Spezifikation vor der Umsetzungsplanung festlegen.** Welche Bildschirmgrößen und Kernaufgaben dienen als konkrete Prüfung für Smartphone und Rechner?
+Erfassungsdatum und Monatsgrenzen richten sich nach Europe/Berlin einschließlich Sommer-/Winterzeit. Eine andere Gerätezeitzone verändert keine Zuordnung. Kalenderdaten wie das Zieldatum werden ohne Umrechnung in Zeitpunkte behandelt. Diese Fachdefinition ist keine Aufforderung, Zeitzonenerläuterungen im UI anzuzeigen.
 
-## 10. Annahmen
+### 8.2 Sitzung, Bestätigung und Fehler
 
-- **[ASSUMPTION] Budgetänderung:** Eine manuelle Änderung des Monatsbudgets gilt sofort im laufenden Monat und in allen Folgemonaten.
-- **[ASSUMPTION] Restbudget unter null:** Die Formel erlaubt einen negativen Wert, falls die Ausgaben das Monatsbudget überschreiten. Die genaue Darstellung ist offen.
+Finanzdaten und kurzfristige Zugangsnachweise bleiben im Browser ausschließlich im Arbeitsspeicher. Die geschützte Sitzungsverlängerung folgt dem bestehenden Zugangsvertrag. Erfolg wird erst nach dauerhaft bestätigter Speicherung angezeigt; Doppelsenden wird verhindert. Späte Antworten nach Abmeldung, Ablauf oder Kontowechsel bleiben wirkungslos.
 
+Bei Fehlern oder fehlender Verbindung bleiben Entwürfe nur im offenen Tab erhalten. Es gibt keine Offline-Synchronisation. Ausgaben- und Ziellöschung erfordern eine verständliche Bestätigung. Zusammengehörige Änderungen werden vollständig bestätigt oder vollständig verworfen.
+
+### 8.3 Betrieb und private Daten
+
+Der Betrieb muss Verarbeitungsrückstand, letzte erfolgreiche Monatsverarbeitung und technische Fehler erkennen können, ohne Finanztexte, Geldbeträge oder Zugangsnachweise in Logs offenzulegen. Produktionsgeheimnisse bleiben außerhalb versionierter Dateien. Vor echten Daten sind verschlüsselte Backups außerhalb des VPS und ein getesteter Wiederherstellungsweg Voraussetzung. Die noch offenen Entscheidungen dazu stehen in §9.
+
+### 8.4 Übergang und Freigabebedingungen
+
+Bestehende Konten und IDs, Eigentümer, Ausgabedaten, historische Budgetstände und manuelle Fortschritte bleiben erhalten. Vor Erstaktivierung werden keine automatischen Monatsanrechnungen rückwirkend erfunden; manuelle Bestände werden nicht in solche Anrechnungen umgedeutet.
+
+Die neue Oberfläche verwendet vollständig API v2 einschließlich Kontozugang. Während v1 unterstützt wird, bleiben Monatsautomatik und negative manuelle Fortschrittswerte serverseitig gesperrt. Vor Freigabe müssen die v2-Oberfläche und ihre Sicherheitsregeln abgenommen sowie v1 kontrolliert stillgelegt sein: Bereits zugelassene v1-Vorgänge einschließlich Lesezugriffen und Datenbankarbeit müssen beendet oder abgebrochen sein; veraltete Oberflächen erhalten einen Aktualisierungspfad. Erst dann darf ein Konto die Monatsautomatik aktivieren beziehungsweise negative Werte nutzen.
+
+Nach den ersten vorzeichenbehafteten Fortschrittswerten oder Monatswirkungen ist ein Rückfall auf v1 ausgeschlossen. Ein technischer Rücknahmeschritt darf Finanzdaten nicht abschneiden oder überschreiben; erforderlich sind eine v2-kompatible Korrektur oder eine geprüfte Wiederherstellung.
+
+## 9. Offene Fragen und weitere Planung
+
+| Punkt | Verantwortlich | Klärung spätestens |
+| --- | --- | --- |
+| Export, Kontolöschung, Aufbewahrung einschließlich Monatsnachweisen, Kontowiederherstellung und notwendige E-Mail-Bestätigung | Linus | Vor echten Nutzerdaten und Produktionsfreigabe. |
+| VPS-Auslegung, Domain/DNS, feste Laufzeitversionen, externe verschlüsselte Backups mit Zeitplan/Aufbewahrung, Wiederherstellungsziele und Überwachung | Linus | Vor Produktionsbetrieb; Wiederherstellungsweg muss getestet sein. |
+| Anmeldedrosselung und begrenzte gleichzeitige Passwortprüfungen anhand von Zielhost und Lastprofil bewerten | Linus | Vor Produktionsbetrieb; bestehender Eintrag in [deferred-work.md](../../../implementation-artifacts/deferred-work.md) bleibt maßgeblich. |
+| Vergleich zur finanziellen Wirkung bestimmen | Linus | Nach ein bis zwei Monaten privater Nutzung. |
+| Bankimport für eine spätere Version erneut bewerten | Linus | Erst bei Planung einer späteren Version; kein Bestandteil dieses Umfangs. |
+
+Diese Punkte blockieren die Produktionsfreigabe beziehungsweise die genannte spätere Entscheidung, nicht die bereits beschlossene Zielarchitektur. Vor Umsetzung sind [DESIGN.md](../../ux-designs/ux-try-not-to-be-poor-2026-10-19/DESIGN.md) und [EXPERIENCE.md](../../ux-designs/ux-try-not-to-be-poor-2026-10-19/EXPERIENCE.md) sowie neue Folge-Stories mit diesem Zielumfang abzugleichen. Die bisherigen Done-Nachweise werden nicht rückwirkend umgeschrieben. API-v2-Details und konkrete technische Ausgestaltung verbleiben in Architektur und Folge-Stories.
+
+Die bisher offenen Fragen zu negativem Restbudget, Linkgültigkeit, Betragsregeln, Sparzielbearbeitung/-löschung und responsiven Prüfgrößen sind in §5 und §8 beantwortet. Die sofortige Wirkung einer Budgetänderung ist eine bestätigte Regel.
+
+## 10. Annahmenindex
+
+Die SPEC führt zwei Ableitungen, die auch dieses PRD ausdrücklich beibehält:
+
+- **Zu FR-10:** Der vorzeichenbehaftete Fortschrittsbereich gilt auch für die manuelle Gesamteingabe.
+- **Zu FR-12:** Die gesamte Ausgabenverwaltung einschließlich Historie, Bearbeiten und Löschen zieht in den Tab Ausgaben.
+
+Beide sind bereits Grundlage der Architektur vom 25.10.2026; es bestehen daraus keine zusätzlichen offenen Architekturentscheidungen.

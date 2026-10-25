@@ -23,7 +23,12 @@ geplanten Funktionsumfangs ist abgeschlossen; die
 
 - Node **24.22.0**, npm (mit Node geliefert), JDK **25** einschließlich `javac`.
 - Maven **3.10.0** wird durch `backend/mvnw` geladen; kein globales Maven nötig.
-- Für die manuelle lokale Anwendung: Docker mit Compose und PostgreSQL **18.6**.
+- Für die manuelle lokale Anwendung: Docker mit Compose v2 oder neuer
+  (`up --wait` erforderlich) und PostgreSQL **18.6**. Das Startskript erkennt
+  sowohl das Plugin `docker compose` als auch ein eigenständiges `docker-compose`.
+  Die Docker-CLI allein enthält Compose nicht zwingend. Unter Ubuntu mit Docker
+  aus den Ubuntu-Paketquellen installiert `sudo apt-get install docker-compose-v2`
+  das Plugin. Danach sollte `docker compose version` erfolgreich sein.
 - Für Prüfungen: Linux x86_64, Python 3, curl, Git, sha256sum und **unzip**.
   Der unveränderte Herstellerwrapper benötigt unzip für das mit ZIP-Prüfsumme
   gepinnte Maven-Archiv; sein TAR-Fallback passt nicht zu dieser Prüfsumme.

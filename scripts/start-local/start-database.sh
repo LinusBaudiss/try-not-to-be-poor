@@ -9,4 +9,24 @@ if [[ ! -f .local/database.env ]]; then
   exit 1
 fi
 
-exec docker compose --env-file .local/database.env -f deploy/compose.local.yaml up -d --wait
+compose_supported() {
+  local help
+  "$@" version >/dev/null 2>&1 || return 1
+  help=$("$@" up --help 2>/dev/null) || return 1
+  [[ "$help" =~ (^|[[:space:]])--wait([[:space:]]|$) ]]
+}
+
+if command -v docker >/dev/null && compose_supported docker compose; then
+  COMPOSE=(docker compose)
+elif command -v docker-compose >/dev/null && compose_supported docker-compose; then
+  COMPOSE=(docker-compose)
+else
+  printf '%s\n' \
+    'Docker Compose mit Unterstützung für up --wait wurde nicht gefunden.' \
+    'Installiere Compose v2 oder neuer als Docker-Plugin (docker compose) oder als docker-compose.' \
+    'Unter Ubuntu mit Docker aus den Ubuntu-Paketquellen: sudo apt-get install docker-compose-v2' \
+    'Details stehen in README.md unter Voraussetzungen.' >&2
+  exit 1
+fi
+
+exec "${COMPOSE[@]}" --env-file .local/database.env -f deploy/compose.local.yaml up -d --wait

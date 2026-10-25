@@ -42,6 +42,29 @@ vorhanden; `deploy/compose.local.yaml` startet nur PostgreSQL. Vor echten Nutzer
 Betrieb geklärt sowie verschlüsselte Backups außerhalb des VPS und eine geprüfte
 Wiederherstellung vorhanden sein.
 
+Die gesamte Anwendung in einem Terminal starten:
+
+```bash
+./start-local.sh
+```
+
+Das Skript im Projektverzeichnis ruft Einrichtung, Datenbank, Backend und Frontend
+in dieser Reihenfolge auf. Es wartet auf die Bereitschaft von Backend und
+HTTPS-Frontend und zeigt dann `https://localhost:4200` an. Belegte Ports 8080/4200
+und ein weiterer Gesamtstart desselben Projekts werden abgewiesen. Für den
+Gesamtstart werden zusätzlich `curl` und `flock` (Linux: util-linux) benötigt.
+Für Backend und Frontend beträgt die Startwartezeit jeweils fünf Minuten; bei
+langsamen Erstbuilds kann sie etwa mit `START_LOCAL_TIMEOUT_SECONDS=600 ./start-local.sh`
+erhöht werden. Image-Downloads und der vorherige Compose-Datenbankstart fallen
+nicht unter dieses Zeitlimit. Als Argumente sind `--ssl-cert` und `--ssl-key`
+für eigene Zertifikatspfade erlaubt; Host, Port und HTTPS bleiben für die
+Sitzungskonfiguration fest auf `https://localhost:4200` eingestellt.
+Die Ausgabe beider Dienste bleibt im Terminal sichtbar. Strg+C oder das Ende
+eines Anwendungsprozesses beendet Backend und Frontend samt Unterprozessen;
+die lokale Datenbank läuft mit ihren gespeicherten Daten weiter.
+
+Alternativ lassen sich die Schritte einzeln ausführen:
+
 Lokale Konfiguration vorbereiten und anschließend die Datenbank starten:
 
 ```bash

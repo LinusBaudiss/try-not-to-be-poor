@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+# Auch ein expliziter Aufruf mit sh soll die benötigte Bash verwenden.
+if ! (builtin shopt) >/dev/null 2>&1; then
+  exec bash -- "$0" "$@"
+fi
+
 set -euo pipefail
 
 PROJECT_ROOT=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)

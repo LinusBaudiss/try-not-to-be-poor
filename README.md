@@ -48,6 +48,9 @@ Die gesamte Anwendung in einem Terminal starten:
 ./start-local.sh
 ```
 
+Auch `bash start-local.sh` und `sh start-local.sh` sind möglich; bei einem
+Aufruf mit `sh` wechselt das Skript vor dem Start automatisch zu Bash.
+
 Das Skript im Projektverzeichnis ruft Einrichtung, Datenbank, Backend und Frontend
 in dieser Reihenfolge auf. Es wartet auf die Bereitschaft von Backend und
 HTTPS-Frontend und zeigt dann `https://localhost:4200` an. Belegte Ports 8080/4200

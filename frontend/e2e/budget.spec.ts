@@ -5,7 +5,7 @@ const password = '  Grüner 🦊 im Baum  ';
 const endpoint = '**/api/v1/expense-budget/budget';
 async function account(request: APIRequestContext): Promise<string> {
   const email = `budget-${crypto.randomUUID()}@example.org`;
-  expect((await request.post('http://127.0.0.1:8080/api/v1/access/registrations', {
+  expect((await request.post('http://127.0.0.1:8080/api/v2/access/registrations', {
     data: { registrationToken: 'a'.repeat(43), email, password }
   })).status()).toBe(201);
   return email;
@@ -73,7 +73,7 @@ test('Identitätsfehler wird live gemeldet und gehaltene Zugangsprüfung bleibt 
   const identitySent = new Promise<void>(resolve => { identityReady = resolve; });
   const heldBudget = new Promise<void>(resolve => { releaseBudget = resolve; });
   const budgetSent = new Promise<void>(resolve => { budgetReady = resolve; });
-  await page.route('**/api/v1/access/me', async route => {
+  await page.route('**/api/v2/access/me', async route => {
     if (++identities === 1) return route.fulfill({ status: 500, json: { code: 'SESSION_UNAVAILABLE', message: 'Nicht bestätigt' } });
     const response = await route.fetch(); identityReady(); await heldIdentity; await route.fulfill({ response });
   });
@@ -242,7 +242,7 @@ for (const method of ['GET', 'PUT']) {
       await page.getByRole('button', { name: 'Budget speichern', exact: true }).click();
     }
     await ready;
-    const logout = page.waitForResponse('**/api/v1/access/logout');
+    const logout = page.waitForResponse('**/api/v2/access/logout');
     await page.getByRole('button', { name: 'Abmelden', exact: true }).click();
     expect((await logout).status()).toBe(204);
     await expect(page).toHaveURL('/anmelden');
@@ -290,7 +290,7 @@ test('fehlgeschlagene Sitzungsverlängerung verwirft den Budgetentwurf und eine 
     if (route.request().method() !== 'PUT') return route.continue();
     const response = await route.fetch(); committed(); await held; await route.fulfill({ response });
   });
-  await page.route('**/api/v1/access/refresh', async route => { await route.abort('failed'); });
+  await page.route('**/api/v2/access/refresh', async route => { await route.abort('failed'); });
   await page.getByLabel('Monatsbudget in Euro').fill('987,65');
   await page.getByRole('button', { name: 'Budget speichern', exact: true }).click(); await ready;
   await page.clock.fastForward(570_001);
@@ -308,14 +308,14 @@ test('Tokenablauf verwirft gespeicherten Betrag und Entwurf trotz verspäteter E
   let release!: () => void, committed!: () => void;
   const held = new Promise<void>(resolve => { release = resolve; });
   const ready = new Promise<void>(resolve => { committed = resolve; });
-  await page.route('**/api/v1/access/refresh', async route => {
+  await page.route('**/api/v2/access/refresh', async route => {
     const response = await route.fetch(); committed(); await held; await route.fulfill({ response });
   });
   await page.clock.fastForward(570_001); await ready;
   await page.clock.fastForward(30_000);
   await expect(page).toHaveURL('/anmelden');
   await expect(page.locator('#feedback')).toContainText('abgelaufen');
-  const revoked = page.waitForResponse('**/api/v1/access/logout');
+  const revoked = page.waitForResponse('**/api/v2/access/logout');
   release(); expect((await revoked).status()).toBe(204);
   expect(await page.evaluate(() => {
     const old = (window as any).closedMonth;

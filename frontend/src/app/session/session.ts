@@ -2,18 +2,25 @@ import { HttpBackend, HttpClient, HttpResponse } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { firstValueFrom, timeout } from 'rxjs';
-import { SessionResponse } from '../api/model/sessionResponse';
+import { SessionResponse } from '../api/v2/model/sessionResponse';
+import { SessionsService } from '../api/v2/api/sessions.service';
+import { BASE_PATH } from '../api/v2/variables';
 
 @Injectable({ providedIn: 'root' })
 export class Session {
-  private readonly http = new HttpClient(inject(HttpBackend));
+  // Cookie-Mutationen umgehen den Bearer-Interceptor und verwenden den generierten v2-Vertrag.
+  private readonly api = new SessionsService(new HttpClient(inject(HttpBackend)), inject(BASE_PATH));
   private readonly router = inject(Router);
   private readonly channel = typeof BroadcastChannel === 'undefined' ? null : new BroadcastChannel('tnbp-session');
   private readonly current = signal<SessionResponse | null>(null);
   readonly userId = () => this.current()?.userId ?? null;
   readonly notice = signal('');
   private csrfRequest: Promise<string> | null = null;
-  private epoch = 0;
+  private readonly epoch = signal(0);
+  readonly loggingOut = signal(false);
+  readonly logoutUnconfirmed = signal(false);
+  private logoutRequest: Promise<void> | null = null;
+  private revocation: { version: number; request: Promise<boolean> } | null = null;
   private restored = false;
   private restoring: Promise<boolean> | null = null;
   private refreshing: Promise<boolean> | null = null;
@@ -28,7 +35,7 @@ export class Session {
     });
   }
 
-  generation(): number { return this.epoch; }
+  generation(): number { return this.epoch(); }
   token(): string | null {
     const value = this.current();
     if (value && performance.now() >= this.expiresAtMonotonic) {
@@ -51,29 +58,29 @@ export class Session {
     this.reset();
     this.channel?.postMessage('ended');
     this.restored = true;
-    const version = this.epoch;
+    const version = this.epoch();
     return this.serialize(async () => {
-      if (version !== this.epoch) return false;
-      const headers = { 'X-CSRF-TOKEN': await this.csrfToken() };
+      if (version !== this.epoch()) return false;
+      const csrf = await this.csrfToken();
       const startedAt = performance.now();
-      const result = await firstValueFrom(this.http.post<SessionResponse>('/api/v1/access/login', { email, password }, { headers, observe: 'response' }).pipe(timeout(30_000)));
+      const result = await firstValueFrom(this.api.login(window.location.origin, csrf, { email, password }, 'response').pipe(timeout(30_000)));
       return this.accept(result, version, startedAt);
     });
   }
 
   refresh(): Promise<boolean> {
     if (this.refreshing) return this.refreshing;
-    const version = this.epoch;
+    const version = this.epoch();
     const operation = this.serialize(async () => {
-      if (version !== this.epoch) return false;
+      if (version !== this.epoch()) return false;
       try {
-        const headers = { 'X-CSRF-TOKEN': await this.csrfToken() };
+        const csrf = await this.csrfToken();
         const startedAt = performance.now();
-        const result = await firstValueFrom(this.http.post<SessionResponse>('/api/v1/access/refresh', null, { headers, observe: 'response' }).pipe(timeout(30_000)));
+        const result = await firstValueFrom(this.api.refreshSession(window.location.origin, csrf, 'response').pipe(timeout(30_000)));
         return this.accept(result, version, startedAt);
       } catch {
         // Eine möglicherweise bereits committete Rotation niemals automatisch wiederholen.
-        if (version === this.epoch) this.end('Deine Sitzung konnte nicht verlängert werden. Melde dich erneut an.');
+        if (version === this.epoch()) this.end('Deine Sitzung konnte nicht verlängert werden. Melde dich erneut an.');
         return false;
       }
     });
@@ -82,12 +89,23 @@ export class Session {
     return operation;
   }
 
-  async logout(): Promise<void> {
+  logout(): Promise<void> {
+    if (this.logoutRequest) return this.logoutRequest;
     this.end('Abmeldung läuft …', true, false);
-    const version = this.epoch;
-    const confirmed = await this.revoke();
-    if (version === this.epoch) this.notice.set(confirmed ? 'Du wurdest abgemeldet.'
-      : 'Die Abmeldung wurde nicht bestätigt. Versuche die Abmeldung erneut.');
+    this.loggingOut.set(true);
+    const operation = this.revoke().then(confirmed => {
+      if (this.current()) return;
+      this.logoutUnconfirmed.set(!confirmed);
+      this.notice.set(confirmed ? 'Du wurdest abgemeldet.'
+        : 'Der Widerruf auf dem Server wurde nicht bestätigt. Versuche die Abmeldung erneut.');
+    }).finally(() => {
+      if (this.logoutRequest === operation) {
+        this.logoutRequest = null;
+        this.loggingOut.set(false);
+      }
+    });
+    this.logoutRequest = operation;
+    return operation;
   }
 
   end(message = 'Melde dich erneut an.', broadcast = true, revoke = true): void {
@@ -101,7 +119,7 @@ export class Session {
   }
 
   cancelLogin(version: number): void {
-    if (version !== this.epoch) return;
+    if (version !== this.epoch()) return;
     this.reset();
     this.restored = true;
     this.notice.set('Die Anmeldung wurde abgebrochen.');
@@ -111,28 +129,32 @@ export class Session {
 
   private revoke(): Promise<boolean> {
     // Erst laufende Cookie-Mutationen abschließen, danach deren Familie widerrufen.
-    const version = this.epoch;
-    return this.serialize(async () => {
-      if (version !== this.epoch) return false;
+    const version = this.epoch();
+    if (this.revocation?.version === version) return this.revocation.request;
+    const request = this.serialize(async () => {
+      if (version !== this.epoch()) return false;
       try {
-        const headers = { 'X-CSRF-TOKEN': await this.csrfToken() };
-        await firstValueFrom(this.http.post('/api/v1/access/logout', null, { headers }).pipe(timeout(30_000)));
+        const csrf = await this.csrfToken();
+        await firstValueFrom(this.api.logoutSession(window.location.origin, csrf).pipe(timeout(30_000)));
         return true;
       } catch { return false; }
     });
+    this.revocation = { version, request };
+    void request.finally(() => { if (this.revocation?.request === request) this.revocation = null; });
+    return request;
   }
 
   private reset(): void {
-    ++this.epoch;
+    this.epoch.update(value => value + 1);
     this.current.set(null);
     this.expiresAtMonotonic = 0;
-    this.notice.set('');
+    if (!this.logoutUnconfirmed()) this.notice.set('');
     clearTimeout(this.refreshTimer);
     clearTimeout(this.expiryTimer);
   }
 
   private accept(response: HttpResponse<SessionResponse>, version: number, startedAt: number): boolean {
-    if (version !== this.epoch) return false;
+    if (version !== this.epoch()) return false;
     const result = response.body;
     if (!result || (this.current() && result.userId !== this.current()?.userId)) { this.end(); return false; }
     // HTTP-Date und eine monotone Restlaufzeit vermeiden Abhängigkeit von der Geräteuhr.
@@ -142,13 +164,14 @@ export class Session {
       this.end('Die Sitzung konnte nicht bestätigt werden. Melde dich erneut an.'); return false;
     }
     this.current.set(result);
+    this.logoutUnconfirmed.set(false);
     this.expiresAtMonotonic = performance.now() + lifetime;
     this.notice.set('');
     clearTimeout(this.refreshTimer);
     clearTimeout(this.expiryTimer);
     this.refreshTimer = setTimeout(() => { void this.refresh(); }, Math.max(1_000, lifetime - 30_000));
     this.expiryTimer = setTimeout(() => {
-      if (version === this.epoch) this.end('Deine Sitzung ist abgelaufen. Melde dich erneut an.');
+      if (version === this.epoch()) this.end('Deine Sitzung ist abgelaufen. Melde dich erneut an.');
     }, lifetime);
     return true;
   }
@@ -156,7 +179,7 @@ export class Session {
   // CSRF-Sitzungen dürfen vor dem langlebigen Refresh-Cookie ablaufen oder neu starten.
   private csrfToken(): Promise<string> {
     if (this.csrfRequest) return this.csrfRequest;
-    this.csrfRequest = firstValueFrom(this.http.get<{ token: string }>('/api/v1/access/csrf').pipe(timeout(30_000)))
+    this.csrfRequest = firstValueFrom(this.api.sessionCsrf().pipe(timeout(30_000)))
       .then(result => result.token)
       .finally(() => { this.csrfRequest = null; });
     return this.csrfRequest;

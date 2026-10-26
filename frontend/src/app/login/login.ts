@@ -1,37 +1,38 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, DestroyRef, HostListener, inject, signal } from '@angular/core';
+import { Component, DestroyRef, HostListener, effect, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { Session } from '../session/session';
+import { LogoutButton } from '../session/logout-button';
 
 @Component({
   selector: 'app-login',
-  imports: [FormsModule, RouterLink],
+  imports: [FormsModule, RouterLink, LogoutButton],
   template: `
     <section class="auth-card" aria-labelledby="login-title">
       <h1 id="login-title">Anmelden</h1>
       <p>Öffne deine persönliche Monatsübersicht.</p>
-      <p id="feedback" tabindex="-1" role="status" aria-live="polite" [class.error]="failed()">{{ status() || session.notice() }}</p>
+      <p id="feedback" tabindex="-1" role="status" aria-live="polite" [class.error]="failed()">{{ status() && session.logoutUnconfirmed() ? status() + ' ' + session.notice() : status() || session.notice() }}</p>
       <form (ngSubmit)="submit()" novalidate [attr.aria-busy]="pending()">
         <div class="field">
           <label for="email">E-Mail-Adresse</label>
           <input id="email" name="email" type="email" inputmode="email" autocomplete="username" spellcheck="false"
-            required [readOnly]="pending()" [(ngModel)]="email" [attr.aria-invalid]="!!errors().email"
+            required [readOnly]="pending()" [value]="email" (input)="email = $any($event.target).value" [attr.aria-invalid]="!!errors().email"
             [attr.aria-describedby]="errors().email ? 'email-error' : null">
           @if (errors().email) { <p class="field-error" id="email-error">{{ errors().email }}</p> }
         </div>
         <div class="field">
           <label for="password">Passwort</label>
           <input id="password" name="password" type="password" autocomplete="current-password" required
-            [readOnly]="pending()" [(ngModel)]="password" [attr.aria-invalid]="!!errors().password"
+            [readOnly]="pending()" [value]="password" (input)="password = $any($event.target).value" [attr.aria-invalid]="!!errors().password"
             [attr.aria-describedby]="errors().password ? 'password-error' : null">
           @if (errors().password) { <p class="field-error" id="password-error">{{ errors().password }}</p> }
         </div>
         @if (!online()) { <p class="error">Du bist offline. Deine Eingaben bleiben in diesem Tab erhalten.</p> }
-        <button type="submit" [disabled]="pending() || !online()">{{ pending() ? 'Anmeldung läuft …' : 'Anmelden' }}</button>
+        <button type="submit" [disabled]="pending() || session.loggingOut() || !online()">{{ pending() ? 'Anmeldung läuft …' : 'Anmelden' }}</button>
       </form>
-      @if (session.notice().includes('nicht bestätigt')) {
-        <button type="button" class="secondary" (click)="session.logout()">Abmeldung erneut versuchen</button>
+      @if (session.logoutUnconfirmed() || session.loggingOut()) {
+        <app-logout-button [retry]="true" />
       }
       <a routerLink="/registrieren">Eigenes Konto anlegen</a>
     </section>`
@@ -41,6 +42,7 @@ export class Login {
   private readonly router = inject(Router);
   private active = true;
   private attempt: number | null = null;
+  private version = this.session.generation();
   protected email = '';
   protected password = '';
   protected readonly pending = signal(false);
@@ -49,10 +51,14 @@ export class Login {
   protected readonly status = signal('');
   protected readonly errors = signal<Record<string, string>>({});
   constructor() {
+    effect(() => {
+      const version = this.session.generation();
+      if (version !== this.version) { this.version = version; this.clear(); }
+    });
     inject(DestroyRef).onDestroy(() => {
       this.active = false;
-      this.password = '';
       if (this.pending() && this.attempt !== null) this.session.cancelLogin(this.attempt);
+      this.clear();
     });
   }
 
@@ -60,7 +66,7 @@ export class Login {
   @HostListener('window:offline') disconnected(): void { this.online.set(false); }
 
   protected async submit(): Promise<void> {
-    if (this.pending() || !this.online()) return;
+    if (this.pending() || this.session.loggingOut() || !this.online()) return;
     const errors: Record<string, string> = {};
     if (!this.email.trim()) errors['email'] = 'Gib deine E-Mail-Adresse ein.';
     if (!this.password) errors['password'] = 'Gib dein Passwort ein.';
@@ -70,14 +76,16 @@ export class Login {
       this.focus(errors['email'] ? 'email' : 'password'); return;
     }
     this.pending.set(true); this.failed.set(false); this.status.set('Anmeldung läuft …');
+    let attempt: number | null = null;
     try {
       const login = this.session.login(this.email, this.password);
-      this.attempt = this.session.generation();
+      attempt = this.attempt = this.session.generation();
+      this.version = this.attempt;
       const accepted = await login;
-      if (!this.active) return;
+      if (!this.accepts(attempt)) return;
       this.status.set('');
       if (accepted) {
-        this.password = '';
+        this.email = ''; this.password = '';
         this.pending.set(false);
         await this.router.navigateByUrl('/monat');
       } else {
@@ -86,13 +94,22 @@ export class Login {
         this.focus('feedback');
       }
     } catch (failure) {
-      if (!this.active) return;
+      if (!this.accepts(attempt)) return;
       this.failed.set(true);
       this.status.set(failure instanceof HttpErrorResponse && failure.status === 401
         ? 'Anmeldung nicht möglich. Prüfe E-Mail-Adresse und Passwort.'
         : 'Die Anmeldung wurde nicht bestätigt. Versuche es erneut.');
       this.focus('feedback');
-    } finally { this.pending.set(false); }
+    } finally { if (this.accepts(attempt)) this.pending.set(false); }
   }
-  private focus(id: string): void { requestAnimationFrame(() => document.getElementById(id)?.focus()); }
+  private accepts(attempt: number | null): boolean {
+    return this.active && attempt === this.attempt && attempt === this.session.generation();
+  }
+  private clear(): void {
+    this.email = ''; this.password = ''; this.errors.set({}); this.status.set(''); this.failed.set(false); this.pending.set(false);
+  }
+  private focus(id: string): void {
+    const version = this.session.generation();
+    requestAnimationFrame(() => { if (this.active && version === this.session.generation()) document.getElementById(id)?.focus(); });
+  }
 }

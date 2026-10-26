@@ -14,8 +14,9 @@ Registrierung meldet nicht an. Nach der Anmeldung öffnet sich „Monat“;
 „Sparziele“ ist über die Hauptnavigation erreichbar.
 
 Der abgeschlossene v1-Umfang umfasst Epics 1–2 mit den neun Stories
-1.1–1.6 und 2.1–2.3. Kontozugang ist zusätzlich über API v2 verfügbar;
-Oberfläche und Finanzrouten verwenden weiterhin v1. Weitere v2-,
+1.1–1.6 und 2.1–2.3. Die Oberfläche verwendet für alle sechs Zugangsfunktionen
+einschließlich Identitätsprüfung API v2; Budget, Ausgaben und Sparziele bleiben
+über v1 bedienbar. Weitere v2-,
 Oberflächen- und Automatikarbeiten aus Epics 3–4 sind noch offen.
 Den Arbeitsstand dokumentieren [Sprintstatus](_bmad-output/implementation-artifacts/sprint-status.yaml)
 und die zugehörigen Story-Specs. Retrospektiven bleiben optional;
@@ -215,7 +216,7 @@ Zertifikat `--ssl-cert` und `--ssl-key` aus geschützter lokaler Ablage verwende
 HTTP, abweichende Hosts und abweichende Origins sind keine unterstützte
 Sitzungskonfiguration. Der lokale Proxy behält Secure-Cookie-Attribute bei.
 
-`GET /api/v1/access/csrf` liefert Spring Securitys CSRF-Token (`no-store`). Vor jeder Cookie-Mutation holt der Tab einen frischen Token und
+`GET /api/v2/access/csrf` liefert Spring Securitys CSRF-Token (`no-store`). Vor jeder Cookie-Mutation holt der Tab einen frischen Token und
 sendet ihn als `X-CSRF-TOKEN` bei Login, Refresh und Logout. Die serverseitige
 CSRF-Sitzung verwendet `__Host-tnbp-csrf` (HttpOnly, Secure, SameSite=Strict,
 Path=/, keine Domain), der Token selbst bleibt nur im Tabspeicher. Nach einem
@@ -235,6 +236,16 @@ Refresh-Familie; ausgestellte JWTs bleiben bis Ablauf gültig. Die SPA verwirft
 bei Sitzungsende und Kontowechsel alle persönlichen Speicherwerte und schließt
 die persönliche Ansicht. Laufende Cookie-Mutationen werden vor Logout beendet,
 damit eine späte Refreshantwort die Abmeldung oder einen bereits eingetretenen Sitzungsablauf nicht rückgängig macht. Kontowechsel und Sitzungsende schließen persönliche Ansichten auch in anderen offenen Tabs über BroadcastChannel; dabei werden keine Geheimnisse übertragen.
+
+Beide Ansichten verwenden dieselbe rote Aktion **Abmelden**. Sie schließt den
+persönlichen Bereich sofort; während des Serverwiderrufs erscheint „Abmeldung
+läuft …“. Bleibt dessen Bestätigung aus, nennt die Anmeldung den unbestätigten
+Widerruf und bietet „Abmeldung erneut versuchen“ an. Laufende Abmeldungen werden
+geteilt und können nicht doppelt gesendet werden. Die Cookie-Sperre
+`tnbp-session-cookie` und der BroadcastChannel `tnbp-session` bleiben mit älteren
+v1-Tabs kompatibel. Eingaben bleiben bei Fehlern nur im offenen Formular; nach
+unbestätigter Registrierung wird zuerst die Anmeldung angeboten. Verlassen und
+Sitzungsende verwerfen persönliche Eingaben und entkräften verspätete Antworten.
 
 ## Monatsbudget verwenden
 
@@ -350,8 +361,10 @@ Origin und CSRF-Header bleiben für jede Cookie-Mutation verpflichtend. Logout
 widerruft die Familie auch für die andere Version. Alle v2-Antworten einschließlich
 Registrierung und Fehlern tragen `Cache-Control: no-store`; fehlende Sitzungskonfiguration
 meldet bei Login, Refresh und Logout 503. Unbestätigte Mutationen niemals automatisch
-wiederholen. Die bestehende Oberfläche verwendet weiterhin v1; Finanzrouten unter
-v2, Browserumstellung, v1-Stilllegung und Produktionsfreigabe folgen gesondert.
+wiederholen. Der Browser verwendet die generierten v2-Zugangsclients; v2-Identität
+und v1-Finanzaufrufe erhalten den Bearer ausschließlich über den Interceptor für
+dieselbe Herkunft und die unterstützten Hauptversionen. Finanzrouten unter v2,
+v1-Stilllegung und Produktionsfreigabe folgen gesondert.
 
 Die Python-Prüfungen prüfen neben dem Linkgenerator die getrennten Basisverträge,
 Erstverträge und das Abbrechen des Vertragschecks bei Kompatibilitätsfehlern in

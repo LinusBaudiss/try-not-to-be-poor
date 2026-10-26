@@ -5,11 +5,13 @@ import { firstValueFrom, timeout } from 'rxjs';
 import { SavingsGoalResponse } from '../api/model/savingsGoalResponse';
 import { savingsProgress } from '../shared/savings-progress';
 import { Session } from '../session/session';
+import { LogoutButton } from '../session/logout-button';
+import { SessionsService } from '../api/v2/api/sessions.service';
 import { MAX_CENTS, euroInput, formatEuro, parseEuro } from '../shared/money';
 
 @Component({
   selector: 'app-savings-goals',
-  imports: [FormsModule],
+  imports: [FormsModule, LogoutButton],
   template: `<section class="auth-card" aria-labelledby="savings-title">
     <h1 id="savings-title">Sparziele</h1>
     <p role="status" aria-live="polite" [class.error]="identityFailed()">{{ identityStatus() }}</p>
@@ -147,12 +149,13 @@ import { MAX_CENTS, euroInput, formatEuro, parseEuro } from '../shared/money';
       </form>
       <p id="goal-status" tabindex="-1" role="status" aria-live="polite" [class.error]="failed()" [class.success]="saved()">{{ status() }}</p>
     }
-    <button type="button" class="secondary" (click)="session.logout()">Abmelden</button>
+    <app-logout-button />
   </section>`
 })
 export class SavingsGoals {
   protected readonly session = inject(Session);
   private readonly http = inject(HttpClient);
+  private readonly access = inject(SessionsService);
   private readonly owner = this.session.userId();
   private readonly version = this.session.generation();
   private active = true;
@@ -216,7 +219,7 @@ export class SavingsGoals {
     if (!this.accepts() || this.opening()) return;
     this.opening.set(true); this.identityFailed.set(false);
     try {
-      const identity = await firstValueFrom(this.http.get<{ userId: string }>('/api/v1/access/me').pipe(timeout(30_000)));
+      const identity = await firstValueFrom(this.access.sessionIdentity().pipe(timeout(30_000)));
       if (!this.accepts()) return;
       if (identity?.userId !== this.owner) throw new Error('Identität nicht bestätigt.');
       this.identityConfirmed.set(true); this.identityStatus.set('Du bist angemeldet. Deine persönlichen Sparziele sind geöffnet.');
@@ -398,7 +401,10 @@ export class SavingsGoals {
     this.deleting.set(goal); this.deleteStatus.set(''); this.resetMutationStatus();
     requestAnimationFrame(() => {
       if (!this.accepts() || this.deleting()?.id !== goal.id) return;
-      this.deleteDialog?.nativeElement.showModal(); this.focus('goal-delete-cancel');
+      const dialog = this.deleteDialog?.nativeElement;
+      dialog?.showModal();
+      // Kein späterer Frame darf die erste Tastaturnavigation zurücksetzen.
+      dialog?.querySelector<HTMLButtonElement>('#goal-delete-cancel')?.focus();
     });
   }
   protected cancelDelete(event?: Event): void {

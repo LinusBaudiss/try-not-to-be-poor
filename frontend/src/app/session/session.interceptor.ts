@@ -4,7 +4,9 @@ import { catchError, from, mergeMap, throwError } from 'rxjs';
 import { Session } from './session';
 
 export const sessionInterceptor: HttpInterceptorFn = (request, next) => {
-  if (!request.url.startsWith('/api/v1/') || /\/access\/(registrations|csrf|login|refresh|logout)$/.test(request.url)) return next(request);
+  const url = new URL(request.url, window.location.origin);
+  const supported = url.origin === window.location.origin && /^\/api\/v[12]\//.test(url.pathname);
+  if (!supported || /^\/api\/v[12]\/access\/(registrations|csrf|login|refresh|logout)$/.test(url.pathname)) return next(request);
   const session = inject(Session);
   const version = session.generation();
   const token = session.token();

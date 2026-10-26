@@ -5,7 +5,7 @@ const password = '  Grüner 🦊 im Baum  ';
 const endpoint = '**/api/v1/expense-budget/expenses/*';
 async function account(request: APIRequestContext): Promise<string> {
   const email = `mutations-${crypto.randomUUID()}@example.org`;
-  expect((await request.post('http://127.0.0.1:8080/api/v1/access/registrations', {
+  expect((await request.post('http://127.0.0.1:8080/api/v2/access/registrations', {
     data: { registrationToken: 'a'.repeat(43), email, password }
   })).status()).toBe(201);
   return email;
@@ -255,7 +255,7 @@ for (const method of ['PUT', 'DELETE']) {
   test(`Tokenablauf verwirft ${method}-Antwort, Entwürfe und Dialog`, async ({ page, request }) => {
     await page.clock.install(); await login(page, await account(request)); await save(page, 'Brot', '1');
     const refreshHeld = gate(), refreshReady = gate();
-    await page.route('**/api/v1/access/refresh', async route => { const response = await route.fetch(); refreshReady.release(); await refreshHeld.promise; await route.fulfill({ response }); });
+    await page.route('**/api/v2/access/refresh', async route => { const response = await route.fetch(); refreshReady.release(); await refreshHeld.promise; await route.fulfill({ response }); });
     await page.clock.fastForward(570_001); await refreshReady.promise; await page.clock.fastForward(28_000);
     await action(page, 'Brot', 'bearbeiten').click(); await edit(page, 'Verwerfen', '2');
     if (method === 'DELETE') await action(page, 'Brot', 'löschen').click();
@@ -266,7 +266,7 @@ for (const method of ['PUT', 'DELETE']) {
     await page.clock.fastForward(3_000); await expect(page).toHaveURL('/anmelden');
     const answered = page.waitForResponse(response => response.request().method() === method && /expenses\//.test(response.url()));
     held.release(); await answered;
-    const revoked = page.waitForResponse('**/api/v1/access/logout'); refreshHeld.release(); expect((await revoked).status()).toBe(204);
+    const revoked = page.waitForResponse('**/api/v2/access/logout'); refreshHeld.release(); expect((await revoked).status()).toBe(204);
     expect(await page.evaluate(() => { const old = (window as any).oldExpenses; return { items: old.items(), editing: old.editing(), editName: old.editName, editAmount: old.editAmount, deleting: old.deleting() }; }))
       .toEqual({ items: [], editing: null, editName: '', editAmount: '', deleting: null });
   });

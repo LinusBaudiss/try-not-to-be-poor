@@ -5,7 +5,7 @@ const password = '  Grüner 🦊 im Baum  ';
 const endpoint = '**/api/v1/expense-budget/expenses';
 async function account(request: APIRequestContext): Promise<string> {
   const email = `expenses-${crypto.randomUUID()}@example.org`;
-  expect((await request.post('http://127.0.0.1:8080/api/v1/access/registrations', {
+  expect((await request.post('http://127.0.0.1:8080/api/v2/access/registrations', {
     data: { registrationToken: 'a'.repeat(43), email, password }
   })).status()).toBe(201);
   return email;
@@ -227,7 +227,7 @@ test('Tokenablauf während einer Speicherung verwirft Entwurf und verspätete An
     const response = await route.fetch(); ready.release(); await held.promise; await route.fulfill({ response });
   });
   const refreshHeld = gate(), refreshReady = gate();
-  await page.route('**/api/v1/access/refresh', async route => {
+  await page.route('**/api/v2/access/refresh', async route => {
     const response = await route.fetch(); refreshReady.release(); await refreshHeld.promise; await route.fulfill({ response });
   });
   await page.clock.fastForward(570_001); await refreshReady.promise;
@@ -239,7 +239,7 @@ test('Tokenablauf während einer Speicherung verwirft Entwurf und verspätete An
   await expect(page.locator('#feedback')).toContainText('abgelaufen');
   const answered = page.waitForResponse(response => response.url().endsWith('/expense-budget/expenses') && response.request().method() === 'POST');
   held.release(); await answered;
-  const revoked = page.waitForResponse('**/api/v1/access/logout');
+  const revoked = page.waitForResponse('**/api/v2/access/logout');
   refreshHeld.release(); expect((await revoked).status()).toBe(204);
   await expect(page.locator('app-expenses')).toHaveCount(0);
   expect(await page.evaluate(() => { const old = (window as any).closedExpenses; return { items: old.items(), name: old.name, amount: old.amount }; }))
@@ -296,7 +296,7 @@ test('Historie behält Kalenderdaten unabhängig von der Browserzeitzone und zei
 
 test('vor bestätigter Identität werden weder Ausgaben angefordert noch Formularwerte angezeigt', async ({ page, request }) => {
   const held = gate(), ready = gate(); let reads = 0;
-  await page.route('**/api/v1/access/me', async route => {
+  await page.route('**/api/v2/access/me', async route => {
     const response = await route.fetch(); ready.release(); await held.promise; await route.fulfill({ response });
   });
   await page.route(endpoint, async route => { reads++; await route.continue(); });

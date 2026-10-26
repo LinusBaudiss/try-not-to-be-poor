@@ -5,7 +5,7 @@ const password = '  Grüner 🦊 im Baum  ';
 const endpoint = '**/api/v1/savings-goals';
 async function account(request: APIRequestContext): Promise<string> {
   const email = `goals-${crypto.randomUUID()}@example.org`;
-  expect((await request.post('http://127.0.0.1:8080/api/v1/access/registrations', {
+  expect((await request.post('http://127.0.0.1:8080/api/v2/access/registrations', {
     data: { registrationToken: 'a'.repeat(43), email, password }
   })).status()).toBe(201);
   return email;
@@ -216,13 +216,13 @@ test('Tokenablauf während des Speicherns verwirft Entwurf und verspätete Antwo
   await page.clock.install(); await login(page, await account(request)); const held = gate(), ready = gate();
   await page.route(endpoint, async route => { if (route.request().method() !== 'POST') return route.continue(); const response = await route.fetch(); ready.release(); await held.promise; await route.fulfill({ response }); });
   const refreshHeld = gate(), refreshReady = gate();
-  await page.route('**/api/v1/access/refresh', async route => { const response = await route.fetch(); refreshReady.release(); await refreshHeld.promise; await route.fulfill({ response }); });
+  await page.route('**/api/v2/access/refresh', async route => { const response = await route.fetch(); refreshReady.release(); await refreshHeld.promise; await route.fulfill({ response }); });
   await page.clock.fastForward(570_001); await refreshReady.promise; await page.clock.fastForward(28_000);
   await draft(page, 'Verwerfen', '9,99', '2028-02-29'); await page.evaluate(() => { (window as any).closedGoals = (window as any).ng.getComponent(document.querySelector('app-savings-goals')); });
   await page.getByRole('button', { name: 'Sparziel speichern', exact: true }).click(); await ready.promise;
   await page.clock.fastForward(3_000); await expect(page).toHaveURL('/anmelden');
   const answered = page.waitForResponse(response => response.url().endsWith('/savings-goals') && response.request().method() === 'POST'); held.release(); await answered;
-  const revoked = page.waitForResponse('**/api/v1/access/logout'); refreshHeld.release(); expect((await revoked).status()).toBe(204);
+  const revoked = page.waitForResponse('**/api/v2/access/logout'); refreshHeld.release(); expect((await revoked).status()).toBe(204);
   expect(await page.evaluate(() => { const old = (window as any).closedGoals; return { items: old.items(), name: old.name, amount: old.amount, date: old.targetDate }; })).toEqual({ items: [], name: '', amount: '', date: '' });
 });
 
@@ -249,11 +249,11 @@ test('Tastatur, 200-Prozent-Text und axe bleiben mobil und am Desktop zugänglic
 
 test('vor bestätigter Identität fehlen persönliche Anfragen und Formulare; falsche Identität wird abgewiesen', async ({ page, request }) => {
   const held = gate(), ready = gate(); let reads = 0;
-  await page.route('**/api/v1/access/me', async route => { ready.release(); await held.promise; await route.fulfill({ status: 200, json: { userId: '00000000-0000-4000-8000-000000000001' } }); });
+  await page.route('**/api/v2/access/me', async route => { ready.release(); await held.promise; await route.fulfill({ status: 200, json: { userId: '00000000-0000-4000-8000-000000000001' } }); });
   await page.route(endpoint, async route => { reads++; await route.continue(); });
   await login(page, await account(request), false); await ready.promise;
   expect(reads).toBe(0); await expect(page.getByLabel('Name des Sparziels')).toHaveCount(0); held.release();
-  await expect(page.getByRole('button', { name: 'Zugang erneut prüfen' })).toBeVisible(); expect(reads).toBe(0); await page.unroute('**/api/v1/access/me');
+  await expect(page.getByRole('button', { name: 'Zugang erneut prüfen' })).toBeVisible(); expect(reads).toBe(0); await page.unroute('**/api/v2/access/me');
   await page.getByRole('button', { name: 'Zugang erneut prüfen' }).click(); await expect(page.getByRole('button', { name: 'Sparziel speichern', exact: true })).toBeEnabled(); expect(reads).toBe(1);
 });
 

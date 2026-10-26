@@ -9,7 +9,7 @@ const endpoint = '**/api/v1/expense-budget/month-summary';
 const initial = { month: '2026-10-01', budgetCents: 10000, expensesCents: 1234, remainingCents: 8766 };
 async function account(request: APIRequestContext): Promise<string> {
   const email = `summary-${crypto.randomUUID()}@example.org`;
-  expect((await request.post('http://127.0.0.1:8080/api/v1/access/registrations', {
+  expect((await request.post('http://127.0.0.1:8080/api/v2/access/registrations', {
     data: { registrationToken: 'a'.repeat(43), email, password }
   })).status()).toBe(201);
   return email;
@@ -189,7 +189,7 @@ test('Tokenablauf leert den Arbeitsspeicher und verwirft eine noch laufende Mona
   await expect(page.locator('.summary-money')).toHaveText('87,66 €');
   await page.evaluate(() => { (window as any).closedSummary = (window as any).ng.getComponent(document.querySelector('app-month-summary')); });
   const refreshHeld = gate(), refreshReady = gate();
-  await page.route('**/api/v1/access/refresh', async route => {
+  await page.route('**/api/v2/access/refresh', async route => {
     const response = await route.fetch(); refreshReady.release(); await refreshHeld.promise; await route.fulfill({ response });
   });
   await page.clock.fastForward(570_001); await refreshReady.promise;
@@ -202,7 +202,7 @@ test('Tokenablauf leert den Arbeitsspeicher und verwirft eine noch laufende Mona
   const answered = page.waitForResponse(response => response.url().endsWith('/month-summary'));
   held.release(); await answered;
   expect(await page.evaluate(() => (window as any).closedSummary.value())).toBeNull();
-  const revoked = page.waitForResponse('**/api/v1/access/logout');
+  const revoked = page.waitForResponse('**/api/v2/access/logout');
   refreshHeld.release(); expect((await revoked).status()).toBe(204);
   await expect(page.locator('app-month-summary')).toHaveCount(0);
 });

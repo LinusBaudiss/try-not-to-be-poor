@@ -43,9 +43,12 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 import com.zaxxer.hikari.HikariDataSource;
 import tools.jackson.databind.json.JsonMapper;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = {de.linus.tnbp.TnbpApplication.class, RegistrationIT.TimeConfiguration.class},
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith(OutputCaptureExtension.class)
 class RegistrationIT {
+    String version() { return "v1"; }
+    String accessPath() { return "/api/" + version() + "/access/"; }
     static final String PASSWORD = "  Grüner 🦊 im Baum  ";
     static final Instant ISSUED = RegistrationTest.ISSUED;
     static final String TOKEN = RegistrationTest.TOKEN;
@@ -108,7 +111,7 @@ class RegistrationIT {
     }
 
     HttpResponse<String> postAt(int destinationPort, String body) throws Exception {
-        return HttpClient.newHttpClient().send(HttpRequest.newBuilder(URI.create("http://localhost:" + destinationPort + "/api/v1/access/registrations"))
+        return HttpClient.newHttpClient().send(HttpRequest.newBuilder(URI.create("http://localhost:" + destinationPort + accessPath() + "registrations"))
             .header("Content-Type", "application/json").POST(HttpRequest.BodyPublishers.ofString(body)).build(), HttpResponse.BodyHandlers.ofString());
     }
 
@@ -142,6 +145,7 @@ class RegistrationIT {
         var existing = register(TOKEN, "person@example.org", "🦊".repeat(14));
         var unknown = register(TOKEN, "neu@example.org", "🦊".repeat(14));
         assertThat(existing.statusCode()).isEqualTo(400);
+        if (version().equals("v2")) assertThat(existing.headers().firstValue("Cache-Control")).hasValue("no-store");
         assertThat(existing.body()).isEqualTo(unknown.body()).contains("password", "15 bis 64");
         assertThat(register(TOKEN, "kaputt", "🦊".repeat(65)).body()).contains("email", "password");
         assertThat(register(TOKEN, "neu@example.org", "Mailcreated5240").body()).contains("zu häufig");
@@ -167,7 +171,7 @@ class RegistrationIT {
                 var publisher = chunked ? HttpRequest.BodyPublishers.ofInputStream(() -> new ByteArrayInputStream(bytes))
                     : HttpRequest.BodyPublishers.ofByteArray(bytes);
                 assertThat(publisher.contentLength()).isEqualTo(chunked ? -1 : bytes.length);
-                var response = HttpClient.newBuilder().version(HttpClient.Version.HTTP_1_1).build().send(HttpRequest.newBuilder(URI.create("http://localhost:" + port + "/api/v1/access/registrations"))
+                var response = HttpClient.newBuilder().version(HttpClient.Version.HTTP_1_1).build().send(HttpRequest.newBuilder(URI.create("http://localhost:" + port + accessPath() + "registrations"))
                     .header("Content-Type", "application/json").POST(publisher).build(), HttpResponse.BodyHandlers.ofString());
                 assertThat(response.statusCode()).as("Chunked=%s", chunked).isEqualTo(400);
                 assertThat(response.body()).contains("VALIDATION_FAILED").doesNotContain("\"password\"");
@@ -192,9 +196,10 @@ class RegistrationIT {
 
     @Test
     void frameworkProtokollfehlerBehaltenIhrenHttpStatus() throws Exception {
-        var response = HttpClient.newHttpClient().send(HttpRequest.newBuilder(URI.create("http://localhost:" + port + "/api/v1/access/registrations"))
+        var response = HttpClient.newHttpClient().send(HttpRequest.newBuilder(URI.create("http://localhost:" + port + accessPath() + "registrations"))
             .header("Content-Type", "text/plain").POST(HttpRequest.BodyPublishers.ofString("keine JSON-Anfrage")).build(), HttpResponse.BodyHandlers.ofString());
         assertThat(response.statusCode()).isEqualTo(415);
+        if (version().equals("v2")) assertThat(response.headers().firstValue("Cache-Control")).hasValue("no-store");
         assertThat(response.body()).doesNotContain("SERVER_ERROR");
         assertThat(count()).isZero();
     }
@@ -273,6 +278,7 @@ class RegistrationIT {
         try (var applicationLogs = new ApplicationLogs()) {
             var result = register(TOKEN, "commit@example.org", PASSWORD);
             assertThat(result.statusCode()).isEqualTo(500);
+            if (version().equals("v2")) assertThat(result.headers().firstValue("Cache-Control")).hasValue("no-store");
             assertThat(result.body()).contains("SERVER_ERROR").doesNotContain("wurde angelegt");
             assertThat(count()).isZero();
             assertThat(applicationLogs.output()).contains("Fehlerkategorie=DATENBANK")
@@ -297,7 +303,7 @@ class RegistrationIT {
         var runtime = new org.springframework.jdbc.core.JdbcTemplate(new org.springframework.jdbc.datasource.DriverManagerDataSource(PostgresFixture.URL, "tnbp_runtime", "runtime-test-only"));
         assertThat(runtime.queryForObject("SELECT rolsuper OR rolbypassrls FROM pg_roles WHERE rolname = current_user", Boolean.class)).isFalse();
         assertThat(runtime.queryForObject("SELECT has_table_privilege(current_user, 'access.accounts', 'DELETE')", Boolean.class)).isFalse();
-        var response = HttpClient.newHttpClient().send(HttpRequest.newBuilder(URI.create("http://localhost:" + port + "/api/v1/access/accounts")).GET().build(), HttpResponse.BodyHandlers.ofString());
+        var response = HttpClient.newHttpClient().send(HttpRequest.newBuilder(URI.create("http://localhost:" + port + accessPath() + "accounts")).GET().build(), HttpResponse.BodyHandlers.ofString());
         assertThat(response.statusCode()).isEqualTo(403);
     }
 
@@ -420,7 +426,7 @@ class RegistrationIT {
     }
 
     /** Erfasst Anwendungs- und Frameworklogs; PostgreSQL-Prozesslogs bleiben getrennt. */
-    private static final class ApplicationLogs extends AppenderBase<ILoggingEvent> implements AutoCloseable {
+    static final class ApplicationLogs extends AppenderBase<ILoggingEvent> implements AutoCloseable {
         private final Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
         private final StringBuilder messages = new StringBuilder();
 

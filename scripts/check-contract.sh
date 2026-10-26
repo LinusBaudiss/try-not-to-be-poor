@@ -2,7 +2,9 @@
 set -eu
 PROJECT_ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 cd "$PROJECT_ROOT"
-./scripts/generator.sh validate --input-spec api-contract/openapi.yaml
+for CONTRACT in api-contract/openapi.yaml api-contract/v2/openapi.yaml; do
+  ./scripts/generator.sh validate --input-spec "$CONTRACT"
+done
 
 CACHE_DIR="$PROJECT_ROOT/.cache/tools"
 OASDIFF="$CACHE_DIR/oasdiff-1.30.0"
@@ -24,20 +26,24 @@ fi
 
 BASE_REF=${CONTRACT_BASE_REF:-HEAD}
 if [ "$BASE_REF" = 0000000000000000000000000000000000000000 ]; then
-  printf '%s\n' 'Erster Commit: noch kein Basisvertrag vorhanden.'
+  printf '%s\n' 'Erster Commit: noch keine Basisverträge vorhanden.'
 else
   git rev-parse --verify "$BASE_REF^{commit}" >/dev/null
-  if git cat-file -e "$BASE_REF:api-contract/openapi.yaml" 2>/dev/null; then
-    BASE_CONTRACT=$(mktemp)
-    trap 'rm -f "$BASE_CONTRACT"' EXIT HUP INT TERM
-    git show "$BASE_REF:api-contract/openapi.yaml" > "$BASE_CONTRACT"
-    "$OASDIFF" breaking "$BASE_CONTRACT" api-contract/openapi.yaml --fail-on ERR --allow-external-refs=false
-  else
-    printf '%s\n' 'Erstvertrag: Im Basiscommit liegt noch kein API-Vertrag vor.'
-  fi
+  BASE_CONTRACT=$(mktemp)
+  trap 'rm -f "$BASE_CONTRACT"' EXIT HUP INT TERM
+  for CONTRACT in api-contract/openapi.yaml api-contract/v2/openapi.yaml; do
+    if git cat-file -e "$BASE_REF:$CONTRACT" 2>/dev/null; then
+      git show "$BASE_REF:$CONTRACT" > "$BASE_CONTRACT"
+      "$OASDIFF" breaking "$BASE_CONTRACT" "$CONTRACT" --fail-on ERR --allow-external-refs=false
+    else
+      printf 'Erstvertrag: Im Basiscommit liegt noch kein Vertrag für %s vor.\n' "$CONTRACT"
+    fi
+  done
 fi
 
-# Beide tatsächlich verwendeten Generatorausgaben werden kompiliert.
+# Beide Java-Versionen sowie auch ungenutzte Angular-Generatorausgaben kompilieren.
 ./backend/mvnw -B -f backend/pom.xml -DskipTests compile
 npm --prefix frontend ci
+npm --prefix frontend run generate:api
+npm --prefix frontend run check:contracts
 npm --prefix frontend run build

@@ -5,6 +5,7 @@
   "engines": { "node": "24.22.0" },
   "scripts": {
     "generate:api": "../scripts/generate-client.sh",
+    "check:contracts": "ngc -p tsconfig.contracts.json",
     "prebuild": "npm run generate:api",
     "build": "ng build",
     "prestart": "npm run generate:api",

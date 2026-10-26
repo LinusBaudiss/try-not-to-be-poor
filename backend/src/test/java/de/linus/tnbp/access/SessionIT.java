@@ -20,8 +20,11 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import tools.jackson.databind.json.JsonMapper;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = {de.linus.tnbp.TnbpApplication.class, SessionIT.Time.class},
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class SessionIT {
+    String version() { return "v1"; }
+    String accessPath() { return "/api/" + version() + "/access/"; }
     static final RegistrationIT.MutableClock CLOCK = new RegistrationIT.MutableClock(SessionTest.NOW);
     static final String ORIGIN = "https://localhost:4200";
     static final String PASSWORD = "  Grüner 🦊 im Baum  ";
@@ -48,6 +51,8 @@ class SessionIT {
 
     final class Browser {
         int destination = port;
+        String apiVersion = version();
+        String path() { return "/api/" + apiVersion + "/access/"; }
         String csrfCookie = "", csrf = "", refreshCookie = "";
         String access;
         Browser() throws Exception { loadCsrf(); }
@@ -55,7 +60,12 @@ class SessionIT {
             var response = get("csrf", null);
             csrf = JSON.readTree(response.body()).get("token").asString();
             String nextCookie = cookie(response, "__Host-tnbp-csrf");
-            if (!nextCookie.isEmpty()) csrfCookie = nextCookie;
+            if (!nextCookie.isEmpty()) {
+                String setCookie = response.headers().allValues("Set-Cookie").stream()
+                    .filter(value -> value.startsWith("__Host-tnbp-csrf=")).findFirst().orElseThrow();
+                assertThat(setCookie).contains("Secure", "HttpOnly", "SameSite=Strict", "Path=/").doesNotContain("Domain=");
+                csrfCookie = nextCookie;
+            }
             assertThat(response.headers().firstValue("Cache-Control")).hasValue("no-store");
         }
         HttpResponse<String> login(String email, String password) throws Exception {
@@ -63,7 +73,7 @@ class SessionIT {
         }
         HttpResponse<String> post(String action) throws Exception { return mutation(action, "", ORIGIN, csrf, true); }
         HttpResponse<String> mutation(String action, String body, String origin, String header, boolean updateCookie) throws Exception {
-            var request = HttpRequest.newBuilder(URI.create("http://localhost:" + destination + "/api/v1/access/" + action))
+            var request = HttpRequest.newBuilder(URI.create("http://localhost:" + destination + path() + action))
                 .header("Content-Type", "application/json").header("Cookie", csrfCookie + "; " + refreshCookie);
             if (origin != null) request.header("Origin", origin);
             if (header != null) request.header("X-CSRF-TOKEN", header);
@@ -76,7 +86,7 @@ class SessionIT {
             return response;
         }
         HttpResponse<String> get(String path, String bearer) throws Exception {
-            var request = HttpRequest.newBuilder(URI.create("http://localhost:" + destination + "/api/v1/access/" + path)).GET();
+            var request = HttpRequest.newBuilder(URI.create("http://localhost:" + destination + path() + path)).GET();
             if (!csrfCookie.isEmpty()) request.header("Cookie", csrfCookie);
             if (bearer != null) request.header("Authorization", "Bearer " + bearer);
             return HttpClient.newHttpClient().send(request.build(), HttpResponse.BodyHandlers.ofString());
@@ -261,7 +271,7 @@ class SessionIT {
         try (var incomplete = app.run(args.toArray(String[]::new))) {
             int destination = Integer.parseInt(incomplete.getEnvironment().getRequiredProperty("local.server.port"));
             for (String action : List.of("login", "refresh", "logout")) {
-                var request = HttpRequest.newBuilder(URI.create("http://localhost:" + destination + "/api/v1/access/" + action))
+                var request = HttpRequest.newBuilder(URI.create("http://localhost:" + destination + accessPath() + action))
                     .header("Origin", "https://fremd.example").POST(HttpRequest.BodyPublishers.noBody()).build();
                 var response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
                 assertThat(response.statusCode()).isEqualTo(503);

@@ -1,0 +1,6 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": { "noEmit": true, "types": [] },
+  "files": ["src/app/api/index.ts", "src/app/api/v2/index.ts"],
+  "include": ["src/app/api/**/*.ts"]
+}

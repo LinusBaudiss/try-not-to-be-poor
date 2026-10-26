@@ -1,0 +1,377 @@
+openapi: 3.0.4
+info:
+  title: Try Not to Be Poor API v2
+  version: 2.0.0
+  description: Versionierter Kontozugang mit denselben Konten und Refresh-Familien wie v1. Registrierung erzeugt
+    keine Sitzung. Unbestätigte Mutationen niemals automatisch wiederholen.
+servers:
+- url: /api/v2
+paths:
+  /access/registrations:
+    post:
+      tags:
+      - Access
+      operationId: register
+      summary: Eigenes Konto über einen aktiven Registrierungslink anlegen
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegistrationRequest'
+      responses:
+        '201':
+          description: Das Konto wurde verbindlich gespeichert; keine Sitzung.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegistrationCreated'
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+        '400':
+          description: Feldfehler oder neutraler Registrierungsfehler ohne Kontobestätigung.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+        '415':
+          description: Nicht unterstützter Content-Type; keine Kontoanlage.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+        '500':
+          description: Speicherung fehlgeschlagen. Es wird kein Erfolg bestätigt.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+  /access/csrf:
+    get:
+      tags:
+      - Sessions
+      operationId: sessionCsrf
+      security: []
+      summary: CSRF-Token nur für den Arbeitsspeicher des Tabs beziehen
+      responses:
+        '200':
+          description: no-store; setzt ein hostgebundenes HttpOnly Secure SameSite=Strict CSRF-Sitzungscookie.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CsrfResponse'
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+            Set-Cookie:
+              description: __Host-tnbp-csrf; HttpOnly; Secure; SameSite=Strict; Path=/; keine Domain. Speichert
+                ausschließlich CSRF-Zustand, keine Anmeldung.
+              schema:
+                type: string
+  /access/login:
+    post:
+      tags:
+      - Sessions
+      operationId: login
+      security: []
+      parameters:
+      - $ref: '#/components/parameters/Origin'
+      - $ref: '#/components/parameters/CsrfHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/SessionCreated'
+        '401':
+          $ref: '#/components/responses/SessionRejected'
+        '403':
+          $ref: '#/components/responses/SessionForbidden'
+        '500':
+          $ref: '#/components/responses/SessionUnavailable'
+        '503':
+          $ref: '#/components/responses/SessionUnavailable'
+  /access/refresh:
+    post:
+      tags:
+      - Sessions
+      operationId: refreshSession
+      security:
+      - RefreshCookie: []
+      parameters:
+      - $ref: '#/components/parameters/Origin'
+      - $ref: '#/components/parameters/CsrfHeader'
+      responses:
+        '200':
+          $ref: '#/components/responses/SessionCreated'
+        '401':
+          $ref: '#/components/responses/SessionRejected'
+        '403':
+          $ref: '#/components/responses/SessionForbidden'
+        '500':
+          $ref: '#/components/responses/SessionUnavailable'
+        '503':
+          $ref: '#/components/responses/SessionUnavailable'
+  /access/logout:
+    post:
+      tags:
+      - Sessions
+      operationId: logoutSession
+      description: Das Refresh-Cookie ist optional. Eine bekannte Familie wird nach Commit widerrufen;
+        auch ohne oder mit unbekanntem Refresh-Cookie erfolgt idempotent 204 und das Cookie wird gelöscht.
+        Der passende CSRF-Cookie-/Headerkontext und die exakte Origin bleiben erforderlich.
+      security:
+      - {}
+      - RefreshCookie: []
+      parameters:
+      - $ref: '#/components/parameters/Origin'
+      - $ref: '#/components/parameters/CsrfHeader'
+      responses:
+        '204':
+          description: Bekannte Familie widerrufen und Cookie gelöscht; auch ohne oder mit unbekanntem Refresh-Cookie.
+            Vorhandene Access-JWTs laufen regulär ab. no-store.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+            Set-Cookie:
+              $ref: '#/components/headers/RefreshCookie'
+        '403':
+          $ref: '#/components/responses/SessionForbidden'
+        '500':
+          $ref: '#/components/responses/SessionUnavailable'
+        '503':
+          $ref: '#/components/responses/SessionUnavailable'
+  /access/me:
+    get:
+      tags:
+      - Sessions
+      operationId: sessionIdentity
+      security:
+      - AccessBearer: []
+      responses:
+        '200':
+          description: Identität ausschließlich aus verifiziertem JWT-sub; no-store.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionIdentity'
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+        '401':
+          $ref: '#/components/responses/SessionRejected'
+components:
+  securitySchemes:
+    AccessBearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: 'Vollständig geprüftes HS256-JWT: Signatur, Aussteller, Zielgruppe, iat, nbf, exklusives exp
+        und kanonischer UUID-sub. Gültigkeit zehn Minuten; nur im Arbeitsspeicher. Cookies ersetzen kein Bearer-JWT.'
+    RefreshCookie:
+      type: apiKey
+      in: cookie
+      name: __Host-tnbp-refresh
+      description: 256 Zufallsbits, HttpOnly; Secure; SameSite=Strict; Path=/; kein Domain. Jede Erneuerung rotiert.
+        30 Tage inaktiv / 90 Tage seit Anmeldung, Grenzen exklusiv.
+  parameters:
+    Origin:
+      name: Origin
+      in: header
+      required: true
+      schema:
+        type: string
+      description: Muss exakt der extern konfigurierten HTTPS-SPA-Origin entsprechen.
+    CsrfHeader:
+      name: X-CSRF-TOKEN
+      in: header
+      required: true
+      schema:
+        type: string
+      description: Spring-Security-CSRF-Token aus GET /access/csrf; nur im Arbeitsspeicher halten.
+        Erfordert zusätzlich das passende __Host-tnbp-csrf-Sessioncookie aus demselben Handschlag;
+        Header und Cookie müssen gemeinsam gesendet werden.
+  headers:
+    NoStore:
+      description: Persönliche Zugangsantworten und Fehler niemals zwischenspeichern.
+      schema:
+        type: string
+        enum:
+        - no-store
+    RefreshCookie:
+      description: __Host-tnbp-refresh; HttpOnly; Secure; SameSite=Strict; Path=/; keine Domain. Rotation nach Commit,
+        Max-Age höchstens 30 Tage Inaktivität und 90 Tage seit Anmeldung (exklusive Grenzen). Löschung mit Max-Age=0.
+      schema:
+        type: string
+  responses:
+    SessionCreated:
+      description: Erst nach Commit; no-store. Set-Cookie rotiert __Host-tnbp-refresh (HttpOnly; Secure; SameSite=Strict;
+        Path=/; kein Domain).
+      headers:
+        Set-Cookie:
+          $ref: '#/components/headers/RefreshCookie'
+        Cache-Control:
+          $ref: '#/components/headers/NoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SessionResponse'
+    SessionRejected:
+      description: Neutraler Fehler; Refreshfehler löschen Cookie. no-store.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SessionError'
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/NoStore'
+        Set-Cookie:
+          $ref: '#/components/headers/RefreshCookie'
+    SessionForbidden:
+      description: CSRF oder Origin fehlt/falsch; keine Mutation. no-store.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SessionError'
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/NoStore'
+    SessionUnavailable:
+      description: Keine bestätigte Mutation; eine unbestätigte Rotation nicht automatisch wiederholen. no-store.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SessionError'
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/NoStore'
+  schemas:
+    RegistrationRequest:
+      type: object
+      additionalProperties: false
+      required:
+      - registrationToken
+      - email
+      - password
+      description: E-Mail wird getrimmt und kleingeschrieben. Passwort wird ausschließlich NFC-normalisiert und
+        in Unicode-Codepunkten geprüft (15–64); keine Zeichenklassenpflicht.
+      properties:
+        registrationToken:
+          type: string
+          minLength: 43
+          maxLength: 43
+          pattern: ^[A-Za-z0-9_-]{43}$
+          writeOnly: true
+          description: Ungepaddetes Base64url-Geheimnis (256 Bit) aus dem URL-Fragment.
+        email:
+          type: string
+          description: Gültige E-Mail-Syntax, nach Normalisierung höchstens 254 Zeichen.
+        password:
+          type: string
+          writeOnly: true
+          description: 15–64 druckbare Unicode-Codepunkte nach NFC; Leerzeichen erlaubt, kein Trimmen oder Abschneiden.
+            Lokale Sperrliste.
+    RegistrationCreated:
+      type: object
+      additionalProperties: false
+      required:
+      - message
+      properties:
+        message:
+          type: string
+          example: Dein Konto wurde angelegt.
+    ApiError:
+      type: object
+      additionalProperties: false
+      required:
+      - code
+      - message
+      - fieldErrors
+      properties:
+        code:
+          type: string
+          enum:
+          - VALIDATION_FAILED
+          - REGISTRATION_FAILED
+          - SERVER_ERROR
+        message:
+          type: string
+        fieldErrors:
+          type: object
+          additionalProperties:
+            type: string
+    CsrfResponse:
+      type: object
+      additionalProperties: false
+      required:
+      - token
+      properties:
+        token:
+          type: string
+    LoginRequest:
+      type: object
+      additionalProperties: false
+      required:
+      - email
+      - password
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+          writeOnly: true
+    SessionResponse:
+      type: object
+      additionalProperties: false
+      required:
+      - accessToken
+      - expiresAt
+      - userId
+      properties:
+        accessToken:
+          type: string
+          description: HS256, externer Schlüssel, exakt zehn Minuten. Nur im Arbeitsspeicher.
+        expiresAt:
+          type: string
+          format: date-time
+        userId:
+          type: string
+          format: uuid
+    SessionIdentity:
+      type: object
+      additionalProperties: false
+      required:
+      - userId
+      properties:
+        userId:
+          type: string
+          format: uuid
+    SessionError:
+      type: object
+      additionalProperties: false
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: string
+          enum:
+          - SESSION_REJECTED
+          - SESSION_FORBIDDEN
+          - SESSION_UNAVAILABLE
+        message:
+          type: string

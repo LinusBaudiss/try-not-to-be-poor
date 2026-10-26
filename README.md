@@ -320,13 +320,43 @@ npx --prefix frontend playwright install chromium
 npm --prefix frontend run e2e
 ```
 
-`check-contract.sh` validiert den Vertrag mit Generator 7.26.0, generiert und
-kompiliert die verwendeten Spring-Boot-4-Interfaces und den Angular-22-Client.
+`check-contract.sh` validiert beide Verträge mit Generator 7.26.0 und generiert
+die Spring-Boot-4-Interfaces getrennt unter `backend/target/generated-sources/openapi/v1`
+und `v2` (Java-Pakete `de.linus.tnbp.contract` und `de.linus.tnbp.contract.v2`).
+Die Angular-22-Module liegen unter `frontend/src/app/api/` und dessen Unterordner
+`v2/`; bisherige Importe bleiben gültig. Maven kompiliert beide Java-Ausgaben.
+`npm --prefix frontend run check:contracts` kompiliert mit `ngc` und
+`tsconfig.contracts.json` alle generierten TypeScript-Dateien, einschließlich
+der noch nicht durch die SPA importierten v2-Dateien. Danach baut die bisherige SPA.
 `CONTRACT_BASE_REF=<commit>` setzt den Vergleichscommit; ohne Variable wird `HEAD`
-verwendet. Fehlt dort der Vertrag, behandelt das Skript ausdrücklich den
-Erstvertrag. Bei vorhandenem Basisvertrag blockiert oasdiff 1.30.0 mit
-`--fail-on ERR` inkompatible Änderungen; diese benötigen `/api/v2`. CI verwendet
+verwendet. Jede Version wird ausschließlich gegen ihren eigenen Vertrag im
+Basiscommit verglichen. Fehlt dort etwa v2, gilt nur diese Version als Erstvertrag;
+v1 wird weiterhin gegen v1 geprüft. Bei vorhandenem Basisvertrag blockiert
+oasdiff 1.30.0 mit `--fail-on ERR` inkompatible Änderungen jeder unterstützten
+Hauptversion. CI verwendet
 die PR-Basis beziehungsweise den vorherigen Push-Commit.
+
+Der eingefrorene Vertrag `api-contract/openapi.yaml` beschreibt weiterhin v1.
+`api-contract/v2/openapi.yaml` stellt zusätzlich den Kontozugang unter `/api/v2`
+bereit: Registrierung (`POST /access/registrations`), CSRF (`GET /access/csrf`),
+Anmeldung (`POST /access/login`), Erneuerung (`POST /access/refresh`), Abmeldung
+(`POST /access/logout`) und eigene Identität (`GET /access/me`). Beide Versionen
+verwenden dieselben Konten, JWT-Regeln, sicheren Cookies und rotierenden
+Refresh-Familien. Ein CSRF-Handschlag gilt auch beim Wechsel des Versionsadapters;
+Origin und CSRF-Header bleiben für jede Cookie-Mutation verpflichtend. Logout
+widerruft die Familie auch für die andere Version. Alle v2-Antworten einschließlich
+Registrierung und Fehlern tragen `Cache-Control: no-store`; fehlende Sitzungskonfiguration
+meldet bei Login, Refresh und Logout 503. Unbestätigte Mutationen niemals automatisch
+wiederholen. Die bestehende Oberfläche verwendet weiterhin v1; Finanzrouten unter
+v2, Browserumstellung, v1-Stilllegung und Produktionsfreigabe folgen gesondert.
+
+Die Python-Prüfungen prüfen neben dem Linkgenerator die getrennten Basisverträge,
+Erstverträge und das Abbrechen des Vertragschecks bei Kompatibilitätsfehlern in
+isolierten Git-Repositories. Die Zugangstests werden für beide HTTP-Versionen
+gegen PostgreSQL wiederverwendet. Zusätzliche `AccessVersionsIT`-Fälle prüfen
+Versionswechsel, konkurrierenden Refresh durch beide Adapter, gemeinsame
+Widerrufe, manipulierte JWT-Claims, Cookie-only-Ablehnung, unbekannte Routen und
+einen erst beim Logout-Commit auftretenden Fehler ohne Erfolgsbestätigung.
 
 `verify` führt die Unitfälle und die HTTP-Integrationstests für Registrierung,
 Sitzungen, Budget, Ausgaben, Monatsübersicht und Sparziele mit einer echten,

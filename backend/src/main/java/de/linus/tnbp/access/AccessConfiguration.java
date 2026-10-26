@@ -49,9 +49,12 @@ class AccessConfiguration {
                     jakarta.servlet.http.HttpServletResponse response, jakarta.servlet.FilterChain chain)
                     throws java.io.IOException, jakarta.servlet.ServletException {
                 String path = request.getServletPath();
+                if (path.startsWith("/api/v2/")) response.setHeader("Cache-Control", "no-store");
                 if (path.startsWith("/api/v1/expense-budget/") || path.equals("/api/v1/savings-goals")
                     || path.matches("/api/v1/savings-goals/[^/]+(?:/progress)?")) response.setHeader("Cache-Control", "no-store");
-                if (path.startsWith("/api/v1/access/") && !path.equals("/api/v1/access/registrations")) {
+                if ((path.startsWith("/api/v1/access/") && !path.equals("/api/v1/access/registrations"))
+                    || path.equals("/api/v2/access/login") || path.equals("/api/v2/access/refresh")
+                    || path.equals("/api/v2/access/logout")) {
                     response.setHeader("Cache-Control", "no-store");
                     if (request.getMethod().equals("POST")) {
                         if (!jwt.available()) {
@@ -76,6 +79,8 @@ class AccessConfiguration {
             .csrf(csrf -> csrf.csrfTokenRepository(csrfRepository)
                 .sessionAuthenticationStrategy(noSessionAuthentication)
                 .ignoringRequestMatchers("/api/v1/access/registrations")
+                .ignoringRequestMatchers(request -> request.getMethod().equals("POST")
+                    && request.getServletPath().equals("/api/v2/access/registrations"))
                 // Diese Routen akzeptieren ausschließlich Bearer; Refresh-/CSRF-Cookies erteilen keinen Zugang.
                 .ignoringRequestMatchers(request -> (request.getMethod().equals("PUT")
                     && (request.getServletPath().equals("/api/v1/expense-budget/budget")
@@ -89,9 +94,10 @@ class AccessConfiguration {
             .addFilterBefore(origin, org.springframework.security.web.csrf.CsrfFilter.class)
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.POST, "/api/v1/access/registrations", "/api/v1/access/login",
-                    "/api/v1/access/refresh", "/api/v1/access/logout").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/v1/access/csrf").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/v1/access/me", "/api/v1/expense-budget/budget", "/api/v1/expense-budget/expenses", "/api/v1/expense-budget/month-summary", "/api/v1/savings-goals").authenticated()
+                    "/api/v1/access/refresh", "/api/v1/access/logout", "/api/v2/access/registrations",
+                    "/api/v2/access/login", "/api/v2/access/refresh", "/api/v2/access/logout").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/access/csrf", "/api/v2/access/csrf").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/access/me", "/api/v2/access/me", "/api/v1/expense-budget/budget", "/api/v1/expense-budget/expenses", "/api/v1/expense-budget/month-summary", "/api/v1/savings-goals").authenticated()
                 .requestMatchers(HttpMethod.PUT, "/api/v1/expense-budget/budget", "/api/v1/savings-goals/*/progress").authenticated()
                 .requestMatchers(HttpMethod.POST, "/api/v1/expense-budget/expenses", "/api/v1/savings-goals").authenticated()
                 .requestMatchers(HttpMethod.PUT, "/api/v1/expense-budget/expenses/*", "/api/v1/savings-goals/*").authenticated()
@@ -102,6 +108,7 @@ class AccessConfiguration {
             .exceptionHandling(errors -> errors
                 .authenticationEntryPoint((request, response, failure) -> SessionHttp.error(response,
                     request.getServletPath().equals("/api/v1/access/me")
+                        || request.getServletPath().equals("/api/v2/access/me")
                         || request.getServletPath().equals("/api/v1/expense-budget/budget")
                         || request.getServletPath().equals("/api/v1/expense-budget/expenses")
                         || request.getServletPath().matches("/api/v1/expense-budget/expenses/[^/]+")

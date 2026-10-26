@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @Order(Ordered.HIGHEST_PRECEDENCE)
-@RestControllerAdvice(assignableTypes = SessionController.class)
+@RestControllerAdvice(assignableTypes = {SessionController.class, SessionV2Controller.class})
 class SessionErrors {
     @ExceptionHandler(Exception.class)
     ResponseEntity<SessionError> failed(Exception failure, HttpServletRequest request) {

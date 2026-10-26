@@ -13,11 +13,14 @@ und Passwort erstellen und sieht ausschließlich die eigenen Daten. Eine
 Registrierung meldet nicht an. Nach der Anmeldung öffnet sich „Monat“;
 „Sparziele“ ist über die Hauptnavigation erreichbar.
 
-Laut [Sprintstatus](_bmad-output/implementation-artifacts/sprint-status.yaml)
-sind beide Epics und alle neun Stories (1.1–1.6 und 2.1–2.3) `done`.
-Die Retrospektiven sind noch offen und optional. Die Implementierung des
-geplanten Funktionsumfangs ist abgeschlossen; die
-[Voraussetzungen für Produktivbetrieb](#vor-echten-nutzerdaten) sind noch offen.
+Der abgeschlossene v1-Umfang umfasst Epics 1–2 mit den neun Stories
+1.1–1.6 und 2.1–2.3. Kontozugang ist zusätzlich über API v2 verfügbar;
+Oberfläche und Finanzrouten verwenden weiterhin v1. Weitere v2-,
+Oberflächen- und Automatikarbeiten aus Epics 3–4 sind noch offen.
+Den Arbeitsstand dokumentieren [Sprintstatus](_bmad-output/implementation-artifacts/sprint-status.yaml)
+und die zugehörigen Story-Specs. Retrospektiven bleiben optional;
+die [Voraussetzungen für Produktivbetrieb](#vor-echten-nutzerdaten)
+sind weiterhin offen.
 
 ## Voraussetzungen
 

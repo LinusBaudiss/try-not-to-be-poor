@@ -174,6 +174,134 @@ paths:
               $ref: '#/components/headers/NoStore'
         '401':
           $ref: '#/components/responses/SessionRejected'
+  /expenses:
+    get:
+      tags: [Expenses]
+      operationId: getExpenses
+      summary: Eigene vollständige Ausgabenhistorie nach Datum absteigend, dann ID lesen
+      security:
+        - AccessBearer: []
+      responses:
+        '200':
+          description: Alle eigenen Monate; no-store.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ExpenseResponse'
+        '401':
+          $ref: '#/components/responses/SessionRejected'
+        '500':
+          $ref: '#/components/responses/ExpenseUnavailable'
+    post:
+      tags: [Expenses]
+      operationId: postExpense
+      summary: Eine eigene Ausgabe am aktuellen Kalendertag erfassen
+      description: Ausschließlich geprüftes Bearer-sub bestimmt den Eigentümer. Monatssummen über der sicheren Centgrenze werden atomar abgelehnt. Erfolg erst nach Commit.
+      security:
+        - AccessBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExpenseRequest'
+      responses:
+        '201':
+          description: Verbindlich gespeichert; no-store.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExpenseResponse'
+        '400':
+          description: Feldfehler oder sichere Monatssumme überschritten; keine Mutation, no-store.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExpenseError'
+        '415':
+          $ref: '#/components/responses/ExpenseUnsupportedMediaType'
+        '401':
+          $ref: '#/components/responses/SessionRejected'
+        '500':
+          $ref: '#/components/responses/ExpenseUnavailable'
+  /expenses/{expenseId}:
+    parameters:
+      - name: expenseId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    put:
+      tags: [Expenses]
+      operationId: putExpense
+      summary: Name und Betrag einer eigenen Ausgabe ändern
+      description: ID, Eigentümer und ursprüngliches Kalenderdatum bleiben unverändert. Ersatzsumme im ursprünglichen Monat atomar prüfen; Erfolg erst nach Commit. Ausschließlich geprüftes Bearer-sub bestimmt den Eigentümer.
+      security:
+        - AccessBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExpenseRequest'
+      responses:
+        '200':
+          description: Verbindlich geändert; no-store.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExpenseResponse'
+        '400':
+          description: Ungültige Eingabe oder sichere Monatssumme überschritten; keine Mutation, no-store.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExpenseError'
+        '415':
+          $ref: '#/components/responses/ExpenseUnsupportedMediaType'
+        '401':
+          $ref: '#/components/responses/SessionRejected'
+        '404':
+          $ref: '#/components/responses/ExpenseNotFound'
+        '500':
+          $ref: '#/components/responses/ExpenseUnavailable'
+    delete:
+      tags: [Expenses]
+      operationId: deleteExpense
+      summary: Eine eigene Ausgabe endgültig löschen
+      description: Ausschließlich geprüftes Bearer-sub bestimmt den Eigentümer. Erfolg erst nach Commit.
+      security:
+        - AccessBearer: []
+      responses:
+        '204':
+          description: Verbindlich gelöscht; leerer Antwortkörper, no-store.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+        '401':
+          $ref: '#/components/responses/SessionRejected'
+        '404':
+          $ref: '#/components/responses/ExpenseNotFound'
+        '500':
+          $ref: '#/components/responses/ExpenseUnavailable'
 components:
   securitySchemes:
     AccessBearer:
@@ -207,7 +335,7 @@ components:
         Header und Cookie müssen gemeinsam gesendet werden.
   headers:
     NoStore:
-      description: Persönliche Zugangsantworten und Fehler niemals zwischenspeichern.
+      description: Persönliche Antworten und Fehler niemals zwischenspeichern.
       schema:
         type: string
         enum:
@@ -259,6 +387,38 @@ components:
       headers:
         Cache-Control:
           $ref: '#/components/headers/NoStore'
+    ExpenseNotFound:
+      description: Ausgabe nicht gefunden; identisch für fehlende und fremde IDs, no-store.
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/NoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ExpenseNotFoundError'
+    ExpenseUnsupportedMediaType:
+      description: Nicht unterstützter Content-Type; keine Mutation. Der Accept-Header nennt application/json.
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/NoStore'
+        Accept:
+          description: Unterstützter Medientyp für die Anfrage.
+          schema:
+            type: string
+            example: application/json
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ExpenseError'
+    ExpenseUnavailable:
+      description: Speicherung oder Lesen nicht bestätigt; neutraler Fehler, no-store.
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/NoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ExpenseError'
   schemas:
     RegistrationRequest:
       type: object
@@ -375,3 +535,66 @@ components:
           - SESSION_UNAVAILABLE
         message:
           type: string
+    ExpenseNotFoundError:
+      type: object
+      additionalProperties: false
+      required: [code, message, fieldErrors]
+      properties:
+        code:
+          type: string
+          enum: [EXPENSE_NOT_FOUND]
+        message:
+          type: string
+        fieldErrors:
+          type: object
+          additionalProperties:
+            type: string
+    ExpenseRequest:
+      type: object
+      additionalProperties: false
+      required: [name, amountCents]
+      properties:
+        name:
+          type: string
+          minLength: 1
+          description: Wird getrimmt; darf danach nicht leer sein.
+        amountCents:
+          type: integer
+          format: int64
+          minimum: 1
+          maximum: 9007199254740991
+          description: Positive ganze EUR-Cent; keine Rundung oder Typumwandlung.
+    ExpenseResponse:
+      type: object
+      additionalProperties: false
+      required: [id, name, amountCents, recordedOn]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          minLength: 1
+        amountCents:
+          type: integer
+          format: int64
+          minimum: 1
+          maximum: 9007199254740991
+        recordedOn:
+          type: string
+          format: date
+          description: Serverseitiges Kalenderdatum in Europe/Berlin ohne Zeitpunktumrechnung.
+    ExpenseError:
+      type: object
+      additionalProperties: false
+      required: [code, message, fieldErrors]
+      properties:
+        code:
+          type: string
+          enum: [VALIDATION_FAILED, MONTH_LIMIT_EXCEEDED, EXPENSE_UNAVAILABLE]
+        message:
+          type: string
+        fieldErrors:
+          type: object
+          additionalProperties:
+            type: string

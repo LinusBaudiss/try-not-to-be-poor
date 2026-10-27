@@ -11,12 +11,18 @@ Sparzielen, vorrangig für Smartphones. Implementiert sind:
 Jede Person mit dem Registrierungslink kann ein unabhängiges Konto mit E-Mail
 und Passwort erstellen und sieht ausschließlich die eigenen Daten. Eine
 Registrierung meldet nicht an. Nach der Anmeldung öffnet sich „Monat“;
-„Sparziele“ ist über die Hauptnavigation erreichbar.
+„Ausgaben“ und „Sparziele“ sind in dieser Reihenfolge über die Hauptnavigation erreichbar.
+Erfassung, vollständige Ausgabenhistorie, Bearbeiten und bestätigtes Löschen liegen
+ausschließlich unter `/ausgaben`; „Monat“ enthält Budget und Monatsübersicht.
 
 Der abgeschlossene v1-Umfang umfasst Epics 1–2 mit den neun Stories
 1.1–1.6 und 2.1–2.3. Die Oberfläche verwendet für alle sechs Zugangsfunktionen
-einschließlich Identitätsprüfung API v2; Budget, Ausgaben und Sparziele bleiben
-über v1 bedienbar. Weitere v2-,
+einschließlich Identitätsprüfung sowie für alle vier Ausgabenoperationen API v2
+(`/api/v2/expenses`). Budget, Monatsübersicht und Sparziele bleiben über v1 bedienbar.
+Beide Ausgabenversionen verwenden dieselben Daten und dieselbe Finanztransaktion.
+Nach einer unbestätigten Ausgabenmutation sperrt die Oberfläche weitere Mutationen,
+bis die Historie erfolgreich neu geladen und ausdrücklich geprüft wurde.
+Entwürfe bleiben dabei nur im offenen Tab erhalten. Weitere v2-,
 Oberflächen- und Automatikarbeiten aus Epics 3–4 sind noch offen.
 Den Arbeitsstand dokumentieren [Sprintstatus](_bmad-output/implementation-artifacts/sprint-status.yaml)
 und die zugehörigen Story-Specs. Retrospektiven bleiben optional;
@@ -243,7 +249,7 @@ bei Sitzungsende und Kontowechsel alle persönlichen Speicherwerte und schließt
 die persönliche Ansicht. Laufende Cookie-Mutationen werden vor Logout beendet,
 damit eine späte Refreshantwort die Abmeldung oder einen bereits eingetretenen Sitzungsablauf nicht rückgängig macht. Kontowechsel und Sitzungsende schließen persönliche Ansichten auch in anderen offenen Tabs über BroadcastChannel; dabei werden keine Geheimnisse übertragen.
 
-Beide Ansichten verwenden dieselbe rote Aktion **Abmelden**. Sie schließt den
+Alle drei Hauptbereiche verwenden dieselbe rote Aktion **Abmelden**. Sie schließt den
 persönlichen Bereich sofort; während des Serverwiderrufs erscheint „Abmeldung
 läuft …“. Bleibt dessen Bestätigung aus, nennt die Anmeldung den unbestätigten
 Widerruf und bietet „Abmeldung erneut versuchen“ an. Laufende Abmeldungen werden
@@ -290,7 +296,7 @@ Budgetzugriff. Alle Finanzantworten tragen `Cache-Control: no-store`.
 
 ## Ausgaben erfassen, bearbeiten und löschen
 
-Unter „Monat“ einen Namen und einen positiven Eurobetrag eingeben, z. B.
+Unter „Ausgaben“ einen Namen und einen positiven Eurobetrag eingeben, z. B.
 `12,50`, und „Ausgabe speichern“ wählen. Komma oder Punkt sind erlaubt,
 Tausendertrennzeichen und mehr als zwei Nachkommastellen werden abgelehnt.
 Einzelbeträge und die Ausgabensumme jedes Monats dürfen höchstens
@@ -300,9 +306,12 @@ Das Erfassungsdatum setzt der Server nach `Europe/Berlin`.
 „Alle Ausgaben“ zeigt die eigene Historie über alle Monate, mobil als
 beschriftete Einträge und auf breiten Ansichten als Tabelle. „Bearbeiten“ ändert
 Name und Betrag; das Erfassungsdatum bleibt erhalten. „Löschen“ verlangt eine
-Bestätigung und entfernt den Eintrag endgültig. Änderungen aktualisieren
-Historie und Monatsübersicht; nur Ausgaben des laufenden Monats fließen in das
-aktuelle Restbudget ein. „Ausgaben aktualisieren“ lädt die Historie erneut.
+Bestätigung und entfernt den Eintrag endgültig. Bestätigte Änderungen aktualisieren
+die Historie; beim anschließenden Öffnen von „Monat“ wird die Monatsübersicht frisch
+geladen, auch über Zurück/Vorwärts. Nur Ausgaben des laufenden Monats fließen in das
+aktuelle Restbudget ein. „Ausgaben aktualisieren“ lädt die Historie erneut. Nach einem
+unbestätigten Vorgang zunächst die Historie laden und prüfen, dann „Ich habe die
+Historie geprüft“ wählen. Erst danach ist ein weiterer ausdrücklicher Versuch möglich.
 
 ## Sparziele verwenden
 
@@ -367,10 +376,12 @@ Origin und CSRF-Header bleiben für jede Cookie-Mutation verpflichtend. Logout
 widerruft die Familie auch für die andere Version. Alle v2-Antworten einschließlich
 Registrierung und Fehlern tragen `Cache-Control: no-store`; fehlende Sitzungskonfiguration
 meldet bei Login, Refresh und Logout 503. Unbestätigte Mutationen niemals automatisch
-wiederholen. Der Browser verwendet die generierten v2-Zugangsclients; v2-Identität
-und v1-Finanzaufrufe erhalten den Bearer ausschließlich über den Interceptor für
-dieselbe Herkunft und die unterstützten Hauptversionen. Finanzrouten unter v2,
-v1-Stilllegung und Produktionsfreigabe folgen gesondert.
+wiederholen. Der v2-Vertrag umfasst außerdem GET/POST `/expenses` und PUT/DELETE
+`/expenses/{expenseId}`. Der Browser verwendet die generierten v2-Zugangs- und
+Ausgabenclients. V2-Identität, v2-Ausgaben und die übrigen v1-Finanzaufrufe erhalten
+den Bearer ausschließlich über den Interceptor für dieselbe Herkunft und die
+unterstützten Hauptversionen. Weitere Finanzrouten unter v2, v1-Stilllegung und
+Produktionsfreigabe folgen gesondert.
 
 ## Finanzmodule auf V9 umstellen und wiederanlaufen lassen
 

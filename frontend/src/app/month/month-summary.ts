@@ -11,7 +11,7 @@ import { MAX_CENTS, formatSignedEuro } from '../shared/money';
     <h2 id="summary-title">Deine Monatsübersicht</h2>
     <p id="summary-status" role="status" aria-live="polite" [class.error]="failed()">{{ status() }}</p>
     @if (value(); as summary) {
-      <p class="summary-month">{{ monthLabel(summary.month) }} · Kalender in Berlin</p>
+      <p class="summary-month">{{ monthLabel(summary.month) }}</p>
       @if (summary.remainingCents !== null) {
         <p class="remaining" [class.error]="summary.remainingCents < 0">Restbudget
           <strong class="summary-money">{{ money(summary.remainingCents) }}</strong>

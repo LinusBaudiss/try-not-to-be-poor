@@ -139,6 +139,8 @@ class FinanceMigrationIT {
                     .isEqualTo(json(nullableMap("amountCents", budget)));
                 assertThat(finance(client, origin, bearer, "GET", "/expense-budget/expenses", null).valueStream().toList())
                     .containsExactlyInAnyOrderElementsOf(ownExpenses.stream().map(this::expenseResponse).toList());
+                assertThat(finance(client, origin, bearer, "GET", "/expenses", null))
+                    .isEqualTo(finance(client, origin, bearer, "GET", "/expense-budget/expenses", null));
                 var summary = new LinkedHashMap<String, Object>();
                 summary.put("month", month.toString()); summary.put("budgetCents", budget); summary.put("expensesCents", total);
                 summary.put("remainingCents", budget == null ? null : budget - total);
@@ -160,11 +162,14 @@ class FinanceMigrationIT {
                 var changedExpense = new LinkedHashMap<>(ownExpenses.getFirst());
                 changedExpense.put("name", "Migriert geprüft 🥖");
                 changedExpense.put("amount_cents", ((Number) changedExpense.get("amount_cents")).longValue() + 3);
-                assertThat(finance(client, origin, bearer, "PUT", "/expense-budget/expenses/" + changedExpense.get("id"),
+                assertThat(finance(client, origin, bearer, "PUT", "/expenses/" + changedExpense.get("id"),
                     Map.of("name", changedExpense.get("name"), "amountCents", changedExpense.get("amount_cents")))).isEqualTo(expenseResponse(changedExpense));
                 assertThat(admin.queryForMap("SELECT * FROM expenses.expenses WHERE user_id = ? AND id = ?", user, changedExpense.get("id"))).isEqualTo(changedExpense);
                 assertThat(finance(client, origin, bearer, "GET", "/expense-budget/expenses", null).valueStream().toList())
                     .containsExactlyInAnyOrderElementsOf(ownExpenses.stream().map(row -> expenseResponse(row.get("id").equals(changedExpense.get("id")) ? changedExpense : row)).toList());
+
+                assertThat(finance(client, origin, bearer, "GET", "/expenses", null))
+                    .isEqualTo(finance(client, origin, bearer, "GET", "/expense-budget/expenses", null));
 
                 var changedGoal = new LinkedHashMap<>(ownGoals.getFirst());
                 changedGoal.put("progress_cents", 17L); // Absolutes Ersetzen, auch nach vorherigem Überziel-Fortschritt.
@@ -182,7 +187,7 @@ class FinanceMigrationIT {
     }
 
     private JsonNode finance(HttpClient client, String origin, String bearer, String method, String path, Object body) throws Exception {
-        var request = java.net.http.HttpRequest.newBuilder(java.net.URI.create(origin + "/api/v1" + path))
+        var request = java.net.http.HttpRequest.newBuilder(java.net.URI.create(origin + (path.startsWith("/expenses") ? "/api/v2" : "/api/v1") + path))
             .header("Authorization", "Bearer " + bearer);
         if (body != null) request.header("Content-Type", "application/json");
         var response = client.send(request.method(method, body == null ? java.net.http.HttpRequest.BodyPublishers.noBody()

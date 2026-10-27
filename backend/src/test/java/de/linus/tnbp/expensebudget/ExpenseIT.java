@@ -38,7 +38,7 @@ class ExpenseIT {
     static final byte[] KEY = new byte[32];
     static final MutableClock CLOCK = new MutableClock(NOW);
     static final JsonMapper JSON = JsonMapper.builder().build();
-    static final String PATH = "/api/v1/expense-budget/expenses";
+    String path() { return "/api/v1/expense-budget/expenses"; }
     @LocalServerPort int port;
     @Autowired DataSource source;
     @Autowired JdbcTemplate jdbc;
@@ -83,7 +83,7 @@ class ExpenseIT {
         return call(method, body, bearer, "");
     }
     HttpResponse<String> call(String method, String body, String bearer, String query) throws Exception {
-        var request = HttpRequest.newBuilder(URI.create("http://localhost:" + port + PATH + query));
+        var request = HttpRequest.newBuilder(URI.create("http://localhost:" + port + path() + query));
         if (bearer != null) request.header("Authorization", "Bearer " + bearer);
         if (body != null) request.header("Content-Type", "application/json");
         // Ein fremder Eigentümerheader wird niemals zur Autorisierung verwendet.
@@ -164,7 +164,7 @@ class ExpenseIT {
     }
 
     @Test void nichtUnterstuetzterMedientypBehaeltProtokollstatusUndHeaderOhneMutation() throws Exception {
-        var request = HttpRequest.newBuilder(URI.create("http://localhost:" + port + PATH))
+        var request = HttpRequest.newBuilder(URI.create("http://localhost:" + port + path()))
             .header("Authorization", "Bearer " + token(first)).header("Content-Type", "text/plain")
             .POST(HttpRequest.BodyPublishers.ofString("{\"name\":\"Brot\",\"amountCents\":1}")).build();
         var rejected = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
@@ -263,7 +263,7 @@ class ExpenseIT {
             assertThat(rejected.statusCode()).isEqualTo(401);
             assertThat(rejected.body()).doesNotContain("amountCents", first.toString());
         }
-        var request = HttpRequest.newBuilder(URI.create("http://localhost:" + port + PATH))
+        var request = HttpRequest.newBuilder(URI.create("http://localhost:" + port + path()))
             .header("Cookie", "__Host-tnbp-refresh=synthetisch; __Host-tnbp-csrf=synthetisch")
             .header("Content-Type", "application/json").POST(HttpRequest.BodyPublishers.ofString("{\"name\":\"Brot\",\"amountCents\":1}")).build();
         assertThat(HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString()).statusCode()).isEqualTo(401);
@@ -428,7 +428,7 @@ class ExpenseIT {
         for (String method : List.of("PUT", "DELETE")) {
             String body = method.equals("PUT") ? "{\"name\":\"Brot\",\"amountCents\":1}" : null;
             for (String bearer : invalid) assertThat(call(method, body, bearer, "/" + id).statusCode()).isEqualTo(401);
-            var request = HttpRequest.newBuilder(URI.create("http://localhost:" + port + PATH + "/" + id))
+            var request = HttpRequest.newBuilder(URI.create("http://localhost:" + port + path() + "/" + id))
                 .header("Cookie", "__Host-tnbp-refresh=synthetisch; __Host-tnbp-csrf=synthetisch")
                 .header("Content-Type", "application/json").method(method, body == null ? HttpRequest.BodyPublishers.noBody() : HttpRequest.BodyPublishers.ofString(body)).build();
             var rejected = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
@@ -607,4 +607,23 @@ class ExpenseIT {
             }
         }
     }
+    @Test void sommerUndWinterzeitBewahrenServerseitigeKalendertage() throws Exception {
+        var cases = Map.of(
+            "2026-03-28T23:00:00Z", "2026-03-29",
+            "2026-03-29T00:59:59Z", "2026-03-29",
+            "2026-03-29T01:00:00Z", "2026-03-29",
+            "2026-10-24T22:00:00Z", "2026-10-25",
+            "2026-10-25T00:59:59Z", "2026-10-25",
+            "2026-10-25T01:00:00Z", "2026-10-25",
+            "2026-10-25T22:59:59Z", "2026-10-25",
+            "2026-10-25T23:00:00Z", "2026-10-26");
+        for (var entry : cases.entrySet()) {
+            CLOCK.now = Instant.parse(entry.getKey());
+            var created = save(first, 1);
+            assertThat(created.statusCode()).as(entry.getKey()).isEqualTo(201);
+            assertThat(JSON.readTree(created.body()).get("recordedOn").asText()).isEqualTo(entry.getValue());
+        }
+        assertThat(count(first)).isEqualTo(cases.size());
+    }
+
 }

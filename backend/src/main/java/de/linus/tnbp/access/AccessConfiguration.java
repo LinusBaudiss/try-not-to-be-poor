@@ -94,8 +94,8 @@ class AccessConfiguration {
                     "/api/v1/access/refresh", "/api/v1/access/logout", "/api/v2/access/registrations",
                     "/api/v2/access/login", "/api/v2/access/refresh", "/api/v2/access/logout").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/access/csrf", "/api/v2/access/csrf").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/v1/access/me", "/api/v2/access/me", "/api/v1/expense-budget/budget", "/api/v1/expense-budget/expenses", "/api/v2/expenses", "/api/v1/expense-budget/month-summary", "/api/v1/savings-goals").authenticated()
-                .requestMatchers(HttpMethod.PUT, "/api/v1/expense-budget/budget", "/api/v1/savings-goals/*/progress").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/v1/access/me", "/api/v2/access/me", "/api/v1/expense-budget/budget", "/api/v1/expense-budget/expenses", "/api/v2/expenses", "/api/v2/budget", "/api/v2/month-summary", "/api/v1/expense-budget/month-summary", "/api/v1/savings-goals").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/v1/expense-budget/budget", "/api/v2/budget", "/api/v1/savings-goals/*/progress").authenticated()
                 .requestMatchers(HttpMethod.POST, "/api/v1/expense-budget/expenses", "/api/v2/expenses", "/api/v1/savings-goals").authenticated()
                 .requestMatchers(HttpMethod.PUT, "/api/v1/expense-budget/expenses/*", "/api/v2/expenses/*", "/api/v1/savings-goals/*").authenticated()
                 .requestMatchers(HttpMethod.DELETE, "/api/v1/expense-budget/expenses/*", "/api/v2/expenses/*", "/api/v1/savings-goals/*").authenticated()
@@ -107,6 +107,8 @@ class AccessConfiguration {
                     request.getServletPath().equals("/api/v1/access/me")
                         || request.getServletPath().equals("/api/v2/access/me")
                         || request.getServletPath().equals("/api/v1/expense-budget/budget")
+                        || request.getServletPath().equals("/api/v2/budget")
+                        || request.getServletPath().equals("/api/v2/month-summary")
                         || (request.getServletPath().equals("/api/v1/expense-budget/expenses") || request.getServletPath().equals("/api/v2/expenses"))
                         || (request.getServletPath().matches("/api/v1/expense-budget/expenses/[^/]+") || request.getServletPath().matches("/api/v2/expenses/[^/]+"))
                         || request.getServletPath().equals("/api/v1/expense-budget/month-summary")
@@ -123,7 +125,7 @@ class AccessConfiguration {
         String path = request.getServletPath(), method = request.getMethod();
         if (method.equals("POST")) return path.equals("/api/v1/access/registrations") || path.equals("/api/v2/access/registrations")
             || path.equals("/api/v1/expense-budget/expenses") || path.equals("/api/v2/expenses") || path.equals("/api/v1/savings-goals");
-        if (method.equals("PUT") && (path.equals("/api/v1/expense-budget/budget")
+        if (method.equals("PUT") && (path.equals("/api/v1/expense-budget/budget") || path.equals("/api/v2/budget")
             || path.matches("/api/v1/savings-goals/[^/]+/progress"))) return true;
         return (method.equals("PUT") || method.equals("DELETE")) && (path.matches("/api/v1/expense-budget/expenses/[^/]+")
             || path.matches("/api/v2/expenses/[^/]+") || path.matches("/api/v1/savings-goals/[^/]+"));

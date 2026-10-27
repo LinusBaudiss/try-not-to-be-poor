@@ -129,5 +129,6 @@ nav a.active { color: var(--on-primary); background: var(--primary); }
 #goal-mutation-status:focus, #goal-delete-status:focus { outline: 3px solid var(--focus-ring); outline-offset: 3px; }
 
 h1:focus, #expense-delete-status:focus { outline: 3px solid var(--focus-ring); outline-offset: 3px; }
-.expense-uncertainty { margin-block: 1.5rem; padding: 1rem; border: 2px solid var(--error); border-radius: .5rem; }
-.expense-uncertainty button + button { margin-top: .75rem; }
+.expense-uncertainty, .budget-uncertainty { margin-block: 1.5rem; padding: 1rem; border: 2px solid var(--error); border-radius: .5rem; }
+.budget-uncertainty { padding: min(1rem, 16px); }
+.expense-uncertainty button + button, .budget-uncertainty button + button { margin-top: .75rem; }

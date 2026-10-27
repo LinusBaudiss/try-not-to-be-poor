@@ -18,7 +18,9 @@ ausschließlich unter `/ausgaben`; „Monat“ enthält Budget und Monatsübersi
 Der abgeschlossene v1-Umfang umfasst Epics 1–2 mit den neun Stories
 1.1–1.6 und 2.1–2.3. Die Oberfläche verwendet für alle sechs Zugangsfunktionen
 einschließlich Identitätsprüfung sowie für alle vier Ausgabenoperationen API v2
-(`/api/v2/expenses`). Budget, Monatsübersicht und Sparziele bleiben über v1 bedienbar.
+(`/api/v2/expenses`). Budget (`GET`/`PUT /api/v2/budget`) und Monatsübersicht
+(`GET /api/v2/month-summary`) verwenden ebenfalls v2. Sparziele bleiben über v1
+bedienbar.
 Beide Ausgabenversionen verwenden dieselben Daten und dieselbe Finanztransaktion.
 Nach einer unbestätigten Ausgabenmutation sperrt die Oberfläche weitere Mutationen,
 bis die Historie erfolgreich neu geladen und ausdrücklich geprüft wurde.
@@ -284,13 +286,19 @@ aktualisieren die Übersicht.
 Die Anzeige bestätigt erst eine erfolgreich abgeschlossene Speicherung.
 Währenddessen ist Doppelsenden gesperrt. Bei Fehlern und offline bleibt der
 Entwurf im offenen Tab erhalten; offline ist Speichern blockiert. Bei einer
-verlorenen Antwort kann der Server bereits gespeichert haben. Ein bewusster
-Retry setzt denselben Monatswert erneut. Neuladen lädt den bestätigten
-Serverbestand; Entwürfe werden nicht im Browser gespeichert. Abmeldung,
+verlorenen Antwort kann der Server bereits gespeichert haben. Weitere Speicherung
+bleibt gesperrt, bis „Budget zur Prüfung laden“ den aktuellen Stand geladen hat
+und „Ich habe das Budget geprüft“ ausdrücklich bestätigt wurde. Der Prüfabruf
+erhält den offenen Entwurf; erst anschließend lässt sich dieser ausdrücklich
+speichern. Ein fehlgeschlagener Prüfabruf hebt die Sperre nicht auf. Der
+Vorgangsschutz bleibt auch bei einem Bereichswechsel erhalten; persönliche
+Entwürfe bleiben nur im offenen Formular. Es gibt keine automatische Wiederholung
+oder Offline-Synchronisation. Neuladen lädt den aktuellen Serverbestand; Entwürfe
+werden nicht im Browser gespeichert. Abmeldung,
 Sitzungsende und Kontowechsel verwerfen Beträge und Entwürfe sowie später
 eintreffende Antworten.
 
-`GET`/`PUT /api/v1/expense-budget/budget` akzeptieren ausschließlich ein
+`GET`/`PUT /api/v2/budget` und `GET /api/v2/month-summary` akzeptieren ausschließlich ein
 verifiziertes Bearer-JWT; Cookies und Eigentümerangaben bestimmen keinen
 Budgetzugriff. Alle Finanzantworten tragen `Cache-Control: no-store`.
 
@@ -377,10 +385,13 @@ widerruft die Familie auch für die andere Version. Alle v2-Antworten einschlie�
 Registrierung und Fehlern tragen `Cache-Control: no-store`; fehlende Sitzungskonfiguration
 meldet bei Login, Refresh und Logout 503. Unbestätigte Mutationen niemals automatisch
 wiederholen. Der v2-Vertrag umfasst außerdem GET/POST `/expenses` und PUT/DELETE
-`/expenses/{expenseId}`. Der Browser verwendet die generierten v2-Zugangs- und
-Ausgabenclients. V2-Identität, v2-Ausgaben und die übrigen v1-Finanzaufrufe erhalten
+`/expenses/{expenseId}`, GET/PUT `/budget` sowie GET `/month-summary`. Der Browser
+verwendet für Zugang, Ausgaben, Budget und Monatsübersicht die generierten
+v2-Clients. Beide Finanzversionen teilen denselben Bestand und die äußere
+Finanzkoordination; v1 bleibt für Altoberflächen verfügbar. V2-Operationen und
+die verbleibenden v1-Sparzielaufrufe erhalten
 den Bearer ausschließlich über den Interceptor für dieselbe Herkunft und die
-unterstützten Hauptversionen. Weitere Finanzrouten unter v2, v1-Stilllegung und
+unterstützten Hauptversionen. Sparzielrouten unter v2, v1-Stilllegung und
 Produktionsfreigabe folgen gesondert.
 
 ## Finanzmodule auf V9 umstellen und wiederanlaufen lassen

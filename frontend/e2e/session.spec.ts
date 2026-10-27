@@ -390,7 +390,7 @@ test('späte geschützte Angular-Antwort wird nach Sitzungsende als verworfen zu
   });
   const outcome = page.evaluate(async () => {
     const month = (window as any).ng.getComponent(document.querySelector('app-month'));
-    return new Promise(resolve => month.http.get('/api/v2/access/me').subscribe({
+    return new Promise(resolve => month.budgets.httpClient.get('/api/v2/access/me').subscribe({
       next: () => resolve({ accepted: true }),
       error: (failure: any) => resolve({ status: failure.status, statusText: failure.statusText })
     }));
@@ -404,7 +404,7 @@ test('späte geschützte Angular-Antwort wird nach Sitzungsende als verworfen zu
   await expect(page.getByRole('status')).toHaveText('Du wurdest abgemeldet.');
 });
 
-test('Zugang und Ausgaben nutzen v2; Budget, Monatsübersicht und Sparziele bleiben im Übergang funktionsfähig', async ({ page }) => {
+test('Zugang, Ausgaben, Budget und Monat nutzen v2; Sparziele bleiben im Übergang funktionsfähig', async ({ page }) => {
   const access: { path: string; method: string; bearer?: string; csrf?: string; origin?: string }[] = [];
   const headerChecks: Promise<void>[] = [];
   const finances = new Set<string>();
@@ -464,11 +464,11 @@ test('Zugang und Ausgaben nutzen v2; Budget, Monatsübersicht und Sparziele blei
       expect(item.csrf).toBeTruthy(); expect(item.origin).toBe('https://localhost:4200');
     }
   }
-  expect([...finances]).toEqual(expect.arrayContaining(['GET /api/v1/expense-budget/budget', 'PUT /api/v1/expense-budget/budget', 'GET /api/v1/expense-budget/month-summary', 'GET /api/v1/savings-goals']));
+  expect([...finances]).toEqual(expect.arrayContaining(['GET /api/v2/budget', 'PUT /api/v2/budget', 'GET /api/v2/month-summary', 'GET /api/v1/savings-goals']));
   expect([...finances].filter(operation => operation.includes('/api/v2/expenses')).sort()).toEqual([
     `DELETE /api/v2/expenses/${expenseId}`, 'GET /api/v2/expenses', 'POST /api/v2/expenses', `PUT /api/v2/expenses/${expenseId}`
   ]);
-  expect([...finances].filter(operation => operation.includes('/api/v1/expense-budget/expenses'))).toEqual([]);
+  expect([...finances].filter(operation => operation.includes('/api/v1/expense-budget/'))).toEqual([]);
 });
 
 test('Interceptor begrenzt Bearer auf dieselbe Herkunft und v1/v2 und nimmt öffentliche Zugangspfade aus', async ({ page, request }) => {
@@ -480,19 +480,19 @@ test('Interceptor begrenzt Bearer auf dieselbe Herkunft und v1/v2 und nimmt öff
     await route.fulfill({ status: 200, json: {}, headers: { 'Access-Control-Allow-Origin': 'https://localhost:4200' } });
   });
   const paths = [
-    '/api/v1/expense-budget/budget', '/api/v2/access/me', 'https://localhost:4200/api/v2/access/me',
+    '/api/v1/expense-budget/budget', '/api/v2/budget', '/api/v2/access/me', 'https://localhost:4200/api/v2/access/me',
     'https://fremd.example/api/v2/access/me', '//fremd.example/api/v1/expense-budget/budget',
     '/api/v3/access/me', '/api/v20/access/me', '/api/v1extra/access/me',
     ...['registrations', 'csrf', 'login', 'refresh', 'logout'].map(name => `/api/v2/access/${name}`)
   ].map((path, index) => `${path}?interceptorProbe=${index}`);
   await page.evaluate(async paths => {
     const month = (window as any).ng.getComponent(document.querySelector('app-month'));
-    for (const path of paths) await new Promise(resolve => month.http.get(path).subscribe({ next: resolve, error: resolve }));
+    for (const path of paths) await new Promise(resolve => month.budgets.httpClient.get(path).subscribe({ next: resolve, error: resolve }));
   }, paths);
   expect(observed.size).toBe(paths.length);
   for (const [index, path] of paths.entries()) {
     const header = observed.get(new URL(path, 'https://localhost:4200').href);
-    if (index < 3) expect(header).toMatch(/^Bearer /);
+    if (index < 4) expect(header).toMatch(/^Bearer /);
     else expect(header).toBeUndefined();
   }
 });

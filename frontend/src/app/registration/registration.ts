@@ -1,10 +1,12 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, HostListener, inject, signal } from '@angular/core';
+import { Component, DestroyRef, HostListener, effect, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { timeout } from 'rxjs';
-import { AccessService } from '../api/api/access.service';
-import { ApiError } from '../api/model/apiError';
+import { AccessService } from '../api/v2/api/access.service';
+import { ApiError } from '../api/v2/model/apiError';
+import { Session } from '../session/session';
 
 @Component({
   selector: 'app-registration',
@@ -47,6 +49,10 @@ import { ApiError } from '../api/model/apiError';
 })
 export class Registration {
   private readonly api = inject(AccessService);
+  private readonly session = inject(Session);
+  private readonly destroy = inject(DestroyRef);
+  private readonly version = this.session.generation();
+  private active = true;
   protected token = new URLSearchParams(window.location.hash.slice(1)).get('registrationToken') ?? '';
   protected readonly email = signal('');
   protected readonly password = signal('');
@@ -62,6 +68,10 @@ export class Registration {
     if (window.location.hash) {
       window.history.replaceState(null, '', window.location.pathname + window.location.search);
     }
+    effect(() => {
+      if (this.version !== this.session.generation()) this.clear();
+    });
+    this.destroy.onDestroy(() => { this.active = false; this.clear(); });
   }
 
   @HostListener('window:online')
@@ -76,13 +86,16 @@ export class Registration {
   disconnected(): void { this.online.set(false); }
 
   protected submit(): void {
-    if (this.pending() || !this.online() || this.success() || !this.token) return;
+    if (!this.accepts() || this.pending() || !this.online() || this.success() || !this.token) return;
     this.errors.set({});
     this.failed.set(false);
     this.pending.set(true);
     this.status.set('Dein Konto wird angelegt …');
-    this.api.register({ registrationToken: this.token, email: this.email(), password: this.password() }).pipe(timeout(30_000)).subscribe({
+    this.api.register({ registrationToken: this.token, email: this.email(), password: this.password() })
+      .pipe(timeout(30_000), takeUntilDestroyed(this.destroy)).subscribe({
       next: () => {
+        if (!this.accepts()) return;
+        this.email.set('');
         this.password.set('');
         this.token = '';
         this.pending.set(false);
@@ -91,6 +104,7 @@ export class Registration {
         this.focus('feedback');
       },
       error: (response: HttpErrorResponse) => {
+        if (!this.accepts()) return;
         const body = response.error as Partial<ApiError> | null;
         const fields: Record<string, string> = {};
         for (const key of ['email', 'password']) {
@@ -102,13 +116,20 @@ export class Registration {
         this.errors.set(fields);
         this.status.set(response.status === 400
           ? (Object.keys(fields).length ? 'Prüfe die markierten Felder.' : 'Registrierung nicht möglich. Prüfe deine Angaben und den Registrierungslink.')
-          : 'Die Bestätigung ist ausgeblieben. Ob dein Konto angelegt wurde, ist unklar. Deine Eingaben bleiben erhalten. Versuche es erneut.');
+          : 'Die Bestätigung ist ausgeblieben. Ob dein Konto angelegt wurde, ist unklar. Versuche zunächst, dich anzumelden. Deine Eingaben bleiben im offenen Formular erhalten.');
         this.focus(fields['email'] ? 'email' : fields['password'] ? 'password' : 'feedback');
       }
     });
   }
 
   private focus(id: string): void {
-    requestAnimationFrame(() => document.getElementById(id)?.focus());
+    requestAnimationFrame(() => { if (this.accepts()) document.getElementById(id)?.focus(); });
+  }
+
+  private accepts(): boolean { return this.active && this.version === this.session.generation(); }
+
+  private clear(): void {
+    this.email.set(''); this.password.set(''); this.token = '';
+    this.pending.set(false); this.success.set(false); this.errors.set({}); this.failed.set(false); this.status.set('');
   }
 }

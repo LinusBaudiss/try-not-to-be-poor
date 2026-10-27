@@ -5,7 +5,7 @@ const password = '  Grüner 🦊 im Baum  ';
 const endpoint = '**/api/v1/savings-goals/*';
 async function account(request: APIRequestContext): Promise<string> {
   const email = `mutation-${crypto.randomUUID()}@example.org`;
-  expect((await request.post('http://127.0.0.1:8080/api/v1/access/registrations', {
+  expect((await request.post('http://127.0.0.1:8080/api/v2/access/registrations', {
     data: { registrationToken: 'a'.repeat(43), email, password }
   })).status()).toBe(201); return email;
 }
@@ -225,7 +225,7 @@ for (const method of ['PUT', 'DELETE']) {
       await page.route(endpoint, async route => { const response = await route.fetch(); ready.release(); await held.promise; await route.fulfill({ response }); });
       const refreshReady = gate(), refreshHeld = gate();
       if (boundary === 'expiry') {
-        await page.route('**/api/v1/access/refresh', async route => { const response = await route.fetch(); refreshReady.release(); await refreshHeld.promise; await route.fulfill({ response }); });
+        await page.route('**/api/v2/access/refresh', async route => { const response = await route.fetch(); refreshReady.release(); await refreshHeld.promise; await route.fulfill({ response }); });
         await page.clock.fastForward(570_001); await refreshReady.promise; await page.clock.fastForward(28_000);
       }
       if (method === 'PUT') { await open(page); await draft(page); } else await startDelete(page);
@@ -237,7 +237,7 @@ for (const method of ['PUT', 'DELETE']) {
       else await page.clock.fastForward(3_000);
       await expect(page).toHaveURL('/anmelden');
       const answered = page.waitForResponse(r => r.request().method() === method && /savings-goals\/[\w-]+$/.test(r.url())); held.release(); await answered;
-      if (boundary === 'expiry') { const revoked = page.waitForResponse('**/api/v1/access/logout'); refreshHeld.release(); expect((await revoked).status()).toBe(204); }
+      if (boundary === 'expiry') { const revoked = page.waitForResponse('**/api/v2/access/logout'); refreshHeld.release(); expect((await revoked).status()).toBe(204); }
       await cleared(page);
     });
   }

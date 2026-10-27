@@ -4,13 +4,15 @@ import { FormsModule } from '@angular/forms';
 import { firstValueFrom, timeout } from 'rxjs';
 import { BudgetResponse } from '../api/model/budgetResponse';
 import { Session } from '../session/session';
+import { LogoutButton } from '../session/logout-button';
+import { SessionsService } from '../api/v2/api/sessions.service';
 import { Expenses } from './expenses';
 import { MonthSummary } from './month-summary';
 import { MAX_CENTS, euroInput, formatEuro, parseEuro } from '../shared/money';
 
 @Component({
   selector: 'app-month',
-  imports: [FormsModule, Expenses, MonthSummary],
+  imports: [FormsModule, Expenses, MonthSummary, LogoutButton],
   template: `<section class="auth-card" aria-labelledby="month-title">
     <h1 id="month-title">Monat</h1>
     <p id="identity-status" role="status" aria-live="polite" [class.error]="identityFailed()">{{ identityStatus() }}</p>
@@ -45,12 +47,13 @@ import { MAX_CENTS, euroInput, formatEuro, parseEuro } from '../shared/money';
       <p id="budget-status" tabindex="-1" role="status" aria-live="polite" [class.error]="failed()" [class.success]="saved()">{{ status() }}</p>
       <app-expenses (changed)="refreshSummary()" />
     }
-    <button type="button" class="secondary" (click)="session.logout()">Abmelden</button>
+    <app-logout-button />
   </section>`
 })
 export class Month {
   protected readonly session = inject(Session);
   private readonly http = inject(HttpClient);
+  private readonly access = inject(SessionsService);
   private readonly owner = this.session.userId();
   private readonly version = this.session.generation();
   private active = true;
@@ -105,7 +108,7 @@ export class Month {
 
   async verifyIdentity(): Promise<boolean> {
     try {
-      const identity = await firstValueFrom(this.http.get<{ userId: string }>('/api/v1/access/me').pipe(timeout(30_000)));
+      const identity = await firstValueFrom(this.access.sessionIdentity().pipe(timeout(30_000)));
       if (!this.accepts() || identity.userId !== this.owner) return false;
       this.identityFailed.set(false); this.identityConfirmed.set(true);
       this.identityStatus.set('Du bist angemeldet. Deine persönliche Monatsübersicht ist geöffnet.');

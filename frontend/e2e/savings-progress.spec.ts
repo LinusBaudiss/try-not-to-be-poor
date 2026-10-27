@@ -5,7 +5,7 @@ const password = '  Grüner 🦊 im Baum  ';
 const endpoint = '**/api/v1/savings-goals/*/progress';
 async function account(request: APIRequestContext): Promise<string> {
   const email = `progress-${crypto.randomUUID()}@example.org`;
-  expect((await request.post('http://127.0.0.1:8080/api/v1/access/registrations', {
+  expect((await request.post('http://127.0.0.1:8080/api/v2/access/registrations', {
     data: { registrationToken: 'a'.repeat(43), email, password }
   })).status()).toBe(201);
   return email;
@@ -198,7 +198,7 @@ for (const boundary of ['Abmeldung', 'Kontowechsel', 'Tokenablauf']) {
     await page.route(endpoint, async route => { const response = await route.fetch(); ready.release(); await held.promise; await route.fulfill({ response }); });
     const refreshReady = gate(), refreshHeld = gate();
     if (boundary === 'Tokenablauf') {
-      await page.route('**/api/v1/access/refresh', async route => { const response = await route.fetch(); refreshReady.release(); await refreshHeld.promise; await route.fulfill({ response }); });
+      await page.route('**/api/v2/access/refresh', async route => { const response = await route.fetch(); refreshReady.release(); await refreshHeld.promise; await route.fulfill({ response }); });
       await page.clock.fastForward(570_001); await refreshReady.promise; await page.clock.fastForward(28_000);
     }
     await edit(page, '12,34'); await retainComponent(page);
@@ -212,7 +212,7 @@ for (const boundary of ['Abmeldung', 'Kontowechsel', 'Tokenablauf']) {
     await expect(page).toHaveURL('/anmelden');
     const answered = page.waitForResponse(response => response.url().endsWith('/progress')); held.release(); await answered;
     if (boundary === 'Tokenablauf') {
-      const revoked = page.waitForResponse('**/api/v1/access/logout'); refreshHeld.release(); expect((await revoked).status()).toBe(204);
+      const revoked = page.waitForResponse('**/api/v2/access/logout'); refreshHeld.release(); expect((await revoked).status()).toBe(204);
     }
     await expectCleared(page);
   });

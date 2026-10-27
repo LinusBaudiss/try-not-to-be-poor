@@ -26,8 +26,8 @@ test('echte Registrierung: Commit bestätigt Erfolg, Passwort entfernt, keine Si
   await open(page);
   await expect(page).toHaveURL('/registrieren');
   const email = await fill(page);
-  const request = page.waitForRequest('**/api/v1/access/registrations');
-  const response = page.waitForResponse('**/api/v1/access/registrations');
+  const request = page.waitForRequest('**/api/v2/access/registrations');
+  const response = page.waitForResponse('**/api/v2/access/registrations');
   await send(page);
   expect((await response).status()).toBe(201);
   expect((await request).postDataJSON()).toEqual({ registrationToken: token, email, password });
@@ -61,7 +61,7 @@ test('falscher Link liefert einen neutralen Fehler und erhält Eingaben', async 
 
 test('bereits vorhandene E-Mail wird auch bei anderer Schreibweise nicht bestätigt', async ({ page, request }) => {
   const email = freshEmail();
-  const first = await request.post('http://127.0.0.1:8080/api/v1/access/registrations', { data: { registrationToken: token, email, password } });
+  const first = await request.post('http://127.0.0.1:8080/api/v2/access/registrations', { data: { registrationToken: token, email, password } });
   expect(first.status()).toBe(201);
   await open(page);
   await fill(page, `  ${email.toUpperCase()}  `);
@@ -112,7 +112,7 @@ test('laufende Anfrage blockiert Doppelsenden und zeigt Erfolg erst nach der Ant
   let release!: () => void;
   const held = new Promise<void>(resolve => { release = resolve; });
   let requests = 0;
-  await page.route('**/api/v1/access/registrations', async route => {
+  await page.route('**/api/v2/access/registrations', async route => {
     requests++;
     await held;
     await route.continue();
@@ -131,7 +131,7 @@ test('laufende Anfrage blockiert Doppelsenden und zeigt Erfolg erst nach der Ant
 
 for (const mode of ['Netzwerkfehler', 'Serverfehler']) {
   test(`${mode}: kein Erfolg, Eingaben erhalten, erneutes Absenden möglich`, async ({ page }) => {
-    await page.route('**/api/v1/access/registrations', route => mode === 'Netzwerkfehler'
+    await page.route('**/api/v2/access/registrations', route => mode === 'Netzwerkfehler'
       ? route.abort('failed')
       : route.fulfill({ status: 500, contentType: 'application/json', body: '{"code":"SERVER_ERROR","message":"Fehler","fieldErrors":{}}' }));
     await open(page);
@@ -141,7 +141,7 @@ for (const mode of ['Netzwerkfehler', 'Serverfehler']) {
     await expect(page.getByLabel('E-Mail-Adresse', { exact: true })).toHaveValue(email);
     await expect(page.getByLabel('Passwort', { exact: true })).toHaveValue(password);
     await expect(page.getByRole('button', { name: 'Konto anlegen', exact: true })).toBeEnabled();
-    await page.unroute('**/api/v1/access/registrations');
+    await page.unroute('**/api/v2/access/registrations');
     await send(page);
     await expect(page.getByRole('status')).toHaveText('Dein Konto wurde angelegt.');
   });
@@ -160,7 +160,7 @@ test('neuer Link im selben Tab verwirft alten Token, Entwurf und Fehler und entf
   await expect(page.getByRole('status')).toBeEmpty();
   await expect(page).toHaveURL('/registrieren');
   await fill(page);
-  const sent = page.waitForRequest('**/api/v1/access/registrations');
+  const sent = page.waitForRequest('**/api/v2/access/registrations');
   await send(page);
   expect((await sent).postDataJSON().registrationToken).toBe(token);
   await expect(page.getByRole('status')).toHaveText('Dein Konto wurde angelegt.');
@@ -170,13 +170,13 @@ test('hängende Anfrage endet nach 30 Sekunden mit erhaltenem Entwurf und erneut
   await page.clock.install();
   let release!: () => void;
   const held = new Promise<void>(resolve => { release = resolve; });
-  await page.route('**/api/v1/access/registrations', async route => {
+  await page.route('**/api/v2/access/registrations', async route => {
     await held;
     await route.abort().catch(() => {});
   });
   await open(page);
   const email = await fill(page);
-  const sent = page.waitForRequest('**/api/v1/access/registrations');
+  const sent = page.waitForRequest('**/api/v2/access/registrations');
   await send(page);
   await sent;
   await expect(page.getByRole('button', { name: 'Konto wird angelegt …' })).toBeDisabled();
@@ -186,14 +186,14 @@ test('hängende Anfrage endet nach 30 Sekunden mit erhaltenem Entwurf und erneut
   await expect(page.getByLabel('Passwort', { exact: true })).toHaveValue(password);
   await expect(page.getByRole('button', { name: 'Konto anlegen', exact: true })).toBeEnabled();
   release();
-  await page.unroute('**/api/v1/access/registrations');
+  await page.unroute('**/api/v2/access/registrations');
   await send(page);
   await expect(page.getByRole('status')).toHaveText('Dein Konto wurde angelegt.');
 });
 
 test('verlorene Antwort nach echtem Commit meldet fehlende Bestätigung und erlaubt erneuten Versuch', async ({ page }) => {
   let committed = false;
-  await page.route('**/api/v1/access/registrations', async route => {
+  await page.route('**/api/v2/access/registrations', async route => {
     const response = await route.fetch();
     expect(response.status()).toBe(201);
     committed = true;
@@ -207,8 +207,8 @@ test('verlorene Antwort nach echtem Commit meldet fehlende Bestätigung und erla
   await expect(page.getByLabel('E-Mail-Adresse', { exact: true })).toHaveValue(email);
   await expect(page.getByLabel('Passwort', { exact: true })).toHaveValue(password);
   await expect(page.getByRole('button', { name: 'Konto anlegen', exact: true })).toBeEnabled();
-  await page.unroute('**/api/v1/access/registrations');
-  const retried = page.waitForResponse('**/api/v1/access/registrations');
+  await page.unroute('**/api/v2/access/registrations');
+  const retried = page.waitForResponse('**/api/v2/access/registrations');
   await send(page);
   expect((await retried).status()).toBe(400);
   await expect(page.getByRole('status')).toContainText('Registrierung nicht möglich.');
@@ -237,8 +237,8 @@ test('320 Pixel, Tastatur, 200-Prozent-Text und Touchziele bleiben zugänglich',
   await page.keyboard.insertText(password);
   await page.keyboard.press('Tab');
   await expect(page.getByRole('button', { name: 'Konto anlegen', exact: true })).toBeFocused();
-  for (const width of [320, 390, 768, 1280]) {
-    await page.setViewportSize({ width, height: 568 });
+  for (const viewport of [{ width: 320, height: 568 }, { width: 390, height: 844 }, { width: 768, height: 1024 }, { width: 1280, height: 800 }]) {
+    await page.setViewportSize(viewport);
     for (const fontSize of ['100%', '200%']) {
       await page.evaluate(size => { document.documentElement.style.fontSize = size; }, fontSize);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBeTruthy();
@@ -253,4 +253,49 @@ test('320 Pixel, Tastatur, 200-Prozent-Text und Touchziele bleiben zugänglich',
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
   await page.keyboard.press('Enter');
   await expect(page.getByRole('status')).toHaveText('Dein Konto wurde angelegt.');
+});
+
+for (const outcome of ['Erfolg', 'Fehler']) {
+  test(`Verlassen der Registrierung verwirft Eingaben und eine verspätete ${outcome}-Antwort`, async ({ page }) => {
+    let release!: () => void, ready!: () => void;
+    const held = new Promise<void>(resolve => { release = resolve; });
+    const sent = new Promise<void>(resolve => { ready = resolve; });
+    await page.route('**/api/v2/access/registrations', async route => {
+      const response = outcome === 'Erfolg' ? await route.fetch() : undefined;
+      ready(); await held;
+      if (response) await route.fulfill({ response }).catch(() => {});
+      else await route.fulfill({ status: 400, json: { fieldErrors: { email: 'Verspäteter Fehler' } } }).catch(() => {});
+    });
+    await open(page); await fill(page);
+    await page.evaluate(() => { (window as any).oldRegistration = (window as any).ng.getComponent(document.querySelector('app-registration')); });
+    await send(page); await sent;
+    await page.getByRole('link', { name: 'Zur Anmeldung' }).click();
+    await expect(page).toHaveURL('/anmelden');
+    release();
+    expect(await page.evaluate(() => {
+      const old = (window as any).oldRegistration;
+      return { email: old.email(), password: old.password(), token: old.token, status: old.status(), success: old.success(), errors: old.errors() };
+    })).toEqual({ email: '', password: '', token: '', status: '', success: false, errors: {} });
+    await expect(page.getByRole('status')).toBeEmpty();
+  });
+}
+
+test('Sitzungsende im anderen Tab leert das offene Registrierungsformular und verwirft eine späte Antwort', async ({ page }) => {
+  let release!: () => void, ready!: () => void;
+  const held = new Promise<void>(resolve => { release = resolve; });
+  const sent = new Promise<void>(resolve => { ready = resolve; });
+  await page.route('**/api/v2/access/registrations', async route => {
+    const response = await route.fetch(); ready(); await held; await route.fulfill({ response }).catch(() => {});
+  });
+  await open(page); await fill(page);
+  await page.evaluate(() => { (window as any).oldRegistration = (window as any).ng.getComponent(document.querySelector('app-registration')); });
+  await send(page); await sent;
+  await page.evaluate(() => { const channel = new BroadcastChannel('tnbp-session'); channel.postMessage('ended'); channel.close(); });
+  await expect(page).toHaveURL('/anmelden');
+  release();
+  await expect(page.getByRole('status')).toContainText('anderen Tab');
+  expect(await page.evaluate(() => {
+    const old = (window as any).oldRegistration;
+    return { email: old.email(), password: old.password(), token: old.token, status: old.status(), success: old.success() };
+  })).toEqual({ email: '', password: '', token: '', status: '', success: false });
 });

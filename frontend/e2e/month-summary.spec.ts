@@ -5,7 +5,7 @@ test.use({ timezoneId: 'America/Los_Angeles' });
 
 const password = '  Grüner 🦊 im Baum  ';
 const summaryHeaders = { Date: 'Fri, 23 Oct 2026 10:00:00 GMT' };
-const endpoint = '**/api/v1/expense-budget/month-summary';
+const endpoint = '**/api/v2/month-summary';
 const initial = { month: '2026-10-01', budgetCents: 10000, expensesCents: 1234, remainingCents: 8766 };
 async function account(request: APIRequestContext): Promise<string> {
   const email = `summary-${crypto.randomUUID()}@example.org`;
@@ -61,14 +61,14 @@ test('bestätigte Budget- und Ausgabenänderungen laden neu; Entwürfe und laufe
   await page.getByLabel('Monatsbudget in Euro').fill('200');
   await expect(money).toHaveText('100,00 €');
   const held = gate(), ready = gate();
-  await page.route('**/api/v1/expense-budget/budget', async route => {
+  await page.route('**/api/v2/budget', async route => {
     if (route.request().method() !== 'PUT') return route.continue();
     const response = await route.fetch(); ready.release(); await held.promise; await route.fulfill({ response });
   });
   await page.getByRole('button', { name: 'Budget speichern', exact: true }).click(); await ready.promise;
   await expect(money).toHaveText('100,00 €'); held.release(); await expect(money).toHaveText('200,00 €');
-  await page.unroute('**/api/v1/expense-budget/budget');
-  await page.route('**/api/v1/expense-budget/budget', async route => {
+  await page.unroute('**/api/v2/budget');
+  await page.route('**/api/v2/budget', async route => {
     if (route.request().method() !== 'PUT') return route.continue();
     await route.fulfill({ status: 500, json: {} });
   });
@@ -98,7 +98,7 @@ test('Laden, Netzfehler und ungültige Antworten entfernen alte Werte und bleibe
   await expect(summary.locator('.summary-money')).toHaveText('87,66 €');
   for (const invalid of [null, {}, { ...initial, month: '2026-13-01' }, { ...initial, month: '2026-10-02' },
     { ...initial, remainingCents: 1 }, { ...initial, budgetCents: null }, { ...initial, expensesCents: -1 },
-    { ...initial, expensesCents: 9007199254740992 }, { ...initial, budgetCents: '10000' }]) {
+    { ...initial, expensesCents: 9007199254740992 }, { ...initial, budgetCents: '10000' }, { ...initial, extra: true }]) {
     value = invalid;
     await summary.getByRole('button').click();
     await expect(summary).toContainText('konnte nicht geladen werden');
@@ -174,8 +174,8 @@ test('Restbudget steht vor Formularen, ist per Tastatur aktualisierbar und bleib
   await expect(page.locator('#summary-status')).toContainText('Budget überschritten');
   await expect(page.locator('#summary-status')).toHaveAttribute('aria-live', 'polite');
   expect(await page.evaluate(() => !!(document.querySelector('app-month-summary')!.compareDocumentPosition(document.querySelector('form')!) & Node.DOCUMENT_POSITION_FOLLOWING))).toBe(true);
-  for (const width of [320, 1280]) {
-    await page.setViewportSize({ width, height: width === 320 ? 568 : 800 });
+  for (const [width, height] of [[320, 568], [390, 844], [768, 1024], [1280, 800]]) {
+    await page.setViewportSize({ width, height });
     for (const size of ['100%', '200%']) {
       await page.evaluate(value => { document.documentElement.style.fontSize = value; }, size);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
@@ -359,4 +359,75 @@ test('Monatsrückkehr verwirft die noch ausstehende Antwort der verlassenen Ansi
   held.release(); await answered;
   await expect(page.locator('.summary-money')).toHaveText('80,00 €');
   expect(await page.evaluate(() => (window as any).leftSummary.value())).toBeNull();
+});
+
+test('veraltete Summary vor PUT wird verworfen und spätes Budget-GET erhält Entwurf', async ({ page, request }) => {
+  await login(page, await account(request));
+  await page.getByLabel('Monatsbudget in Euro').fill('100');
+  await page.getByRole('button', { name: 'Budget speichern', exact: true }).click();
+  await expect(page.locator('.summary-money')).toHaveText('100,00 €');
+  const old = gate(), ready = gate(); let reads = 0;
+  await page.route(endpoint, async route => {
+    if (++reads !== 1) return route.continue();
+    const response = await route.fetch(); ready.release(); await old.promise; await route.fulfill({ response });
+  });
+  await refresh(page); await ready.promise;
+  await page.getByLabel('Monatsbudget in Euro').fill('200');
+  await page.getByRole('button', { name: 'Budget speichern', exact: true }).click();
+  await expect(page.locator('#budget-status')).toContainText('wurde gespeichert');
+  await expect(page.locator('.summary-money')).toHaveText('200,00 €');
+  const answered = page.waitForResponse(response => response.url().endsWith('/month-summary'));
+  old.release(); await answered;
+  await page.unroute(endpoint);
+  await expect(page.locator('.summary-money')).toHaveText('200,00 €');
+  await expect(page.locator('.money')).toHaveText('200,00 €');
+  const budget = gate(), budgetReady = gate();
+  await page.route('**/api/v2/budget', async route => {
+    const response = await route.fetch(); budgetReady.release(); await budget.promise; await route.fulfill({ response });
+  });
+  await page.evaluate(() => void (window as any).ng.getComponent(document.querySelector('app-month')).loadBudget());
+  await budgetReady.promise;
+  await page.getByLabel('Monatsbudget in Euro').fill('345,67');
+  await expect(page.getByRole('button', { name: 'Budget speichern', exact: true })).toBeDisabled();
+  const budgetAnswered = page.waitForResponse(response => response.url().endsWith('/budget'));
+  budget.release(); await budgetAnswered;
+  await expect(page.getByRole('button', { name: 'Budget speichern', exact: true })).toBeEnabled();
+  await expect(page.locator('.summary-money')).toHaveText('200,00 €');
+  await expect(page.getByLabel('Monatsbudget in Euro')).toHaveValue('345,67');
+});
+
+test('206 ist keine bestätigte Monatsübersicht', async ({ page, request }) => {
+  await page.route(endpoint, route => route.fulfill({ status: 206, headers: summaryHeaders, json: initial }));
+  await login(page, await account(request));
+  await expect(page.locator('#summary-status')).toContainText('konnte nicht geladen werden');
+  await expect(page.locator('.summary-money')).toHaveCount(0);
+});
+
+test('Monatswechsel während fehlgeschlagenem Budget-PUT wird nach der Pause nachgeladen', async ({ page, request }) => {
+  await page.clock.install();
+  let reads = 0;
+  await page.route(endpoint, route => {
+    const first = ++reads === 1;
+    return route.fulfill({ headers: { Date: first ? 'Sat, 31 Oct 2026 22:59:58 GMT' : 'Sat, 31 Oct 2026 23:00:01 GMT' },
+      json: first ? initial : { ...initial, month: '2026-11-01', expensesCents: 0, remainingCents: 10000 } });
+  });
+  await login(page, await account(request));
+  await expect(page.locator('.summary-money')).toHaveText('87,66 €');
+  const held = gate(), ready = gate();
+  await page.route('**/api/v2/budget', async route => {
+    if (route.request().method() !== 'PUT') return route.continue();
+    ready.release(); await held.promise;
+    await route.fulfill({ status: 500, json: { code: 'BUDGET_UNAVAILABLE', message: 'Nicht bestätigt', fieldErrors: {} } });
+  });
+  await page.getByLabel('Monatsbudget in Euro').fill('200');
+  await page.getByRole('button', { name: 'Budget speichern', exact: true }).click(); await ready.promise;
+  await expect(page.locator('#summary-status')).toHaveText('Die Monatsübersicht wird nach dem laufenden Budgetvorgang aktualisiert.');
+  await page.clock.fastForward(3000);
+  expect(reads).toBe(1);
+  held.release();
+  await expect(page.locator('#budget-status')).toContainText('nicht bestätigt');
+  await expect(page.locator('app-month-summary')).toContainText('November 2026');
+  await expect(page.locator('.summary-money')).toHaveText('100,00 €');
+  await expect(page.getByLabel('Monatsbudget in Euro')).toHaveValue('200');
+  expect(reads).toBe(2);
 });

@@ -22,7 +22,7 @@ class ExpenseV2IT extends ExpenseIT {
         assertThat(v1.statusCode()).isEqualTo(200);
         assertThat(v1.body()).isEqualTo(call("GET", null, token(first)).body());
         assertThat(update(first, id, "Über v2 geändert", 234).statusCode()).isEqualTo(200);
-        for (String route : List.of("/api/v2/expenses/" + id, "/api/v2/expenses/" + id + "/extra", "/api/v2/budget", "/api/v2/unbekannt")) {
+        for (String route : List.of("/api/v2/expenses/" + id, "/api/v2/expenses/" + id + "/extra", "/api/v2/unbekannt")) {
             var denied = client.send(HttpRequest.newBuilder(URI.create("http://localhost:" + port + route))
                 .header("Authorization", "Bearer " + token(first)).GET().build(), HttpResponse.BodyHandlers.ofString());
             assertThat(denied.statusCode()).as(route).isEqualTo(403);

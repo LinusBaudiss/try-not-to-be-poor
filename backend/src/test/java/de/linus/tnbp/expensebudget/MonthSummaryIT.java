@@ -38,7 +38,7 @@ class MonthSummaryIT {
     static final byte[] KEY = new byte[32];
     static final MutableClock CLOCK = new MutableClock(NOW);
     static final JsonMapper JSON = JsonMapper.builder().build();
-    static final String PATH = "/api/v1/expense-budget/month-summary";
+    String path() { return "/api/v1/expense-budget/month-summary"; }
     @LocalServerPort int port;
     @Autowired DataSource source;
     @Autowired JdbcTemplate jdbc;
@@ -81,7 +81,7 @@ class MonthSummaryIT {
         return call(method, body, bearer, "");
     }
     HttpResponse<String> call(String method, String body, String bearer, String query) throws Exception {
-        var request = HttpRequest.newBuilder(URI.create("http://localhost:" + port + PATH + query));
+        var request = HttpRequest.newBuilder(URI.create("http://localhost:" + port + path() + query));
         if (bearer != null) request.header("Authorization", "Bearer " + bearer);
         if (body != null) request.header("Content-Type", "application/json");
         // Ein fremder Eigentümerheader wird niemals zur Autorisierung verwendet.
@@ -110,6 +110,9 @@ class MonthSummaryIT {
     }
     @Test void matrixUndKontentrennungGebenNurDenAktuellenBerlinMonatZurueck() throws Exception {
         summary(null, 0, null, "2026-10-01");
+        expense(first, "2026-10-02", 1);
+        summary(null, 1, null, "2026-10-01");
+        PostgresFixture.ADMIN.update("DELETE FROM expenses.expenses WHERE user_id = ?", first);
         budget(first, "2026-09-01", 10000); budget(first, "2026-11-01", 99999); budget(second, "2026-10-01", 99999);
         summary(10000L, 0, 10000L, "2026-10-01");
         expense(first, "2026-09-30", 77777); expense(first, "2026-11-01", 55555); expense(second, "2026-10-23", 99999);
@@ -132,6 +135,20 @@ class MonthSummaryIT {
         assertThat(rejected.body()).contains("MONTH_SUMMARY_UNAVAILABLE").doesNotContain(first.toString(), "9007199254740991", "SELECT");
         assertThat(output.getAll()).doesNotContain("9007199254740991", "SELECT amount_cents");
     }
+    @Test void ungueltigerBudgetbestandWirdAuchInZusammengesetzterAnsichtAbgelehnt() throws Exception {
+        budget(first, "2026-10-01", 123);
+        PostgresFixture.ADMIN.execute("ALTER TABLE budget.budgets DROP CONSTRAINT budgets_amount_cents_check");
+        try {
+            PostgresFixture.ADMIN.update("UPDATE budget.budgets SET amount_cents = -1 WHERE user_id = ?", first);
+            var response = call("GET", null, token(first));
+            assertThat(response.statusCode()).isEqualTo(500);
+            assertThat(response.body()).contains("MONTH_SUMMARY_UNAVAILABLE").doesNotContain("budgetCents", first.toString());
+        } finally {
+            PostgresFixture.ADMIN.update("UPDATE budget.budgets SET amount_cents = 123 WHERE user_id = ?", first);
+            PostgresFixture.ADMIN.execute("ALTER TABLE budget.budgets ADD CONSTRAINT budgets_amount_cents_check CHECK (amount_cents BETWEEN 0 AND 9007199254740991)");
+        }
+    }
+
     @Test void jwtUndCookiesKoennenKeineFremdeOderUngepruefteIdentitaetEinbringen() throws Exception {
         var claims = SignedJWT.parse(token(first)).getJWTClaimsSet();
         byte[] wrongKey = KEY.clone(); wrongKey[0] = 1;
@@ -144,7 +161,7 @@ class MonthSummaryIT {
             assertThat(result.statusCode()).isEqualTo(401);
             assertThat(result.body()).doesNotContain("budgetCents", first.toString());
         }
-        var request = HttpRequest.newBuilder(URI.create("http://localhost:" + port + PATH))
+        var request = HttpRequest.newBuilder(URI.create("http://localhost:" + port + path()))
             .header("Cookie", "__Host-tnbp-refresh=synthetisch; __Host-tnbp-csrf=synthetisch").GET().build();
         assertThat(HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString()).statusCode()).isEqualTo(401);
     }

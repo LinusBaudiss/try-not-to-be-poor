@@ -37,3 +37,11 @@
 - source_spec: `_bmad-output/implementation-artifacts/spec-3-4-eigene-ausgaben-im-getrennten-bereich-ueber-api-v2-verwalten.md`
   summary: Bestehende Entwurfsverwerfung beim Verlassen eines Hauptbereichs auf verständliche Verwerfungsentscheidung oder flüchtigen Erhalt prüfen.
   evidence: Blind 3; bereits der Basisstand leert persönliche Formulare bei Routenzerstörung, etwa Monat → Sparziele → Monat; README benennt dieses Verhalten. Der vorhandene Schutz offener Budgetentwürfe gegen Hintergrundantworten bleibt wirksam, schützt aber keinen bereits verlassenen Formularbereich.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-3-5-monatsbudget-und-restbudget-ueber-api-v2-pruefen-und-aendern.md`
+  summary: Abwehr künstlich beschädigter einzelner Ausgaben bei weiterhin gültiger Monatssumme bewerten.
+  evidence: Die unveränderte öffentliche Monatssummenprojektion prüft die Summe, nicht jeden Einzelwert; −1 und 101 würden 100 ergeben. Reguläre Schreibpfade und Datenbank-Constraints verhindern solche Bestände, zusätzliche Verteidigung bei außerplanmäßig beschädigten Daten fehlt bereits vor Story 3.5.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-3-5-monatsbudget-und-restbudget-ueber-api-v2-pruefen-und-aendern.md`
+  summary: Abschlussnachweis eines nach Browsertimeout noch laufenden Budgetvorgangs vor weiteren Mutationen untersuchen.
+  evidence: Der Timeoutnachweis hält eine bereits committete Antwort zurück. Ein ursprünglicher PUT kann dagegen noch auf der Kontosperre warten, während ein ungesperrter Prüf-GET bereits antwortet; dasselbe Risiko bestand beim früheren v1-Budget-Retry. Eine serverseitige Vorgangsidentität oder Abschlussbarriere wäre gesondert zu entwerfen.

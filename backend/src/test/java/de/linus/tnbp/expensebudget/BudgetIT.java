@@ -38,7 +38,7 @@ class BudgetIT {
     static final byte[] KEY = new byte[32];
     static final MutableClock CLOCK = new MutableClock(NOW);
     static final JsonMapper JSON = JsonMapper.builder().build();
-    static final String PATH = "/api/v1/expense-budget/budget";
+    String path() { return "/api/v1/expense-budget/budget"; }
     @LocalServerPort int port;
     @Autowired DataSource source;
     @Autowired JdbcTemplate jdbc;
@@ -81,7 +81,7 @@ class BudgetIT {
         return call(method, body, bearer, "");
     }
     HttpResponse<String> call(String method, String body, String bearer, String query) throws Exception {
-        var request = HttpRequest.newBuilder(URI.create("http://localhost:" + port + PATH + query));
+        var request = HttpRequest.newBuilder(URI.create("http://localhost:" + port + path() + query));
         if (bearer != null) request.header("Authorization", "Bearer " + bearer);
         if (body != null) request.header("Content-Type", "application/json");
         // Ein fremder Eigentümerheader wird niemals zur Autorisierung verwendet.
@@ -114,6 +114,23 @@ class BudgetIT {
             assertThat(rejected.statusCode()).as(body).isEqualTo(400);
             assertThat(JSON.readTree(rejected.body()).path("fieldErrors").has("amountCents")).isTrue();
             assertThat(amount(call("GET", null, token(first)))).isEqualTo(7654);
+        }
+    }
+
+    @Test void ungueltigerGespeicherterBetragWirdNeutralAbgelehnt(CapturedOutput output) throws Exception {
+        save(first, 123);
+        PostgresFixture.ADMIN.execute("ALTER TABLE budget.budgets DROP CONSTRAINT budgets_amount_cents_check");
+        try {
+            for (long invalid : new long[] {-1, Money.MAX_CENTS + 1}) {
+                PostgresFixture.ADMIN.update("UPDATE budget.budgets SET amount_cents = ? WHERE user_id = ?", invalid, first);
+                var response = call("GET", null, token(first));
+                assertThat(response.statusCode()).isEqualTo(500);
+                assertThat(response.body()).contains("BUDGET_UNAVAILABLE").doesNotContain(first.toString(), "9007199254740992", "SELECT");
+            }
+            assertThat(output.getAll()).doesNotContain("9007199254740992");
+        } finally {
+            PostgresFixture.ADMIN.update("UPDATE budget.budgets SET amount_cents = 123 WHERE user_id = ?", first);
+            PostgresFixture.ADMIN.execute("ALTER TABLE budget.budgets ADD CONSTRAINT budgets_amount_cents_check CHECK (amount_cents BETWEEN 0 AND 9007199254740991)");
         }
     }
 
@@ -162,7 +179,7 @@ class BudgetIT {
     }
 
     @Test void cookieAlleinErteiltKeinenBudgetzugangUndBearerPutBenoetigtKeinCookieCsrf() throws Exception {
-        var request = HttpRequest.newBuilder(URI.create("http://localhost:" + port + PATH))
+        var request = HttpRequest.newBuilder(URI.create("http://localhost:" + port + path()))
             .header("Cookie", "__Host-tnbp-refresh=synthetisch; __Host-tnbp-csrf=synthetisch")
             .header("Content-Type", "application/json").PUT(HttpRequest.BodyPublishers.ofString("{\"amountCents\":10}")).build();
         assertThat(HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString()).statusCode()).isEqualTo(401);

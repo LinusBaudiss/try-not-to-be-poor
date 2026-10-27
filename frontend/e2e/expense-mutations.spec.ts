@@ -237,7 +237,7 @@ test('frühere Monate bleiben in der Historie und ändern den aktuellen Rest bei
   const id = crypto.randomUUID(); let items = [{ id, name: 'Früher', amountCents: 100, recordedOn: '2020-01-31' }];
   let summaryReads = 0;
   await page.route('**/api/v2/expenses', route => route.fulfill({ json: items }));
-  await page.route('**/api/v1/expense-budget/month-summary', async route => {
+  await page.route('**/api/v2/month-summary', async route => {
     summaryReads++; await route.fulfill({ headers: { Date: new Date().toUTCString() }, json: { month: '2026-10-01', budgetCents: 10000, expensesCents: 0, remainingCents: 10000 } });
   });
   await page.route(endpoint, async route => {

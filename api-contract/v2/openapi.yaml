@@ -302,6 +302,99 @@ paths:
           $ref: '#/components/responses/ExpenseNotFound'
         '500':
           $ref: '#/components/responses/ExpenseUnavailable'
+  /budget:
+    get:
+      tags: [Budget]
+      operationId: getBudget
+      summary: Eigenes fortlaufendes Budget für den aktuellen Berlin-Kalendermonat lesen
+      security:
+        - AccessBearer: []
+      responses:
+        '200':
+          description: no-store; null bedeutet noch kein Budget, 0 ein gesetztes Nullbudget.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BudgetResponse'
+        '401':
+          $ref: '#/components/responses/SessionRejected'
+        '500':
+          $ref: '#/components/responses/BudgetUnavailable'
+    put:
+      tags: [Budget]
+      operationId: putBudget
+      summary: Eigenes Budget ab aktuellem Berlin-Monat fortlaufend festlegen oder ändern
+      description: Ausschließlich Bearer-Authentifizierung; Cookies bestimmen weder Zugang noch Eigentümer. Frühere Monate bleiben erhalten. Keine Budgetlöschung.
+      security:
+        - AccessBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BudgetRequest'
+      responses:
+        '200':
+          description: Erst nach Commit bestätigt; no-store.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BudgetResponse'
+        '400':
+          description: Ungültige Eingabe, unveränderter Bestand; no-store.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BudgetError'
+        '415':
+          $ref: '#/components/responses/BudgetUnsupportedMediaType'
+        '401':
+          $ref: '#/components/responses/SessionRejected'
+        '500':
+          $ref: '#/components/responses/BudgetUnavailable'
+  /month-summary:
+    get:
+      tags: [MonthSummary]
+      operationId: getMonthSummary
+      summary: Eigenes Budget und Ausgaben des aktuellen Berlin-Monats aus einem Datenbanksnapshot lesen
+      security:
+        - AccessBearer: []
+      responses:
+        '200':
+          description: no-store; fehlendes Budget und Rest sind null, ein Nullbudget ist numerisch.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+            Date:
+              description: Verbindliche HTTP-Serverzeit im RFC-1123-Format (GMT). Der Browser verwendet sie mit der seit Empfang monoton verstrichenen Zeit zur Erkennung eines Monatswechsels, unabhängig von seiner Geräteuhr.
+              required: true
+              schema:
+                type: string
+                example: Tue, 27 Oct 2026 13:00:00 GMT
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MonthSummaryResponse'
+        '401':
+          $ref: '#/components/responses/SessionRejected'
+        '500':
+          description: Monatsübersicht nicht geladen; neutraler Fehler, no-store.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MonthSummaryError'
 components:
   securitySchemes:
     AccessBearer:
@@ -419,6 +512,29 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ExpenseError'
+    BudgetUnavailable:
+      description: Lesen oder Speicherung nicht bestätigt; neutraler Fehler, no-store. Vor erneuter Mutation aktuellen Stand prüfen.
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/NoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BudgetError'
+    BudgetUnsupportedMediaType:
+      description: Nicht unterstützter Content-Type; keine Mutation.
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/NoStore'
+        Accept:
+          description: Unterstützter Medientyp für die Anfrage.
+          schema:
+            type: string
+            example: application/json
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BudgetError'
   schemas:
     RegistrationRequest:
       type: object
@@ -598,3 +714,77 @@ components:
           type: object
           additionalProperties:
             type: string
+    BudgetRequest:
+      type: object
+      additionalProperties: false
+      required: [amountCents]
+      properties:
+        amountCents:
+          type: integer
+          format: int64
+          minimum: 0
+          maximum: 9007199254740991
+          description: Ganze EUR-Cent; Strings, Bruchteile und Überlauf werden ohne Rundung abgelehnt.
+    BudgetResponse:
+      type: object
+      additionalProperties: false
+      required: [amountCents]
+      properties:
+        amountCents:
+          type: integer
+          format: int64
+          nullable: true
+          minimum: 0
+          maximum: 9007199254740991
+    BudgetError:
+      type: object
+      additionalProperties: false
+      required: [code, message, fieldErrors]
+      properties:
+        code:
+          type: string
+          enum: [VALIDATION_FAILED, BUDGET_UNAVAILABLE]
+        message:
+          type: string
+        fieldErrors:
+          type: object
+          additionalProperties:
+            type: string
+    MonthSummaryResponse:
+      type: object
+      additionalProperties: false
+      required: [month, budgetCents, expensesCents, remainingCents]
+      properties:
+        month:
+          type: string
+          format: date
+          description: Erster Kalendertag des einmalig serverseitig bestimmten Europe/Berlin-Monats.
+          pattern: '^(?!0000)\d{4}-(0[1-9]|1[0-2])-01$'
+        budgetCents:
+          type: integer
+          format: int64
+          nullable: true
+          minimum: 0
+          maximum: 9007199254740991
+        expensesCents:
+          type: integer
+          format: int64
+          minimum: 0
+          maximum: 9007199254740991
+        remainingCents:
+          type: integer
+          format: int64
+          nullable: true
+          minimum: -9007199254740991
+          maximum: 9007199254740991
+          description: Exakte Differenz budgetCents minus expensesCents; null genau bei fehlendem Budget.
+    MonthSummaryError:
+      type: object
+      additionalProperties: false
+      required: [code, message]
+      properties:
+        code:
+          type: string
+          enum: [MONTH_SUMMARY_UNAVAILABLE]
+        message:
+          type: string

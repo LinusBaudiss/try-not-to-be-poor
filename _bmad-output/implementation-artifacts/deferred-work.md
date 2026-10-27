@@ -13,3 +13,19 @@
 - source_spec: `_bmad-output/implementation-artifacts/spec-3-2-browserzugang-v2-und-rotes-abmelden.md`
   summary: Eingangsfokus nach Sitzungsende und tatsächliche Screenreader-Ankündigung der Anmeldung manuell prüfen und bei Bedarf nachführen.
   evidence: Review Blind 5; bereits die v1-Abmeldung entfernt die fokussierte Aktion und navigiert ohne ausdrücklich gesetzten Eingangsfokus. Programmatische Rollen, Status und Tastaturwege sind geprüft; die gesprochene Ausgabe und deren zeitliche Ankündigung benötigen einen eigenständigen Screenreader-Test.
+
+- source_spec: `spec-3-3-bestehende-ausgaben-und-budgets-verlustfrei-weiterfuehren.md`
+  summary: Effektive Tabellen-/Spaltenrechte beim Backendstart gegen das vorgesehene Minimalprofil prüfen.
+  evidence: Blind 1; bereits vor Story 3.3 prüfte der Startwächter keine vollständige ACL. Migration und neuer Rechteabgleich setzen das vorgesehene Profil, erkennen jedoch keine anschließend administrativ erweiterten Feldrechte beim direkten Backendstart.
+
+- source_spec: `spec-3-3-bestehende-ausgaben-und-budgets-verlustfrei-weiterfuehren.md`
+  summary: Administrativ hinzugefügte Wechselmöglichkeiten in privilegierte Rollen beim Start erkennen.
+  evidence: Blind 2; bestehender Wächter prüft eigene Attribute und Besitzer-/Migratormitgliedschaften, keine übrigen per SET erreichbaren Rollenattribute. Die vorgesehenen Rollen besitzen solche Mitgliedschaften nicht; PostgreSQL 18 dokumentiert getrennte SET-/INHERIT-Rechte unter https://www.postgresql.org/docs/18/role-membership.html.
+
+- source_spec: `spec-3-3-bestehende-ausgaben-und-budgets-verlustfrei-weiterfuehren.md`
+  summary: Erzwungene RLS zusätzlich auf administrativ aufgeweichte Policysemantik prüfen.
+  evidence: Blind 3; bereits der Basisstand überprüfte beim Start keine Policyinhalte. V9 bewahrt die bestehenden korrekten Policies; ENABLE/FORCE allein würde eine zusätzlich angelegte permissive USING-true-Policy nicht erkennen.
+
+- source_spec: `spec-3-3-bestehende-ausgaben-und-budgets-verlustfrei-weiterfuehren.md`
+  summary: Rechteabgleich bei zusätzlichen geerbten Gruppenrechten um eine effektive Privilegienprüfung ergänzen.
+  evidence: Blind 4; neue Provisionierung entzieht direkte PUBLIC-/runtime-ACLs, keine Rechte anderer Gruppenrollen. Solche administrativ eingerichteten Mitgliedschaften und deren Rechte wären schon vor der Story wirksam; sie werden durch den vorgesehenen Initialisierungsweg nicht angelegt.

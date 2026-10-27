@@ -1,5 +1,6 @@
-package de.linus.tnbp.savingsgoals;
+package de.linus.tnbp.finance.http;
 
+import de.linus.tnbp.savingsgoals.SavingsGoals;
 import de.linus.tnbp.contract.model.SavingsGoalError;
 import de.linus.tnbp.contract.model.SavingsGoalNotFoundError;
 import java.util.Map;
@@ -23,13 +24,13 @@ import tools.jackson.core.JacksonException;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @RestControllerAdvice(assignableTypes = SavingsGoalController.class)
 class SavingsGoalErrors {
-    @ExceptionHandler({SavingsGoalService.NotFound.class, org.springframework.web.method.annotation.MethodArgumentTypeMismatchException.class})
+    @ExceptionHandler({SavingsGoals.NotFound.class, org.springframework.web.method.annotation.MethodArgumentTypeMismatchException.class})
     ResponseEntity<SavingsGoalNotFoundError> missing() {
         return ResponseEntity.status(404).header("Cache-Control", "no-store").body(new SavingsGoalNotFoundError(
             SavingsGoalNotFoundError.CodeEnum.SAVINGS_GOAL_NOT_FOUND, "Das Sparziel wurde nicht gefunden.", Map.of()));
     }
-    @ExceptionHandler(SavingsGoalService.InvalidGoal.class)
-    ResponseEntity<SavingsGoalError> invalid(SavingsGoalService.InvalidGoal failure) {
+    @ExceptionHandler(SavingsGoals.InvalidGoal.class)
+    ResponseEntity<SavingsGoalError> invalid(SavingsGoals.InvalidGoal failure) {
         return bad(SavingsGoalError.CodeEnum.VALIDATION_FAILED, "Prüfe das Sparziel.", failure.fields);
     }
     @ExceptionHandler(MethodArgumentNotValidException.class)

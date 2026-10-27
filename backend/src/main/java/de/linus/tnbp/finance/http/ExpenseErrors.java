@@ -1,5 +1,6 @@
-package de.linus.tnbp.expensebudget;
+package de.linus.tnbp.finance.http;
 
+import de.linus.tnbp.expenses.Expenses;
 import de.linus.tnbp.contract.model.ExpenseError;
 import de.linus.tnbp.contract.model.ExpenseNotFoundError;
 import java.util.Map;
@@ -23,13 +24,13 @@ import tools.jackson.core.JacksonException;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @RestControllerAdvice(assignableTypes = ExpenseController.class)
 class ExpenseErrors {
-    @ExceptionHandler({ExpenseService.NotFound.class, org.springframework.web.method.annotation.MethodArgumentTypeMismatchException.class})
+    @ExceptionHandler({Expenses.NotFound.class, org.springframework.web.method.annotation.MethodArgumentTypeMismatchException.class})
     ResponseEntity<ExpenseNotFoundError> missing() {
         return ResponseEntity.status(404).header("Cache-Control", "no-store").body(new ExpenseNotFoundError(
             ExpenseNotFoundError.CodeEnum.EXPENSE_NOT_FOUND, "Die Ausgabe wurde nicht gefunden.", Map.of()));
     }
-    @ExceptionHandler(ExpenseService.InvalidExpense.class)
-    ResponseEntity<ExpenseError> invalid(ExpenseService.InvalidExpense failure) {
+    @ExceptionHandler(Expenses.InvalidExpense.class)
+    ResponseEntity<ExpenseError> invalid(Expenses.InvalidExpense failure) {
         return bad(ExpenseError.CodeEnum.VALIDATION_FAILED, "Prüfe die Ausgabe.", failure.fields);
     }
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -53,7 +54,7 @@ class ExpenseErrors {
         if ("name".equals(name)) fields.put("name", "Gib einen Namen als Text ein.");
         if ("amountCents".equals(name)) fields.put("amountCents", "Gib einen positiven Betrag bis 90.071.992.547.409,91 Euro in ganzen Cent ein.");
     }
-    @ExceptionHandler(ExpenseService.MonthLimit.class)
+    @ExceptionHandler(Expenses.MonthLimit.class)
     ResponseEntity<ExpenseError> limit() {
         return bad(ExpenseError.CodeEnum.MONTH_LIMIT_EXCEEDED, "Die Monatssumme würde die zulässige Centgrenze überschreiten.",
             Map.of("amountCents", "Dieser Betrag überschreitet die zulässige Monatssumme."));

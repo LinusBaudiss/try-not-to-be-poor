@@ -1,5 +1,6 @@
-package de.linus.tnbp.expensebudget;
+package de.linus.tnbp.finance.http;
 
+import de.linus.tnbp.finance.FinanceApplication;
 import de.linus.tnbp.contract.api.MonthSummaryApi;
 import de.linus.tnbp.contract.model.MonthSummaryResponse;
 import java.util.UUID;
@@ -11,11 +12,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1")
 public class MonthSummaryController implements MonthSummaryApi {
-    private final MonthSummaryService summaries;
-    public MonthSummaryController(MonthSummaryService summaries) { this.summaries = summaries; }
+    private final FinanceApplication summaries;
+    public MonthSummaryController(FinanceApplication summaries) { this.summaries = summaries; }
     @Override public ResponseEntity<MonthSummaryResponse> getMonthSummary() {
         UUID userId = UUID.fromString(SecurityContextHolder.getContext().getAuthentication().getName());
-        var result = summaries.current(userId);
+        var result = summaries.currentSummary(userId);
         return ResponseEntity.ok().header("Cache-Control", "no-store").body(new MonthSummaryResponse()
             .month(result.month()).budgetCents(result.budgetCents()).expensesCents(result.expensesCents()).remainingCents(result.remainingCents()));
     }

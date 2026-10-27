@@ -18,11 +18,23 @@ class DatabaseRoleVerifier implements ApplicationRunner {
         Boolean unsafe = jdbc.queryForObject("""
             SELECT r.rolsuper OR r.rolbypassrls OR r.rolcreaterole OR r.rolcreatedb
                 OR EXISTS (SELECT 1 FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
-                           WHERE n.nspname IN ('access', 'expense_budget', 'savings_goals') AND pg_has_role(current_user, c.relowner, 'MEMBER'))
+                           WHERE n.nspname IN ('access', 'expenses', 'budget', 'savings_goals') AND pg_has_role(current_user, c.relowner, 'MEMBER'))
+                OR EXISTS (SELECT 1 FROM pg_namespace n
+                           WHERE n.nspname IN ('access', 'expenses', 'budget', 'savings_goals')
+                             AND (pg_has_role(current_user, n.nspowner, 'MEMBER') OR has_schema_privilege(current_user, n.oid, 'CREATE')))
             FROM pg_roles r WHERE r.rolname = current_user
             """, Boolean.class);
         if (!Boolean.FALSE.equals(unsafe)) {
             throw new IllegalStateException("Die Laufzeitrolle darf weder privilegiert noch Tabellenbesitzer sein.");
+        }
+        Boolean protectedFinance = jdbc.queryForObject("""
+            SELECT count(*) = 3 AND bool_and(c.relrowsecurity AND c.relforcerowsecurity
+                AND has_schema_privilege(current_user, n.oid, 'USAGE'))
+            FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
+            WHERE (n.nspname, c.relname) IN (('expenses', 'expenses'), ('budget', 'budgets'), ('savings_goals', 'goals'))
+            """, Boolean.class);
+        if (!Boolean.TRUE.equals(protectedFinance)) {
+            throw new IllegalStateException("Die Finanzschemas benötigen minimale Laufzeitrechte und erzwungene RLS.");
         }
     }
 }

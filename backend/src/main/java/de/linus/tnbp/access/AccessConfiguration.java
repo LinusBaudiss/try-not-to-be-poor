@@ -78,30 +78,27 @@ class AccessConfiguration {
                 .sessionAuthenticationStrategy(noSessionAuthentication))
             .csrf(csrf -> csrf.csrfTokenRepository(csrfRepository)
                 .sessionAuthenticationStrategy(noSessionAuthentication)
-                .ignoringRequestMatchers("/api/v1/access/registrations")
-                .ignoringRequestMatchers(request -> request.getMethod().equals("POST")
-                    && request.getServletPath().equals("/api/v2/access/registrations"))
-                // Diese Routen akzeptieren ausschließlich Bearer; Refresh-/CSRF-Cookies erteilen keinen Zugang.
-                .ignoringRequestMatchers(request -> (request.getMethod().equals("PUT")
-                    && (request.getServletPath().equals("/api/v1/expense-budget/budget")
-                        || request.getServletPath().matches("/api/v1/savings-goals/[^/]+/progress")))
-                    || (request.getMethod().equals("POST")
-                    && (request.getServletPath().equals("/api/v1/expense-budget/expenses")
-                        || request.getServletPath().equals("/api/v1/savings-goals")))
-                    || ((request.getMethod().equals("PUT") || request.getMethod().equals("DELETE"))
-                    && (request.getServletPath().matches("/api/v1/expense-budget/expenses/[^/]+")
-                        || request.getServletPath().matches("/api/v1/savings-goals/[^/]+")))))
+                // Resource Server ergänzt sonst eine pauschale Bearer-CSRF-Ausnahme.
+                // Den fertigen Filter auf die konkreten erlaubten Methoden/Pfade begrenzen;
+                // Login/Refresh/Logout benötigen auch mit Bearer weiterhin CSRF.
+                .withObjectPostProcessor(new org.springframework.security.config.ObjectPostProcessor<org.springframework.security.web.csrf.CsrfFilter>() {
+                    @Override public <O extends org.springframework.security.web.csrf.CsrfFilter> O postProcess(O filter) {
+                        filter.setRequireCsrfProtectionMatcher(request ->
+                            org.springframework.security.web.csrf.CsrfFilter.DEFAULT_CSRF_MATCHER.matches(request) && !csrfExempt(request));
+                        return filter;
+                    }
+                }))
             .addFilterBefore(origin, org.springframework.security.web.csrf.CsrfFilter.class)
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.POST, "/api/v1/access/registrations", "/api/v1/access/login",
                     "/api/v1/access/refresh", "/api/v1/access/logout", "/api/v2/access/registrations",
                     "/api/v2/access/login", "/api/v2/access/refresh", "/api/v2/access/logout").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/access/csrf", "/api/v2/access/csrf").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/v1/access/me", "/api/v2/access/me", "/api/v1/expense-budget/budget", "/api/v1/expense-budget/expenses", "/api/v1/expense-budget/month-summary", "/api/v1/savings-goals").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/v1/access/me", "/api/v2/access/me", "/api/v1/expense-budget/budget", "/api/v1/expense-budget/expenses", "/api/v2/expenses", "/api/v1/expense-budget/month-summary", "/api/v1/savings-goals").authenticated()
                 .requestMatchers(HttpMethod.PUT, "/api/v1/expense-budget/budget", "/api/v1/savings-goals/*/progress").authenticated()
-                .requestMatchers(HttpMethod.POST, "/api/v1/expense-budget/expenses", "/api/v1/savings-goals").authenticated()
-                .requestMatchers(HttpMethod.PUT, "/api/v1/expense-budget/expenses/*", "/api/v1/savings-goals/*").authenticated()
-                .requestMatchers(HttpMethod.DELETE, "/api/v1/expense-budget/expenses/*", "/api/v1/savings-goals/*").authenticated()
+                .requestMatchers(HttpMethod.POST, "/api/v1/expense-budget/expenses", "/api/v2/expenses", "/api/v1/savings-goals").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/v1/expense-budget/expenses/*", "/api/v2/expenses/*", "/api/v1/savings-goals/*").authenticated()
+                .requestMatchers(HttpMethod.DELETE, "/api/v1/expense-budget/expenses/*", "/api/v2/expenses/*", "/api/v1/savings-goals/*").authenticated()
                 .anyRequest().denyAll())
             .oauth2ResourceServer(oauth -> oauth.jwt(config -> config.decoder(jwt))
                 .authenticationEntryPoint((request, response, failure) -> SessionHttp.error(response, 401)))
@@ -110,8 +107,8 @@ class AccessConfiguration {
                     request.getServletPath().equals("/api/v1/access/me")
                         || request.getServletPath().equals("/api/v2/access/me")
                         || request.getServletPath().equals("/api/v1/expense-budget/budget")
-                        || request.getServletPath().equals("/api/v1/expense-budget/expenses")
-                        || request.getServletPath().matches("/api/v1/expense-budget/expenses/[^/]+")
+                        || (request.getServletPath().equals("/api/v1/expense-budget/expenses") || request.getServletPath().equals("/api/v2/expenses"))
+                        || (request.getServletPath().matches("/api/v1/expense-budget/expenses/[^/]+") || request.getServletPath().matches("/api/v2/expenses/[^/]+"))
                         || request.getServletPath().equals("/api/v1/expense-budget/month-summary")
                         || request.getServletPath().equals("/api/v1/savings-goals")
                         || request.getServletPath().matches("/api/v1/savings-goals/[^/]+(?:/progress)?") ? 401 : 403))
@@ -121,5 +118,14 @@ class AccessConfiguration {
             .httpBasic(basic -> basic.disable())
             .logout(logout -> logout.disable())
             .build();
+    }
+    private static boolean csrfExempt(jakarta.servlet.http.HttpServletRequest request) {
+        String path = request.getServletPath(), method = request.getMethod();
+        if (method.equals("POST")) return path.equals("/api/v1/access/registrations") || path.equals("/api/v2/access/registrations")
+            || path.equals("/api/v1/expense-budget/expenses") || path.equals("/api/v2/expenses") || path.equals("/api/v1/savings-goals");
+        if (method.equals("PUT") && (path.equals("/api/v1/expense-budget/budget")
+            || path.matches("/api/v1/savings-goals/[^/]+/progress"))) return true;
+        return (method.equals("PUT") || method.equals("DELETE")) && (path.matches("/api/v1/expense-budget/expenses/[^/]+")
+            || path.matches("/api/v2/expenses/[^/]+") || path.matches("/api/v1/savings-goals/[^/]+"));
     }
 }

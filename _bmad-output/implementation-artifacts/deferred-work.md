@@ -29,3 +29,11 @@
 - source_spec: `spec-3-3-bestehende-ausgaben-und-budgets-verlustfrei-weiterfuehren.md`
   summary: Rechteabgleich bei zusätzlichen geerbten Gruppenrechten um eine effektive Privilegienprüfung ergänzen.
   evidence: Blind 4; neue Provisionierung entzieht direkte PUBLIC-/runtime-ACLs, keine Rechte anderer Gruppenrollen. Solche administrativ eingerichteten Mitgliedschaften und deren Rechte wären schon vor der Story wirksam; sie werden durch den vorgesehenen Initialisierungsweg nicht angelegt.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-3-4-eigene-ausgaben-im-getrennten-bereich-ueber-api-v2-verwalten.md`
+  summary: Abschlussbarriere oder Operationsidentität für explizite Wiederholungen nach einem Browsertimeout bewerten.
+  evidence: Blind 2; bereits vor dieser Story konnte eine Mutation nach dem 30-Sekunden-Browsertimeout auf die Kontosperre warten, während ein ungesperrter Historienabruf den alten Bestand liefert. Neuladen und menschliche Prüfung beweisen keinen abgeschlossenen Servervorgang; eine spätere ausdrücklich wiederholte Anlage kann zusätzlich committen. Ein belastbarer Verbesserungsnachweis benötigt einen blockierten ursprünglichen Vorgang über Timeout und Prüfabruf hinweg.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-3-4-eigene-ausgaben-im-getrennten-bereich-ueber-api-v2-verwalten.md`
+  summary: Bestehende Entwurfsverwerfung beim Verlassen eines Hauptbereichs auf verständliche Verwerfungsentscheidung oder flüchtigen Erhalt prüfen.
+  evidence: Blind 3; bereits der Basisstand leert persönliche Formulare bei Routenzerstörung, etwa Monat → Sparziele → Monat; README benennt dieses Verhalten. Der vorhandene Schutz offener Budgetentwürfe gegen Hintergrundantworten bleibt wirksam, schützt aber keinen bereits verlassenen Formularbereich.

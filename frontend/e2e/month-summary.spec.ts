@@ -20,7 +20,7 @@ async function login(page: Page, email: string): Promise<void> {
   await page.getByLabel('Passwort', { exact: true }).fill(password);
   await page.getByRole('button', { name: 'Anmelden', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Monat', exact: true })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Ausgabe speichern', exact: true })).toBeEnabled();
+  await expect(page.getByLabel('Monatsbudget in Euro')).toBeVisible();
 }
 function gate() {
   let release!: () => void;
@@ -75,12 +75,17 @@ test('bestätigte Budget- und Ausgabenänderungen laden neu; Entwürfe und laufe
   await page.getByLabel('Monatsbudget in Euro').fill('300');
   await page.getByRole('button', { name: 'Budget speichern', exact: true }).click();
   await expect(page.locator('#budget-status')).toContainText('nicht bestätigt'); await expect(money).toHaveText('200,00 €');
+  await page.getByRole('link', { name: 'Ausgaben', exact: true }).click();
   await page.getByLabel('Name der Ausgabe').fill('Brot'); await page.getByLabel('Ausgabenbetrag in Euro').fill('12,34');
   await page.getByRole('button', { name: 'Ausgabe speichern', exact: true }).click();
+  await expect(page.locator('#expense-status')).toHaveText('Deine Ausgabe wurde gespeichert.');
+  await page.getByRole('link', { name: 'Monat', exact: true }).click();
   await expect(money).toHaveText('187,66 €');
   let reads = 0;
   await page.route(endpoint, async route => { reads++; await route.continue(); });
-  await page.getByRole('button', { name: 'Ausgaben aktualisieren', exact: true }).click();
+  await page.getByRole('link', { name: 'Ausgaben', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Ausgabe speichern', exact: true })).toBeEnabled();
+  await page.goBack();
   await expect.poll(() => reads).toBe(1); await expect(money).toHaveText('187,66 €');
 });
 
@@ -279,3 +284,79 @@ for (const firstEvent of ['focus', 'visibilitychange'] as const) {
     expect(reads).toBe(3);
   });
 }
+
+test('drei Hauptbereiche trennen Ausgaben und laden nach CRUD auch über Zurück/Vorwärts frische Monatswerte', async ({ page, request }) => {
+  await page.goto('/ausgaben'); await expect(page).toHaveURL('/anmelden');
+  await login(page, await account(request));
+  await expect(page).toHaveURL('/monat');
+  await expect(page.locator('nav a')).toHaveText(['Monat', 'Ausgaben', 'Sparziele']);
+  await expect(page.locator('app-expenses')).toHaveCount(0);
+  await page.getByLabel('Monatsbudget in Euro').fill('100');
+  await page.getByRole('button', { name: 'Budget speichern', exact: true }).click();
+  await expect(page.locator('.summary-money')).toHaveText('100,00 €');
+  await page.getByRole('link', { name: 'Ausgaben', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Ausgaben', exact: true, level: 1 })).toBeFocused();
+  await expect(page.getByRole('link', { name: 'Ausgaben', exact: true })).toHaveAttribute('aria-current', 'page');
+  await expect(page.getByLabel('Monatsbudget in Euro')).toHaveCount(0);
+  await page.getByLabel('Name der Ausgabe').fill('Berlin-Fahrt');
+  await page.getByLabel('Ausgabenbetrag in Euro').fill('12,34');
+  await page.getByRole('button', { name: 'Ausgabe speichern', exact: true }).click();
+  await expect(page.locator('#expense-status')).toHaveText('Deine Ausgabe wurde gespeichert.');
+  await page.goBack();
+  await expect(page.getByRole('heading', { name: 'Monat', exact: true })).toBeFocused();
+  await expect(page.locator('.summary-money')).toHaveText('87,66 €');
+  await page.goForward();
+  await page.getByRole('button', { name: 'Berlin-Fahrt bearbeiten', exact: true }).click();
+  await page.getByLabel('Betrag bearbeiten in Euro').fill('20');
+  await page.getByRole('button', { name: 'Änderungen speichern', exact: true }).click();
+  await expect(page.locator('#expense-status')).toHaveText('Deine Ausgabe wurde geändert.');
+  await page.goBack(); await expect(page.locator('.summary-money')).toHaveText('80,00 €');
+  await page.goForward();
+  await page.getByRole('button', { name: 'Berlin-Fahrt löschen', exact: true }).click();
+  await page.getByRole('button', { name: 'Endgültig löschen', exact: true }).click();
+  await expect(page.getByText('Noch keine Ausgaben erfasst.')).toBeVisible();
+  await page.goBack(); await expect(page.locator('.summary-money')).toHaveText('100,00 €');
+});
+
+test('sichtbare und assistive Systemtexte verzichten auf Zeitzonenerklärungen und erhalten Berlin-Fahrt', async ({ page, request }) => {
+  await login(page, await account(request));
+  for (const area of ['Monat', 'Ausgaben', 'Sparziele']) {
+    await page.getByRole('link', { name: area, exact: true }).click();
+    await expect(page.getByRole('heading', { name: area, exact: true, level: 1 })).toBeVisible();
+    if (area === 'Ausgaben') {
+      await page.getByLabel('Name der Ausgabe').fill('Berlin-Fahrt');
+      await page.getByLabel('Ausgabenbetrag in Euro').fill('1,001');
+      await page.getByRole('button', { name: 'Ausgabe speichern', exact: true }).click();
+      await expect(page.locator('#expense-amount-error')).toBeVisible();
+      await expect(page.getByLabel('Name der Ausgabe')).toHaveValue('Berlin-Fahrt');
+      await page.getByLabel('Ausgabenbetrag in Euro').fill('1');
+      await page.getByRole('button', { name: 'Ausgabe speichern', exact: true }).click();
+      await expect(page.locator('.expense-cards')).toContainText('Berlin-Fahrt');
+      await page.getByRole('button', { name: 'Berlin-Fahrt löschen', exact: true }).click();
+    }
+    const copy = await page.evaluate(() => [document.body.innerText, ...Array.from(document.querySelectorAll('*')).flatMap(element =>
+      ['aria-label', 'aria-description', 'title', 'placeholder', 'alt'].map(attribute => element.getAttribute(attribute) ?? ''))].join('\n'));
+    expect(copy).not.toMatch(/in Berlin|Kalender in Berlin|Europe\/Berlin|Zeitzone/);
+    if (area === 'Ausgaben') await page.getByRole('button', { name: 'Abbrechen', exact: true }).click();
+  }
+});
+
+test('Monatsrückkehr verwirft die noch ausstehende Antwort der verlassenen Ansicht', async ({ page, request }) => {
+  await page.route(endpoint, route => route.fulfill({ headers: summaryHeaders, json: initial }));
+  await login(page, await account(request)); await expect(page.locator('.summary-money')).toHaveText('87,66 €');
+  await page.evaluate(() => { (window as any).leftSummary = (window as any).ng.getComponent(document.querySelector('app-month-summary')); });
+  await page.unroute(endpoint);
+  const held = gate(), ready = gate(); let reads = 0;
+  await page.route(endpoint, async route => {
+    if (++reads === 1) { ready.release(); await held.promise; await route.fulfill({ headers: summaryHeaders, json: initial }); }
+    else await route.fulfill({ headers: summaryHeaders, json: { ...initial, expensesCents: 2000, remainingCents: 8000 } });
+  });
+  await refresh(page); await ready.promise;
+  await page.getByRole('link', { name: 'Ausgaben', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Ausgabe speichern', exact: true })).toBeEnabled();
+  await page.goBack(); await expect(page.locator('.summary-money')).toHaveText('80,00 €');
+  const answered = page.waitForResponse(response => response.url().endsWith('/month-summary'));
+  held.release(); await answered;
+  await expect(page.locator('.summary-money')).toHaveText('80,00 €');
+  expect(await page.evaluate(() => (window as any).leftSummary.value())).toBeNull();
+});

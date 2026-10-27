@@ -404,7 +404,7 @@ test('späte geschützte Angular-Antwort wird nach Sitzungsende als verworfen zu
   await expect(page.getByRole('status')).toHaveText('Du wurdest abgemeldet.');
 });
 
-test('alle sechs Browserzugangsoperationen nutzen ausschließlich v2, Finanzaufgaben bleiben auf v1', async ({ page }) => {
+test('Zugang und Ausgaben nutzen v2; Budget, Monatsübersicht und Sparziele bleiben im Übergang funktionsfähig', async ({ page }) => {
   const access: { path: string; method: string; bearer?: string; csrf?: string; origin?: string }[] = [];
   const headerChecks: Promise<void>[] = [];
   const finances = new Set<string>();
@@ -415,7 +415,7 @@ test('alle sechs Browserzugangsoperationen nutzen ausschließlich v2, Finanzaufg
         access.push({ path, method: request.method(), bearer: headers['authorization'], csrf: headers['x-csrf-token'], origin: headers['origin'] });
       }));
     }
-    if (path.startsWith('/api/v1/') && !path.includes('/access/')) finances.add(path);
+    if (/^\/api\/v[12]\//.test(path) && !path.includes('/access/')) finances.add(`${request.method()} ${path}`);
   });
   const email = `v2-browser-${crypto.randomUUID()}@example.org`;
   await page.goto(`/registrieren#registrationToken=${'a'.repeat(43)}`);
@@ -432,6 +432,20 @@ test('alle sechs Browserzugangsoperationen nutzen ausschließlich v2, Finanzaufg
   await page.getByLabel('Monatsbudget in Euro', { exact: true }).fill('75');
   await page.getByRole('button', { name: 'Budget speichern', exact: true }).click();
   await expect(page.locator('#budget-status')).toContainText('wurde gespeichert');
+  await page.getByRole('link', { name: 'Ausgaben', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Ausgabe speichern', exact: true })).toBeEnabled();
+  await page.getByLabel('Name der Ausgabe').fill('Netzwerkprüfung');
+  await page.getByLabel('Ausgabenbetrag in Euro').fill('1');
+  await page.getByRole('button', { name: 'Ausgabe speichern', exact: true }).click();
+  await expect(page.locator('#expense-status')).toHaveText('Deine Ausgabe wurde gespeichert.');
+  const expenseId = await page.locator('.expense-cards [data-expense-action]').first().getAttribute('data-expense-action');
+  await page.getByRole('button', { name: 'Netzwerkprüfung bearbeiten', exact: true }).click();
+  await page.getByLabel('Betrag bearbeiten in Euro').fill('2');
+  await page.getByRole('button', { name: 'Änderungen speichern', exact: true }).click();
+  await expect(page.locator('#expense-status')).toHaveText('Deine Ausgabe wurde geändert.');
+  await page.getByRole('button', { name: 'Netzwerkprüfung löschen', exact: true }).click();
+  await page.getByRole('button', { name: 'Endgültig löschen', exact: true }).click();
+  await expect(page.locator('#expense-status')).toHaveText('Deine Ausgabe wurde gelöscht.');
   await page.getByRole('link', { name: 'Sparziele', exact: true }).click();
   await expect(page.getByText('Du bist angemeldet. Deine persönlichen Sparziele sind geöffnet.')).toBeVisible();
   await page.reload();
@@ -450,7 +464,11 @@ test('alle sechs Browserzugangsoperationen nutzen ausschließlich v2, Finanzaufg
       expect(item.csrf).toBeTruthy(); expect(item.origin).toBe('https://localhost:4200');
     }
   }
-  expect([...finances]).toEqual(expect.arrayContaining(['/api/v1/expense-budget/budget', '/api/v1/expense-budget/expenses', '/api/v1/expense-budget/month-summary', '/api/v1/savings-goals']));
+  expect([...finances]).toEqual(expect.arrayContaining(['GET /api/v1/expense-budget/budget', 'PUT /api/v1/expense-budget/budget', 'GET /api/v1/expense-budget/month-summary', 'GET /api/v1/savings-goals']));
+  expect([...finances].filter(operation => operation.includes('/api/v2/expenses')).sort()).toEqual([
+    `DELETE /api/v2/expenses/${expenseId}`, 'GET /api/v2/expenses', 'POST /api/v2/expenses', `PUT /api/v2/expenses/${expenseId}`
+  ]);
+  expect([...finances].filter(operation => operation.includes('/api/v1/expense-budget/expenses'))).toEqual([]);
 });
 
 test('Interceptor begrenzt Bearer auf dieselbe Herkunft und v1/v2 und nimmt öffentliche Zugangspfade aus', async ({ page, request }) => {
@@ -567,14 +585,14 @@ test('Logout und Retry teilen ihren laufenden Widerruf und zeigen einen roten Pe
   expect(calls).toBe(2);
 });
 
-for (const destination of ['Monat', 'Sparziele']) {
+for (const destination of ['Monat', 'Ausgaben', 'Sparziele']) {
   test(`rote Abmeldeaktion in ${destination}: vier Viewports, 200-%-Text, Fokus, Zustände und Kontrast`, async ({ page, request }) => {
     test.setTimeout(90_000);
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await login(page, await account(request));
-    if (destination === 'Sparziele') {
+    if (destination !== 'Monat') {
       await page.getByRole('link', { name: destination, exact: true }).click();
-      await expect(page.getByText('Du bist angemeldet. Deine persönlichen Sparziele sind geöffnet.')).toBeVisible();
+      await expect(page.getByRole('heading', { name: destination, exact: true, level: 1 })).toBeVisible();
     }
     const button = page.getByRole('button', { name: 'Abmelden', exact: true });
     for (const viewport of [{ width: 320, height: 568 }, { width: 390, height: 844 }, { width: 768, height: 1024 }, { width: 1280, height: 800 }]) {
@@ -669,17 +687,17 @@ test('Offline-Abmeldung schließt lokal und bietet den Widerrufs-Retry erst nach
   await expect(page.getByRole('status')).toHaveText('Du wurdest abgemeldet.');
 });
 
-test('rote Abmeldung ist in beiden Hauptansichten per Touch bedienbar', async ({ browser, request }) => {
+test('rote Abmeldung ist in allen drei Hauptansichten per Touch bedienbar', async ({ browser, request }) => {
   const context = await browser.newContext({ baseURL: 'https://localhost:4200', ignoreHTTPSErrors: true,
     viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
   try {
     const page = await context.newPage();
     const email = await account(request);
-    for (const destination of ['Monat', 'Sparziele']) {
+    for (const destination of ['Monat', 'Ausgaben', 'Sparziele']) {
       await login(page, email);
-      if (destination === 'Sparziele') {
-        await page.getByRole('link', { name: 'Sparziele', exact: true }).tap();
-        await expect(page.getByRole('heading', { name: 'Sparziele', exact: true })).toBeVisible();
+      if (destination !== 'Monat') {
+        await page.getByRole('link', { name: destination, exact: true }).tap();
+        await expect(page.getByRole('heading', { name: destination, exact: true, level: 1 })).toBeVisible();
       }
       await page.getByRole('button', { name: 'Abmelden', exact: true }).tap();
       await expect(page).toHaveURL('/anmelden');

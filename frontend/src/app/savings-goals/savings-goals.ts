@@ -13,7 +13,7 @@ import { MAX_CENTS, euroInput, formatEuro, parseEuro } from '../shared/money';
   selector: 'app-savings-goals',
   imports: [FormsModule, LogoutButton],
   template: `<section class="auth-card" aria-labelledby="savings-title">
-    <h1 id="savings-title">Sparziele</h1>
+    <h1 id="savings-title" tabindex="-1">Sparziele</h1>
     <p role="status" aria-live="polite" [class.error]="identityFailed()">{{ identityStatus() }}</p>
     @if (identityFailed()) { <button type="button" (click)="open()" [disabled]="opening() || !online()">Zugang erneut prüfen</button> }
     @if (identityConfirmed()) {
@@ -209,6 +209,7 @@ export class SavingsGoals {
   private readonly positiveAmount = 'Gib einen positiven Zielbetrag bis 90071992547409,91 Euro ohne Tausendertrennzeichen mit höchstens zwei Nachkommastellen ein.';
 
   constructor() {
+    this.focus('savings-title');
     effect(() => { if (this.session.userId() !== this.owner || this.session.generation() !== this.version) this.clear(); });
     inject(DestroyRef).onDestroy(() => { this.active = false; this.clear(); });
     void this.open();

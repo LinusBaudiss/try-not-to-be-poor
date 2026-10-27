@@ -1,16 +1,43 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Component, DestroyRef, ElementRef, HostListener, ViewChild, effect, inject, output, signal } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Component, DestroyRef, ElementRef, HostListener, Injectable, ViewChild, effect, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { firstValueFrom, timeout } from 'rxjs';
-import { ExpenseResponse } from '../api/model/expenseResponse';
+import { ExpenseResponse } from '../api/v2/model/expenseResponse';
+import { ExpensesService } from '../api/v2/api/expenses.service';
 import { Session } from '../session/session';
 import { MAX_CENTS, euroInput, formatEuro, parseEuro } from '../shared/money';
+
+// Nur der Vorgangsschutz überlebt eine Ansicht; keine Namen, Beträge, IDs oder Entwürfe.
+@Injectable({ providedIn: 'root' })
+class ExpenseOperations {
+  private readonly session = inject(Session);
+  private version = this.session.generation();
+  private sequence = 0;
+  readonly pending = signal(false);
+  readonly uncertain = signal(false);
+
+  constructor() { effect(() => { this.session.generation(); this.synchronize(); }); }
+  synchronize(): void {
+    if (this.version === this.session.generation()) return;
+    this.version = this.session.generation(); ++this.sequence;
+    this.pending.set(false); this.uncertain.set(false);
+  }
+  begin(): { version: number; sequence: number } {
+    this.synchronize(); this.pending.set(true);
+    return { version: this.version, sequence: ++this.sequence };
+  }
+  abandon(): void { this.synchronize(); if (this.pending()) this.uncertain.set(true); }
+  settle(operation: { version: number; sequence: number }): void {
+    this.synchronize();
+    if (operation.version === this.version && operation.sequence === this.sequence) this.pending.set(false);
+  }
+}
 
 @Component({
   selector: 'app-expenses',
   imports: [FormsModule],
   template: `<section class="expenses" aria-labelledby="expenses-title">
-    <h2 id="expenses-title">Ausgaben</h2>
+    <h2 id="expenses-title">Ausgaben verwalten</h2>
     <form (ngSubmit)="save()" novalidate [attr.aria-busy]="pending()">
       <h3>Ausgabe erfassen</h3>
       <div class="field">
@@ -25,11 +52,11 @@ import { MAX_CENTS, euroInput, formatEuro, parseEuro } from '../shared/money';
         <input id="expense-amount" name="amount" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" required
           [readOnly]="pending()" [ngModel]="amount" (ngModelChange)="edit('amount', $event)"
           [attr.aria-invalid]="!!amountError()" [attr.aria-describedby]="amountError() ? 'expense-hint expense-amount-error' : 'expense-hint'">
-        <p id="expense-hint" class="hint">Positiver Eurobetrag ohne Tausendertrennzeichen, z. B. 12,50. Komma oder Punkt, höchstens zwei Nachkommastellen. Das Datum wird automatisch in Berlin gesetzt.</p>
+        <p id="expense-hint" class="hint">Positiver Eurobetrag ohne Tausendertrennzeichen, z. B. 12,50. Komma oder Punkt, höchstens zwei Nachkommastellen. Das Datum wird automatisch gesetzt.</p>
         @if (amountError()) { <p id="expense-amount-error" class="field-error">{{ amountError() }}</p> }
       </div>
       @if (!online()) { <p class="error">Du bist offline. Dein Entwurf bleibt in diesem Tab erhalten. Speichern ist erst online möglich.</p> }
-      <button type="submit" [disabled]="pending() || loading() || !loaded() || !online()">{{ creating() ? 'Ausgabe wird gespeichert …' : 'Ausgabe speichern' }}</button>
+      <button type="submit" [disabled]="pending() || loading() || !loaded() || !online() || uncertain()">{{ creating() ? 'Ausgabe wird gespeichert …' : 'Ausgabe speichern' }}</button>
     </form>
     @if (editing(); as expense) {
       <form class="expense-editor" (ngSubmit)="update()" novalidate [attr.aria-busy]="pending()" aria-labelledby="expense-edit-title">
@@ -51,7 +78,7 @@ import { MAX_CENTS, euroInput, formatEuro, parseEuro } from '../shared/money';
           @if (editAmountError()) { <p id="expense-edit-amount-error" class="field-error">{{ editAmountError() }}</p> }
         </div>
         <div class="expense-actions">
-          <button type="submit" [disabled]="pending() || loading() || !loaded() || !online()">Änderungen speichern</button>
+          <button type="submit" [disabled]="pending() || loading() || !loaded() || !online() || uncertain()">Änderungen speichern</button>
           <button type="button" (click)="cancelEdit()" [disabled]="pending()">Bearbeitung abbrechen</button>
         </div>
       </form>
@@ -64,11 +91,18 @@ import { MAX_CENTS, euroInput, formatEuro, parseEuro } from '../shared/money';
         <p id="expense-delete-status" tabindex="-1" role="status" aria-live="polite" [class.error]="failed()">{{ deleteStatus() }}</p>
         <div class="expense-actions">
           <button id="expense-delete-cancel" type="button" autofocus (click)="cancelDelete()" [disabled]="pending()">Abbrechen</button>
-          <button type="button" (click)="remove()" [disabled]="pending() || !online()">{{ pending() ? 'Ausgabe wird gelöscht …' : 'Endgültig löschen' }}</button>
+          <button type="button" (click)="remove()" [disabled]="pending() || loading() || !loaded() || !online() || uncertain()">{{ pending() ? 'Ausgabe wird gelöscht …' : 'Endgültig löschen' }}</button>
         </div>
       }
     </dialog>
     <p id="expense-status" tabindex="-1" role="status" aria-live="polite" [class.error]="failed()" [class.success]="saved()">{{ status() }}</p>
+    @if (uncertain()) {
+      <div class="expense-uncertainty" role="status">
+        <p>Der letzte Vorgang ist unbestätigt. Lade die Historie neu und prüfe den gespeicherten Stand vor einem weiteren Versuch. Gleicher Name und Betrag beweisen keinen erfolgreichen Vorgang.</p>
+        <button type="button" (click)="load()" [disabled]="pending() || loading() || !online()">Historie zur Prüfung laden</button>
+        <button type="button" (click)="confirmReview()" [disabled]="!uncertaintyReloaded() || loading() || !loaded()">Ich habe die Historie geprüft</button>
+      </div>
+    }
     <h3 id="history-title" tabindex="-1">Alle Ausgaben</h3>
     @if (loaded()) {
       <button type="button" (click)="load()" [disabled]="pending() || !online()">Ausgaben aktualisieren</button>
@@ -91,7 +125,7 @@ import { MAX_CENTS, euroInput, formatEuro, parseEuro } from '../shared/money';
               <div><dt>Datum</dt><dd>{{ date(expense.recordedOn) }}</dd></div>
             </dl><div class="expense-actions">
               <button type="button" [attr.aria-label]="expense.name + ' bearbeiten'" [attr.data-expense-action]="expense.id" (click)="startEdit(expense, $event)" [disabled]="pending() || loading() || !!editing()">Bearbeiten</button>
-              <button type="button" [attr.aria-label]="expense.name + ' löschen'" [attr.data-expense-action]="expense.id" (click)="startDelete(expense, $event)" [disabled]="pending() || loading()">Löschen</button>
+              <button type="button" [attr.aria-label]="expense.name + ' löschen'" [attr.data-expense-action]="expense.id" (click)="startDelete(expense, $event)" [disabled]="pending() || loading() || uncertain()">Löschen</button>
             </div></li>
           }
         </ul>
@@ -100,7 +134,7 @@ import { MAX_CENTS, euroInput, formatEuro, parseEuro } from '../shared/money';
           <tbody>@for (expense of items(); track expense.id) {
             <tr><td>{{ expense.name }}</td><td class="expense-amount">{{ money(expense.amountCents) }}</td><td>{{ date(expense.recordedOn) }}</td><td><div class="expense-actions">
               <button type="button" [attr.aria-label]="expense.name + ' bearbeiten'" [attr.data-expense-action]="expense.id" (click)="startEdit(expense, $event)" [disabled]="pending() || loading() || !!editing()">Bearbeiten</button>
-              <button type="button" [attr.aria-label]="expense.name + ' löschen'" [attr.data-expense-action]="expense.id" (click)="startDelete(expense, $event)" [disabled]="pending() || loading()">Löschen</button>
+              <button type="button" [attr.aria-label]="expense.name + ' löschen'" [attr.data-expense-action]="expense.id" (click)="startDelete(expense, $event)" [disabled]="pending() || loading() || uncertain()">Löschen</button>
             </div></td></tr>
           }</tbody>
         </table>
@@ -109,9 +143,9 @@ import { MAX_CENTS, euroInput, formatEuro, parseEuro } from '../shared/money';
   </section>`
 })
 export class Expenses {
-  readonly changed = output<void>();
   private readonly session = inject(Session);
-  private readonly http = inject(HttpClient);
+  private readonly api = inject(ExpensesService);
+  private readonly operations = inject(ExpenseOperations);
   private readonly owner = this.session.userId();
   private readonly version = this.session.generation();
   private active = true;
@@ -132,9 +166,11 @@ export class Expenses {
   protected readonly loaded = signal(false);
   protected readonly loading = signal(false);
   protected readonly loadFailed = signal(false);
-  protected readonly pending = signal(false);
+  protected readonly pending = this.operations.pending;
   protected readonly online = signal(navigator.onLine);
   protected readonly status = signal('');
+  protected readonly uncertain = this.operations.uncertain;
+  protected readonly uncertaintyReloaded = signal(false);
   protected readonly saved = signal(false);
   protected readonly failed = signal(false);
   protected readonly nameError = signal('');
@@ -144,9 +180,10 @@ export class Expenses {
   private readonly positiveAmount = 'Gib einen positiven Betrag bis 90071992547409,91 Euro ohne Tausendertrennzeichen mit höchstens zwei Nachkommastellen ein.';
 
   constructor() {
+    this.operations.synchronize();
     effect(() => { if (this.session.userId() !== this.owner || this.session.generation() !== this.version) this.clear(); });
-    inject(DestroyRef).onDestroy(() => { this.active = false; this.clear(); });
-    void this.load(false);
+    inject(DestroyRef).onDestroy(() => { this.operations.abandon(); this.active = false; this.clear(); });
+    void this.load();
   }
   @HostListener('window:online') connected(): void { this.online.set(true); }
   @HostListener('window:offline') disconnected(): void { this.online.set(false); }
@@ -155,20 +192,22 @@ export class Expenses {
     this.saved.set(false); this.failed.set(false); this.status.set('');
     (field === 'name' ? this.nameError : this.amountError).set('');
   }
-  protected async load(notify = true): Promise<void> {
+  protected async load(): Promise<void> {
     if (!this.accepts() || this.loading() || this.pending()) return;
-    this.items.set([]); this.loaded.set(false); this.loading.set(true); this.loadFailed.set(false);
+    this.items.set([]); this.loaded.set(false); this.loading.set(true); this.loadFailed.set(false); this.uncertaintyReloaded.set(false);
     try {
-      const result = await firstValueFrom(this.http.get<ExpenseResponse[]>('/api/v1/expense-budget/expenses').pipe(timeout(30_000)));
+      const response = await firstValueFrom(this.api.getExpenses('response').pipe(timeout(30_000)));
+      const result = response.body;
       if (!this.accepts()) return;
-      if (!Array.isArray(result) || !result.every(value => this.valid(value)) || new Set(result.map(value => value.id)).size !== result.length)
+      if (response.status !== 200 || !Array.isArray(result) || !result.every(value => this.valid(value)) || new Set(result.map(value => value.id)).size !== result.length)
         throw new Error('Ungültige Ausgabenantwort.');
-      this.items.set(this.sort(result)); this.loaded.set(true); if (notify) this.changed.emit();
+      this.items.set(this.sort(result)); this.loaded.set(true);
+      if (this.uncertain()) this.uncertaintyReloaded.set(true);
     } catch { if (this.accepts()) this.loadFailed.set(true); }
     finally { if (this.accepts()) this.loading.set(false); }
   }
   protected async save(): Promise<void> {
-    if (!this.accepts() || this.pending() || this.loading() || !this.loaded() || !this.online()) return;
+    if (!this.accepts() || this.pending() || this.loading() || !this.loaded() || !this.online() || this.uncertain()) return;
     this.saved.set(false); this.failed.set(false); this.nameError.set(''); this.amountError.set('');
     const name = this.name.trim(), amountCents = parseEuro(this.amount);
     if (!name) this.nameError.set('Gib einen Namen für die Ausgabe ein.');
@@ -177,14 +216,15 @@ export class Expenses {
       this.failed.set(true); this.status.set('Prüfe Name und Betrag.');
       this.focus(this.nameError() ? 'expense-name' : 'expense-amount'); return;
     }
-    this.pending.set(true); this.creating.set(true); this.status.set('Ausgabe wird gespeichert …');
+    const operation = this.operations.begin(); this.creating.set(true); this.status.set('Ausgabe wird gespeichert …');
     try {
-      const result = await firstValueFrom(this.http.post<ExpenseResponse>('/api/v1/expense-budget/expenses', { name, amountCents }).pipe(timeout(30_000)));
+      const response = await firstValueFrom(this.api.postExpense({ name, amountCents: amountCents! }, 'response').pipe(timeout(30_000)));
+      const result = response.body;
       if (!this.accepts()) return;
-      if (!this.valid(result) || result.name !== name || result.amountCents !== amountCents || this.items().some(value => value.id === result.id))
+      if (response.status !== 201 || !this.valid(result) || result.name !== name || result.amountCents !== amountCents || this.items().some(value => value.id === result.id))
         throw new Error('Speicherung nicht bestätigt.');
       this.items.set(this.sort([...this.items(), result])); this.name = ''; this.amount = '';
-      this.status.set('Deine Ausgabe wurde gespeichert.'); this.saved.set(true); this.changed.emit(); this.focus('expense-name');
+      this.status.set('Deine Ausgabe wurde gespeichert.'); this.saved.set(true); this.focus('expense-name');
     } catch (failure) {
       if (!this.accepts()) return;
       this.failed.set(true);
@@ -195,10 +235,11 @@ export class Expenses {
         this.status.set('Die Ausgabe wurde nicht gespeichert. Prüfe die Eingaben.');
         this.focus(this.nameError() ? 'expense-name' : this.amountError() ? 'expense-amount' : 'expense-status');
       } else {
+        this.markUncertain();
         this.status.set('Die Speicherung wurde nicht bestätigt. Die Ausgabe wurde möglicherweise bereits gespeichert. Dein Entwurf bleibt erhalten. Aktualisiere und prüfe vor erneutem Speichern die Historie, um Duplikate zu vermeiden.');
         this.focus('expense-status');
       }
-    } finally { if (this.accepts()) { this.pending.set(false); this.creating.set(false); } }
+    } finally { this.operations.settle(operation); if (this.accepts()) this.creating.set(false); }
   }
   protected startEdit(expense: ExpenseResponse, event: Event): void {
     if (!this.accepts() || this.pending() || this.loading() || this.editing()) return;
@@ -220,7 +261,7 @@ export class Expenses {
     this.editing.set(null); this.editName = ''; this.editAmount = ''; this.editNameError.set(''); this.editAmountError.set('');
   }
   protected startDelete(expense: ExpenseResponse, event: Event): void {
-    if (!this.accepts() || this.pending() || this.loading()) return;
+    if (!this.accepts() || this.pending() || this.loading() || this.uncertain()) return;
     this.deleteTrigger = event.currentTarget as HTMLElement;
     this.deleting.set(expense); this.deleteStatus.set(''); this.status.set(''); this.failed.set(false); this.saved.set(false);
     requestAnimationFrame(() => {
@@ -251,13 +292,13 @@ export class Expenses {
     if (kind === 'edit') this.editTrigger = null; else this.deleteTrigger = null;
     requestAnimationFrame(() => {
       if (!this.accepts()) return;
-      if (trigger?.isConnected && trigger.getClientRects().length) trigger.focus();
+      if (trigger?.isConnected && trigger.matches(':enabled') && trigger.getClientRects().length) trigger.focus();
       else document.getElementById('history-title')?.focus();
     });
   }
   protected async update(): Promise<void> {
     const expense = this.editing();
-    if (!expense || !this.accepts() || this.pending() || this.loading() || !this.loaded() || !this.online()) return;
+    if (!expense || !this.accepts() || this.pending() || this.loading() || !this.loaded() || !this.online() || this.uncertain()) return;
     const name = this.editName.trim(), amountCents = parseEuro(this.editAmount);
     this.editNameError.set(!name ? 'Gib einen Namen für die Ausgabe ein.' : '');
     this.editAmountError.set(amountCents === null || amountCents === 0 ? this.positiveAmount : '');
@@ -266,15 +307,15 @@ export class Expenses {
       this.failed.set(true); this.status.set('Prüfe Name und Betrag.');
       this.focus(this.editNameError() ? 'expense-edit-name' : 'expense-edit-amount'); return;
     }
-    this.pending.set(true); this.status.set('Änderungen werden gespeichert …');
+    const operation = this.operations.begin(); this.status.set('Änderungen werden gespeichert …');
     try {
-      const response = await firstValueFrom(this.http.put<ExpenseResponse>(`/api/v1/expense-budget/expenses/${expense.id}`, { name, amountCents }, { observe: 'response' }).pipe(timeout(30_000)));
+      const response = await firstValueFrom(this.api.putExpense(expense.id, { name, amountCents: amountCents! }, 'response').pipe(timeout(30_000)));
       if (!this.accepts()) return;
       const result = response.body;
       if (response.status !== 200 || !this.valid(result) || result.id !== expense.id || result.recordedOn !== expense.recordedOn || result.name !== name || result.amountCents !== amountCents)
         throw new Error('Änderung nicht bestätigt.');
       this.items.set(this.sort(this.items().map(value => value.id === result.id ? result : value)));
-      this.resetEditor(); this.status.set('Deine Ausgabe wurde geändert.'); this.saved.set(true); this.changed.emit(); this.restoreTrigger('edit');
+      this.resetEditor(); this.status.set('Deine Ausgabe wurde geändert.'); this.saved.set(true); this.restoreTrigger('edit');
     } catch (failure) {
       if (!this.accepts()) return;
       this.failed.set(true);
@@ -285,20 +326,21 @@ export class Expenses {
         this.status.set('Die Ausgabe wurde nicht geändert. Prüfe die Eingaben.');
         this.focus(this.editNameError() ? 'expense-edit-name' : this.editAmountError() ? 'expense-edit-amount' : 'expense-status');
       } else {
+        if (!(failure instanceof HttpErrorResponse && failure.status === 404)) this.markUncertain();
         this.status.set(failure instanceof HttpErrorResponse && failure.status === 404
           ? 'Die Ausgabe wurde nicht gefunden. Dein Bearbeitungsentwurf bleibt erhalten. Aktualisiere die Historie.'
           : 'Die Änderung wurde nicht bestätigt. Sie wurde möglicherweise bereits gespeichert. Dein Bearbeitungsentwurf bleibt erhalten. Aktualisiere und prüfe vor erneutem Speichern die Historie.');
         this.focus('expense-status');
       }
-    } finally { if (this.accepts()) this.pending.set(false); }
+    } finally { this.operations.settle(operation); }
   }
   protected async remove(): Promise<void> {
     const expense = this.deleting();
-    if (!expense || !this.accepts() || this.pending() || !this.online()) return;
-    this.pending.set(true); this.failed.set(false); this.saved.set(false); this.deleteStatus.set('Ausgabe wird gelöscht …');
+    if (!expense || !this.accepts() || this.pending() || !this.online() || !this.loaded() || this.loading() || this.uncertain()) return;
+    const operation = this.operations.begin(); this.failed.set(false); this.saved.set(false); this.deleteStatus.set('Ausgabe wird gelöscht …');
     this.focus('expense-delete-status');
     try {
-      const response = await firstValueFrom(this.http.delete(`/api/v1/expense-budget/expenses/${expense.id}`, { observe: 'response', responseType: 'text' }).pipe(timeout(30_000)));
+      const response = await firstValueFrom(this.api.deleteExpense(expense.id, 'response').pipe(timeout(30_000)));
       if (!this.accepts()) return;
       if (response.status !== 204 || response.body) throw new Error('Löschung nicht bestätigt.');
       const index = this.items().findIndex(value => value.id === expense.id);
@@ -306,21 +348,30 @@ export class Expenses {
       this.items.set(remaining);
       if (this.editing()?.id === expense.id) { this.resetEditor(); this.editTrigger = null; }
       this.closeDelete(); this.deleteTrigger = null;
-      this.status.set('Deine Ausgabe wurde gelöscht.'); this.saved.set(true); this.changed.emit();
+      this.status.set('Deine Ausgabe wurde gelöscht.'); this.saved.set(true);
       const next = remaining[index] ?? remaining[index - 1];
       requestAnimationFrame(() => {
         if (!this.accepts()) return;
         const action = next ? [...document.querySelectorAll<HTMLElement>('[data-expense-action]')]
           .find(element => element.dataset['expenseAction'] === next.id && element.matches(':enabled') && element.getClientRects().length > 0) : null;
-        (action ?? document.getElementById('history-title'))?.focus();
+        (action ?? document.getElementById('expense-name'))?.focus();
       });
     } catch (failure) {
       if (!this.accepts()) return;
       this.failed.set(true);
+      if (!(failure instanceof HttpErrorResponse && failure.status === 404)) this.markUncertain();
       this.deleteStatus.set(failure instanceof HttpErrorResponse && failure.status === 404
         ? 'Die Ausgabe wurde nicht gefunden. Schließe den Dialog und aktualisiere die Historie.'
         : 'Die Löschung wurde nicht bestätigt. Die Ausgabe wurde möglicherweise bereits gelöscht. Schließe den Dialog und aktualisiere die Historie, bevor du es erneut versuchst.');
-    } finally { if (this.accepts()) this.pending.set(false); }
+    } finally { this.operations.settle(operation); }
+  }
+  private markUncertain(): void { this.uncertain.set(true); this.uncertaintyReloaded.set(false); }
+  protected confirmReview(): void {
+    if (!this.accepts() || this.pending() || !this.uncertaintyReloaded() || this.loading() || !this.loaded()) return;
+    this.uncertain.set(false); this.uncertaintyReloaded.set(false);
+    this.failed.set(false); this.saved.set(false);
+    this.status.set('Historie geprüft. Ein weiterer Vorgang kann ausdrücklich gestartet werden.');
+    this.focus(this.editing() ? 'expense-edit-name' : 'expense-name');
   }
   protected focusName(): void { this.focus('expense-name'); }
   private accepts(): boolean { return this.active && !!this.owner && this.owner === this.session.userId() && this.version === this.session.generation(); }
@@ -330,6 +381,7 @@ export class Expenses {
   }
   private valid(value: unknown): value is ExpenseResponse {
     if (!value || typeof value !== 'object') return false;
+    if (Object.keys(value).sort().join(',') !== 'amountCents,id,name,recordedOn') return false;
     const e = value as ExpenseResponse;
     return typeof e.id === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(e.id)
       && typeof e.name === 'string' && !!e.name.trim() && Number.isSafeInteger(e.amountCents) && e.amountCents > 0 && e.amountCents <= MAX_CENTS
@@ -343,7 +395,8 @@ export class Expenses {
   }
   private clear(): void {
     this.closeDelete(); this.resetEditor(); this.editTrigger = null; this.deleteTrigger = null; this.creating.set(false);
+    this.uncertaintyReloaded.set(false);
     this.name = ''; this.amount = ''; this.items.set([]); this.loaded.set(false); this.loading.set(false);
-    this.pending.set(false); this.status.set(''); this.nameError.set(''); this.amountError.set(''); this.saved.set(false); this.failed.set(false);
+    this.status.set(''); this.nameError.set(''); this.amountError.set(''); this.saved.set(false); this.failed.set(false);
   }
 }

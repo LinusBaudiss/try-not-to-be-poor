@@ -6,15 +6,14 @@ import { BudgetResponse } from '../api/model/budgetResponse';
 import { Session } from '../session/session';
 import { LogoutButton } from '../session/logout-button';
 import { SessionsService } from '../api/v2/api/sessions.service';
-import { Expenses } from './expenses';
 import { MonthSummary } from './month-summary';
 import { MAX_CENTS, euroInput, formatEuro, parseEuro } from '../shared/money';
 
 @Component({
   selector: 'app-month',
-  imports: [FormsModule, Expenses, MonthSummary, LogoutButton],
+  imports: [FormsModule, MonthSummary, LogoutButton],
   template: `<section class="auth-card" aria-labelledby="month-title">
-    <h1 id="month-title">Monat</h1>
+    <h1 id="month-title" tabindex="-1">Monat</h1>
     <p id="identity-status" role="status" aria-live="polite" [class.error]="identityFailed()">{{ identityStatus() }}</p>
     @if (identityFailed()) { <button type="button" (click)="open()" [disabled]="opening() || !online()">Zugang erneut prüfen</button> }
     @if (identityConfirmed()) {
@@ -30,7 +29,7 @@ import { MAX_CENTS, euroInput, formatEuro, parseEuro } from '../shared/money';
         } @else {
           <p class="budget-value">Dein Monatsbudget: <strong class="money">{{ money(amountCents()!) }}</strong></p>
         }
-        <p id="budget-scope" class="hint budget-scope">Dein Budget gilt für den laufenden Kalendermonat in Berlin und danach. Änderungen gelten sofort; frühere Monate behalten ihren Betrag.</p>
+        <p id="budget-scope" class="hint budget-scope">Dein Budget gilt für den laufenden Kalendermonat und danach. Änderungen gelten sofort; frühere Monate behalten ihren Betrag.</p>
         <form (ngSubmit)="save()" novalidate [attr.aria-busy]="pending()">
           <div class="field">
             <label for="budget-amount">Monatsbudget in Euro</label>
@@ -45,7 +44,6 @@ import { MAX_CENTS, euroInput, formatEuro, parseEuro } from '../shared/money';
         </form>
       }
       <p id="budget-status" tabindex="-1" role="status" aria-live="polite" [class.error]="failed()" [class.success]="saved()">{{ status() }}</p>
-      <app-expenses (changed)="refreshSummary()" />
     }
     <app-logout-button />
   </section>`
@@ -88,6 +86,7 @@ export class Month {
   constructor() {
     effect(() => { if (this.session.userId() !== this.owner || this.session.generation() !== this.version) this.clear(); });
     inject(DestroyRef).onDestroy(() => { this.active = false; this.clear(); });
+    this.focus('month-title');
     void this.open();
   }
 

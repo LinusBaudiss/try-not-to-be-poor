@@ -2,7 +2,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test, Page, APIRequestContext } from '@playwright/test';
 
 const password = '  Grüner 🦊 im Baum  ';
-const endpoint = '**/api/v1/expense-budget/expenses/*';
+const endpoint = '**/api/v2/expenses/*';
 async function account(request: APIRequestContext): Promise<string> {
   const email = `mutations-${crypto.randomUUID()}@example.org`;
   expect((await request.post('http://127.0.0.1:8080/api/v2/access/registrations', {
@@ -15,6 +15,8 @@ async function login(page: Page, email: string): Promise<void> {
   await page.getByLabel('E-Mail-Adresse', { exact: true }).fill(email);
   await page.getByLabel('Passwort', { exact: true }).fill(password);
   await page.getByRole('button', { name: 'Anmelden', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Monat', exact: true })).toBeVisible();
+  await page.getByRole('link', { name: 'Ausgaben', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Ausgabe speichern', exact: true })).toBeEnabled();
 }
 async function save(page: Page, name: string, amount: string): Promise<void> {
@@ -35,13 +37,23 @@ async function edit(page: Page, name: string, amount: string) {
   await page.getByLabel('Betrag bearbeiten in Euro', { exact: true }).fill(amount);
 }
 const summaryMoney = (page: Page) => page.locator('app-month-summary .summary-money');
-
-test('Bearbeiten ist vorbelegt, abbrechbar und bestätigt Werte sowie Rest erst nach Antwort; Erfassungsentwurf bleibt', async ({ page, request }) => {
-  await login(page, await account(request));
+async function setBudget(page: Page): Promise<void> {
+  await page.getByRole('link', { name: 'Monat', exact: true }).click();
   await page.getByLabel('Monatsbudget in Euro').fill('100');
   await page.getByRole('button', { name: 'Budget speichern', exact: true }).click();
+  await expect(summaryMoney(page)).toHaveText('100,00 €');
+  await page.getByRole('link', { name: 'Ausgaben', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Ausgabe speichern', exact: true })).toBeEnabled();
+}
+async function reviewHistory(page: Page): Promise<void> {
+  await page.getByRole('button', { name: 'Historie zur Prüfung laden', exact: true }).click();
+  await page.getByRole('button', { name: 'Ich habe die Historie geprüft', exact: true }).click();
+}
+
+test('Bearbeiten ist vorbelegt, abbrechbar und bestätigt Werte erst nach Antwort; Erfassungsentwurf bleibt', async ({ page, request }) => {
+  await login(page, await account(request));
+  await setBudget(page);
   await save(page, 'Brot', '12,34');
-  await expect(summaryMoney(page)).toHaveText('87,66 €');
   const originalDate = await page.locator('.expense-cards dd').last().textContent();
   await page.getByLabel('Name der Ausgabe').fill('Neuer Entwurf');
   await page.getByLabel('Ausgabenbetrag in Euro').fill('7,89');
@@ -63,7 +75,6 @@ test('Bearbeiten ist vorbelegt, abbrechbar und bestätigt Werte sowie Rest erst 
   });
   await page.getByRole('button', { name: 'Änderungen speichern', exact: true }).click(); await ready.promise;
   await expect(page.locator('.expense-cards')).toContainText('12,34 €');
-  await expect(summaryMoney(page)).toHaveText('87,66 €');
   await expect(page.getByRole('button', { name: 'Änderungen speichern', exact: true })).toBeDisabled();
   await expect(page.getByRole('button', { name: 'Ausgabe speichern', exact: true })).toBeDisabled();
   await expect(page.getByRole('button', { name: 'Bearbeitung abbrechen', exact: true })).toBeDisabled();
@@ -73,7 +84,6 @@ test('Bearbeiten ist vorbelegt, abbrechbar und bestätigt Werte sowie Rest erst 
   await expect(page.locator('.expense-cards')).toContainText('Brot korrigiert');
   await expect(page.locator('.expense-cards')).toContainText('20,01 €');
   await expect(page.locator('.expense-cards dd').last()).toHaveText(originalDate!);
-  await expect(summaryMoney(page)).toHaveText('79,99 €');
   await expect(action(page, 'Brot korrigiert', 'bearbeiten')).toBeFocused();
   await expect(page.getByLabel('Name der Ausgabe')).toHaveValue('Neuer Entwurf');
   await expect(page.getByLabel('Ausgabenbetrag in Euro')).toHaveValue('7,89');
@@ -82,7 +92,7 @@ test('Bearbeiten ist vorbelegt, abbrechbar und bestätigt Werte sowie Rest erst 
 
 test('Löschdialog nennt Eintrag und Folge, schließt Fokus ein, startet bei Abbrechen und entfernt erst bestätigt', async ({ page, request }) => {
   await login(page, await account(request));
-  await page.getByLabel('Monatsbudget in Euro').fill('100'); await page.getByRole('button', { name: 'Budget speichern', exact: true }).click();
+  await setBudget(page);
   await save(page, 'Erste', '10'); await save(page, 'Zweite', '20');
   const firstName = await page.locator('.expense-cards li').first().locator('dd').first().textContent();
   const otherName = firstName === 'Erste' ? 'Zweite' : 'Erste';
@@ -105,7 +115,7 @@ test('Löschdialog nennt Eintrag und Folge, schließt Fokus ein, startet bei Abb
     deletes++; const response = await route.fetch(); ready.release(); await held.promise; await route.fulfill({ response });
   });
   await dialog.getByRole('button', { name: 'Endgültig löschen', exact: true }).click(); await ready.promise;
-  await expect(page.locator('.expense-cards li')).toHaveCount(2); await expect(summaryMoney(page)).toHaveText('70,00 €');
+  await expect(page.locator('.expense-cards li')).toHaveCount(2);
   await expect(dialog.getByRole('button', { name: 'Abbrechen', exact: true })).toBeDisabled();
   await expect(page.locator('#expense-delete-status')).toBeFocused();
   await page.keyboard.press('Tab'); await expect(page.locator('#expense-delete-status')).toBeFocused();
@@ -113,12 +123,10 @@ test('Löschdialog nennt Eintrag und Folge, schließt Fokus ein, startet bei Abb
   held.release(); await expect(dialog).not.toBeVisible();
   await expect(page.locator('.expense-cards li')).toHaveCount(1);
   await expect(action(page, otherName, 'bearbeiten')).toBeFocused();
-  await expect(summaryMoney(page)).toHaveText(otherName === 'Erste' ? '90,00 €' : '80,00 €');
   await page.unroute(endpoint);
   await action(page, otherName, 'löschen').click(); await dialog.getByRole('button', { name: 'Endgültig löschen', exact: true }).click();
   await expect(page.getByText('Noch keine Ausgaben erfasst.')).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Alle Ausgaben', exact: true })).toBeFocused();
-  await expect(summaryMoney(page)).toHaveText('100,00 €');
+  await expect(page.getByLabel('Name der Ausgabe')).toBeFocused();
 });
 
 test('Bearbeitungsfelder zeigen verständliche Fehler für leere Namen, Null, Überpräzision und Überlauf ohne Request', async ({ page, request, context }) => {
@@ -155,7 +163,7 @@ test('fehlgeschlagene und ungültige PUT-Antworten bewahren Entwurf und bestäti
   await login(page, await account(request)); await save(page, 'Brot', '1,15');
   const originalDate = (await page.locator('.expense-cards dd').last().textContent())!.split('.').reverse().join('-');
   await action(page, 'Brot', 'bearbeiten').click(); await edit(page, 'Korrektur', '2,34');
-  for (const mode of ['network', 'server', 'missing', 'id', 'date', 'name', 'amount', 'invalid-date', 'fraction', 'wrong-status']) {
+  for (const mode of ['network', 'server', 'missing', 'id', 'date', 'name', 'amount', 'invalid-date', 'fraction', 'wrong-status', 'extra-field']) {
     await page.route(endpoint, async route => {
       if (mode === 'network') return route.abort('failed');
       if (mode === 'server' || mode === 'missing') return route.fulfill({ status: mode === 'server' ? 500 : 404, json: {} });
@@ -164,7 +172,8 @@ test('fehlgeschlagene und ungültige PUT-Antworten bewahren Entwurf und bestäti
         id: mode === 'id' ? crypto.randomUUID() : id,
         name: mode === 'name' ? 'Fremder Name' : 'Korrektur',
         amountCents: mode === 'amount' ? 235 : mode === 'fraction' ? 234.5 : 234,
-        recordedOn: mode === 'invalid-date' ? '2026-02-30' : mode === 'date' ? '2000-01-01' : originalDate
+        recordedOn: mode === 'invalid-date' ? '2026-02-30' : mode === 'date' ? '2000-01-01' : originalDate,
+        ...(mode === 'extra-field' ? { unexpected: true } : {})
       } });
     });
     await page.getByRole('button', { name: 'Änderungen speichern', exact: true }).click();
@@ -174,6 +183,16 @@ test('fehlgeschlagene und ungültige PUT-Antworten bewahren Entwurf und bestäti
     await expect(page.getByLabel('Betrag bearbeiten in Euro')).toHaveValue('2,34');
     await expect(page.locator('.expense-cards')).toContainText('Brot'); await expect(page.locator('.expense-cards')).toContainText('1,15 €');
     await page.unroute(endpoint);
+    if (mode !== 'missing') {
+      await expect(action(page, 'Brot', 'löschen')).toBeDisabled();
+      await page.evaluate(() => {
+        const component = (window as any).ng.getComponent(document.querySelector('app-expenses'));
+        component.startDelete(component.items()[0], { currentTarget: null });
+      });
+      await expect(page.getByRole('dialog')).not.toBeVisible();
+      await reviewHistory(page);
+      await expect(page.getByLabel('Name bearbeiten', { exact: true })).toBeFocused();
+    }
   }
 });
 
@@ -187,6 +206,7 @@ test('verlorene PUT- und DELETE-Antwort nach Commit meldet Ungewissheit; Aktuali
   await page.unroute(endpoint); await page.getByRole('button', { name: 'Ausgaben aktualisieren', exact: true }).click();
   await expect(page.locator('.expense-cards')).toContainText('Korrektur');
   await expect(page.getByLabel('Name bearbeiten', { exact: true })).toHaveValue('Korrektur');
+  await page.getByRole('button', { name: 'Ich habe die Historie geprüft', exact: true }).click();
   await page.getByRole('button', { name: 'Bearbeitung abbrechen', exact: true }).click();
   await action(page, 'Korrektur', 'löschen').click();
   await page.route(endpoint, async route => { const response = await route.fetch(); expect(response.status()).toBe(204); await route.abort('failed'); });
@@ -206,13 +226,17 @@ test('DELETE bestätigt ausschließlich 204, Fehler halten den Dialog und die Hi
     await expect(page.locator('#expense-delete-status')).toContainText(mode === 'missing' ? 'nicht gefunden' : 'nicht bestätigt');
     await expect(page.getByRole('dialog')).toBeVisible(); await expect(page.locator('.expense-cards li')).toHaveCount(1);
     await page.unroute(endpoint);
+    if (mode !== 'missing') {
+      await page.getByRole('dialog').getByRole('button', { name: 'Abbrechen', exact: true }).click();
+      await reviewHistory(page); await action(page, 'Brot', 'löschen').click();
+    }
   }
 });
 
 test('frühere Monate bleiben in der Historie und ändern den aktuellen Rest bei Mutation nicht', async ({ page, request }) => {
   const id = crypto.randomUUID(); let items = [{ id, name: 'Früher', amountCents: 100, recordedOn: '2020-01-31' }];
   let summaryReads = 0;
-  await page.route('**/api/v1/expense-budget/expenses', route => route.fulfill({ json: items }));
+  await page.route('**/api/v2/expenses', route => route.fulfill({ json: items }));
   await page.route('**/api/v1/expense-budget/month-summary', async route => {
     summaryReads++; await route.fulfill({ headers: { Date: new Date().toUTCString() }, json: { month: '2026-10-01', budgetCents: 10000, expensesCents: 0, remainingCents: 10000 } });
   });
@@ -220,15 +244,20 @@ test('frühere Monate bleiben in der Historie und ändern den aktuellen Rest bei
     if (route.request().method() === 'PUT') { items = [{ ...items[0], ...route.request().postDataJSON() }]; await route.fulfill({ json: items[0] }); }
     else { items = []; await route.fulfill({ status: 204 }); }
   });
-  await login(page, await account(request)); await expect(summaryMoney(page)).toHaveText('100,00 €');
+  await login(page, await account(request));
   const initialReads = summaryReads;
   await action(page, 'Früher', 'bearbeiten').click(); await edit(page, 'Früher korrigiert', '99');
   await page.getByRole('button', { name: 'Änderungen speichern', exact: true }).click();
   await expect(page.locator('.expense-cards')).toContainText('31.01.2020'); await expect(page.locator('.expense-cards')).toContainText('99,00 €');
-  await expect.poll(() => summaryReads).toBe(initialReads + 1); await expect(summaryMoney(page)).toHaveText('100,00 €');
+  await page.getByRole('link', { name: 'Monat', exact: true }).click();
+  await expect(summaryMoney(page)).toHaveText('100,00 €');
+  expect(summaryReads).toBe(initialReads + 1);
+  await page.getByRole('link', { name: 'Ausgaben', exact: true }).click();
   await action(page, 'Früher korrigiert', 'löschen').click(); await page.getByRole('button', { name: 'Endgültig löschen', exact: true }).click();
-  await expect.poll(() => summaryReads).toBe(initialReads + 2); await expect(summaryMoney(page)).toHaveText('100,00 €');
   await expect(page.getByText('Noch keine Ausgaben erfasst.')).toBeVisible();
+  await page.goBack();
+  await expect(summaryMoney(page)).toHaveText('100,00 €');
+  expect(summaryReads).toBe(initialReads + 2);
 });
 
 for (const method of ['PUT', 'DELETE']) {
@@ -272,17 +301,17 @@ for (const method of ['PUT', 'DELETE']) {
   });
 }
 
-test('Aktionen, Editor und Dialog sind bei 320/1280 und 100/200 Prozent Text bedienbar, ohne horizontales Scrollen und axe-Fehler', async ({ page, request }) => {
+test('Aktionen, Editor und Dialog sind an vier Viewports und mit 100/200 Prozent Text bedienbar, ohne horizontales Scrollen und axe-Fehler', async ({ page, request }) => {
   await login(page, await account(request));
   const name = 'SehrLangerAusgabenname'.repeat(10); await save(page, name, '90071992547409,91');
-  for (const width of [320, 1280]) for (const size of ['100%', '200%']) {
-    await page.setViewportSize({ width, height: width === 320 ? 568 : 800 });
+  for (const width of [320, 390, 768, 1280]) for (const size of ['100%', '200%']) {
+    await page.setViewportSize({ width, height: ({ 320: 568, 390: 844, 768: 1024, 1280: 800 } as Record<number, number>)[width] });
     await page.evaluate(value => { document.documentElement.style.fontSize = value; }, size);
     await action(page, name, 'bearbeiten').click();
     await expect(page.getByLabel('Name bearbeiten', { exact: true })).toBeFocused();
     await page.keyboard.press('Tab'); await expect(page.getByLabel('Betrag bearbeiten in Euro')).toBeFocused();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
-    const history = width === 320 ? page.locator('.expense-cards') : page.locator('.expense-table');
+    const history = width < 1024 ? page.locator('.expense-cards') : page.locator('.expense-table');
     await expect(history).toBeVisible(); await expect(history).toContainText('90.071.992.547.409,91 €');
     expect(await history.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
     for (const target of [...await history.getByRole('button').all(), ...await page.locator('.expense-editor button, .expense-editor input').all()]) {
@@ -305,14 +334,14 @@ test('fehlgeschlagenes Neuladen sperrt Bearbeitung bei erhaltenem Entwurf bis zu
   await login(page, await account(request)); await save(page, 'Brot', '1');
   await action(page, 'Brot', 'bearbeiten').click(); await edit(page, 'Korrigiert', '2,34');
   let puts = 0; page.on('request', req => { if (req.method() === 'PUT' && /expenses\//.test(req.url())) puts++; });
-  await page.route('**/api/v1/expense-budget/expenses', route => route.fulfill({ status: 500, json: {} }));
+  await page.route('**/api/v2/expenses', route => route.fulfill({ status: 500, json: {} }));
   await page.getByRole('button', { name: 'Ausgaben aktualisieren', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Ausgaben erneut laden', exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Änderungen speichern', exact: true })).toBeDisabled();
   await expect(page.getByLabel('Name bearbeiten', { exact: true })).toHaveValue('Korrigiert');
   await expect(page.getByLabel('Betrag bearbeiten in Euro')).toHaveValue('2,34');
   await page.getByLabel('Betrag bearbeiten in Euro').press('Enter'); expect(puts).toBe(0);
-  await page.unroute('**/api/v1/expense-budget/expenses');
+  await page.unroute('**/api/v2/expenses');
   await page.getByRole('button', { name: 'Ausgaben erneut laden', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Änderungen speichern', exact: true })).toBeEnabled();
   await expect(page.getByLabel('Name bearbeiten', { exact: true })).toHaveValue('Korrigiert');
@@ -373,10 +402,12 @@ test('Abbrechen nach Bearbeitungs- oder Löschfehlern setzt Status und Fehlerges
   await page.getByRole('dialog').getByRole('button', { name: 'Abbrechen', exact: true }).click();
   await expect(page.locator('#expense-status')).toHaveText('Löschen abgebrochen.');
   await expect(page.locator('#expense-status')).not.toHaveClass(/error|success/);
-  await expect(action(page, 'Brot', 'löschen')).toBeFocused();
+  await expect(action(page, 'Brot', 'löschen')).toBeDisabled();
+  await expect(page.getByRole('heading', { name: 'Alle Ausgaben', exact: true })).toBeFocused();
   await expect(page.getByLabel('Betrag bearbeiten in Euro')).toHaveValue('0');
   await page.getByRole('button', { name: 'Bearbeitung abbrechen', exact: true }).click();
   await expect(action(page, 'Brot', 'bearbeiten')).toBeFocused();
+  await reviewHistory(page);
   await action(page, 'Brot', 'löschen').click();
   await expect(page.locator('#expense-delete-status')).toHaveText('');
   await page.keyboard.press('Escape'); await expect(page.locator('#expense-status')).toHaveText('Löschen abgebrochen.');
@@ -399,7 +430,7 @@ for (const method of ['PUT', 'DELETE']) {
     await page.clock.runFor(22);
     const status = page.locator(method === 'PUT' ? '#expense-status' : '#expense-delete-status');
     await expect(status).toContainText('nicht bestätigt'); await expect(status).toContainText('möglicherweise');
-    await expect(submit).toBeEnabled();
+    await expect(submit).toBeDisabled();
     if (method === 'PUT') await expect(page.getByRole('button', { name: 'Bearbeitung abbrechen', exact: true })).toBeEnabled();
     else await expect(page.getByRole('dialog').getByRole('button', { name: 'Abbrechen', exact: true })).toBeEnabled();
     await expect(page.getByLabel('Name bearbeiten', { exact: true })).toHaveValue('Erhaltener Entwurf');

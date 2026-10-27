@@ -1,5 +1,6 @@
-package de.linus.tnbp.expensebudget;
+package de.linus.tnbp.finance.http;
 
+import de.linus.tnbp.budget.Budgets;
 import de.linus.tnbp.contract.model.BudgetError;
 import java.util.Map;
 import org.slf4j.LoggerFactory;
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @RestControllerAdvice(assignableTypes = BudgetController.class)
 class BudgetErrors {
-    @ExceptionHandler({BudgetService.InvalidAmount.class, HttpMessageNotReadableException.class, MethodArgumentNotValidException.class})
+    @ExceptionHandler({Budgets.InvalidAmount.class, HttpMessageNotReadableException.class, MethodArgumentNotValidException.class})
     ResponseEntity<BudgetError> invalid() {
         return ResponseEntity.badRequest().header("Cache-Control", "no-store").body(new BudgetError(
             BudgetError.CodeEnum.VALIDATION_FAILED, "Prüfe den Budgetbetrag.",

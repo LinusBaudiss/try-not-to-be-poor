@@ -1,5 +1,7 @@
-package de.linus.tnbp.savingsgoals;
+package de.linus.tnbp.finance.http;
 
+import de.linus.tnbp.finance.FinanceApplication;
+import de.linus.tnbp.savingsgoals.SavingsGoals;
 import de.linus.tnbp.contract.api.SavingsGoalsApi;
 import de.linus.tnbp.contract.model.SavingsGoalRequest;
 import de.linus.tnbp.contract.model.SavingsGoalProgressRequest;
@@ -14,29 +16,29 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1")
 public class SavingsGoalController implements SavingsGoalsApi {
-    private final SavingsGoalService goals;
-    public SavingsGoalController(SavingsGoalService goals) { this.goals = goals; }
+    private final FinanceApplication goals;
+    public SavingsGoalController(FinanceApplication goals) { this.goals = goals; }
     @Override public ResponseEntity<List<SavingsGoalResponse>> getSavingsGoals() {
-        return ResponseEntity.ok().header("Cache-Control", "no-store").body(goals.all(userId()).stream().map(this::response).toList());
+        return ResponseEntity.ok().header("Cache-Control", "no-store").body(goals.allGoals(userId()).stream().map(this::response).toList());
     }
     @Override public ResponseEntity<SavingsGoalResponse> postSavingsGoal(SavingsGoalRequest input) {
         return ResponseEntity.status(201).header("Cache-Control", "no-store")
-            .body(response(goals.save(userId(), input.getName(), input.getTargetAmountCents(), input.getTargetDate())));
+            .body(response(goals.saveGoal(userId(), input.getName(), input.getTargetAmountCents(), input.getTargetDate())));
     }
     @Override public ResponseEntity<SavingsGoalResponse> putSavingsGoalProgress(UUID id, SavingsGoalProgressRequest input) {
         return ResponseEntity.ok().header("Cache-Control", "no-store")
-            .body(response(goals.progress(userId(), id, input.getProgressCents())));
+            .body(response(goals.progressGoal(userId(), id, input.getProgressCents())));
     }
     @Override public ResponseEntity<SavingsGoalResponse> putSavingsGoal(UUID id, SavingsGoalRequest input) {
         return ResponseEntity.ok().header("Cache-Control", "no-store")
-            .body(response(goals.update(userId(), id, input.getName(), input.getTargetAmountCents(), input.getTargetDate())));
+            .body(response(goals.updateGoal(userId(), id, input.getName(), input.getTargetAmountCents(), input.getTargetDate())));
     }
     @Override public ResponseEntity<Void> deleteSavingsGoal(UUID id) {
-        goals.delete(userId(), id);
+        goals.deleteGoal(userId(), id);
         return ResponseEntity.noContent().header("Cache-Control", "no-store").build();
     }
     private UUID userId() { return UUID.fromString(SecurityContextHolder.getContext().getAuthentication().getName()); }
-    private SavingsGoalResponse response(SavingsGoalRepository.Goal goal) {
+    private SavingsGoalResponse response(SavingsGoals.Goal goal) {
         return new SavingsGoalResponse(goal.id(), goal.name(), goal.targetAmountCents(), goal.progressCents()).targetDate(goal.targetDate());
     }
 }

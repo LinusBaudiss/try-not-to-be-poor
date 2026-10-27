@@ -5,6 +5,9 @@ import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jwt.*;
 import de.linus.tnbp.access.PostgresFixture;
+import de.linus.tnbp.finance.FinanceApplication;
+import de.linus.tnbp.shared.Money;
+import de.linus.tnbp.expenses.Expenses;
 import java.net.URI;
 import java.net.http.*;
 import java.sql.Connection;
@@ -39,7 +42,7 @@ class BudgetIT {
     @LocalServerPort int port;
     @Autowired DataSource source;
     @Autowired JdbcTemplate jdbc;
-    @Autowired BudgetService service;
+    @Autowired FinanceApplication service;
     UUID first, second;
 
     @DynamicPropertySource static void properties(DynamicPropertyRegistry registry) {
@@ -99,7 +102,7 @@ class BudgetIT {
             assertThat(saved.statusCode()).isEqualTo(200); assertThat(amount(saved)).isEqualTo(cents);
             assertThat(amount(call("GET", null, token(first)))).isEqualTo(cents);
         }
-        assertThat(PostgresFixture.ADMIN.queryForObject("SELECT count(*) FROM expense_budget.budgets", Integer.class)).isEqualTo(1);
+        assertThat(PostgresFixture.ADMIN.queryForObject("SELECT count(*) FROM budget.budgets", Integer.class)).isEqualTo(1);
     }
 
     @Test void jsonTypenFehlendeWerteNegativUndUeberlaufWerdenOhneRundungAbgelehnt() throws Exception {
@@ -130,7 +133,7 @@ class BudgetIT {
         CLOCK.now = Instant.parse("2026-10-31T23:00:00Z");
         assertThat(amount(call("GET", null, token(first)))).isEqualTo(100);
         save(first, 200); save(first, 300);
-        assertThat(PostgresFixture.ADMIN.queryForList("SELECT valid_from::text, amount_cents FROM expense_budget.budgets ORDER BY valid_from"))
+        assertThat(PostgresFixture.ADMIN.queryForList("SELECT valid_from::text, amount_cents FROM budget.budgets ORDER BY valid_from"))
             .containsExactly(Map.of("valid_from", "2026-10-01", "amount_cents", 100L), Map.of("valid_from", "2026-11-01", "amount_cents", 300L));
         CLOCK.now = Instant.parse("2026-12-31T23:00:00Z");
         assertThat(amount(call("GET", null, token(first)))).isEqualTo(300);
@@ -168,16 +171,16 @@ class BudgetIT {
 
     @Test void commitFehlerBestaetigtKeineSpeicherungUndVeraendertKeinenBestand(CapturedOutput output) throws Exception {
         save(first, 12345);
-        PostgresFixture.ADMIN.execute("CREATE FUNCTION expense_budget.reject_budget_commit() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'GeheimerBudgetfehler'; RETURN NEW; END $$");
-        PostgresFixture.ADMIN.execute("CREATE CONSTRAINT TRIGGER reject_budget_commit AFTER INSERT OR UPDATE ON expense_budget.budgets DEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION expense_budget.reject_budget_commit()");
+        PostgresFixture.ADMIN.execute("CREATE FUNCTION budget.reject_budget_commit() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'GeheimerBudgetfehler'; RETURN NEW; END $$");
+        PostgresFixture.ADMIN.execute("CREATE CONSTRAINT TRIGGER reject_budget_commit AFTER INSERT OR UPDATE ON budget.budgets DEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION budget.reject_budget_commit()");
         try {
             var result = save(first, 8912345678901234L);
             assertThat(result.statusCode()).isEqualTo(500);
             assertThat(result.body()).contains("BUDGET_UNAVAILABLE").doesNotContain("GeheimerBudgetfehler", "8912345678901234");
             assertThat(amount(call("GET", null, token(first)))).isEqualTo(12345);
         } finally {
-            PostgresFixture.ADMIN.execute("DROP TRIGGER reject_budget_commit ON expense_budget.budgets");
-            PostgresFixture.ADMIN.execute("DROP FUNCTION expense_budget.reject_budget_commit()");
+            PostgresFixture.ADMIN.execute("DROP TRIGGER reject_budget_commit ON budget.budgets");
+            PostgresFixture.ADMIN.execute("DROP FUNCTION budget.reject_budget_commit()");
         }
         assertThat(output.getAll()).contains("Budgetanfrage fehlgeschlagen; Fehlerkategorie=DATENBANK")
             .doesNotContain("GeheimerBudgetfehler", "8912345678901234", "amount_cents =", "INSERT INTO expense_budget");
@@ -190,13 +193,13 @@ class BudgetIT {
         try (Connection connection = runtimeSource.getConnection()) {
             assertThat(count(connection)).isZero();
             assertThat(updateAmount(connection, first, 456)).isZero();
-            assertThat(PostgresFixture.ADMIN.queryForObject("SELECT amount_cents FROM expense_budget.budgets", Long.class)).isEqualTo(123);
+            assertThat(PostgresFixture.ADMIN.queryForObject("SELECT amount_cents FROM budget.budgets", Long.class)).isEqualTo(123);
             connection.setAutoCommit(false);
             context(connection, second);
             assertThat(count(connection)).isZero();
             assertThat(updateAmount(connection, first, 456)).isZero();
-            assertThat(PostgresFixture.ADMIN.queryForObject("SELECT amount_cents FROM expense_budget.budgets", Long.class)).isEqualTo(123);
-            try (var statement = connection.prepareStatement("INSERT INTO expense_budget.budgets VALUES (?, DATE '2026-10-01', 1)")) {
+            assertThat(PostgresFixture.ADMIN.queryForObject("SELECT amount_cents FROM budget.budgets", Long.class)).isEqualTo(123);
+            try (var statement = connection.prepareStatement("INSERT INTO budget.budgets VALUES (?, DATE '2026-10-01', 1)")) {
                 statement.setObject(1, first);
                 assertThatThrownBy(statement::executeUpdate).isInstanceOf(java.sql.SQLException.class);
             }
@@ -206,7 +209,7 @@ class BudgetIT {
             assertThat(count(connection)).isEqualTo(1);
             assertThat(updateAmount(connection, first, 456)).isEqualTo(1);
             connection.commit();
-            assertThat(PostgresFixture.ADMIN.queryForObject("SELECT amount_cents FROM expense_budget.budgets", Long.class)).isEqualTo(456);
+            assertThat(PostgresFixture.ADMIN.queryForObject("SELECT amount_cents FROM budget.budgets", Long.class)).isEqualTo(456);
             assertThat(count(connection)).isZero();
             context(connection, first);
             assertThat(count(connection)).isEqualTo(1);
@@ -214,7 +217,7 @@ class BudgetIT {
             assertThat(count(connection)).isZero();
             connection.rollback();
         }
-        service.current(first); service.save(second, 10L);
+        service.currentBudget(first); service.saveBudget(second, 10L);
         // Prüft alle Poolverbindungen nach echten Anwendungs-Transaktionen, ohne neuen Kontext.
         var connections = new ArrayList<Connection>();
         try {
@@ -223,12 +226,12 @@ class BudgetIT {
         } finally { for (var connection : connections) connection.close(); }
     }
     int updateAmount(Connection connection, UUID user, long amount) throws Exception {
-        try (var statement = connection.prepareStatement("UPDATE expense_budget.budgets SET amount_cents = ? WHERE user_id = ?")) {
+        try (var statement = connection.prepareStatement("UPDATE budget.budgets SET amount_cents = ? WHERE user_id = ?")) {
             statement.setLong(1, amount); statement.setObject(2, user); return statement.executeUpdate();
         }
     }
     long count(Connection connection) throws Exception {
-        try (var statement = connection.createStatement(); var result = statement.executeQuery("SELECT count(*) FROM expense_budget.budgets")) {
+        try (var statement = connection.createStatement(); var result = statement.executeQuery("SELECT count(*) FROM budget.budgets")) {
             result.next(); return result.getLong(1);
         }
     }
@@ -240,19 +243,19 @@ class BudgetIT {
 
     @Test void minimaleRechteForceRlsUndDatenbankConstraintsSindWirksam() {
         var runtime = new JdbcTemplate(new DriverManagerDataSource(PostgresFixture.URL, "tnbp_runtime", "runtime-test-only"));
-        assertThat(PostgresFixture.ADMIN.queryForObject("SELECT relrowsecurity AND relforcerowsecurity FROM pg_class WHERE oid = 'expense_budget.budgets'::regclass", Boolean.class)).isTrue();
+        assertThat(PostgresFixture.ADMIN.queryForObject("SELECT relrowsecurity AND relforcerowsecurity FROM pg_class WHERE oid = 'budget.budgets'::regclass", Boolean.class)).isTrue();
         assertThat(runtime.queryForObject("SELECT rolsuper OR rolbypassrls OR rolcreaterole OR rolcreatedb FROM pg_roles WHERE rolname = current_user", Boolean.class)).isFalse();
-        assertThat(runtime.queryForObject("SELECT pg_has_role(current_user, relowner, 'MEMBER') FROM pg_class WHERE oid = 'expense_budget.budgets'::regclass", Boolean.class)).isFalse();
-        for (String sql : List.of("DELETE FROM expense_budget.budgets", "UPDATE expense_budget.budgets SET user_id = user_id",
-                "UPDATE expense_budget.budgets SET valid_from = valid_from", "ALTER TABLE expense_budget.budgets DISABLE ROW LEVEL SECURITY",
-                "CREATE TABLE expense_budget.forbidden (id integer)", "INSERT INTO expense_budget.budgets VALUES ('" + first + "', DATE '2026-10-01', 1)")) {
+        assertThat(runtime.queryForObject("SELECT pg_has_role(current_user, relowner, 'MEMBER') FROM pg_class WHERE oid = 'budget.budgets'::regclass", Boolean.class)).isFalse();
+        for (String sql : List.of("DELETE FROM budget.budgets", "UPDATE budget.budgets SET user_id = user_id",
+                "UPDATE budget.budgets SET valid_from = valid_from", "ALTER TABLE budget.budgets DISABLE ROW LEVEL SECURITY",
+                "CREATE TABLE budget.forbidden (id integer)", "INSERT INTO budget.budgets VALUES ('" + first + "', DATE '2026-10-01', 1)")) {
             assertThatThrownBy(() -> runtime.execute(sql)).isInstanceOf(DataAccessException.class);
         }
         for (String values : List.of("DATE '2026-10-01', -1", "DATE '2026-10-01', 9007199254740992", "DATE '2026-10-02', 1")) {
-            assertThatThrownBy(() -> PostgresFixture.ADMIN.execute("INSERT INTO expense_budget.budgets VALUES ('" + first + "', " + values + ")"))
+            assertThatThrownBy(() -> PostgresFixture.ADMIN.execute("INSERT INTO budget.budgets VALUES ('" + first + "', " + values + ")"))
                 .isInstanceOf(DataAccessException.class);
         }
-        assertThatThrownBy(() -> PostgresFixture.ADMIN.execute("INSERT INTO expense_budget.budgets VALUES ('" + UUID.randomUUID() + "', DATE '2026-10-01', 1)"))
+        assertThatThrownBy(() -> PostgresFixture.ADMIN.execute("INSERT INTO budget.budgets VALUES ('" + UUID.randomUUID() + "', DATE '2026-10-01', 1)"))
             .isInstanceOf(DataAccessException.class);
     }
 }

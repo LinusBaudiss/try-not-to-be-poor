@@ -1,5 +1,6 @@
-package de.linus.tnbp.expensebudget;
+package de.linus.tnbp.finance.http;
 
+import de.linus.tnbp.finance.FinanceApplication;
 import de.linus.tnbp.contract.api.BudgetApi;
 import de.linus.tnbp.contract.model.BudgetRequest;
 import de.linus.tnbp.contract.model.BudgetResponse;
@@ -12,14 +13,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1")
 public class BudgetController implements BudgetApi {
-    private final BudgetService budgets;
-    public BudgetController(BudgetService budgets) { this.budgets = budgets; }
+    private final FinanceApplication budgets;
+    public BudgetController(FinanceApplication budgets) { this.budgets = budgets; }
 
     @Override public ResponseEntity<BudgetResponse> getBudget() {
-        return response(budgets.current(userId()));
+        return response(budgets.currentBudget(userId()));
     }
     @Override public ResponseEntity<BudgetResponse> putBudget(BudgetRequest input) {
-        return response(budgets.save(userId(), input.getAmountCents()));
+        return response(budgets.saveBudget(userId(), input.getAmountCents()));
     }
     private UUID userId() { return UUID.fromString(SecurityContextHolder.getContext().getAuthentication().getName()); }
     private ResponseEntity<BudgetResponse> response(Long amountCents) {

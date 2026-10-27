@@ -29,7 +29,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 # - Retrospective appends its action items to action_items; the status view surfaces open ones
 generated: 10-22-2026 11:51
-last_updated: 10-26-2026 21:33
+last_updated: 10-27-2026
 project: try-not-to-be-poor
 project_key: NOKEY
 tracking_system: file-system
@@ -53,7 +53,7 @@ development_status:
   epic-3: in-progress
   3-1-eigenen-kontozugang-über-api-v2-nutzen: review
   3-2-in-der-oberfläche-den-neuen-zugang-und-rotes-abmelden-nutzen: review
-  3-3-bestehende-ausgaben-und-budgets-verlustfrei-weiterführen: backlog
+  3-3-bestehende-ausgaben-und-budgets-verlustfrei-weiterführen: review
   3-4-eigene-ausgaben-im-getrennten-bereich-über-api-v2-verwalten: backlog
   3-5-monatsbudget-und-restbudget-über-api-v2-prüfen-und-ändern: backlog
   3-6-eigene-sparziele-und-gesamtfortschritt-über-api-v2-pflegen: backlog

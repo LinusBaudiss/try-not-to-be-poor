@@ -40,8 +40,8 @@ sind weiterhin offen.
   oasdiff **1.30.0** sind festgelegt. npm-Abhängigkeiten stehen im Lockfile.
 
 Frontend und Backend besitzen getrennte Builds. Die statische SPA spricht
-ausschließlich per HTTP mit `/api/v1`. Der Vertrag liegt in
-`api-contract/openapi.yaml` (OpenAPI 3.0.4). Client und Spring-Interfaces werden
+ausschließlich per HTTP mit `/api/v1` und `/api/v2`. Die getrennten Verträge liegen in
+`api-contract/openapi.yaml` und `api-contract/v2/openapi.yaml` (OpenAPI 3.0.4). Client und Spring-Interfaces werden
 generiert, nicht von Hand geändert oder versioniert.
 
 ## Lokal starten
@@ -113,6 +113,12 @@ Migrationsrolle und führt die versionierten Migrationen unter
 erhält Konten und Finanzdaten bei Neustarts.
 Geänderte Kennwörter in der lokalen Datei ändern keine bereits initialisierte
 Datenbank; Rollenkennwörter müssen dann gezielt in PostgreSQL angepasst werden.
+Bei jedem Datenbankstart führt `start-database.sh` zusätzlich
+[`deploy/provision-finance-grants.sql`](deploy/provision-finance-grants.sql)
+als Datenbankadministrator aus. Der wiederholbare Abgleich entzieht überzählige
+Finanzrechte und setzt die benötigten Tabellen-/Spaltenrechte auch auf vorhandenen
+Volumes. Er unterstützt den bisherigen V8- und den neuen V9-Schemastand, legt
+keine Rollen an und ändert keine Kennwörter. Der Migrator bleibt ohne `CREATEROLE`.
 
 `setup.sh` legt auch die benötigte `.local/session.env` an. Beachte vor dem
 Öffnen der Anwendung die Hinweise zu [Sitzungsschlüssel und HTTPS](#sitzungsschlüssel-und-https).
@@ -365,6 +371,68 @@ wiederholen. Der Browser verwendet die generierten v2-Zugangsclients; v2-Identit
 und v1-Finanzaufrufe erhalten den Bearer ausschließlich über den Interceptor für
 dieselbe Herkunft und die unterstützten Hauptversionen. Finanzrouten unter v2,
 v1-Stilllegung und Produktionsfreigabe folgen gesondert.
+
+## Finanzmodule auf V9 umstellen und wiederanlaufen lassen
+
+Story 3.3 verschiebt mit der neuen Migration
+`V9__split_finance_schemas.sql` die vorhandenen Tabellen mittels `SET SCHEMA`:
+`expense_budget.expenses` wird `expenses.expenses`, `expense_budget.budgets`
+wird `budget.budgets`. Tabellenidentität, Constraints, Indizes, RLS und sämtliche
+Bestandszeilen bleiben erhalten. Das alte Schema entfällt. `savings_goals.goals`
+und der eingefrorene v1-Vertrag bleiben erhalten. Öffentliche Modulzugänge
+verwenden eine äußere Kontotransaktion; alle acht Finanzmutationen erwerben
+dieselbe Seed-14-Kontosperre vor Fachlesen und Kalenderbestimmung. Die Monatsansicht
+liest ihre getrennten Projektionen in einem read-only REPEATABLE-READ-Snapshot.
+
+Der kontrollierte lokale Umstellungsweg lautet:
+
+1. Backend und laufende Finanzzugriffe vollständig beenden; synthetischen
+   V8-Bestand bei Bedarf sichern. Kein altes API-Artefakt parallel weiterbetreiben.
+2. `./scripts/start-local/start-database.sh` ausführen. Der administrative
+   Rechteabgleich arbeitet auch bei einem bereits initialisierten Volume.
+3. Das neue Backend starten. Flyway prüft die unveränderten V1–V8-Migrationen
+   und führt V9 vor den Finanzanwendungsfällen mit der Migrationsrolle aus.
+   Bei einem Fehler bleibt der Start fehlgeschlagen; keine manuelle
+   Datenkopie oder Änderung der alten Migrationen vornehmen.
+4. Eigene Ausgabenhistorie, Budget, Monatswerte und Ziele über die bisherigen
+   v1-Finanzrouten prüfen. Der Kontozugang bleibt unter v1 und v2 nutzbar.
+
+`FinanceMigrationIT` prüft einen frischen sowie einen befüllten V8-Stand mit zwei
+Konten, drei Budget-/Ausgabenmonaten und manuellem Fortschritt. Vollständige
+Zeilen- und OID-Vergleiche belegen den Erhalt; derselbe Rechteabgleich läuft
+vor und wiederholt nach V9 ohne Passwortänderung. Anschließend startet der Test
+das tatsächlich paketierte JAR gegen beide migrierten Datenbanken. Beim befüllten
+Bestand lädt es für beide Konten alle bisherigen Finanzansichten über HTTP.
+`FinanceCoordinationIT` belegt außerdem gemeinsame Verbindung/Transaktion,
+Rollback nach Modulschreiben und bei Commitfehler, acht Sperrpfade, Monatswechsel,
+Kontext-/Poolgrenzen und einen Commit zwischen getrennten Monatsprojektionen.
+
+Ein Rücknahmestand muss genau gegen V9 und die beschriebenen Rechte geprüft sein.
+Der Vorgänger `3afa328e23a2766fd2f26ee9d1162737510b9b1d` verwendet noch
+`expense_budget`-SQL und ist dafür ungeeignet. Für die weitere Einführung wird
+das unten identifizierte geprüfte Story-3.3-JAR aufbewahrt. Bei einer Rücknahme
+alle laufenden API-Vorgänge beenden und dieses Artefakt mit derselben geschützten
+Konfiguration gegen den erhaltenen V9-Bestand neu starten. Keine Downmigration,
+Tabellenrückkopie, Datenkürzung oder Fortschrittsrekonstruktion ausführen.
+Negative Fortschritte bleiben durch Validierung und Datenbankgrenze gesperrt;
+Automatikobjekte oder Automatikrouten entstehen mit dieser Story nicht.
+V1-Stilllegung, die vollständige Freigabebarriere und Produktion bleiben eigene
+Voraussetzungen. Nach ersten signierten Werten oder Monatswirkungen ist ein
+Rückfall auf v1 ausgeschlossen.
+
+Geprüftes Rücknahmeartefakt vom **2026-10-27**: `tnbp-0.1.0-SNAPSHOT.jar`,
+SHA-256 `629bcfacb7079922000e3a776a00fa510104b8fb819ec4891420ae085b480a46`.
+Eine unveränderte lokale Kopie liegt unter
+`.local/releases/story-3.3/tnbp-629bcfacb7079922000e3a776a00fa510104b8fb819ec4891420ae085b480a46.jar`;
+`verified-artifact.txt` daneben hält Prüfsumme und Prüfumfang fest.
+Der abschließende Backendlauf umfasst 44 Unit-/Architektur- und 145
+Integrationstests einschließlich des paketierten Wiederanlaufs. Beide
+Vertragsprüfungen samt Client-/SPA-Kompilierung, zwölf Python-Prüfungen und
+162 HTTPS-Browserfälle waren erfolgreich. Der geprüfte Quellstand ist als lokaler
+Release-Snapshot `b4679692fd63f479cd0ab0cdca99942a512d521d` unter
+`refs/bmad/story-3.3-release` gesichert. Dieser Snapshot verändert weder den
+aktuellen Branch noch den Arbeitsbaum; die oben genannte JAR-Prüfsumme identifiziert
+das tatsächlich ausgeführte Artefakt. Der Snapshot ist lokal und wurde nicht gepusht.
 
 Die Python-Prüfungen prüfen neben dem Linkgenerator die getrennten Basisverträge,
 Erstverträge und das Abbrechen des Vertragschecks bei Kompatibilitätsfehlern in

@@ -1,5 +1,6 @@
-package de.linus.tnbp.expensebudget;
+package de.linus.tnbp.finance.http;
 
+import de.linus.tnbp.budget.Budgets;
 import de.linus.tnbp.contract.model.MonthSummaryError;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;

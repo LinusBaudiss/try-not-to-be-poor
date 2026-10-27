@@ -29,4 +29,7 @@ else
   exit 1
 fi
 
-exec "${COMPOSE[@]}" --env-file .local/database.env -f deploy/compose.local.yaml up -d --wait
+"${COMPOSE[@]}" --env-file .local/database.env -f deploy/compose.local.yaml up -d --wait
+"${COMPOSE[@]}" --env-file .local/database.env -f deploy/compose.local.yaml exec -T postgres \
+  psql --set ON_ERROR_STOP=1 --username tnbp_admin --dbname tnbp \
+  --file /opt/tnbp/provision-finance-grants.sql

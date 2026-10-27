@@ -1,5 +1,7 @@
-package de.linus.tnbp.expensebudget;
+package de.linus.tnbp.finance.http;
 
+import de.linus.tnbp.finance.FinanceApplication;
+import de.linus.tnbp.expenses.Expenses;
 import de.linus.tnbp.contract.api.ExpensesApi;
 import de.linus.tnbp.contract.model.ExpenseRequest;
 import de.linus.tnbp.contract.model.ExpenseResponse;
@@ -13,25 +15,25 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1")
 public class ExpenseController implements ExpensesApi {
-    private final ExpenseService expenses;
-    public ExpenseController(ExpenseService expenses) { this.expenses = expenses; }
+    private final FinanceApplication expenses;
+    public ExpenseController(FinanceApplication expenses) { this.expenses = expenses; }
     @Override public ResponseEntity<List<ExpenseResponse>> getExpenses() {
-        return ResponseEntity.ok().header("Cache-Control", "no-store").body(expenses.all(userId()).stream().map(this::response).toList());
+        return ResponseEntity.ok().header("Cache-Control", "no-store").body(expenses.allExpenses(userId()).stream().map(this::response).toList());
     }
     @Override public ResponseEntity<ExpenseResponse> postExpense(ExpenseRequest input) {
         return ResponseEntity.status(201).header("Cache-Control", "no-store")
-            .body(response(expenses.save(userId(), input.getName(), input.getAmountCents())));
+            .body(response(expenses.saveExpense(userId(), input.getName(), input.getAmountCents())));
     }
     @Override public ResponseEntity<ExpenseResponse> putExpense(UUID expenseId, ExpenseRequest input) {
         return ResponseEntity.ok().header("Cache-Control", "no-store")
-            .body(response(expenses.update(userId(), expenseId, input.getName(), input.getAmountCents())));
+            .body(response(expenses.updateExpense(userId(), expenseId, input.getName(), input.getAmountCents())));
     }
     @Override public ResponseEntity<Void> deleteExpense(UUID expenseId) {
-        expenses.delete(userId(), expenseId);
+        expenses.deleteExpense(userId(), expenseId);
         return ResponseEntity.noContent().header("Cache-Control", "no-store").build();
     }
     private UUID userId() { return UUID.fromString(SecurityContextHolder.getContext().getAuthentication().getName()); }
-    private ExpenseResponse response(ExpenseRepository.Expense expense) {
+    private ExpenseResponse response(Expenses.Expense expense) {
         return new ExpenseResponse(expense.id(), expense.name(), expense.amountCents(), expense.recordedOn());
     }
 }

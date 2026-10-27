@@ -5,6 +5,9 @@ import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jwt.*;
 import de.linus.tnbp.access.PostgresFixture;
+import de.linus.tnbp.finance.FinanceApplication;
+import de.linus.tnbp.shared.Money;
+import de.linus.tnbp.expenses.Expenses;
 import java.net.URI;
 import java.net.http.*;
 import java.sql.Connection;
@@ -39,7 +42,7 @@ class SavingsGoalIT {
     @LocalServerPort int port;
     @Autowired DataSource source;
     @Autowired JdbcTemplate jdbc;
-    @Autowired SavingsGoalService service;
+    @Autowired FinanceApplication service;
     UUID first, second;
 
     @DynamicPropertySource static void properties(DynamicPropertyRegistry registry) {
@@ -220,7 +223,7 @@ class SavingsGoalIT {
             context(connection, first); assertThat(count(connection)).isEqualTo(1);
             connection.rollback(); assertThat(count(connection)).isZero();
         }
-        service.all(first); service.save(second, "Zweitkonto", 1L, null);
+        service.allGoals(first); service.saveGoal(second, "Zweitkonto", 1L, null);
         var connections = new ArrayList<Connection>();
         try {
             for (int i = 0; i < 8; i++) connections.add(source.getConnection());
@@ -363,7 +366,7 @@ class SavingsGoalIT {
             }
         }
         assertThat(JSON.readTree(call("GET", null, token(first)).body()).get(0).get("progressCents").asLong()).isEqualTo(3);
-        service.progress(first, UUID.fromString(id), 4L);
+        service.progressGoal(first, UUID.fromString(id), 4L);
         try (Connection connection = source.getConnection()) { assertThat(count(connection)).isZero(); }
     }
 
@@ -459,13 +462,13 @@ class SavingsGoalIT {
             int holderPid;
             try (var result = statement.executeQuery("SELECT pg_backend_pid()")) { result.next(); holderPid = result.getInt(1); }
             statement.executeUpdate("UPDATE savings_goals.goals SET progress_cents = 15000 WHERE id = '" + id + "'");
-            var updated = executor.submit(() -> service.update(first, id, "Parallel", 10000L, null));
+            var updated = executor.submit(() -> service.updateGoal(first, id, "Parallel", 10000L, null));
             awaitRowLock(holderPid); assertThat(updated.isDone()).isFalse();
             connection.commit();
             assertThat(updated.get(5, java.util.concurrent.TimeUnit.SECONDS).progressCents()).isEqualTo(15000);
             context(connection, first);
             statement.executeUpdate("UPDATE savings_goals.goals SET name = 'Noch einmal', target_amount_cents = 20000 WHERE id = '" + id + "'");
-            var progress = executor.submit(() -> service.progress(first, id, 16000L));
+            var progress = executor.submit(() -> service.progressGoal(first, id, 16000L));
             awaitRowLock(holderPid); assertThat(progress.isDone()).isFalse();
             connection.commit();
             var result = progress.get(5, java.util.concurrent.TimeUnit.SECONDS);

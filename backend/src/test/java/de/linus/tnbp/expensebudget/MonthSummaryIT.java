@@ -5,6 +5,9 @@ import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jwt.*;
 import de.linus.tnbp.access.PostgresFixture;
+import de.linus.tnbp.finance.FinanceApplication;
+import de.linus.tnbp.shared.Money;
+import de.linus.tnbp.expenses.Expenses;
 import java.net.URI;
 import java.net.http.*;
 import java.sql.Connection;
@@ -39,8 +42,7 @@ class MonthSummaryIT {
     @LocalServerPort int port;
     @Autowired DataSource source;
     @Autowired JdbcTemplate jdbc;
-    @Autowired MonthSummaryService service;
-    @Autowired MonthSummaryRepository repository;
+    @Autowired FinanceApplication service;
     UUID first, second;
 
     @DynamicPropertySource static void properties(DynamicPropertyRegistry registry) {
@@ -90,10 +92,10 @@ class MonthSummaryIT {
         return response;
     }
     void budget(UUID user, String month, long cents) {
-        PostgresFixture.ADMIN.update("INSERT INTO expense_budget.budgets VALUES (?, ?::date, ?)", user, month, cents);
+        PostgresFixture.ADMIN.update("INSERT INTO budget.budgets VALUES (?, ?::date, ?)", user, month, cents);
     }
     void expense(UUID user, String date, long cents) {
-        PostgresFixture.ADMIN.update("INSERT INTO expense_budget.expenses VALUES (?, ?, 'Synthetisch', ?, ?::date)", UUID.randomUUID(), user, cents, date);
+        PostgresFixture.ADMIN.update("INSERT INTO expenses.expenses VALUES (?, ?, 'Synthetisch', ?, ?::date)", UUID.randomUUID(), user, cents, date);
     }
     void summary(Long budget, long expenses, Long remaining, String month) throws Exception {
         var response = call("GET", null, token(first), "?userId=" + second);
@@ -122,8 +124,8 @@ class MonthSummaryIT {
     @Test void nullbudgetUndCentgrenzenBleibenExaktUndUngueltigeSummenScheiternSicher(CapturedOutput output) throws Exception {
         budget(first, "2026-10-01", 0);
         summary(0L, 0, 0L, "2026-10-01");
-        expense(first, "2026-10-23", BudgetService.MAX_CENTS);
-        summary(0L, BudgetService.MAX_CENTS, -BudgetService.MAX_CENTS, "2026-10-01");
+        expense(first, "2026-10-23", Money.MAX_CENTS);
+        summary(0L, Money.MAX_CENTS, -Money.MAX_CENTS, "2026-10-01");
         expense(first, "2026-10-23", 1);
         var rejected = call("GET", null, token(first));
         assertThat(rejected.statusCode()).isEqualTo(500);
@@ -146,28 +148,27 @@ class MonthSummaryIT {
             .header("Cookie", "__Host-tnbp-refresh=synthetisch; __Host-tnbp-csrf=synthetisch").GET().build();
         assertThat(HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString()).statusCode()).isEqualTo(401);
     }
-    @Test void rlsVerweigertFehlendenUndFalschenKontextAuchImGemeinsamenSnapshot() {
+    @Test void rlsVerweigertFehlendenUndFalschenKontextAufBeidenProjektionen() {
         budget(first, "2026-10-01", 10000); expense(first, "2026-10-23", 1234);
         var runtime = new JdbcTemplate(new DriverManagerDataSource(PostgresFixture.URL, "tnbp_runtime", "runtime-test-only"));
-        var repo = new MonthSummaryRepository(runtime);
-        assertThat(repo.current(first, LocalDate.parse("2026-10-01"))).isEqualTo(new MonthSummaryRepository.Snapshot(null, java.math.BigDecimal.ZERO));
-        var tx = new org.springframework.transaction.support.TransactionTemplate(new org.springframework.jdbc.datasource.DataSourceTransactionManager(runtime.getDataSource()));
-        tx.executeWithoutResult(status -> {
-            repo.context(second);
-            assertThat(repo.current(first, LocalDate.parse("2026-10-01")).budgetCents()).isNull();
-            assertThat(repo.current(first, LocalDate.parse("2026-10-01")).expensesCents()).isEqualByComparingTo("0");
-        });
-        service.current(first);
-        assertThat(repository.current(first, LocalDate.parse("2026-10-01")).budgetCents()).isNull();
-        for (String table : List.of("budgets", "expenses"))
-            assertThat(PostgresFixture.ADMIN.queryForObject("SELECT relrowsecurity AND relforcerowsecurity FROM pg_class WHERE oid = 'expense_budget." + table + "'::regclass", Boolean.class)).isTrue();
+        for (String table : List.of("budget.budgets", "expenses.expenses")) {
+            assertThat(runtime.queryForObject("SELECT count(*) FROM " + table, Integer.class)).isZero();
+            var tx = new org.springframework.transaction.support.TransactionTemplate(new org.springframework.jdbc.datasource.DataSourceTransactionManager(runtime.getDataSource()));
+            tx.executeWithoutResult(status -> {
+                runtime.queryForObject("SELECT set_config('app.user_id', ?, true)", String.class, second.toString());
+                assertThat(runtime.queryForObject("SELECT count(*) FROM " + table + " WHERE user_id = ?", Integer.class, first)).isZero();
+            });
+            assertThat(PostgresFixture.ADMIN.queryForObject("SELECT relrowsecurity AND relforcerowsecurity FROM pg_class WHERE oid = ?::regclass", Boolean.class, table)).isTrue();
+        }
+        service.currentSummary(first);
+        assertThat(runtime.queryForObject("SELECT count(*) FROM budget.budgets", Integer.class)).isZero();
         assertThat(runtime.queryForObject("SELECT rolsuper OR rolbypassrls FROM pg_roles WHERE rolname = current_user", Boolean.class)).isFalse();
     }
     @Test void parallelerCommitZwischenTeilabfragenErgibtKeinenGemischtenDatenstand() throws Exception {
         budget(first, "2026-10-01", 10000); expense(first, "2026-10-23", 1234);
         // Eine restriktive Testpolicy hält die Budget-Teilabfrage an, nachdem der Statement-Snapshot feststeht.
-        PostgresFixture.ADMIN.execute("CREATE FUNCTION expense_budget.wait_summary() RETURNS boolean LANGUAGE plpgsql VOLATILE AS $$ BEGIN PERFORM pg_advisory_xact_lock(150015); RETURN true; END $$");
-        PostgresFixture.ADMIN.execute("CREATE POLICY summary_barrier ON expense_budget.budgets AS RESTRICTIVE FOR SELECT TO tnbp_runtime USING (expense_budget.wait_summary())");
+        PostgresFixture.ADMIN.execute("CREATE FUNCTION budget.wait_summary() RETURNS boolean LANGUAGE plpgsql VOLATILE AS $$ BEGIN PERFORM pg_advisory_xact_lock(150015); RETURN true; END $$");
+        PostgresFixture.ADMIN.execute("CREATE POLICY summary_barrier ON budget.budgets AS RESTRICTIVE FOR SELECT TO tnbp_runtime USING (budget.wait_summary())");
         try (var executor = java.util.concurrent.Executors.newSingleThreadExecutor()) {
             try (Connection lock = PostgresFixture.ADMIN.getDataSource().getConnection()) {
                 lock.setAutoCommit(false);
@@ -183,8 +184,8 @@ class MonthSummaryIT {
                 assertThat(waiting).isTrue();
                 try (Connection writer = PostgresFixture.ADMIN.getDataSource().getConnection()) {
                     writer.setAutoCommit(false);
-                    try (var st = writer.prepareStatement("UPDATE expense_budget.budgets SET amount_cents = 20000 WHERE user_id = ?")) { st.setObject(1, first); st.executeUpdate(); }
-                    try (var st = writer.prepareStatement("UPDATE expense_budget.expenses SET amount_cents = 4321 WHERE user_id = ?")) { st.setObject(1, first); st.executeUpdate(); }
+                    try (var st = writer.prepareStatement("UPDATE budget.budgets SET amount_cents = 20000 WHERE user_id = ?")) { st.setObject(1, first); st.executeUpdate(); }
+                    try (var st = writer.prepareStatement("UPDATE expenses.expenses SET amount_cents = 4321 WHERE user_id = ?")) { st.setObject(1, first); st.executeUpdate(); }
                     writer.commit();
                 }
                 lock.commit();
@@ -194,8 +195,8 @@ class MonthSummaryIT {
                 assertThat(result.get("remainingCents").asLong()).isEqualTo(8766);
             }
         } finally {
-            PostgresFixture.ADMIN.execute("DROP POLICY summary_barrier ON expense_budget.budgets");
-            PostgresFixture.ADMIN.execute("DROP FUNCTION expense_budget.wait_summary()");
+            PostgresFixture.ADMIN.execute("DROP POLICY summary_barrier ON budget.budgets");
+            PostgresFixture.ADMIN.execute("DROP FUNCTION budget.wait_summary()");
         }
         summary(20000L, 4321, 15679L, "2026-10-01");
     }

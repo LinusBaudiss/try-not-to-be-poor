@@ -1,4 +1,4 @@
-package de.linus.tnbp.savingsgoals;
+package de.linus.tnbp.finance.http;
 
 import de.linus.tnbp.contract.model.SavingsGoalRequest;
 import java.time.LocalDate;

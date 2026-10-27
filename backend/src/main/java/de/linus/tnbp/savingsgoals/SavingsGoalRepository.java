@@ -1,5 +1,6 @@
 package de.linus.tnbp.savingsgoals;
 
+import de.linus.tnbp.savingsgoals.SavingsGoals.Goal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -8,13 +9,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class SavingsGoalRepository {
-    record Goal(UUID id, String name, long targetAmountCents, long progressCents, LocalDate targetDate) {}
+class SavingsGoalRepository {
     private final JdbcTemplate jdbc;
-    public SavingsGoalRepository(JdbcTemplate jdbc) { this.jdbc = jdbc; }
-    void context(UUID userId) {
-        jdbc.queryForObject("SELECT set_config('app.user_id', ?, true)", String.class, userId.toString());
-    }
+    SavingsGoalRepository(JdbcTemplate jdbc) { this.jdbc = jdbc; }
     List<Goal> all(UUID userId) {
         return jdbc.query("""
             SELECT id, name, target_amount_cents, progress_cents, target_date FROM savings_goals.goals

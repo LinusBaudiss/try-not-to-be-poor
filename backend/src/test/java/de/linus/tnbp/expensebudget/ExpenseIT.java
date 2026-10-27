@@ -5,6 +5,9 @@ import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jwt.*;
 import de.linus.tnbp.access.PostgresFixture;
+import de.linus.tnbp.finance.FinanceApplication;
+import de.linus.tnbp.shared.Money;
+import de.linus.tnbp.expenses.Expenses;
 import java.net.URI;
 import java.net.http.*;
 import java.sql.Connection;
@@ -39,9 +42,9 @@ class ExpenseIT {
     @LocalServerPort int port;
     @Autowired DataSource source;
     @Autowired JdbcTemplate jdbc;
-    @Autowired ExpenseService service;
-    @Autowired BudgetService budgets;
-    @Autowired MonthSummaryService summaries;
+    @Autowired FinanceApplication service;
+    @Autowired FinanceApplication budgets;
+    @Autowired FinanceApplication summaries;
     UUID first, second;
 
     @DynamicPropertySource static void properties(DynamicPropertyRegistry registry) {
@@ -116,7 +119,7 @@ class ExpenseIT {
         assertThat(list.get(0).get("id").asText()).isLessThan(list.get(1).get("id").asText());
         assertThat(list.get(2)).isEqualTo(entry);
         assertThat(count(second)).isEqualTo(1);
-        assertThat(PostgresFixture.ADMIN.queryForObject("SELECT count(*) FROM expense_budget.expenses WHERE user_id = ?", Integer.class, first)).isEqualTo(3);
+        assertThat(PostgresFixture.ADMIN.queryForObject("SELECT count(*) FROM expenses.expenses WHERE user_id = ?", Integer.class, first)).isEqualTo(3);
     }
 
     @Test void jsonTypenFeldfehlerUndFremdeEigentuemerOderDatumsfelderErzeugenKeineMutation() throws Exception {
@@ -173,7 +176,7 @@ class ExpenseIT {
     }
 
     @Test void monatssummeUndRestBleibenExaktUndAndereKontenOderMonateSindUnabhaengig() throws Exception {
-        long max = BudgetService.MAX_CENTS;
+        long max = Money.MAX_CENTS;
         CLOCK.now = Instant.parse("2026-10-31T22:59:59Z");
         assertThat(save(first, max).statusCode()).isEqualTo(201);
         var rejected = save(first, 1);
@@ -185,13 +188,13 @@ class ExpenseIT {
         assertThat(save(first, 1).statusCode()).isEqualTo(201);
         assertThat(save(first, 1).statusCode()).isEqualTo(400);
         assertThat(count(first)).isEqualTo(3);
-        assertThat(PostgresFixture.ADMIN.queryForObject("SELECT sum(amount_cents) FROM expense_budget.expenses WHERE user_id = ? AND recorded_on = DATE '2026-11-01'", java.math.BigDecimal.class, first))
+        assertThat(PostgresFixture.ADMIN.queryForObject("SELECT sum(amount_cents) FROM expenses.expenses WHERE user_id = ? AND recorded_on = DATE '2026-11-01'", java.math.BigDecimal.class, first))
             .isEqualByComparingTo(java.math.BigDecimal.valueOf(max));
     }
 
     @Test void wartendeErfassungBestimmtDatumUndMonatssummeErstNachDerKontosperre() throws Exception {
         CLOCK.now = Instant.parse("2026-10-31T22:59:59Z");
-        assertThat(save(first, BudgetService.MAX_CENTS).statusCode()).isEqualTo(201);
+        assertThat(save(first, Money.MAX_CENTS).statusCode()).isEqualTo(201);
         String bearer = token(first);
         try (var executor = java.util.concurrent.Executors.newSingleThreadExecutor()) {
             // Die innere Ressource gibt die Sperre auch bei fehlgeschlagenen Assertions vor executor.close frei.
@@ -204,7 +207,7 @@ class ExpenseIT {
                 try (var statement = holder.prepareStatement("SELECT pg_advisory_xact_lock(hashtextextended(?, 14))")) {
                     statement.setString(1, first.toString()); statement.execute();
                 }
-                var pending = executor.submit(() -> call("POST", "{\"name\":\"Neuer Monat\",\"amountCents\":" + BudgetService.MAX_CENTS + "}", bearer));
+                var pending = executor.submit(() -> call("POST", "{\"name\":\"Neuer Monat\",\"amountCents\":" + Money.MAX_CENTS + "}", bearer));
                 long deadline = System.nanoTime() + java.util.concurrent.TimeUnit.SECONDS.toNanos(5);
                 boolean waiting = false;
                 while (!waiting && System.nanoTime() < deadline) {
@@ -223,14 +226,14 @@ class ExpenseIT {
                 assertThat(saved.statusCode()).isEqualTo(201);
                 assertThat(JSON.readTree(saved.body()).get("recordedOn").asText()).isEqualTo("2026-11-01");
                 assertThat(save(first, 1).statusCode()).isEqualTo(400);
-                assertThat(PostgresFixture.ADMIN.queryForObject("SELECT sum(amount_cents) FROM expense_budget.expenses WHERE user_id = ? AND recorded_on = DATE '2026-11-01'", java.math.BigDecimal.class, first))
-                    .isEqualByComparingTo(java.math.BigDecimal.valueOf(BudgetService.MAX_CENTS));
+                assertThat(PostgresFixture.ADMIN.queryForObject("SELECT sum(amount_cents) FROM expenses.expenses WHERE user_id = ? AND recorded_on = DATE '2026-11-01'", java.math.BigDecimal.class, first))
+                    .isEqualByComparingTo(java.math.BigDecimal.valueOf(Money.MAX_CENTS));
             }
         }
     }
 
     @Test void paralleleErfassungenPruefenUndSchreibenUnterDerselbenKontosperre() throws Exception {
-        assertThat(save(first, BudgetService.MAX_CENTS - 5).statusCode()).isEqualTo(201);
+        assertThat(save(first, Money.MAX_CENTS - 5).statusCode()).isEqualTo(201);
         String bearer = token(first);
         try (var executor = java.util.concurrent.Executors.newFixedThreadPool(12)) {
             var gate = new java.util.concurrent.CountDownLatch(1);
@@ -269,16 +272,16 @@ class ExpenseIT {
 
     @Test void commitFehlerBestaetigtNichtsUndVeraendertKeinenBestand(CapturedOutput output) throws Exception {
         save(first, 123);
-        PostgresFixture.ADMIN.execute("CREATE FUNCTION expense_budget.reject_expense_commit() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'GeheimerAusgabenfehler'; RETURN NEW; END $$");
-        PostgresFixture.ADMIN.execute("CREATE CONSTRAINT TRIGGER reject_expense_commit AFTER INSERT ON expense_budget.expenses DEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION expense_budget.reject_expense_commit()");
+        PostgresFixture.ADMIN.execute("CREATE FUNCTION expenses.reject_expense_commit() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'GeheimerAusgabenfehler'; RETURN NEW; END $$");
+        PostgresFixture.ADMIN.execute("CREATE CONSTRAINT TRIGGER reject_expense_commit AFTER INSERT ON expenses.expenses DEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION expenses.reject_expense_commit()");
         try {
             var rejected = save(first, 876543210);
             assertThat(rejected.statusCode()).isEqualTo(500);
             assertThat(rejected.body()).contains("EXPENSE_UNAVAILABLE").doesNotContain("GeheimerAusgabenfehler", "876543210");
             assertThat(count(first)).isEqualTo(1);
         } finally {
-            PostgresFixture.ADMIN.execute("DROP TRIGGER reject_expense_commit ON expense_budget.expenses");
-            PostgresFixture.ADMIN.execute("DROP FUNCTION expense_budget.reject_expense_commit()");
+            PostgresFixture.ADMIN.execute("DROP TRIGGER reject_expense_commit ON expenses.expenses");
+            PostgresFixture.ADMIN.execute("DROP FUNCTION expenses.reject_expense_commit()");
         }
         assertThat(output.getAll()).contains("Ausgabenanfrage fehlgeschlagen; Fehlerkategorie=DATENBANK")
             .doesNotContain("GeheimerAusgabenfehler", "876543210", "INSERT INTO expense_budget");
@@ -292,7 +295,7 @@ class ExpenseIT {
             assertThat(count(connection)).isZero();
             connection.setAutoCommit(false);
             context(connection, second); assertThat(count(connection)).isZero();
-            try (var statement = connection.prepareStatement("INSERT INTO expense_budget.expenses VALUES (?, ?, 'Fremd', 1, DATE '2026-10-23')")) {
+            try (var statement = connection.prepareStatement("INSERT INTO expenses.expenses VALUES (?, ?, 'Fremd', 1, DATE '2026-10-23')")) {
                 statement.setObject(1, UUID.randomUUID()); statement.setObject(2, first);
                 assertThatThrownBy(statement::executeUpdate).isInstanceOf(java.sql.SQLException.class);
             }
@@ -302,7 +305,7 @@ class ExpenseIT {
             context(connection, first); assertThat(count(connection)).isEqualTo(1);
             connection.rollback(); assertThat(count(connection)).isZero();
         }
-        service.all(first); service.save(second, "Zweitkonto", 1L);
+        service.allExpenses(first); service.saveExpense(second, "Zweitkonto", 1L);
         var connections = new ArrayList<Connection>();
         try {
             for (int i = 0; i < 8; i++) connections.add(source.getConnection());
@@ -310,7 +313,7 @@ class ExpenseIT {
         } finally { for (var connection : connections) connection.close(); }
     }
     long count(Connection connection) throws Exception {
-        try (var statement = connection.createStatement(); var result = statement.executeQuery("SELECT count(*) FROM expense_budget.expenses")) {
+        try (var statement = connection.createStatement(); var result = statement.executeQuery("SELECT count(*) FROM expenses.expenses")) {
             result.next(); return result.getLong(1);
         }
     }
@@ -321,23 +324,23 @@ class ExpenseIT {
     }
     @Test void minimaleRechteForceRlsUndConstraintsSindWirksam() {
         var runtime = new JdbcTemplate(new DriverManagerDataSource(PostgresFixture.URL, "tnbp_runtime", "runtime-test-only"));
-        assertThat(PostgresFixture.ADMIN.queryForObject("SELECT relrowsecurity AND relforcerowsecurity FROM pg_class WHERE oid = 'expense_budget.expenses'::regclass", Boolean.class)).isTrue();
+        assertThat(PostgresFixture.ADMIN.queryForObject("SELECT relrowsecurity AND relforcerowsecurity FROM pg_class WHERE oid = 'expenses.expenses'::regclass", Boolean.class)).isTrue();
         assertThat(runtime.queryForObject("SELECT rolsuper OR rolbypassrls OR rolcreaterole OR rolcreatedb FROM pg_roles WHERE rolname = current_user", Boolean.class)).isFalse();
-        assertThat(runtime.queryForObject("SELECT pg_has_role(current_user, relowner, 'MEMBER') FROM pg_class WHERE oid = 'expense_budget.expenses'::regclass", Boolean.class)).isFalse();
-        assertThat(runtime.update("DELETE FROM expense_budget.expenses")).isZero();
-        assertThat(runtime.update("UPDATE expense_budget.expenses SET name = name")).isZero();
-        for (String sql : List.of("UPDATE expense_budget.expenses SET id = id", "UPDATE expense_budget.expenses SET user_id = user_id",
-            "UPDATE expense_budget.expenses SET recorded_on = recorded_on",
-            "ALTER TABLE expense_budget.expenses DISABLE ROW LEVEL SECURITY", "CREATE TABLE expense_budget.forbidden (id integer)",
-            "INSERT INTO expense_budget.expenses VALUES ('" + UUID.randomUUID() + "', '" + first + "', 'Kontextlos', 1, CURRENT_DATE)"))
+        assertThat(runtime.queryForObject("SELECT pg_has_role(current_user, relowner, 'MEMBER') FROM pg_class WHERE oid = 'expenses.expenses'::regclass", Boolean.class)).isFalse();
+        assertThat(runtime.update("DELETE FROM expenses.expenses")).isZero();
+        assertThat(runtime.update("UPDATE expenses.expenses SET name = name")).isZero();
+        for (String sql : List.of("UPDATE expenses.expenses SET id = id", "UPDATE expenses.expenses SET user_id = user_id",
+            "UPDATE expenses.expenses SET recorded_on = recorded_on",
+            "ALTER TABLE expenses.expenses DISABLE ROW LEVEL SECURITY", "CREATE TABLE expenses.forbidden (id integer)",
+            "INSERT INTO expenses.expenses VALUES ('" + UUID.randomUUID() + "', '" + first + "', 'Kontextlos', 1, CURRENT_DATE)"))
             assertThatThrownBy(() -> runtime.execute(sql)).isInstanceOf(DataAccessException.class);
         for (String value : List.of("'Brot', 0", "'Brot', -1", "'Brot', 9007199254740992", "'', 1", "'   ', 1"))
-            assertThatThrownBy(() -> PostgresFixture.ADMIN.execute("INSERT INTO expense_budget.expenses VALUES ('" + UUID.randomUUID() + "', '" + first + "', " + value + ", CURRENT_DATE)"))
+            assertThatThrownBy(() -> PostgresFixture.ADMIN.execute("INSERT INTO expenses.expenses VALUES ('" + UUID.randomUUID() + "', '" + first + "', " + value + ", CURRENT_DATE)"))
                 .isInstanceOf(DataAccessException.class);
         for (String name : List.of("\t", "\n\r", "\u00a0", "\u1680", "\u2003", "\u2007", "\u2028", "\u2029", "\u202f", "\u205f", "\u3000", "\uFEFF", " \t\u00a0\u2003 "))
-            assertThatThrownBy(() -> PostgresFixture.ADMIN.update("INSERT INTO expense_budget.expenses VALUES (?, ?, ?, 1, CURRENT_DATE)", UUID.randomUUID(), first, name))
+            assertThatThrownBy(() -> PostgresFixture.ADMIN.update("INSERT INTO expenses.expenses VALUES (?, ?, ?, 1, CURRENT_DATE)", UUID.randomUUID(), first, name))
                 .as("Nur Trimzeichen im Namen").isInstanceOf(DataAccessException.class);
-        assertThatThrownBy(() -> PostgresFixture.ADMIN.execute("INSERT INTO expense_budget.expenses VALUES ('" + UUID.randomUUID() + "', '" + UUID.randomUUID() + "', 'Unbekannt', 1, CURRENT_DATE)"))
+        assertThatThrownBy(() -> PostgresFixture.ADMIN.execute("INSERT INTO expenses.expenses VALUES ('" + UUID.randomUUID() + "', '" + UUID.randomUUID() + "', 'Unbekannt', 1, CURRENT_DATE)"))
             .isInstanceOf(DataAccessException.class);
     }
 
@@ -349,12 +352,12 @@ class ExpenseIT {
     @Test void bearbeitungUndLoeschungBewahrenMetadatenUndVerwendenDenUrspruenglichenMonat() throws Exception {
         CLOCK.now = Instant.parse("2026-10-31T22:59:59Z");
         String oldId = expenseId(save(first, 123));
-        String otherOld = expenseId(save(first, BudgetService.MAX_CENTS - 123));
+        String otherOld = expenseId(save(first, Money.MAX_CENTS - 123));
         CLOCK.now = Instant.parse("2026-10-31T23:00:00Z");
-        budgets.save(first, 1000L);
+        budgets.saveBudget(first, 1000L);
         String currentId = expenseId(save(first, 250));
         assertThat(update(first, oldId, "Erhöhung", 124).statusCode()).isEqualTo(400);
-        assertThat(summaries.current(first).remainingCents()).isEqualTo(750);
+        assertThat(summaries.currentSummary(first).remainingCents()).isEqualTo(750);
         var edited = update(first, oldId, "  Korrigiert  ", 100);
         assertThat(edited.statusCode()).isEqualTo(200);
         var value = JSON.readTree(edited.body());
@@ -362,15 +365,15 @@ class ExpenseIT {
         assertThat(value.get("recordedOn").asText()).isEqualTo("2026-10-31");
         assertThat(value.get("name").asText()).isEqualTo("Korrigiert");
         assertThat(value.get("amountCents").asLong()).isEqualTo(100);
-        assertThat(update(first, otherOld, "Rest alter Monat", BudgetService.MAX_CENTS - 100).statusCode()).isEqualTo(200);
-        assertThat(summaries.current(first).remainingCents()).isEqualTo(750);
+        assertThat(update(first, otherOld, "Rest alter Monat", Money.MAX_CENTS - 100).statusCode()).isEqualTo(200);
+        assertThat(summaries.currentSummary(first).remainingCents()).isEqualTo(750);
         assertThat(call("DELETE", null, token(first), "/" + oldId).statusCode()).isEqualTo(204);
-        assertThat(summaries.current(first).remainingCents()).isEqualTo(750);
+        assertThat(summaries.currentSummary(first).remainingCents()).isEqualTo(750);
         assertThat(update(first, currentId, "Neuer Betrag", 400).statusCode()).isEqualTo(200);
-        assertThat(summaries.current(first).remainingCents()).isEqualTo(600);
+        assertThat(summaries.currentSummary(first).remainingCents()).isEqualTo(600);
         var deleted = call("DELETE", null, token(first), "/" + currentId);
         assertThat(deleted.statusCode()).isEqualTo(204); assertThat(deleted.body()).isEmpty();
-        assertThat(summaries.current(first).remainingCents()).isEqualTo(1000);
+        assertThat(summaries.currentSummary(first).remainingCents()).isEqualTo(1000);
         assertThat(count(first)).isEqualTo(1);
     }
 
@@ -440,8 +443,8 @@ class ExpenseIT {
     @Test void commitFehlerBeiPutUndDeleteBestaetigtNichtsUndRolltZurueck(CapturedOutput output) throws Exception {
         String id = expenseId(save(first, 123));
         String before = call("GET", null, token(first)).body();
-        PostgresFixture.ADMIN.execute("CREATE FUNCTION expense_budget.reject_mutation_commit() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'GeheimeKorrektur'; RETURN NEW; END $$");
-        PostgresFixture.ADMIN.execute("CREATE CONSTRAINT TRIGGER reject_mutation_commit AFTER UPDATE OR DELETE ON expense_budget.expenses DEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION expense_budget.reject_mutation_commit()");
+        PostgresFixture.ADMIN.execute("CREATE FUNCTION expenses.reject_mutation_commit() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'GeheimeKorrektur'; RETURN NEW; END $$");
+        PostgresFixture.ADMIN.execute("CREATE CONSTRAINT TRIGGER reject_mutation_commit AFTER UPDATE OR DELETE ON expenses.expenses DEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION expenses.reject_mutation_commit()");
         try {
             for (String method : List.of("PUT", "DELETE")) {
                 var rejected = call(method, method.equals("PUT") ? "{\"name\":\"GeheimerEntwurf\",\"amountCents\":876543210}" : null, token(first), "/" + id);
@@ -450,14 +453,14 @@ class ExpenseIT {
                 assertThat(call("GET", null, token(first)).body()).isEqualTo(before);
             }
         } finally {
-            PostgresFixture.ADMIN.execute("DROP TRIGGER reject_mutation_commit ON expense_budget.expenses");
-            PostgresFixture.ADMIN.execute("DROP FUNCTION expense_budget.reject_mutation_commit()");
+            PostgresFixture.ADMIN.execute("DROP TRIGGER reject_mutation_commit ON expenses.expenses");
+            PostgresFixture.ADMIN.execute("DROP FUNCTION expenses.reject_mutation_commit()");
         }
         assertThat(output.getAll()).doesNotContain("GeheimeKorrektur", "GeheimerEntwurf", "876543210");
     }
 
     @Test void parallelePostPutDeleteHaltenDieErsatzsummeAtomarInnerhalbDerGrenze() throws Exception {
-        save(first, BudgetService.MAX_CENTS - 5);
+        save(first, Money.MAX_CENTS - 5);
         String editId = expenseId(save(first, 1)), deleteId = expenseId(save(first, 1));
         String bearer = token(first);
         try (var executor = java.util.concurrent.Executors.newFixedThreadPool(12)) {
@@ -474,10 +477,10 @@ class ExpenseIT {
             assertThat(codes.subList(0, 10)).allSatisfy(code -> assertThat(code).isIn(201, 400));
             assertThat(codes.get(10)).isIn(200, 400);
             assertThat(codes.get(11)).isEqualTo(204);
-            long actual = PostgresFixture.ADMIN.queryForObject("SELECT sum(amount_cents) FROM expense_budget.expenses WHERE user_id = ?", java.math.BigDecimal.class, first).longValueExact();
-            assertThat(actual).isLessThanOrEqualTo(BudgetService.MAX_CENTS);
-            assertThat(summaries.current(first).expensesCents()).isEqualTo(actual);
-            assertThat(actual).isEqualTo(BudgetService.MAX_CENTS - 5 + (codes.get(10) == 200 ? 4 : 1)
+            long actual = PostgresFixture.ADMIN.queryForObject("SELECT sum(amount_cents) FROM expenses.expenses WHERE user_id = ?", java.math.BigDecimal.class, first).longValueExact();
+            assertThat(actual).isLessThanOrEqualTo(Money.MAX_CENTS);
+            assertThat(summaries.currentSummary(first).expensesCents()).isEqualTo(actual);
+            assertThat(actual).isEqualTo(Money.MAX_CENTS - 5 + (codes.get(10) == 200 ? 4 : 1)
                 + codes.subList(0, 10).stream().filter(code -> code == 201).count());
         }
     }
@@ -522,22 +525,22 @@ class ExpenseIT {
             for (UUID owner : List.of(second, first)) {
                 context(connection, owner);
                 String hidden = owner.equals(first) ? foreign : own;
-                try (var statement = connection.prepareStatement("UPDATE expense_budget.expenses SET name = 'Fremd', amount_cents = 1 WHERE id = ?")) {
+                try (var statement = connection.prepareStatement("UPDATE expenses.expenses SET name = 'Fremd', amount_cents = 1 WHERE id = ?")) {
                     statement.setObject(1, UUID.fromString(hidden)); assertThat(statement.executeUpdate()).isZero();
                 }
-                try (var statement = connection.prepareStatement("DELETE FROM expense_budget.expenses WHERE id = ?")) {
+                try (var statement = connection.prepareStatement("DELETE FROM expenses.expenses WHERE id = ?")) {
                     statement.setObject(1, UUID.fromString(hidden)); assertThat(statement.executeUpdate()).isZero();
                 }
                 connection.commit();
             }
             context(connection, first);
-            try (var statement = connection.prepareStatement("UPDATE expense_budget.expenses SET name = 'Erlaubt', amount_cents = 321 WHERE id = ?")) {
+            try (var statement = connection.prepareStatement("UPDATE expenses.expenses SET name = 'Erlaubt', amount_cents = 321 WHERE id = ?")) {
                 statement.setObject(1, UUID.fromString(own)); assertThat(statement.executeUpdate()).isEqualTo(1);
             }
             connection.commit();
             assertThat(count(connection)).isZero();
             context(connection, first);
-            try (var statement = connection.prepareStatement("DELETE FROM expense_budget.expenses WHERE id = ?")) {
+            try (var statement = connection.prepareStatement("DELETE FROM expenses.expenses WHERE id = ?")) {
                 statement.setObject(1, UUID.fromString(own)); assertThat(statement.executeUpdate()).isEqualTo(1);
             }
             connection.commit(); assertThat(count(connection)).isZero();
@@ -562,7 +565,7 @@ class ExpenseIT {
     }
 
     @Test void wartendesPutVerwendetDenBetragNachErhaltDerKontosperreFuerDieErsatzsumme() throws Exception {
-        long max = BudgetService.MAX_CENTS;
+        long max = Money.MAX_CENTS;
         String id = expenseId(save(first, 10));
         save(first, max - 10);
         String bearer = token(first);
@@ -590,7 +593,7 @@ class ExpenseIT {
                 }
                 assertThat(waiting).as("PUT wartet nachweislich auf die gehaltene Kontosperre").isTrue();
                 assertThat(pending.isDone()).isFalse();
-                try (var statement = holder.prepareStatement("UPDATE expense_budget.expenses SET amount_cents = 1 WHERE user_id = ? AND id = ?")) {
+                try (var statement = holder.prepareStatement("UPDATE expenses.expenses SET amount_cents = 1 WHERE user_id = ? AND id = ?")) {
                     statement.setObject(1, first); statement.setObject(2, UUID.fromString(id));
                     assertThat(statement.executeUpdate()).isEqualTo(1);
                 }
@@ -598,9 +601,9 @@ class ExpenseIT {
                 var rejected = pending.get(10, java.util.concurrent.TimeUnit.SECONDS);
                 assertThat(rejected.statusCode()).isEqualTo(400);
                 assertThat(rejected.body()).contains("MONTH_LIMIT_EXCEEDED");
-                assertThat(PostgresFixture.ADMIN.queryForObject("SELECT sum(amount_cents) FROM expense_budget.expenses WHERE user_id = ?", java.math.BigDecimal.class, first))
+                assertThat(PostgresFixture.ADMIN.queryForObject("SELECT sum(amount_cents) FROM expenses.expenses WHERE user_id = ?", java.math.BigDecimal.class, first))
                     .isEqualByComparingTo(java.math.BigDecimal.valueOf(max - 9));
-                assertThat(PostgresFixture.ADMIN.queryForObject("SELECT amount_cents FROM expense_budget.expenses WHERE id = ?", Long.class, UUID.fromString(id))).isEqualTo(1);
+                assertThat(PostgresFixture.ADMIN.queryForObject("SELECT amount_cents FROM expenses.expenses WHERE id = ?", Long.class, UUID.fromString(id))).isEqualTo(1);
             }
         }
     }

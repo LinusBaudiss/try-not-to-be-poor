@@ -65,6 +65,18 @@ public class FinanceApplication {
         SavingsGoals.validateProgress(progressCents);
         return transactions.mutate(userId, context -> goals.progress(context, id, progressCents));
     }
+    /** Geschlossenes v2-Gate unter derselben Kontosperre wie sämtliche Finanzmutationen. */
+    public SavingsGoals.Goal progressGoalV2(UUID userId, UUID id, Long progressCents) {
+        SavingsGoals.validateSignedProgress(progressCents);
+        return transactions.mutate(userId, context -> {
+            if (progressCents < 0) {
+                goals.requireGoal(context, id);
+                throw new FeatureNotAvailable();
+            }
+            return goals.progress(context, id, progressCents);
+        });
+    }
+    public static final class FeatureNotAvailable extends RuntimeException {}
     public SavingsGoals.Goal updateGoal(UUID userId, UUID id, String name, Long targetAmountCents, LocalDate targetDate) {
         SavingsGoals.validate(name, targetAmountCents, targetDate);
         return transactions.mutate(userId, context -> goals.update(context, id, name, targetAmountCents, targetDate));

@@ -94,11 +94,11 @@ class AccessConfiguration {
                     "/api/v1/access/refresh", "/api/v1/access/logout", "/api/v2/access/registrations",
                     "/api/v2/access/login", "/api/v2/access/refresh", "/api/v2/access/logout").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/access/csrf", "/api/v2/access/csrf").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/v1/access/me", "/api/v2/access/me", "/api/v1/expense-budget/budget", "/api/v1/expense-budget/expenses", "/api/v2/expenses", "/api/v2/budget", "/api/v2/month-summary", "/api/v1/expense-budget/month-summary", "/api/v1/savings-goals").authenticated()
-                .requestMatchers(HttpMethod.PUT, "/api/v1/expense-budget/budget", "/api/v2/budget", "/api/v1/savings-goals/*/progress").authenticated()
-                .requestMatchers(HttpMethod.POST, "/api/v1/expense-budget/expenses", "/api/v2/expenses", "/api/v1/savings-goals").authenticated()
-                .requestMatchers(HttpMethod.PUT, "/api/v1/expense-budget/expenses/*", "/api/v2/expenses/*", "/api/v1/savings-goals/*").authenticated()
-                .requestMatchers(HttpMethod.DELETE, "/api/v1/expense-budget/expenses/*", "/api/v2/expenses/*", "/api/v1/savings-goals/*").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/v1/access/me", "/api/v2/access/me", "/api/v1/expense-budget/budget", "/api/v1/expense-budget/expenses", "/api/v2/expenses", "/api/v2/budget", "/api/v2/month-summary", "/api/v1/expense-budget/month-summary", "/api/v1/savings-goals", "/api/v2/savings-goals").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/v1/expense-budget/budget", "/api/v2/budget", "/api/v1/savings-goals/*/progress", "/api/v2/savings-goals/*/progress").authenticated()
+                .requestMatchers(HttpMethod.POST, "/api/v1/expense-budget/expenses", "/api/v2/expenses", "/api/v1/savings-goals", "/api/v2/savings-goals").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/v1/expense-budget/expenses/*", "/api/v2/expenses/*", "/api/v1/savings-goals/*", "/api/v2/savings-goals/*").authenticated()
+                .requestMatchers(HttpMethod.DELETE, "/api/v1/expense-budget/expenses/*", "/api/v2/expenses/*", "/api/v1/savings-goals/*", "/api/v2/savings-goals/*").authenticated()
                 .anyRequest().denyAll())
             .oauth2ResourceServer(oauth -> oauth.jwt(config -> config.decoder(jwt))
                 .authenticationEntryPoint((request, response, failure) -> SessionHttp.error(response, 401)))
@@ -112,6 +112,8 @@ class AccessConfiguration {
                         || (request.getServletPath().equals("/api/v1/expense-budget/expenses") || request.getServletPath().equals("/api/v2/expenses"))
                         || (request.getServletPath().matches("/api/v1/expense-budget/expenses/[^/]+") || request.getServletPath().matches("/api/v2/expenses/[^/]+"))
                         || request.getServletPath().equals("/api/v1/expense-budget/month-summary")
+                        || request.getServletPath().equals("/api/v2/savings-goals")
+                        || request.getServletPath().matches("/api/v2/savings-goals/[^/]+(?:/progress)?")
                         || request.getServletPath().equals("/api/v1/savings-goals")
                         || request.getServletPath().matches("/api/v1/savings-goals/[^/]+(?:/progress)?") ? 401 : 403))
                 .accessDeniedHandler((request, response, failure) -> SessionHttp.error(response, 403)))
@@ -124,10 +126,10 @@ class AccessConfiguration {
     private static boolean csrfExempt(jakarta.servlet.http.HttpServletRequest request) {
         String path = request.getServletPath(), method = request.getMethod();
         if (method.equals("POST")) return path.equals("/api/v1/access/registrations") || path.equals("/api/v2/access/registrations")
-            || path.equals("/api/v1/expense-budget/expenses") || path.equals("/api/v2/expenses") || path.equals("/api/v1/savings-goals");
+            || path.equals("/api/v1/expense-budget/expenses") || path.equals("/api/v2/expenses") || path.equals("/api/v1/savings-goals") || path.equals("/api/v2/savings-goals");
         if (method.equals("PUT") && (path.equals("/api/v1/expense-budget/budget") || path.equals("/api/v2/budget")
-            || path.matches("/api/v1/savings-goals/[^/]+/progress"))) return true;
+            || path.matches("/api/v1/savings-goals/[^/]+/progress") || path.matches("/api/v2/savings-goals/[^/]+/progress"))) return true;
         return (method.equals("PUT") || method.equals("DELETE")) && (path.matches("/api/v1/expense-budget/expenses/[^/]+")
-            || path.matches("/api/v2/expenses/[^/]+") || path.matches("/api/v1/savings-goals/[^/]+"));
+            || path.matches("/api/v2/expenses/[^/]+") || path.matches("/api/v1/savings-goals/[^/]+") || path.matches("/api/v2/savings-goals/[^/]+"));
     }
 }

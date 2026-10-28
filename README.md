@@ -19,8 +19,9 @@ Der abgeschlossene v1-Umfang umfasst Epics 1–2 mit den neun Stories
 1.1–1.6 und 2.1–2.3. Die Oberfläche verwendet für alle sechs Zugangsfunktionen
 einschließlich Identitätsprüfung sowie für alle vier Ausgabenoperationen API v2
 (`/api/v2/expenses`). Budget (`GET`/`PUT /api/v2/budget`) und Monatsübersicht
-(`GET /api/v2/month-summary`) verwenden ebenfalls v2. Sparziele bleiben über v1
-bedienbar.
+(`GET /api/v2/month-summary`) und alle fünf Sparzieloperationen (`/api/v2/savings-goals`)
+verwenden ebenfalls v2. Die neue Oberfläche bleibt bis zum vollständigen
+Freigabenachweis ein interner Prüfstand; v1 bleibt für Altoberflächen unterstützt.
 Beide Ausgabenversionen verwenden dieselben Daten und dieselbe Finanztransaktion.
 Nach einer unbestätigten Ausgabenmutation sperrt die Oberfläche weitere Mutationen,
 bis die Historie erfolgreich neu geladen und ausdrücklich geprüft wurde.
@@ -330,7 +331,12 @@ vergangene Daten sind erlaubt. Neue Ziele beginnen mit `0,00 €` Fortschritt.
 „Fortschritt aktualisieren“ setzt den **gesamten bisher erreichten Betrag** neu;
 es werden keine einzelnen Beiträge oder Verläufe gespeichert. Null und Beträge
 über dem Zielbetrag sind erlaubt. Die Anzeige nennt den tatsächlichen Betrag,
-Anteil und gegebenenfalls die Überschreitung; der Balken endet bei 100 %.
+Anteil und gegebenenfalls die Überschreitung; ausschließlich der Balken bleibt auf
+0–100 % begrenzt. Der v2-Antwortvertrag und die exakte Anzeige unterstützen bereits
+signierte Fortschritte bis ±9007199254740991 Cent. Negative Schreibwerte bleiben
+serverseitig mit 409 `FEATURE_NOT_AVAILABLE` gesperrt, bis die vollständige
+v1-Lese-/Schreibbarriere nachgewiesen ist. Die Datenbankgrenze bleibt unverändert
+nichtnegativ; es gibt keinen Freigabeschalter.
 Zielbetrag und Fortschritt dürfen jeweils höchstens `9007199254740991` Cent
 betragen. Es gelten dieselben Euro-Eingaberegeln wie beim Budget.
 
@@ -342,7 +348,13 @@ eigenen Ziele erneut. Sparziele beeinflussen das Restbudget nicht.
 Für alle Finanzfunktionen gilt: Erfolg wird erst nach bestätigter Speicherung
 angezeigt. Bei Fehlern oder offline bleiben Entwürfe nur im offenen Tab erhalten;
 offline sind Mutationen gesperrt. Bei verlorenen Antworten kann eine Mutation
-bereits gespeichert sein; vor erneutem Anlegen den Serverbestand prüfen.
+bereits gespeichert sein. Weitere Sparzielmutationen bleiben gesperrt, bis
+„Sparziele zur Prüfung laden“ den aktuellen Bestand erfolgreich geladen hat und
+„Ich habe die Sparziele geprüft“ ausdrücklich bestätigt wurde. Dabei bleiben
+alle offenen Entwürfe erhalten; ein gewöhnliches Aktualisieren oder fehlgeschlagenes
+Laden hebt die Sperre nicht auf. Die Prüfung beweist keinen Serverabschluss nach
+einem Timeout. Bei Bereichswechsel bleiben nur Vorgangsflags erhalten; nach einer
+laufenden Anfrage muss ihr Ausgang abgewartet und der Bestand geprüft werden.
 Neuladen, Abmeldung, Sitzungsende und Kontowechsel verwerfen offene Entwürfe.
 
 ## Prüfen
@@ -385,13 +397,13 @@ widerruft die Familie auch für die andere Version. Alle v2-Antworten einschlie�
 Registrierung und Fehlern tragen `Cache-Control: no-store`; fehlende Sitzungskonfiguration
 meldet bei Login, Refresh und Logout 503. Unbestätigte Mutationen niemals automatisch
 wiederholen. Der v2-Vertrag umfasst außerdem GET/POST `/expenses` und PUT/DELETE
-`/expenses/{expenseId}`, GET/PUT `/budget` sowie GET `/month-summary`. Der Browser
-verwendet für Zugang, Ausgaben, Budget und Monatsübersicht die generierten
+`/expenses/{expenseId}`, GET/PUT `/budget`, GET `/month-summary`, GET/POST
+`/savings-goals`, PUT/DELETE `/savings-goals/{id}` und PUT
+`/savings-goals/{id}/progress`. Der Browser verwendet für sämtliche Operationen die generierten
 v2-Clients. Beide Finanzversionen teilen denselben Bestand und die äußere
-Finanzkoordination; v1 bleibt für Altoberflächen verfügbar. V2-Operationen und
-die verbleibenden v1-Sparzielaufrufe erhalten
+Finanzkoordination; v1 bleibt für Altoberflächen verfügbar. V2-Operationen erhalten
 den Bearer ausschließlich über den Interceptor für dieselbe Herkunft und die
-unterstützten Hauptversionen. Sparzielrouten unter v2, v1-Stilllegung und
+unterstützten Hauptversionen. V1-Stilllegung, negative Schreibfreigabe und
 Produktionsfreigabe folgen gesondert.
 
 ## Finanzmodule auf V9 umstellen und wiederanlaufen lassen

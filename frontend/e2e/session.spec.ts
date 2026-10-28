@@ -404,7 +404,7 @@ test('späte geschützte Angular-Antwort wird nach Sitzungsende als verworfen zu
   await expect(page.getByRole('status')).toHaveText('Du wurdest abgemeldet.');
 });
 
-test('Zugang, Ausgaben, Budget und Monat nutzen v2; Sparziele bleiben im Übergang funktionsfähig', async ({ page }) => {
+test('Sämtliche Zugangs- und Finanzoperationen einschließlich aller fünf Zieloperationen nutzen ausschließlich v2', async ({ page }) => {
   const access: { path: string; method: string; bearer?: string; csrf?: string; origin?: string }[] = [];
   const headerChecks: Promise<void>[] = [];
   const finances = new Set<string>();
@@ -448,6 +448,24 @@ test('Zugang, Ausgaben, Budget und Monat nutzen v2; Sparziele bleiben im Überga
   await expect(page.locator('#expense-status')).toHaveText('Deine Ausgabe wurde gelöscht.');
   await page.getByRole('link', { name: 'Sparziele', exact: true }).click();
   await expect(page.getByText('Du bist angemeldet. Deine persönlichen Sparziele sind geöffnet.')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Sparziel speichern', exact: true })).toBeEnabled();
+  await page.getByLabel('Name des Sparziels', { exact: true }).fill('Netzwerkziel');
+  await page.getByLabel('Zielbetrag in Euro', { exact: true }).fill('100');
+  const goalResponse = page.waitForResponse(r => r.url().endsWith('/api/v2/savings-goals') && r.request().method() === 'POST');
+  await page.getByRole('button', { name: 'Sparziel speichern', exact: true }).click();
+  const goalId = (await (await goalResponse).json()).id;
+  await expect(page.locator('#goal-status')).toHaveClass(/success/);
+  await page.getByRole('button', { name: 'Fortschritt aktualisieren: Netzwerkziel', exact: true }).click();
+  await page.getByLabel('Gesamtfortschritt in Euro').fill('70');
+  await page.getByRole('button', { name: 'Fortschritt speichern', exact: true }).click();
+  await expect(page.locator('#goal-progress-status')).toHaveClass(/success/);
+  await page.getByRole('button', { name: 'Sparziel bearbeiten: Netzwerkziel', exact: true }).click();
+  await page.getByLabel('Zielbetrag in Euro bearbeiten').fill('150');
+  await page.getByRole('button', { name: 'Änderungen speichern', exact: true }).click();
+  await expect(page.locator('#goal-mutation-status')).toHaveClass(/success/);
+  await page.getByRole('button', { name: 'Sparziel löschen: Netzwerkziel', exact: true }).click();
+  await page.getByRole('button', { name: 'Endgültig löschen', exact: true }).click();
+  await expect(page.locator('#goal-mutation-status')).toHaveText('Dein Sparziel wurde gelöscht.');
   await page.reload();
   await expect(page.getByText('Du bist angemeldet. Deine persönlichen Sparziele sind geöffnet.')).toBeVisible();
   await page.getByRole('button', { name: 'Abmelden', exact: true }).click();
@@ -464,11 +482,15 @@ test('Zugang, Ausgaben, Budget und Monat nutzen v2; Sparziele bleiben im Überga
       expect(item.csrf).toBeTruthy(); expect(item.origin).toBe('https://localhost:4200');
     }
   }
-  expect([...finances]).toEqual(expect.arrayContaining(['GET /api/v2/budget', 'PUT /api/v2/budget', 'GET /api/v2/month-summary', 'GET /api/v1/savings-goals']));
+  expect([...finances]).toEqual(expect.arrayContaining(['GET /api/v2/budget', 'PUT /api/v2/budget', 'GET /api/v2/month-summary', 'GET /api/v2/savings-goals']));
   expect([...finances].filter(operation => operation.includes('/api/v2/expenses')).sort()).toEqual([
     `DELETE /api/v2/expenses/${expenseId}`, 'GET /api/v2/expenses', 'POST /api/v2/expenses', `PUT /api/v2/expenses/${expenseId}`
   ]);
-  expect([...finances].filter(operation => operation.includes('/api/v1/expense-budget/'))).toEqual([]);
+  expect([...finances].filter(operation => operation.includes('/api/v2/savings-goals')).sort()).toEqual([
+    `DELETE /api/v2/savings-goals/${goalId}`, 'GET /api/v2/savings-goals', 'POST /api/v2/savings-goals',
+    `PUT /api/v2/savings-goals/${goalId}`, `PUT /api/v2/savings-goals/${goalId}/progress`
+  ]);
+  expect([...finances].filter(operation => operation.includes('/api/v1/'))).toEqual([]);
 });
 
 test('Interceptor begrenzt Bearer auf dieselbe Herkunft und v1/v2 und nimmt öffentliche Zugangspfade aus', async ({ page, request }) => {

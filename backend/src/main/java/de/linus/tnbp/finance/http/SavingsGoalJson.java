@@ -16,7 +16,8 @@ import tools.jackson.databind.deser.std.StdDeserializer;
 class SavingsGoalJson {
     @Bean
     JsonMapperBuilderCustomizer savingsGoalCalendarDate() {
-        return builder -> builder.addMixIn(SavingsGoalRequest.class, CalendarDateInput.class);
+        return builder -> builder.addMixIn(SavingsGoalRequest.class, CalendarDateInput.class)
+            .addMixIn(de.linus.tnbp.contract.v2.model.SavingsGoalRequest.class, CalendarDateInput.class);
     }
     abstract static class CalendarDateInput {
         @JsonDeserialize(using = CalendarDateDeserializer.class)

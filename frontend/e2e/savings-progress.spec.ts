@@ -1,8 +1,18 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, Page, APIRequestContext, Locator } from '@playwright/test';
 
+async function review(page: Page): Promise<void> {
+  await expect(page.getByRole('button', { name: 'Ich habe die Sparziele geprüft', exact: true })).toBeDisabled();
+  await page.getByRole('button', { name: 'Sparziele zur Prüfung laden', exact: true }).click();
+  await page.getByRole('button', { name: 'Ich habe die Sparziele geprüft', exact: true }).click();
+  const id = await page.locator('dialog[open]').count() ? 'goal-delete-cancel'
+    : await page.locator('#goal-progress-amount').count() ? 'goal-progress-amount'
+    : await page.locator('#goal-edit-name').count() ? 'goal-edit-name' : 'goal-name';
+  await expect(page.locator('#' + id)).toBeFocused();
+}
+
 const password = '  Grüner 🦊 im Baum  ';
-const endpoint = '**/api/v1/savings-goals/*/progress';
+const endpoint = '**/api/v2/savings-goals/*/progress';
 async function account(request: APIRequestContext): Promise<string> {
   const email = `progress-${crypto.randomUUID()}@example.org`;
   expect((await request.post('http://127.0.0.1:8080/api/v2/access/registrations', {
@@ -169,7 +179,8 @@ test('nur passende geprüfte 200-Antworten bestätigen den Fortschritt; Fehler e
     await expect(page.locator('#goal-progress-status')).not.toHaveClass(/success/);
     await expect(page.getByLabel('Gesamtfortschritt in Euro')).toHaveValue('30');
     await expect(page.getByRole('progressbar')).toHaveAttribute('aria-valuenow', '0');
-    await expect(page.getByRole('button', { name: 'Fortschritt speichern', exact: true })).toBeEnabled(); await page.unroute(endpoint);
+    await expect(page.getByRole('button', { name: 'Fortschritt speichern', exact: true })).toBeDisabled(); await page.unroute(endpoint); await review(page);
+    await expect(page.getByRole('button', { name: 'Fortschritt speichern', exact: true })).toBeEnabled();
   }
 });
 
@@ -247,7 +258,7 @@ test('beschrifteter Balken, Editor, Fehler und 200-Prozent-Schrift bleiben per T
 });
 
 
-test('Zeitüberschreitung nach 30 Sekunden entsperrt den Editor und verwirft die späte Bestätigung', async ({ page, request }) => {
+test('Zeitüberschreitung nach 30 Sekunden erhält Prüfzwang und Entwurf und verwirft die späte Bestätigung', async ({ page, request }) => {
   await page.clock.install(); await login(page, await account(request)); await create(page);
   const ready = gate(), held = gate(), finished = gate();
   await page.route(endpoint, async route => {
@@ -259,13 +270,16 @@ test('Zeitüberschreitung nach 30 Sekunden entsperrt den Editor und verwirft die
   await page.clock.runFor(20); await expect(page.getByRole('button', { name: 'Fortschritt wird gespeichert …' })).toBeDisabled();
   await page.clock.fastForward(29_979); await expect(page.getByRole('button', { name: 'Fortschritt wird gespeichert …' })).toBeDisabled();
   await page.clock.runFor(22); await expect(page.locator('#goal-progress-status')).toContainText('nicht bestätigt');
-  await expect(page.getByRole('button', { name: 'Fortschritt speichern', exact: true })).toBeEnabled();
+  await expect(page.getByRole('button', { name: 'Fortschritt speichern', exact: true })).toBeDisabled();
   await expect(page.getByRole('button', { name: 'Abbrechen', exact: true })).toBeEnabled();
   await expect(page.getByLabel('Gesamtfortschritt in Euro')).toHaveValue('12,34');
   held.release(); await finished.promise; await page.clock.runFor(50);
   await expect(page.getByRole('progressbar')).toHaveAttribute('aria-valuenow', '0');
   await expect(page.locator('#goal-progress-status')).not.toHaveClass(/success/);
   await expect(page.getByLabel('Gesamtfortschritt in Euro')).toHaveValue('12,34');
+  await page.clock.resume(); await page.unroute(endpoint); await review(page);
+  await expect(page.getByLabel('Gesamtfortschritt in Euro')).toHaveValue('12,34');
+  await expect(page.getByRole('button', { name: 'Fortschritt speichern', exact: true })).toBeEnabled();
 });
 
 test('offener Entwurf erklärt gesperrte andere Ziele; bestätigtes Speichern ändert ausschließlich das gewählte Ziel', async ({ page, request }) => {
@@ -303,7 +317,7 @@ for (const refresh of ['läuft', 'fehlgeschlagen']) {
   test(`Abbrechen nach ${refresh === 'läuft' ? 'laufendem' : 'fehlgeschlagenem'} Listenabruf fokussiert die bleibende Ladeaktion`, async ({ page, request }) => {
     await login(page, await account(request)); await create(page); await edit(page, '12,34');
     const ready = gate(), held = gate();
-    await page.route('**/api/v1/savings-goals', async route => {
+    await page.route('**/api/v2/savings-goals', async route => {
       ready.release(); await held.promise;
       await route.fulfill({ status: 500, json: { code: 'SAVINGS_GOAL_UNAVAILABLE' } });
     });
@@ -316,3 +330,48 @@ for (const refresh of ['läuft', 'fehlgeschlagen']) {
     await expect(reload).toBeFocused();
   });
 }
+
+test('isolierte signierte Antworten zeigen tatsächliche Beträge und symmetrisch gerundete Prozente bis zu sicheren Extremen', async ({ page, request }) => {
+  await login(page, await account(request));
+  const id = '00000000-0000-4000-8000-000000000001';
+  let answer = { id, name: 'Signierte Darstellung', targetAmountCents: 10000, progressCents: -3000, targetDate: null };
+  await page.route('**/api/v2/savings-goals', route => route.fulfill({ status: 200, json: [answer] }));
+  const cases = [
+    { progress: -3000, target: 10000, amount: '−30,00 €', percent: '−30 %', fill: 0 },
+    { progress: 7000, target: 10000, amount: '70,00 €', percent: '70 %', fill: 70 },
+    { progress: 15000, target: 10000, amount: '150,00 €', percent: '150 %', fill: 100 },
+    { progress: -1, target: 32, amount: '−0,01 €', percent: '−3,13 %', fill: 0 },
+    { progress: -1, target: 9007199254740991, amount: '−0,01 €', percent: '−0 %', fill: 0 },
+    { progress: 1, target: 32, amount: '0,01 €', percent: '3,13 %', fill: 3.13 },
+    { progress: -9007199254740991, target: 1, amount: '−90.071.992.547.409,91 €', percent: '−900.719.925.474.099.100 %', fill: 0 },
+    { progress: 9007199254740991, target: 1, amount: '90.071.992.547.409,91 €', percent: '900.719.925.474.099.100 %', fill: 100 }
+  ];
+  for (const value of cases) {
+    answer = { ...answer, progressCents: value.progress, targetAmountCents: value.target };
+    await page.getByRole('button', { name: 'Sparziele aktualisieren', exact: true }).click();
+    await expect(page.locator('.savings-cards dl div').filter({ has: page.getByText('Fortschritt', { exact: true }) }).locator('dd')).toHaveText(value.amount);
+    await expect(page.locator('.savings-cards dl div').filter({ has: page.getByText('Anteil am Zielbetrag', { exact: true }) }).locator('dd')).toHaveText(value.percent);
+    const bar = page.locator('.savings-progress');
+    await expectFill(bar, value.fill);
+    if (value.progress < 0) {
+      await expect(bar).toHaveAttribute('aria-hidden', 'true');
+      await expect(page.getByRole('progressbar')).toHaveCount(0);
+      const accessible = (await page.locator('.savings-cards').ariaSnapshot()).replace(/\u00a0/g, ' ');
+      expect(accessible).toContain('definition: ' + value.amount.replace(/\u00a0/g, ' '));
+      expect(accessible).toContain('definition: ' + value.percent);
+      expect(accessible).not.toContain('progressbar');
+      await page.getByRole('button', { name: 'Fortschritt aktualisieren: Signierte Darstellung', exact: true }).click();
+      await expect(page.getByLabel('Gesamtfortschritt in Euro')).toHaveValue('');
+      await page.getByRole('button', { name: 'Abbrechen', exact: true }).click();
+    } else await expect(bar).toHaveAttribute('aria-valuetext', `${value.amount} von ${value.target === 10000 ? '100,00' : value.target === 32 ? '0,32' : '0,01'} €, ${value.percent}`);
+    for (const [width, height] of [[320, 568], [390, 844], [768, 1024], [1280, 800]]) {
+      await page.setViewportSize({ width, height });
+      await page.evaluate(() => { document.documentElement.style.fontSize = '200%'; });
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
+    }
+  }
+  // Ausschließlich abgefangene Antworten: kein negativer oder anderer Testbestand wurde persistiert.
+  await page.unroute('**/api/v2/savings-goals');
+  await page.getByRole('button', { name: 'Sparziele aktualisieren', exact: true }).click();
+  await expect(page.locator('.savings-cards li')).toHaveCount(0);
+});

@@ -395,6 +395,167 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/MonthSummaryError'
+  /savings-goals:
+    get:
+      tags: [SavingsGoals]
+      operationId: getSavingsGoals
+      summary: Eigene Sparziele stabil nach ID sortiert lesen
+      security:
+        - AccessBearer: []
+      responses:
+        '200':
+          description: Eigene Ziele; no-store.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SavingsGoalResponse'
+        '400':
+          $ref: '#/components/responses/SavingsGoalInvalid'
+        '401':
+          $ref: '#/components/responses/SessionRejected'
+        '500':
+          $ref: '#/components/responses/SavingsGoalUnavailable'
+    post:
+      tags: [SavingsGoals]
+      operationId: postSavingsGoal
+      summary: Ein eigenes Sparziel mit null Cent Fortschritt anlegen
+      description: Ausschließlich geprüftes Bearer-sub bestimmt den Eigentümer. Erfolg erst nach Commit. Zieldatum bleibt ein unverändertes Kalenderdatum, auch vergangene Daten sind zulässig.
+      security:
+        - AccessBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SavingsGoalRequest'
+      responses:
+        '201':
+          description: Verbindlich gespeichert; no-store.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SavingsGoalResponse'
+        '400':
+          $ref: '#/components/responses/SavingsGoalInvalid'
+        '401':
+          $ref: '#/components/responses/SessionRejected'
+        '415':
+          $ref: '#/components/responses/SavingsGoalUnsupportedMediaType'
+        '500':
+          $ref: '#/components/responses/SavingsGoalUnavailable'
+  /savings-goals/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    put:
+      tags: [SavingsGoals]
+      operationId: putSavingsGoal
+      summary: Editierbare Felder eines eigenen Sparziels ersetzen
+      description: Name, Zielbetrag und Datum ersetzen; fehlendes oder null Datum entfernt es. ID, Eigentümer und Fortschritt bleiben erhalten. Erfolg erst nach Commit; no-store.
+      security:
+        - AccessBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SavingsGoalRequest'
+      responses:
+        '200':
+          description: Verbindlich ersetzt; no-store.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SavingsGoalResponse'
+        '400':
+          $ref: '#/components/responses/SavingsGoalInvalid'
+        '401':
+          $ref: '#/components/responses/SessionRejected'
+        '404':
+          $ref: '#/components/responses/SavingsGoalNotFound'
+        '415':
+          $ref: '#/components/responses/SavingsGoalUnsupportedMediaType'
+        '500':
+          $ref: '#/components/responses/SavingsGoalUnavailable'
+    delete:
+      tags: [SavingsGoals]
+      operationId: deleteSavingsGoal
+      summary: Ein eigenes Sparziel endgültig löschen
+      description: Ausschließlich geprüftes Bearer-sub bestimmt den Eigentümer. Erfolg erst nach Commit; no-store.
+      security:
+        - AccessBearer: []
+      responses:
+        '204':
+          description: Verbindlich gelöscht; leerer Antwortkörper; no-store.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+        '400':
+          $ref: '#/components/responses/SavingsGoalInvalid'
+        '401':
+          $ref: '#/components/responses/SessionRejected'
+        '404':
+          $ref: '#/components/responses/SavingsGoalNotFound'
+        '500':
+          $ref: '#/components/responses/SavingsGoalUnavailable'
+  /savings-goals/{id}/progress:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    put:
+      tags: [SavingsGoals]
+      operationId: putSavingsGoalProgress
+      summary: Gesamtfortschritt eines eigenen Sparziels ersetzen
+      description: Idempotenter Ersatz in signierten ganzen EUR-Cent; übrige Zielfelder bleiben unverändert. Negative Werte bleiben mit 409 FEATURE_NOT_AVAILABLE gesperrt, bis alle v1-Lese- und Schreibvorgänge einschließlich Datenbankarbeit nachweislich beendet sind. Kein Konfigurationsschalter ersetzt diese Versionsbarriere. Ausschließlich geprüftes Bearer-sub bestimmt den Eigentümer. Erfolg erst nach Commit.
+      security:
+        - AccessBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SavingsGoalProgressRequest'
+      responses:
+        '200':
+          description: Verbindlich ersetzt; no-store.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SavingsGoalResponse'
+        '400':
+          $ref: '#/components/responses/SavingsGoalInvalid'
+        '401':
+          $ref: '#/components/responses/SessionRejected'
+        '404':
+          $ref: '#/components/responses/SavingsGoalNotFound'
+        '415':
+          $ref: '#/components/responses/SavingsGoalUnsupportedMediaType'
+        '409':
+          $ref: '#/components/responses/SavingsGoalFeatureNotAvailable'
+        '500':
+          $ref: '#/components/responses/SavingsGoalUnavailable'
 components:
   securitySchemes:
     AccessBearer:
@@ -535,7 +696,151 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/BudgetError'
+    SavingsGoalInvalid:
+      description: Ungültige Eingabe; keine Mutation, no-store.
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/NoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SavingsGoalError'
+    SavingsGoalNotFound:
+      description: Sparziel nicht gefunden; identisch für fehlende und fremde IDs, no-store.
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/NoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SavingsGoalNotFoundError'
+    SavingsGoalUnavailable:
+      description: Speicherung oder Lesen nicht bestätigt; neutraler Fehler, no-store.
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/NoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SavingsGoalError'
+    SavingsGoalUnsupportedMediaType:
+      description: Nicht unterstützter Content-Type; keine Mutation.
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/NoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SavingsGoalError'
+    SavingsGoalFeatureNotAvailable:
+      description: Gültiger negativer Fortschritt ist bis zur nachgewiesenen vollständigen v1-Lese-/Schreibbarriere gesperrt; keine Mutation.
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/NoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SavingsGoalFeatureNotAvailableError'
   schemas:
+    SavingsGoalRequest:
+      type: object
+      additionalProperties: false
+      required: [name, targetAmountCents]
+      properties:
+        name:
+          type: string
+          minLength: 1
+          description: Wird getrimmt; darf danach nicht leer sein oder NUL enthalten.
+        targetAmountCents:
+          type: integer
+          format: int64
+          minimum: 1
+          maximum: 9007199254740991
+          description: Positive ganze EUR-Cent; keine Rundung oder Typumwandlung.
+        targetDate:
+          type: string
+          format: date
+          nullable: true
+          description: Optionales striktes ISO-Kalenderdatum YYYY-MM-DD, Jahr 0001 bis 9999.
+    SavingsGoalProgressRequest:
+      type: object
+      additionalProperties: false
+      required: [progressCents]
+      properties:
+        progressCents:
+          type: integer
+          format: int64
+          minimum: -9007199254740991
+          maximum: 9007199254740991
+          description: Neuer Gesamtfortschritt in signierten ganzen EUR-Cent; keine Rundung oder Typumwandlung. Negative Schreibwerte bleiben bis zur nachgewiesenen v1-Barriere mit 409 FEATURE_NOT_AVAILABLE gesperrt.
+    SavingsGoalNotFoundError:
+      type: object
+      additionalProperties: false
+      required: [code, message, fieldErrors]
+      properties:
+        code:
+          type: string
+          enum: [SAVINGS_GOAL_NOT_FOUND]
+        message:
+          type: string
+        fieldErrors:
+          type: object
+          additionalProperties:
+            type: string
+    SavingsGoalResponse:
+      type: object
+      additionalProperties: false
+      required: [id, name, targetAmountCents, progressCents]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          minLength: 1
+        targetAmountCents:
+          type: integer
+          format: int64
+          minimum: 1
+          maximum: 9007199254740991
+        progressCents:
+          type: integer
+          format: int64
+          minimum: -9007199254740991
+          maximum: 9007199254740991
+          description: Tatsächlicher signierter Gesamtfortschritt; neue Ziele beginnen bei 0.
+        targetDate:
+          type: string
+          format: date
+          nullable: true
+    SavingsGoalError:
+      type: object
+      additionalProperties: false
+      required: [code, message, fieldErrors]
+      properties:
+        code:
+          type: string
+          enum: [VALIDATION_FAILED, SAVINGS_GOAL_UNAVAILABLE]
+        message:
+          type: string
+        fieldErrors:
+          type: object
+          additionalProperties:
+            type: string
+    SavingsGoalFeatureNotAvailableError:
+      type: object
+      additionalProperties: false
+      required: [code, message, fieldErrors]
+      properties:
+        code:
+          type: string
+          enum: [FEATURE_NOT_AVAILABLE]
+        message:
+          type: string
+        fieldErrors:
+          type: object
+          additionalProperties:
+            type: string
     RegistrationRequest:
       type: object
       additionalProperties: false

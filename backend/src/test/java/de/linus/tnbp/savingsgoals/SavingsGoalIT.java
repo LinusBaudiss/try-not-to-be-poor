@@ -38,7 +38,7 @@ class SavingsGoalIT {
     static final byte[] KEY = new byte[32];
     static final MutableClock CLOCK = new MutableClock(NOW);
     static final JsonMapper JSON = JsonMapper.builder().build();
-    static final String PATH = "/api/v1/savings-goals";
+    String path() { return "/api/v1/savings-goals"; }
     @LocalServerPort int port;
     @Autowired DataSource source;
     @Autowired JdbcTemplate jdbc;
@@ -81,7 +81,7 @@ class SavingsGoalIT {
         return call(method, body, bearer, "");
     }
     HttpResponse<String> call(String method, String body, String bearer, String query) throws Exception {
-        var request = HttpRequest.newBuilder(URI.create("http://localhost:" + port + PATH + query));
+        var request = HttpRequest.newBuilder(URI.create("http://localhost:" + port + path() + query));
         if (bearer != null) request.header("Authorization", "Bearer " + bearer);
         if (body != null) request.header("Content-Type", "application/json");
         // Ein fremder Eigentümerheader wird niemals zur Autorisierung verwendet.
@@ -184,7 +184,7 @@ class SavingsGoalIT {
             sign(new JWTClaimsSet.Builder(claims).subject("1-1-1-1-1").build(), KEY),
             sign(new JWTClaimsSet.Builder(claims).expirationTime(Date.from(CLOCK.now)).build(), KEY)))
             for (String method : List.of("GET", "POST")) assertThat(call(method, method.equals("POST") ? "{\"name\":\"Reise\",\"targetAmountCents\":1}" : null, bearer).statusCode()).isEqualTo(401);
-        var request = HttpRequest.newBuilder(URI.create("http://localhost:" + port + PATH)).header("Cookie", "__Host-tnbp-refresh=synthetisch")
+        var request = HttpRequest.newBuilder(URI.create("http://localhost:" + port + path())).header("Cookie", "__Host-tnbp-refresh=synthetisch")
             .header("Content-Type", "application/json").POST(HttpRequest.BodyPublishers.ofString("{\"name\":\"Reise\",\"targetAmountCents\":1}")).build();
         var rejected = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
         assertThat(rejected.statusCode()).isEqualTo(401); assertThat(rejected.headers().firstValue("Cache-Control")).hasValue("no-store");
@@ -296,7 +296,10 @@ class SavingsGoalIT {
         String id = goal(first);
         for (String value : List.of("null", "-1", "9007199254740992", "9223372036854775808", "1.01", "1.0", "1e2", "\"100\"", "true", "[]", "{}")) {
             var rejected = progress(id, "{\"progressCents\":" + value + "}", token(first));
-            assertThat(rejected.statusCode()).as(value).isEqualTo(400); fields(rejected, "progressCents");
+            if (value.equals("-1") && path().contains("/v2/")) {
+                assertThat(rejected.statusCode()).isEqualTo(409);
+                assertThat(JSON.readTree(rejected.body()).get("code").asText()).isEqualTo("FEATURE_NOT_AVAILABLE");
+            } else { assertThat(rejected.statusCode()).as(value).isEqualTo(400); fields(rejected, "progressCents"); }
         }
         var missing = progress(id, "{}", token(first));
         assertThat(missing.statusCode()).isEqualTo(400); fields(missing, "progressCents");
@@ -316,7 +319,7 @@ class SavingsGoalIT {
         assertThat(progress("ungueltig", "{\"progressCents\":999}", token(first)).body()).isEqualTo(missing.body());
         for (String bearer : Arrays.asList(null, "ungueltig"))
             assertThat(progress(id, "{\"progressCents\":999}", bearer).statusCode()).isEqualTo(401);
-        var request = HttpRequest.newBuilder(URI.create("http://localhost:" + port + PATH + "/" + id + "/progress"))
+        var request = HttpRequest.newBuilder(URI.create("http://localhost:" + port + path() + "/" + id + "/progress"))
             .header("Cookie", "__Host-tnbp-refresh=synthetisch").header("Content-Type", "application/json")
             .PUT(HttpRequest.BodyPublishers.ofString("{\"progressCents\":999}")).build();
         assertThat(HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString()).statusCode()).isEqualTo(401);

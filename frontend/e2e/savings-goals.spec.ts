@@ -1,8 +1,18 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, Page, APIRequestContext } from '@playwright/test';
 
+async function review(page: Page): Promise<void> {
+  await expect(page.getByRole('button', { name: 'Ich habe die Sparziele geprüft', exact: true })).toBeDisabled();
+  await page.getByRole('button', { name: 'Sparziele zur Prüfung laden', exact: true }).click();
+  await page.getByRole('button', { name: 'Ich habe die Sparziele geprüft', exact: true }).click();
+  const id = await page.locator('dialog[open]').count() ? 'goal-delete-cancel'
+    : await page.locator('#goal-progress-amount').count() ? 'goal-progress-amount'
+    : await page.locator('#goal-edit-name').count() ? 'goal-edit-name' : 'goal-name';
+  await expect(page.locator('#' + id)).toBeFocused();
+}
+
 const password = '  Grüner 🦊 im Baum  ';
-const endpoint = '**/api/v1/savings-goals';
+const endpoint = '**/api/v2/savings-goals';
 async function account(request: APIRequestContext): Promise<string> {
   const email = `goals-${crypto.randomUUID()}@example.org`;
   expect((await request.post('http://127.0.0.1:8080/api/v2/access/registrations', {
@@ -129,7 +139,7 @@ test('Ladefehler, ungültige Antworten und Platzhalter zeigen keine alten Ziele'
   await expect(page.getByText('Eigenes Ziel', { exact: true })).toHaveCount(0); await page.unroute(endpoint);
   for (const goal of [
     { id: 'invalid', name: 'Ungeprüft', targetAmountCents: 1, progressCents: 0 },
-    { id: '00000000-0000-4000-8000-000000000001', name: 'Ungeprüft', targetAmountCents: 1, progressCents: -1 },
+    { id: '00000000-0000-4000-8000-000000000001', name: 'Ungeprüft', targetAmountCents: 1, progressCents: -9007199254740992 },
     { id: '00000000-0000-4000-8000-000000000001', name: 'Ungeprüft', targetAmountCents: 1, progressCents: 0, targetDate: '2026-02-29' }
   ]) {
     await page.route(endpoint, route => route.fulfill({ status: 200, json: [goal] }));
@@ -182,7 +192,7 @@ test('ungültige Anlageantwort bestätigt weder Ziel noch Erfolg und erhält jed
     await expect(page.locator('#goal-status')).toContainText('nicht bestätigt'); await expect(page.locator('#goal-status')).not.toHaveClass(/success/);
     await expect(page.getByLabel('Name des Sparziels')).toHaveValue('Reise'); await expect(page.getByLabel('Zielbetrag in Euro')).toHaveValue('1,15');
     await expect(page.getByLabel('Zieldatum (optional)')).toHaveValue('2028-02-29'); await expect(page.locator('.savings-cards li')).toHaveCount(0);
-    await page.unroute(endpoint);
+    await page.unroute(endpoint); await review(page);
   }
 });
 

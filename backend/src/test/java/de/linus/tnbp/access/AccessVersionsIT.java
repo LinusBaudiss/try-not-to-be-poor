@@ -224,7 +224,7 @@ class AccessVersionsIT {
     @Test void unbekannteRoutenUndFalscheMethodenBleibenAuchMitJwtGesperrt() throws Exception {
         var browser = browser("v2");
         assertThat(browser.login("person@example.org", SessionIT.PASSWORD).statusCode()).isEqualTo(200);
-        for (String route : List.of("/api/v2/access/accounts", "/api/v2/access/login/extra", "/api/v2/expense-budget/budget", "/api/v2/savings-goals")) {
+        for (String route : List.of("/api/v2/access/accounts", "/api/v2/access/login/extra", "/api/v2/expense-budget/budget", "/api/v2/savings-goals/unbekannt/extra")) {
             for (boolean authenticated : List.of(false, true)) {
                 var request = HttpRequest.newBuilder(URI.create("http://localhost:" + port + route)).GET();
                 if (authenticated) request.header("Authorization", "Bearer " + browser.access);

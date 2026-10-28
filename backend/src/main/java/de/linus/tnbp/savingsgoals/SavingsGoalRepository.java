@@ -19,6 +19,10 @@ class SavingsGoalRepository {
             """, (row, index) -> new Goal(row.getObject("id", UUID.class), row.getString("name"),
                 row.getLong("target_amount_cents"), row.getLong("progress_cents"), row.getObject("target_date", LocalDate.class)), userId);
     }
+    boolean exists(UUID userId, UUID id) {
+        return Boolean.TRUE.equals(jdbc.queryForObject(
+            "SELECT EXISTS(SELECT 1 FROM savings_goals.goals WHERE user_id = ? AND id = ?)", Boolean.class, userId, id));
+    }
     Optional<Goal> progress(UUID userId, UUID id, long progressCents) {
         return jdbc.query("""
             UPDATE savings_goals.goals SET progress_cents = ? WHERE user_id = ? AND id = ?

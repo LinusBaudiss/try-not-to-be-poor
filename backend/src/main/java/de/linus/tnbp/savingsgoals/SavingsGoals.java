@@ -40,6 +40,14 @@ public class SavingsGoals {
         context.requireWrite();
         if (!goals.delete(context.userId(), id)) throw new NotFound();
     }
+    public void requireGoal(FinanceContext context, UUID id) {
+        context.requireRead();
+        if (!goals.exists(context.userId(), id)) throw new NotFound();
+    }
+    public static void validateSignedProgress(Long progressCents) {
+        if (progressCents == null || progressCents < -Money.MAX_CENTS || progressCents > Money.MAX_CENTS)
+            throw new InvalidGoal(Map.of("progressCents", "Gib einen gültigen Gesamtfortschritt in ganzen Cent ein."));
+    }
     public static void validateProgress(Long progressCents) {
         // v1 bleibt unterstützt; signierte Fortschritte werden erst später freigegeben.
         if (!Money.nonnegative(progressCents))

@@ -130,6 +130,30 @@ class FinanceCoordinationIT {
         }
     }
 
+    @Test void negativesV2GateWartetAufKontosperreUndPrueftDenBestandErstDanach() throws Exception {
+        var goal = application.saveGoal(first, "Vorher", 1000L, null);
+        CLOCK.calls.set(0);
+        try (Connection blocker = PostgresFixture.ADMIN.getDataSource().getConnection();
+             var executor = Executors.newVirtualThreadPerTaskExecutor()) {
+            blocker.setAutoCommit(false);
+            int holder = holdAccount(blocker, first);
+            var pending = executor.submit(() -> application.progressGoalV2(first, goal.id(), -1L));
+            try {
+                awaitAdvisory(holder);
+                assertThat(pending.isDone()).isFalse();
+                assertThat(CLOCK.calls.get()).as("kein Fachkontext vor Erwerb der Kontosperre").isZero();
+                try (var st = blocker.prepareStatement("DELETE FROM savings_goals.goals WHERE id = ? AND user_id = ?")) {
+                    st.setObject(1, goal.id()); st.setObject(2, first);
+                    assertThat(st.executeUpdate()).isEqualTo(1);
+                }
+                assertThat(pending.isDone()).as("auch nach unbestätigter Löschung bleibt das Gate blockiert").isFalse();
+            } finally { blocker.commit(); }
+            assertThatThrownBy(() -> pending.get(5, TimeUnit.SECONDS))
+                .isInstanceOf(ExecutionException.class).hasCauseInstanceOf(SavingsGoals.NotFound.class);
+            assertThat(application.allGoals(first)).isEmpty();
+        }
+    }
+
     @Test void auchEinLeeresKontoSerialisiertOhneBestehendeZeile() throws Exception {
         try (var executor = Executors.newVirtualThreadPerTaskExecutor();
              Connection blocker = PostgresFixture.ADMIN.getDataSource().getConnection()) {

@@ -127,6 +127,7 @@ nav a.active { color: var(--on-primary); background: var(--primary); }
 .savings-delete-dialog .savings-actions button { flex-basis: auto; }
 
 #goal-mutation-status:focus, #goal-delete-status:focus { outline: 3px solid var(--focus-ring); outline-offset: 3px; }
+.update-card .hint { margin-top: 1rem; }
 
 h1:focus, #expense-delete-status:focus { outline: 3px solid var(--focus-ring); outline-offset: 3px; }
 .expense-uncertainty, .budget-uncertainty { margin-block: 1.5rem; padding: 1rem; border: 2px solid var(--error); border-radius: .5rem; }

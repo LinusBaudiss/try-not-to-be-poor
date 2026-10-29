@@ -10,7 +10,8 @@
     "build": "ng build",
     "prestart": "npm run generate:api",
     "start": "ng serve --host 127.0.0.1 --proxy-config proxy.conf.json",
-    "e2e": "playwright test"
+    "e2e": "playwright test",
+    "e2e:transition": "playwright test --config playwright.transition.config.ts"
   },
   "dependencies": {
     "@angular/common": "22.2.3",

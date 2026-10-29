@@ -105,6 +105,7 @@ export class Registration {
       },
       error: (response: HttpErrorResponse) => {
         if (!this.accepts()) return;
+        if (this.session.handleUpdate(response)) return;
         const body = response.error as Partial<ApiError> | null;
         const fields: Record<string, string> = {};
         for (const key of ['email', 'password']) {

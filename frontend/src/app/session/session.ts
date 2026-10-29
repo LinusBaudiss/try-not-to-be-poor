@@ -1,4 +1,4 @@
-import { HttpBackend, HttpClient, HttpResponse } from '@angular/common/http';
+import { HttpBackend, HttpClient, HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { firstValueFrom, timeout } from 'rxjs';
@@ -15,6 +15,7 @@ export class Session {
   private readonly current = signal<SessionResponse | null>(null);
   readonly userId = () => this.current()?.userId ?? null;
   readonly notice = signal('');
+  readonly updateRequired = signal(false);
   private csrfRequest: Promise<string> | null = null;
   private readonly epoch = signal(0);
   readonly loggingOut = signal(false);
@@ -31,6 +32,7 @@ export class Session {
 
   constructor() {
     this.channel?.addEventListener('message', event => {
+      if (event.data === 'update-required') { this.requireUpdate(false); return; }
       if (event.data === 'ended') this.end('Die Sitzung wurde in einem anderen Tab beendet oder gewechselt.', false, false);
     });
   }
@@ -46,6 +48,7 @@ export class Session {
   }
 
   async restore(): Promise<boolean> {
+    if (this.updateRequired()) return false;
     if (this.token()) return true;
     if (this.restoring) return this.restoring;
     if (this.restored) return false;
@@ -55,30 +58,40 @@ export class Session {
   }
 
   async login(email: string, password: string): Promise<boolean> {
+    if (this.updateRequired()) return false;
     this.reset();
     this.channel?.postMessage('ended');
     this.restored = true;
     const version = this.epoch();
     return this.serialize(async () => {
       if (version !== this.epoch()) return false;
-      const csrf = await this.csrfToken();
-      const startedAt = performance.now();
-      const result = await firstValueFrom(this.api.login(window.location.origin, csrf, { email, password }, 'response').pipe(timeout(30_000)));
-      return this.accept(result, version, startedAt);
+      try {
+        const csrf = await this.csrfToken();
+        if (version !== this.epoch() || this.updateRequired()) return false;
+        const startedAt = performance.now();
+        const result = await firstValueFrom(this.api.login(window.location.origin, csrf, { email, password }, 'response').pipe(timeout(30_000)));
+        return this.accept(result, version, startedAt);
+      } catch (failure) {
+        if (version === this.epoch() && this.handleUpdate(failure)) return false;
+        throw failure;
+      }
     });
   }
 
   refresh(): Promise<boolean> {
+    if (this.updateRequired()) return Promise.resolve(false);
     if (this.refreshing) return this.refreshing;
     const version = this.epoch();
     const operation = this.serialize(async () => {
       if (version !== this.epoch()) return false;
       try {
         const csrf = await this.csrfToken();
+        if (version !== this.epoch() || this.updateRequired()) return false;
         const startedAt = performance.now();
         const result = await firstValueFrom(this.api.refreshSession(window.location.origin, csrf, 'response').pipe(timeout(30_000)));
         return this.accept(result, version, startedAt);
-      } catch {
+      } catch (failure) {
+        if (version === this.epoch() && this.handleUpdate(failure)) return false;
         // Eine möglicherweise bereits committete Rotation niemals automatisch wiederholen.
         if (version === this.epoch()) this.end('Deine Sitzung konnte nicht verlängert werden. Melde dich erneut an.');
         return false;
@@ -90,11 +103,12 @@ export class Session {
   }
 
   logout(): Promise<void> {
+    if (this.updateRequired()) return Promise.resolve();
     if (this.logoutRequest) return this.logoutRequest;
     this.end('Abmeldung läuft …', true, false);
     this.loggingOut.set(true);
     const operation = this.revoke().then(confirmed => {
-      if (this.current()) return;
+      if (this.current() || this.updateRequired()) return;
       this.logoutUnconfirmed.set(!confirmed);
       this.notice.set(confirmed ? 'Du wurdest abgemeldet.'
         : 'Der Widerruf auf dem Server wurde nicht bestätigt. Versuche die Abmeldung erneut.');
@@ -109,6 +123,7 @@ export class Session {
   }
 
   end(message = 'Melde dich erneut an.', broadcast = true, revoke = true): void {
+    if (this.updateRequired()) return;
     this.reset();
     if (broadcast) this.channel?.postMessage('ended');
     this.restored = true;
@@ -119,6 +134,7 @@ export class Session {
   }
 
   cancelLogin(version: number): void {
+    if (this.updateRequired()) return;
     if (version !== this.epoch()) return;
     this.reset();
     this.restored = true;
@@ -128,6 +144,7 @@ export class Session {
   }
 
   private revoke(): Promise<boolean> {
+    if (this.updateRequired()) return Promise.resolve(false);
     // Erst laufende Cookie-Mutationen abschließen, danach deren Familie widerrufen.
     const version = this.epoch();
     if (this.revocation?.version === version) return this.revocation.request;
@@ -135,13 +152,37 @@ export class Session {
       if (version !== this.epoch()) return false;
       try {
         const csrf = await this.csrfToken();
+        if (version !== this.epoch() || this.updateRequired()) return false;
         await firstValueFrom(this.api.logoutSession(window.location.origin, csrf).pipe(timeout(30_000)));
         return true;
-      } catch { return false; }
+      } catch (failure) {
+        if (version === this.epoch()) this.handleUpdate(failure);
+        return false;
+      }
     });
     this.revocation = { version, request };
     void request.finally(() => { if (this.revocation?.request === request) this.revocation = null; });
     return request;
+  }
+
+  handleUpdate(failure: unknown): boolean {
+    if (!(failure instanceof HttpErrorResponse) || failure.status !== 401
+        || failure.error?.code !== 'CLIENT_UPDATE_REQUIRED') return false;
+    this.requireUpdate();
+    return true;
+  }
+
+  requireUpdate(broadcast = true): void {
+    if (this.updateRequired()) return;
+    this.reset();
+    this.restored = true;
+    this.updateRequired.set(true);
+    this.logoutUnconfirmed.set(false);
+    this.loggingOut.set(false);
+    this.notice.set('Bitte lade die Seite neu. Nicht gespeicherte Eingaben werden verworfen.');
+    if (broadcast) this.channel?.postMessage('update-required');
+    // Das Ziel ist fest und gleichursprünglich; Antwortinhalte steuern keine Navigation.
+    void this.router.navigateByUrl('/aktualisieren', { replaceUrl: true });
   }
 
   private reset(): void {
@@ -198,5 +239,11 @@ export class Session {
 export const sessionGuard: CanActivateFn = async () => {
   const session = inject(Session);
   const router = inject(Router);
-  return await session.restore() || router.parseUrl('/anmelden');
+  return await session.restore() || router.parseUrl(session.updateRequired() ? '/aktualisieren' : '/anmelden');
+};
+
+// Auch öffentliche Zugangsformulare bleiben nach einem erkannten Versionswechsel geschlossen.
+export const currentClientGuard: CanActivateFn = () => {
+  const session = inject(Session);
+  return session.updateRequired() ? inject(Router).parseUrl('/aktualisieren') : true;
 };

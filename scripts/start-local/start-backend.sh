@@ -17,4 +17,5 @@ set -a
 . .local/session.env
 set +a
 
-exec ./backend/mvnw -f backend/pom.xml spring-boot:run
+./backend/mvnw -f backend/pom.xml package -DskipTests
+exec python3 scripts/api-release.py start --release backend/target/tnbp-0.1.0-SNAPSHOT.jar --timeout "${START_LOCAL_TIMEOUT_SECONDS:-300}"

@@ -1,0 +1,37 @@
+{
+	admin off
+	auto_https disable_redirects
+	skip_install_trust
+}
+
+https://localhost:4200 {
+	bind 127.0.0.1 ::1
+	tls internal
+	root * {$TNBP_STATIC_ROOT}
+
+	# API und fehlende Dateien erhalten niemals den erfolgreichen SPA-Fallback.
+	@api path /api /api/*
+	handle @api {
+		reverse_proxy 127.0.0.1:8080 {
+			header_down Cache-Control no-store
+		}
+	}
+	@hashed {
+		path_regexp hashed ^/[^/]+-[A-Za-z0-9_-]{8,}\.(js|css|woff2?)$
+		file {path}
+	}
+	handle @hashed {
+		header Cache-Control "public, max-age=31536000, immutable"
+		file_server
+	}
+	@files path_regexp file \.[^/]+$
+	handle @files {
+		header Cache-Control no-store
+		file_server
+	}
+	handle {
+		header Cache-Control no-store
+		rewrite * /index.html
+		file_server
+	}
+}

@@ -1,3 +1,4 @@
+import { completeV2Flow } from './support/complete-v2-flow';
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, Page, APIRequestContext } from '@playwright/test';
 
@@ -404,94 +405,7 @@ test('späte geschützte Angular-Antwort wird nach Sitzungsende als verworfen zu
   await expect(page.getByRole('status')).toHaveText('Du wurdest abgemeldet.');
 });
 
-test('Sämtliche Zugangs- und Finanzoperationen einschließlich aller fünf Zieloperationen nutzen ausschließlich v2', async ({ page }) => {
-  const access: { path: string; method: string; bearer?: string; csrf?: string; origin?: string }[] = [];
-  const headerChecks: Promise<void>[] = [];
-  const finances = new Set<string>();
-  page.on('request', request => {
-    const path = new URL(request.url()).pathname;
-    if (/\/api\/v\d+\/access\//.test(path)) {
-      headerChecks.push(request.allHeaders().then(headers => {
-        access.push({ path, method: request.method(), bearer: headers['authorization'], csrf: headers['x-csrf-token'], origin: headers['origin'] });
-      }));
-    }
-    if (/^\/api\/v[12]\//.test(path) && !path.includes('/access/')) finances.add(`${request.method()} ${path}`);
-  });
-  const email = `v2-browser-${crypto.randomUUID()}@example.org`;
-  await page.goto(`/registrieren#registrationToken=${'a'.repeat(43)}`);
-  await page.getByLabel('E-Mail-Adresse', { exact: true }).fill(email);
-  await page.getByLabel('Passwort', { exact: true }).fill(password);
-  await page.getByRole('button', { name: 'Konto anlegen', exact: true }).click();
-  await expect(page.getByRole('status')).toHaveText('Dein Konto wurde angelegt.');
-  await page.getByRole('link', { name: 'Zur Anmeldung' }).click();
-  await expect(page.getByRole('heading', { name: 'Anmelden', exact: true })).toBeVisible();
-  await page.getByLabel('E-Mail-Adresse', { exact: true }).fill(email);
-  await page.getByLabel('Passwort', { exact: true }).fill(password);
-  await page.getByRole('button', { name: 'Anmelden', exact: true }).click();
-  await expect(page.getByLabel('Monatsbudget in Euro', { exact: true })).toBeVisible();
-  await page.getByLabel('Monatsbudget in Euro', { exact: true }).fill('75');
-  await page.getByRole('button', { name: 'Budget speichern', exact: true }).click();
-  await expect(page.locator('#budget-status')).toContainText('wurde gespeichert');
-  await page.getByRole('link', { name: 'Ausgaben', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'Ausgabe speichern', exact: true })).toBeEnabled();
-  await page.getByLabel('Name der Ausgabe').fill('Netzwerkprüfung');
-  await page.getByLabel('Ausgabenbetrag in Euro').fill('1');
-  await page.getByRole('button', { name: 'Ausgabe speichern', exact: true }).click();
-  await expect(page.locator('#expense-status')).toHaveText('Deine Ausgabe wurde gespeichert.');
-  const expenseId = await page.locator('.expense-cards [data-expense-action]').first().getAttribute('data-expense-action');
-  await page.getByRole('button', { name: 'Netzwerkprüfung bearbeiten', exact: true }).click();
-  await page.getByLabel('Betrag bearbeiten in Euro').fill('2');
-  await page.getByRole('button', { name: 'Änderungen speichern', exact: true }).click();
-  await expect(page.locator('#expense-status')).toHaveText('Deine Ausgabe wurde geändert.');
-  await page.getByRole('button', { name: 'Netzwerkprüfung löschen', exact: true }).click();
-  await page.getByRole('button', { name: 'Endgültig löschen', exact: true }).click();
-  await expect(page.locator('#expense-status')).toHaveText('Deine Ausgabe wurde gelöscht.');
-  await page.getByRole('link', { name: 'Sparziele', exact: true }).click();
-  await expect(page.getByText('Du bist angemeldet. Deine persönlichen Sparziele sind geöffnet.')).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Sparziel speichern', exact: true })).toBeEnabled();
-  await page.getByLabel('Name des Sparziels', { exact: true }).fill('Netzwerkziel');
-  await page.getByLabel('Zielbetrag in Euro', { exact: true }).fill('100');
-  const goalResponse = page.waitForResponse(r => r.url().endsWith('/api/v2/savings-goals') && r.request().method() === 'POST');
-  await page.getByRole('button', { name: 'Sparziel speichern', exact: true }).click();
-  const goalId = (await (await goalResponse).json()).id;
-  await expect(page.locator('#goal-status')).toHaveClass(/success/);
-  await page.getByRole('button', { name: 'Fortschritt aktualisieren: Netzwerkziel', exact: true }).click();
-  await page.getByLabel('Gesamtfortschritt in Euro').fill('70');
-  await page.getByRole('button', { name: 'Fortschritt speichern', exact: true }).click();
-  await expect(page.locator('#goal-progress-status')).toHaveClass(/success/);
-  await page.getByRole('button', { name: 'Sparziel bearbeiten: Netzwerkziel', exact: true }).click();
-  await page.getByLabel('Zielbetrag in Euro bearbeiten').fill('150');
-  await page.getByRole('button', { name: 'Änderungen speichern', exact: true }).click();
-  await expect(page.locator('#goal-mutation-status')).toHaveClass(/success/);
-  await page.getByRole('button', { name: 'Sparziel löschen: Netzwerkziel', exact: true }).click();
-  await page.getByRole('button', { name: 'Endgültig löschen', exact: true }).click();
-  await expect(page.locator('#goal-mutation-status')).toHaveText('Dein Sparziel wurde gelöscht.');
-  await page.reload();
-  await expect(page.getByText('Du bist angemeldet. Deine persönlichen Sparziele sind geöffnet.')).toBeVisible();
-  await page.getByRole('button', { name: 'Abmelden', exact: true }).click();
-  await expect(page.getByRole('status')).toHaveText('Du wurdest abgemeldet.');
-  await Promise.all(headerChecks);
-  expect([...new Set(access.map(item => `${item.method} ${item.path}`))].sort()).toEqual([
-    'GET /api/v2/access/csrf', 'GET /api/v2/access/me', 'POST /api/v2/access/login',
-    'POST /api/v2/access/logout', 'POST /api/v2/access/refresh', 'POST /api/v2/access/registrations'
-  ]);
-  for (const item of access) {
-    if (item.path.endsWith('/me')) expect(item.bearer).toMatch(/^Bearer /);
-    else expect(item.bearer).toBeUndefined();
-    if (/\/(login|refresh|logout)$/.test(item.path)) {
-      expect(item.csrf).toBeTruthy(); expect(item.origin).toBe('https://localhost:4200');
-    }
-  }
-  expect([...finances]).toEqual(expect.arrayContaining(['GET /api/v2/budget', 'PUT /api/v2/budget', 'GET /api/v2/month-summary', 'GET /api/v2/savings-goals']));
-  expect([...finances].filter(operation => operation.includes('/api/v2/expenses')).sort()).toEqual([
-    `DELETE /api/v2/expenses/${expenseId}`, 'GET /api/v2/expenses', 'POST /api/v2/expenses', `PUT /api/v2/expenses/${expenseId}`
-  ]);
-  expect([...finances].filter(operation => operation.includes('/api/v2/savings-goals')).sort()).toEqual([
-    `DELETE /api/v2/savings-goals/${goalId}`, 'GET /api/v2/savings-goals', 'POST /api/v2/savings-goals',
-    `PUT /api/v2/savings-goals/${goalId}`, `PUT /api/v2/savings-goals/${goalId}/progress`
-  ]);
-  expect([...finances].filter(operation => operation.includes('/api/v1/'))).toEqual([]);
-});
+test('Sämtliche Zugangs- und Finanzoperationen einschließlich aller fünf Zieloperationen nutzen ausschließlich v2', async ({ page }) => { await completeV2Flow(page); });
 
 test('Interceptor begrenzt Bearer auf dieselbe Herkunft und v1/v2 und nimmt öffentliche Zugangspfade aus', async ({ page, request }) => {
   await login(page, await account(request));
@@ -866,3 +780,86 @@ for (const viewport of [{ width: 320, height: 568 }, { width: 390, height: 844 }
     expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
   });
 }
+
+for (const operation of ['login', 'refresh', 'logout'] as const) {
+  test(`Updatebroadcast während CSRF verhindert späte Cookie-Mutation: ${operation}`, async ({ page, context, request }) => {
+    const email = await account(request);
+    if (operation === 'login') await page.goto('/anmelden');
+    else await login(page, email);
+    let release!: () => void;
+    const held = new Promise<void>(resolve => { release = resolve; });
+    let csrfStarted = false;
+    let mutations = 0;
+    page.on('request', request => {
+      if (request.method() === 'POST' && /\/api\/v2\/access\/(login|refresh|logout)$/.test(request.url())) mutations++;
+    });
+    await page.route('**/api/v2/access/csrf', async route => {
+      csrfStarted = true;
+      await held;
+      await route.fulfill({ status: 200, json: { token: 'held-csrf' } });
+    });
+    if (operation === 'login') {
+      await page.getByLabel('E-Mail-Adresse', { exact: true }).fill(email);
+      await page.getByLabel('Passwort', { exact: true }).fill(password);
+      await page.getByRole('button', { name: 'Anmelden', exact: true }).click();
+    } else if (operation === 'logout') {
+      await page.getByRole('button', { name: 'Abmelden', exact: true }).click();
+    } else {
+      await page.evaluate(() => {
+        const session = (window as any).ng.getComponent(document.querySelector('app-month')).session;
+        (window as any).pendingRefresh = session.refresh();
+      });
+    }
+    await expect.poll(() => csrfStarted).toBe(true);
+    const broadcaster = await context.newPage();
+    await broadcaster.goto('/anmelden');
+    await broadcaster.evaluate(() => {
+      const channel = new BroadcastChannel('tnbp-session');
+      channel.postMessage('update-required');
+      channel.close();
+    });
+    await expect(page).toHaveURL('/aktualisieren');
+    const csrfResponse = page.waitForResponse('**/api/v2/access/csrf');
+    release();
+    await csrfResponse;
+    await page.evaluate(() => new Promise(resolve => setTimeout(resolve, 0)));
+    await expect(page.getByRole('heading', { name: 'Bitte lade die Seite neu' })).toBeVisible();
+    await expect.poll(() => page.evaluate(() => document.body.textContent?.includes('Widerruf auf dem Server'))).toBe(false);
+    expect(mutations).toBe(0);
+    await expect(page.getByText('Nicht gespeicherte Eingaben werden beim Neuladen verworfen.', { exact: false })).toBeVisible();
+  });
+}
+
+test('Updatezustand hält öffentliche History und interne Navigation bei der Reloadaktion', async ({ page, context }) => {
+  await page.goto('/anmelden');
+  await page.getByLabel('E-Mail-Adresse', { exact: true }).fill('entwurf@example.org');
+  await page.getByRole('link', { name: /Konto anlegen/ }).click();
+  await expect(page).toHaveURL(/\/registrieren/);
+  await page.getByLabel('E-Mail-Adresse', { exact: true }).fill('privater-entwurf@example.org');
+  const broadcaster = await context.newPage();
+  await broadcaster.goto('/anmelden');
+  let mutations = 0;
+  page.on('request', request => {
+    if (['POST', 'PUT', 'DELETE'].includes(request.method()) && request.url().includes('/api/')) mutations++;
+  });
+  await broadcaster.evaluate(() => {
+    const channel = new BroadcastChannel('tnbp-session');
+    channel.postMessage('update-required'); channel.close();
+  });
+  await expect(page).toHaveURL('/aktualisieren');
+  await page.goBack();
+  await expect(page).toHaveURL('/aktualisieren');
+  await page.goForward();
+  await expect(page).toHaveURL('/aktualisieren');
+  for (const target of ['/anmelden', '/registrieren']) {
+    await page.evaluate(async target => {
+      const router = (window as any).ng.getComponent(document.querySelector('app-root')).session.router;
+      await router.navigateByUrl(target);
+    }, target);
+    await expect(page).toHaveURL('/aktualisieren');
+    await expect(page.getByRole('button', { name: 'Seite vollständig neu laden' })).toBeVisible();
+    await expect(page.getByRole('textbox')).toHaveCount(0);
+    await expect(page.getByText('privater-entwurf@example.org')).toHaveCount(0);
+  }
+  expect(mutations).toBe(0);
+});

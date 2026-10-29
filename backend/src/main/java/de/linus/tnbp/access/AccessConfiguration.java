@@ -41,7 +41,9 @@ class AccessConfiguration {
     }
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http, SessionSettings settings, SessionJwt jwt) throws Exception {
+    SecurityFilterChain securityFilterChain(HttpSecurity http, SessionSettings settings, SessionJwt jwt,
+            de.linus.tnbp.shared.ApiVersionState versions, DatabaseRoleVerifier roles) throws Exception {
+        roles.verify();
         var csrfRepository = new org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository();
         csrfRepository.setHeaderName("X-CSRF-TOKEN");
         var origin = new org.springframework.web.filter.OncePerRequestFilter() {
@@ -49,6 +51,14 @@ class AccessConfiguration {
                     jakarta.servlet.http.HttpServletResponse response, jakarta.servlet.FilterChain chain)
                     throws java.io.IOException, jakarta.servlet.ServletException {
                 String path = request.getServletPath();
+                if (versions.v1Retired() && (path.equals("/api/v1") || path.startsWith("/api/v1/"))) {
+                    response.setStatus(401);
+                    response.setContentType("application/json");
+                    response.setCharacterEncoding("UTF-8");
+                    response.setHeader("Cache-Control", "no-store");
+                    response.getWriter().write("{\"code\":\"CLIENT_UPDATE_REQUIRED\",\"message\":\"Bitte lade die Seite neu. Nicht gespeicherte Eingaben werden verworfen.\",\"updateUrl\":\"/aktualisieren\"}");
+                    return;
+                }
                 if (path.startsWith("/api/v2/")) response.setHeader("Cache-Control", "no-store");
                 if (path.startsWith("/api/v1/expense-budget/") || path.equals("/api/v1/savings-goals")
                     || path.matches("/api/v1/savings-goals/[^/]+(?:/progress)?")) response.setHeader("Cache-Control", "no-store");

@@ -53,6 +53,13 @@ jobs:
           java-version: '25'
           cache: maven
       - run: ./backend/mvnw -B -f backend/pom.xml verify -Dit.test=ApiVersionStateIT,ApiRetirementIT,ReleaseTransitionIT,AdministrativeSerializationIT
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: backend-stilllegung-fehler
+          path: |
+            backend/target/failsafe-reports
+            /tmp/tnbp-release-it-*/*.log
   browser-transition:
     runs-on: ubuntu-24.04
     steps:

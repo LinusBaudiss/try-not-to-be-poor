@@ -724,7 +724,12 @@ class Guard:
     def start(self):
         target = self.artifact(self.args.release)
         child, record = None, None
-        def interrupted(signum, frame): raise KeyboardInterrupt
+        stopping = False
+        def interrupted(signum, frame):
+            nonlocal stopping
+            if not stopping:
+                stopping = True
+                raise KeyboardInterrupt
         previous = {sig: signal.signal(sig, interrupted) for sig in (signal.SIGINT, signal.SIGTERM)}
         try:
             with self.lock():
@@ -753,12 +758,17 @@ class Guard:
             print('API über v2 bereit (' + mode + ').', flush=True)
             return child.wait()
         finally:
-            for sig, handler in previous.items(): signal.signal(sig, handler)
-            if child:
-                with self.lock():
-                    current = self.read()
-                    if current['instance'] == record['instance'] and not current.get('stopped'): self.stop()
-                child.wait()
+            # Weitere Signale dürfen den begonnenen DB-/Containmentabschluss
+            # nicht vor seiner dauerhaften Bestätigung unterbrechen.
+            stopping = True
+            try:
+                if child:
+                    with self.lock():
+                        current = self.read()
+                        if current['instance'] == record['instance'] and not current.get('stopped'): self.stop()
+                    child.wait()
+            finally:
+                for sig, handler in previous.items(): signal.signal(sig, handler)
 
     def supervise(self):
         if ctypes.CDLL(None, use_errno=True).prctl(36, 1, 0, 0, 0) != 0:

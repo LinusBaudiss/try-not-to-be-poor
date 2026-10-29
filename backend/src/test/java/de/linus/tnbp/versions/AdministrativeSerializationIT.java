@@ -176,8 +176,8 @@ class AdministrativeSerializationIT {
             var child=builder.start();assertThat(child.waitFor(90,TimeUnit.SECONDS)).as(Files.readString(log)).isTrue();
             assertThat(child.exitValue()).as(Files.readString(log)).isNotZero();assertThat(Files.readString(log)).contains("IsADirectoryError");
             var record=JSON.readValue(Files.readString(run.folder.resolve("instance.json")),Map.class);
-            assertThat(record.get("stopped")).isEqualTo(true);assertThat(record.get("containment_stopped")).isEqualTo(true);
-            assertThat(db.admin.queryForObject("SELECT active FROM api_version.lifecycle",Boolean.class)).isFalse();
+            assertThat(record.get("stopped")).as(Files.readString(run.folder.resolve("retired-api.log"))).isEqualTo(true);assertThat(record.get("containment_stopped")).isEqualTo(true);
+            assertThat(db.admin.queryForObject("SELECT active FROM api_version.lifecycle",Boolean.class)).as(run.readLog()).isFalse();
             assertThat(db.admin.queryForObject("SELECT count(*) FROM pg_stat_activity WHERE datname=current_database() AND usename='tnbp_runtime'",Integer.class)).isZero();
             run.finish();run.start(RELEASE);run.finish();
         }
@@ -190,9 +190,41 @@ class AdministrativeSerializationIT {
             await(() -> run.readLog().contains("API über v2 bereit"));
             Files.delete(original);run.finish();
             assertThat(run.readLog()).doesNotContain("NoSuchFileException","FileNotFoundError");
-            assertThat(db.admin.queryForObject("SELECT active FROM api_version.lifecycle",Boolean.class)).isFalse();
+            assertThat(db.admin.queryForObject("SELECT active FROM api_version.lifecycle",Boolean.class)).as(run.readLog()).isFalse();
             assertThat(db.admin.queryForObject("SELECT count(*) FROM pg_stat_activity WHERE datname=current_database() AND usename='tnbp_runtime'",Integer.class)).isZero();
             assertThat(JSON.readValue(Files.readString(run.folder.resolve("instance.json")),Map.class).get("stopped")).isEqualTo(true);
+        }
+    }
+    @Test void erneutesTermSignalUnterbrichtDenBereitsBegonnenenStoppNicht() throws Exception {
+        try(var db=new VersionDatabase();var run=new Running(db,false)) {
+            String driver="""
+                import contextlib,runpy,sys,time
+                from pathlib import Path
+                m=runpy.run_path(sys.argv[1]);G=m['Guard'];original=G.lock
+                @contextlib.contextmanager
+                def paused(self):
+                    self.lock_calls=getattr(self,'lock_calls',0)+1
+                    if self.lock_calls==2:
+                        Path('__FOLDER__/cleanup-entered').touch()
+                        while not Path('__FOLDER__/continue-cleanup').exists(): time.sleep(.01)
+                    with original(self): yield
+                G.lock=paused;sys.argv=sys.argv[1:]
+                try: sys.exit(m['main']())
+                except KeyboardInterrupt: sys.exit(130)
+                """.replace("__FOLDER__",run.folder.toString());
+            var child=spawn(run,driver,"start",RELEASE);run.process=child.process();run.log=child.log();
+            await(() -> run.readLog().contains("API über v2 bereit"));
+            run.process.destroy();
+            await(() -> Files.exists(run.folder.resolve("cleanup-entered")));
+            var signal=new ProcessBuilder("kill","-TERM",Long.toString(run.process.pid())).start();
+            assertThat(signal.waitFor(5,TimeUnit.SECONDS)).isTrue();assertThat(signal.exitValue()).isZero();
+            Files.createFile(run.folder.resolve("continue-cleanup"));
+            assertThat(run.process.waitFor(20,TimeUnit.SECONDS)).as(run.readLog()).isTrue();
+            assertThat(run.process.exitValue()).as(run.readLog()).isEqualTo(130);
+            assertThat(db.admin.queryForObject("SELECT active FROM api_version.lifecycle",Boolean.class)).as(run.readLog()).isFalse();
+            assertThat(JSON.readValue(Files.readString(run.folder.resolve("instance.json")),Map.class).get("stopped")).isEqualTo(true);
+            assertThat(db.admin.queryForObject("SELECT count(*) FROM pg_stat_activity WHERE datname=current_database() AND usename='tnbp_runtime'",Integer.class)).isZero();
+            run.finish();run.start(RELEASE);run.finish();
         }
     }
     @ParameterizedTest @ValueSource(strings={"database-owner","connect","create","temporary","rule-definition","rule-enable"})

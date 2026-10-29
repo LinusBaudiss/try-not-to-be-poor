@@ -301,3 +301,8 @@ Vermeideter Zustand: DB-A-Prozess mit DB-B-Nachweis; übersehene deaktivierte Sc
 - Freigegebener Intent unverändert SHA-256 `3a9a1627fbcbc6ff3d97d98e2dc6c16e9fc6ff0454c463e6f15a2571706a630b`; archivierter v1-Vertrag und V1–V9 unverändert. Negative Fortschritte, Monatsautomatik und Produktionsbetrieb bleiben gesperrt. Tatsächlicher Screenreader wurde weiterhin nicht manuell ausgeführt.
 
 - XML-Zählung präzisiert: 44 Unit-/Architekturtests aus den Unit-Suites; ein älterer gezielter Surefire-Bericht zu `RegistrationIT` (1 Fall) wird nicht doppelt als Unit-Test gezählt. Die vollständige Failsafe-Matrix enthält alle 292 IT einschließlich dieser Startupabwehr.
+
+### PR-Abschlussprüfung am 29.10.2026
+
+- PR #26 deckte einen zeitabhängigen Testhelferfehler auf: Chromium konnte Antwortkörper zwischen dem Antwortereignis und dem späteren Lesen nach UI-Aktionen verwerfen (`Network.getResponseBody`). Die JSON-Körper für Anmeldung, Wiederherstellung und Sparzielanlage werden nun unmittelbar am Antwortereignis gelesen; sämtliche fachlichen Erwartungen bleiben erhalten.
+- Danach 3/3 reale Alt-/Neubundle-Übergangstests erfolgreich (`/tmp/tnbp37-pr26-transition.log`) sowie der ebenfalls betroffene reguläre vollständige v2-Zugangs-/Finanzablauf 1/1 (`/tmp/tnbp37-pr26-v2-flow.log`). Anwendungscode und freigegebener Intent unverändert.

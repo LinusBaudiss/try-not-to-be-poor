@@ -54,9 +54,11 @@ export async function completeV2Flow(page: Page): Promise<void> {
   await expect(page.getByRole('button', { name: 'Sparziel speichern', exact: true })).toBeEnabled();
   await page.getByLabel('Name des Sparziels', { exact: true }).fill('Netzwerkziel');
   await page.getByLabel('Zielbetrag in Euro', { exact: true }).fill('100');
-  const goalResponse = page.waitForResponse(r => r.url().endsWith('/api/v2/savings-goals') && r.request().method() === 'POST');
+  // Antwortkörper lesen, bevor das Auto-Waiting der Klickaktion weitere Frames zulässt.
+  const goalResponse = page.waitForResponse(r => r.url().endsWith('/api/v2/savings-goals') && r.request().method() === 'POST')
+    .then(response => response.json());
   await page.getByRole('button', { name: 'Sparziel speichern', exact: true }).click();
-  const goalId = (await (await goalResponse).json()).id;
+  const goalId = (await goalResponse).id;
   await expect(page.locator('#goal-status')).toHaveClass(/success/);
   await page.getByRole('button', { name: 'Fortschritt aktualisieren: Netzwerkziel', exact: true }).click();
   await page.getByLabel('Gesamtfortschritt in Euro').fill('70');

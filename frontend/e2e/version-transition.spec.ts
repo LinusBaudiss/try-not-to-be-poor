@@ -9,11 +9,12 @@ async function login(page: Page, email: string) {
   await page.goto('/anmelden');
   await page.getByLabel('E-Mail-Adresse', { exact: true }).fill(email);
   await page.getByLabel('Passwort', { exact: true }).fill(password);
-  const signedIn = page.waitForResponse(/\/api\/v[12]\/access\/login$/);
+  // Vor weiteren Browseraktionen lesen: Chromium kann den Körper danach verwerfen.
+  const signedIn = page.waitForResponse(/\/api\/v[12]\/access\/login$/).then(response => response.json());
   await page.getByRole('button', { name: 'Anmelden', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Monat', exact: true })).toBeVisible();
   await expect(page.getByLabel('Monatsbudget in Euro', { exact: true })).toBeVisible();
-  return (await signedIn).json();
+  return signedIn;
 }
 
 test('unveränderter Altbundle, echter API-Neustart, gespeicherter Bestand und vollständiger v2-Aktualisierungspfad', async ({ page, context, browser, request }) => {
@@ -95,9 +96,9 @@ test('unveränderter Altbundle, echter API-Neustart, gespeicherter Bestand und v
 
   const currentCalls: string[] = [];
   oldTab.on('request', item => { if (item.url().includes('/api/')) currentCalls.push(new URL(item.url()).pathname); });
-  const restored = oldTab.waitForResponse('**/api/v2/access/refresh');
+  const restored = oldTab.waitForResponse('**/api/v2/access/refresh').then(response => response.json());
   await oldTab.goto('/monat');
-  const session = await (await restored).json();
+  const session = await restored;
   await expect(oldTab).toHaveURL('/monat');
   await expect(oldTab.getByRole('link', { name: 'Ausgaben', exact: true })).toBeVisible();
   const currentAsset = await oldTab.locator('script[src]').first().getAttribute('src');

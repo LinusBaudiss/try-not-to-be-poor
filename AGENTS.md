@@ -49,3 +49,7 @@ Private Ausgabenübersicht mit fortlaufendem Monatsbudget und Sparzielen, vorran
 - Generierte Dateien unter `frontend/src/app/api/` und `backend/target/` nicht manuell bearbeiten. Schemaänderungen erfolgen durch neue Flyway-Migrationen unter `backend/src/main/resources/db/migration/`.
 
 <!-- /bmad:context -->
+
+## GitHub-Spiegel der BMAD-Planung
+
+Alle Epics und Stories werden als GitHub-Issues in `LinusBaudiss/try-not-to-be-poor` gespiegelt. Quelle sind `epics.md` und `sprint-status.yaml` auf `main`; lokale Entwicklungsstände erst nach Veröffentlichung spiegeln. Nach veröffentlichten Planungs- oder Statusänderungen den Abgleich gemäß `_bmad-output/implementation-artifacts/github-sync.md` ausführen, sofern die GitHub-Anbindung verfügbar ist. Die stündliche Codex-Automation übernimmt den regelmäßigen Nachlauf. Epics sind echte Parent-Issues ihrer Stories; vorhandene zugehörige PRs werden unter Development und explizite Planungsabhängigkeiten als blocks/blocked by verknüpft. Diese nativen Beziehungen regelmäßig mitprüfen und nachführen, bei fehlenden Connector-Funktionen den vorhandenen direkten GitHub-Zugang verwenden. Stabile BMAD- und Beziehungseigentumsmarker verwenden, manuell hinzugefügte Beziehungen sowie eigene GitHub-Notizen außerhalb des verwalteten Bereichs erhalten.

@@ -468,15 +468,25 @@ class ReleaseTransitionIT {
         }
     }
 
-    @Test void belegterAndererHostbootSchliesstDbArbeitOhneWiederverwendetePidZuSignalisieren() throws Exception {
+    @ParameterizedTest @ValueSource(booleans={false,true})
+    void belegterAndererHostbootSchliesstDbArbeitOhneWiederverwendetePidZuSignalisieren(boolean alreadyGone) throws Exception {
         try(var db=new VersionDatabase();var run=new Running(db,false)) {
             var unrelated=new ProcessBuilder("sleep","120").start();
             try(var work=db.runtimeSource.getConnection()) {
                 work.createStatement().execute("SET application_name='tnbp-api-old-boot'");
                 String driver="""
                     import runpy,sys,uuid
+                    from pathlib import Path
                     m=runpy.run_path(sys.argv[1]); real=m['boot_id']
-                    G=m['Guard']; old=G.bind_database
+                    G=m['Guard']; old=G.bind_database;sql=G.sql
+                    def raced(self,query):
+                        if __GONE__ and query.startswith('SELECT pg_terminate_backend('):
+                            if sql(self,query)!='t': raise RuntimeError('Testbackend nicht beendet')
+                            value=sql(self,query)
+                            if value!='f': raise RuntimeError('Verschwundenes Testbackend nicht nachgewiesen')
+                            Path('__FOLDER__/recovery-backend-already-gone').touch()
+                            return value
+                        return sql(self,query)
                     def prepare(self):
                         old(self)
                         identity=m['process_identity'](__PID__)
@@ -491,10 +501,12 @@ class ReleaseTransitionIT {
                         m['process_identity'].__globals__['boot_id']=lambda:'synthetic-new-host-boot'
                         def forbidden(*args): raise RuntimeError('Fremde PID wurde signalisiert')
                         m['end_containment'].__globals__['signal_process']=forbidden
-                    G.bind_database=prepare;sys.argv=sys.argv[1:];sys.exit(m['main']())
-                    """.replace("__PID__",Long.toString(unrelated.pid()));
+                    G.bind_database=prepare;G.sql=raced;sys.argv=sys.argv[1:];sys.exit(m['main']())
+                    """.replace("__PID__",Long.toString(unrelated.pid()))
+                        .replace("__GONE__",alreadyGone?"True":"False").replace("__FOLDER__",run.folder.toString());
                 var recovered=run.driver(driver,"stop",RELEASE);
                 assertThat(recovered.code).as(recovered.output).isZero();assertThat(unrelated.isAlive()).isTrue();
+                assertThat(Files.exists(run.folder.resolve("recovery-backend-already-gone"))).isEqualTo(alreadyGone);
                 assertThat(db.admin.queryForObject("SELECT active FROM api_version.lifecycle",Boolean.class)).isFalse();
                 assertThat(db.admin.queryForObject("SELECT count(*) FROM pg_stat_activity WHERE application_name='tnbp-api-old-boot'",Integer.class)).isZero();
                 run.start(RELEASE);run.finish();

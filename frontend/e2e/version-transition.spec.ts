@@ -5,12 +5,16 @@ import path from 'node:path';
 import { completeV2Flow } from './support/complete-v2-flow';
 
 const password = '  Grüner 🦊 im Baum  ';
+function nextAuthorization(page: Page) {
+  return page.waitForRequest(request => /^\/api\/v[12]\//.test(new URL(request.url()).pathname)
+    && request.headers()['authorization']?.startsWith('Bearer ') === true)
+    .then(request => request.headers()['authorization']);
+}
 async function login(page: Page, email: string) {
   await page.goto('/anmelden');
   await page.getByLabel('E-Mail-Adresse', { exact: true }).fill(email);
   await page.getByLabel('Passwort', { exact: true }).fill(password);
-  // Vor weiteren Browseraktionen lesen: Chromium kann den Körper danach verwerfen.
-  const signedIn = page.waitForResponse(/\/api\/v[12]\/access\/login$/).then(response => response.json());
+  const signedIn = nextAuthorization(page);
   await page.getByRole('button', { name: 'Anmelden', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Monat', exact: true })).toBeVisible();
   await expect(page.getByLabel('Monatsbudget in Euro', { exact: true })).toBeVisible();
@@ -28,8 +32,7 @@ test('unveränderter Altbundle, echter API-Neustart, gespeicherter Bestand und v
   }
   expect((await request.get('/reference.txt')).status()).toBe(200);
   expect(await (await request.get('/reference.txt')).text()).toBe('5cd387db54cc94aa35e7af02ffd17b1a4480a9f1\n');
-  const oldSession = await login(page, email);
-  const oldHeaders = { Authorization: `Bearer ${oldSession.accessToken}` };
+  const oldHeaders = { Authorization: await login(page, email) };
   const oldGoal = await request.post('http://127.0.0.1:8080/api/v1/savings-goals', {
     headers: oldHeaders, data: { name: 'Erhaltenes Prüfziel', targetAmountCents: 10000, targetDate: '2028-02-29' }
   });
@@ -96,9 +99,11 @@ test('unveränderter Altbundle, echter API-Neustart, gespeicherter Bestand und v
 
   const currentCalls: string[] = [];
   oldTab.on('request', item => { if (item.url().includes('/api/')) currentCalls.push(new URL(item.url()).pathname); });
-  const restored = oldTab.waitForResponse('**/api/v2/access/refresh').then(response => response.json());
+  const restored = oldTab.waitForResponse('**/api/v2/access/refresh');
+  const currentAuthorization = nextAuthorization(oldTab);
   await oldTab.goto('/monat');
-  const session = await restored;
+  expect((await restored).status()).toBe(200);
+  const authorization = await currentAuthorization;
   await expect(oldTab).toHaveURL('/monat');
   await expect(oldTab.getByRole('link', { name: 'Ausgaben', exact: true })).toBeVisible();
   const currentAsset = await oldTab.locator('script[src]').first().getAttribute('src');
@@ -118,7 +123,7 @@ test('unveränderter Altbundle, echter API-Neustart, gespeicherter Bestand und v
   await expect(oldTab.getByText('Vor dem Wechsel', { exact: true }).first()).toBeVisible();
   await expect(oldTab.getByText('Bestätigt ohne Antwort', { exact: true }).first()).toBeVisible();
   await expect(oldTab.getByLabel('Name der Ausgabe', { exact: true })).toHaveValue('');
-  const headers = { Authorization: `Bearer ${session.accessToken}` };
+  const headers = { Authorization: authorization };
   const all = await request.get('http://127.0.0.1:8080/api/v2/expenses', { headers });
   const expenses = await all.json();
   expect(expenses.map((expense: { name: string }) => expense.name).sort()).toEqual(['Bestätigt ohne Antwort', 'Vor dem Wechsel']);

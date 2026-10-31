@@ -487,7 +487,8 @@ class Guard:
         if any(row['application_name'] != proof.get('application') for row in sessions):
             raise RuntimeError('Nicht zugeordnete Datenbankarbeit nach Hostneustart; Wiederanlauf gesperrt.')
         for row in sessions:
-            if self.sql(f"SELECT pg_terminate_backend({int(row['pid'])},5000)") != 't':
+            if (self.sql(f"SELECT pg_terminate_backend({int(row['pid'])},5000)") != 't'
+                    and self.sql(f"SELECT NOT EXISTS(SELECT FROM pg_stat_activity WHERE pid={int(row['pid'])})") != 't'):
                 raise RuntimeError('Datenbankarbeit nach Hostneustart konnte nicht beendet werden.')
         if self.sessions(): raise RuntimeError('Datenbankarbeit nach Hostneustart nicht vollständig beendet.')
         self.assert_closed()
@@ -555,7 +556,10 @@ class Guard:
         unknown = [row for row in sessions if row['application_name'] != record['application']]
         if unknown: raise RuntimeError('Nicht zugeordnete Datenbankarbeit; Wechsel gesperrt.')
         for row in sessions:
-            if self.sql(f"SELECT pg_terminate_backend({int(row['pid'])}, 5000)") != 't':
+            # Ein erfasstes Backend kann nach Prozessende selbst verschwinden.
+            # Nur dessen frisch belegtes Ende ersetzt den Terminierungserfolg.
+            if (self.sql(f"SELECT pg_terminate_backend({int(row['pid'])}, 5000)") != 't'
+                    and self.sql(f"SELECT NOT EXISTS(SELECT FROM pg_stat_activity WHERE pid={int(row['pid'])})") != 't'):
                 raise RuntimeError('Datenbankprozess konnte nicht beendet werden.')
         if self.sessions(): raise RuntimeError('Datenbankarbeit noch nicht vollständig beendet.')
         self.assert_closed()

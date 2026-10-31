@@ -54,12 +54,11 @@ export async function completeV2Flow(page: Page): Promise<void> {
   await expect(page.getByRole('button', { name: 'Sparziel speichern', exact: true })).toBeEnabled();
   await page.getByLabel('Name des Sparziels', { exact: true }).fill('Netzwerkziel');
   await page.getByLabel('Zielbetrag in Euro', { exact: true }).fill('100');
-  // Antwortkörper lesen, bevor das Auto-Waiting der Klickaktion weitere Frames zulässt.
-  const goalResponse = page.waitForResponse(r => r.url().endsWith('/api/v2/savings-goals') && r.request().method() === 'POST')
-    .then(response => response.json());
   await page.getByRole('button', { name: 'Sparziel speichern', exact: true }).click();
-  const goalId = (await goalResponse).id;
   await expect(page.locator('#goal-status')).toHaveClass(/success/);
+  const goalTitle = page.locator('.savings-cards h3').filter({ hasText: /^Netzwerkziel$/ });
+  await expect(goalTitle).toHaveAttribute('id', /^goal-title-[0-9a-f-]{36}$/);
+  const goalId = (await goalTitle.getAttribute('id'))!.slice('goal-title-'.length);
   await page.getByRole('button', { name: 'Fortschritt aktualisieren: Netzwerkziel', exact: true }).click();
   await page.getByLabel('Gesamtfortschritt in Euro').fill('70');
   await page.getByRole('button', { name: 'Fortschritt speichern', exact: true }).click();

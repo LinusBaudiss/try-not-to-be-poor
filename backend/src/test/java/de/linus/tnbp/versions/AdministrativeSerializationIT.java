@@ -195,6 +195,41 @@ class AdministrativeSerializationIT {
             assertThat(JSON.readValue(Files.readString(run.folder.resolve("instance.json")),Map.class).get("stopped")).isEqualTo(true);
         }
     }
+    @Test void zwischenErfassungUndTerminierungBeendetesBackendErlaubtVollstaendigenStopp() throws Exception {
+        try(var db=new VersionDatabase();var run=new Running(db,false)) {
+            run.start(RELEASE);
+            var record=JSON.readValue(Files.readString(run.folder.resolve("instance.json")),Map.class);
+            try(var work=db.runtimeSource.getConnection()) {
+                work.createStatement().execute("SET application_name='"+record.get("application")+"'");
+                var result=work.createStatement().executeQuery("SELECT pg_backend_pid()");result.next();int pid=result.getInt(1);
+                String driver="""
+                    import runpy,sys
+                    from pathlib import Path
+                    m=runpy.run_path(sys.argv[1]);G=m['Guard'];sessions=G.sessions;sql=G.sql
+                    def raced(self):
+                        rows=sessions(self)
+                        if any(row['pid']==__PID__ for row in rows):
+                            if sql(self,'SELECT pg_terminate_backend(__PID__,5000)')!='t':
+                                raise RuntimeError('Testbackend nicht beendet')
+                        return rows
+                    def observed(self,query):
+                        value=sql(self,query)
+                        if query.startswith('SELECT pg_terminate_backend(__PID__,') and value=='f':
+                            Path('__FOLDER__/backend-already-gone').touch()
+                        return value
+                    G.sessions=raced;G.sql=observed;sys.argv=sys.argv[1:];sys.exit(m['main']())
+                    """.replace("__PID__",Integer.toString(pid)).replace("__FOLDER__",run.folder.toString());
+                var stopped=run.driver(driver,"stop",RELEASE);
+                assertThat(stopped.code()).as(stopped.output()).isZero();
+                assertThat(Files.exists(run.folder.resolve("backend-already-gone"))).isTrue();
+                assertThat(db.admin.queryForObject("SELECT active FROM api_version.lifecycle",Boolean.class)).isFalse();
+                assertThat(db.admin.queryForObject("SELECT count(*) FROM pg_stat_activity WHERE pid="+pid,Integer.class)).isZero();
+                assertThat(JSON.readValue(Files.readString(run.folder.resolve("instance.json")),Map.class).get("stopped")).isEqualTo(true);
+                assertThat(db.admin.queryForObject("SELECT bool_and(NOT rolcanlogin) FROM pg_roles WHERE rolname IN ('tnbp_runtime','tnbp_migrator')",Boolean.class)).isTrue();
+            }
+            run.finish();run.start(RELEASE);run.finish();
+        }
+    }
     @Test void erneutesTermSignalUnterbrichtDenBereitsBegonnenenStoppNicht() throws Exception {
         try(var db=new VersionDatabase();var run=new Running(db,false)) {
             String driver="""

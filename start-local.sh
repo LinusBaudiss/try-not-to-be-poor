@@ -73,7 +73,8 @@ cleanup() {
   printf '\n%s\n' 'Backend und Frontend werden beendet; die lokale Datenbank läuft weiter.'
   local pid active attempt
   for pid in "${APP_PIDS[@]}"; do kill -TERM -- "-$pid" 2>/dev/null || true; done
-  for attempt in {1..50}; do
+  # Der Guard beendet zuerst Containment und PostgreSQL-Arbeit nachweisbar.
+  for attempt in {1..600}; do
     active=false
     for pid in "${APP_PIDS[@]}"; do
       if kill -0 -- "-$pid" 2>/dev/null; then active=true; fi
@@ -90,7 +91,7 @@ trap cleanup EXIT
 trap 'exit 130' INT
 trap 'exit 143' TERM
 
-# Eigene Prozessgruppen schließen auch die Java-/Node-Unterprozesse ein.
+# Frontend und Guard haben eigene Gruppen; der Guard hält die API im Subreaper.
 set -m
 wait_ready() {
   local service=$1 url=$2 pid deadline=$((SECONDS + START_LOCAL_TIMEOUT_SECONDS))
@@ -103,7 +104,9 @@ wait_ready() {
         return 1
       fi
     done
-    if curl --disable --noproxy '*' --fail --silent --connect-timeout 1 --max-time 2 "$@" --output /dev/null "$url"; then
+    if [[ "$service" == Backend ]]; then
+      if python3 scripts/start-local/check-backend.py "$url"; then return 0; fi
+    elif curl --disable --noproxy '*' --fail --silent --connect-timeout 1 --max-time 2 "$@" --output /dev/null "$url"; then
       return 0
     fi
     sleep 1
@@ -114,7 +117,7 @@ wait_ready() {
 
 ./scripts/start-local/start-backend.sh </dev/null &
 APP_PIDS+=("$!")
-wait_ready Backend http://127.0.0.1:8080/api/v1/access/csrf
+wait_ready Backend http://127.0.0.1:8080/api/v2/access/csrf
 
 ./scripts/start-local/start-frontend.sh "$@" </dev/null &
 APP_PIDS+=("$!")

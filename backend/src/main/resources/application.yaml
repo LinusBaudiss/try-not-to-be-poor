@@ -29,6 +29,11 @@ access:
     issuer: ${SESSION_ISSUER:}
     audience: ${SESSION_AUDIENCE:}
     origin: ${SESSION_ORIGIN:}
+api:
+  version:
+    mode: ${API_VERSION_MODE:compatible}
+    instance-id: ${API_INSTANCE_ID:}
+    release-sha256: ${API_RELEASE_SHA256:}
 server:
   servlet:
     session:

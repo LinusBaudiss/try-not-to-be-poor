@@ -2,7 +2,7 @@
 set -eu
 PROJECT_ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 cd "$PROJECT_ROOT"
-./backend/mvnw -B -f backend/pom.xml test-compile \
+./backend/mvnw -B -f backend/pom.xml ${E2E_PERSISTENT_DATABASE_DIR:+package -DskipTests} test-compile \
   org.apache.maven.plugins:maven-dependency-plugin:3.8.1:build-classpath \
   -Dmdep.outputFile=target/test-classpath.txt -DincludeScope=test
 TEST_CLASSPATH=$(cat "$PROJECT_ROOT/backend/target/test-classpath.txt")

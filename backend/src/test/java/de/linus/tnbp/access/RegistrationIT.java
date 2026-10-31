@@ -390,17 +390,20 @@ class RegistrationIT {
             {"ALTER TABLE budget.budgets NO FORCE ROW LEVEL SECURITY", "ALTER TABLE budget.budgets FORCE ROW LEVEL SECURITY",
                 "Die Finanzschemas benötigen minimale Laufzeitrechte und erzwungene RLS."},
             {"GRANT CREATE ON SCHEMA savings_goals TO tnbp_runtime", "REVOKE CREATE ON SCHEMA savings_goals FROM tnbp_runtime",
-                "Die Laufzeitrolle darf weder privilegiert noch Tabellenbesitzer sein."}
+                "Die Laufzeitrolle darf weder privilegiert noch Tabellenbesitzer sein."},
+            {"GRANT EXECUTE ON FUNCTION api_version.set_retirement(boolean,uuid,text,text,text) TO tnbp_runtime",
+                "REVOKE EXECUTE ON FUNCTION api_version.set_retirement(boolean,uuid,text,text,text) FROM tnbp_runtime",
+                "Der Versionszustand benötigt minimale Laufzeitrechte."}
         };
         for (String[] testCase : cases) {
             try {
                 PostgresFixture.ADMIN.execute(testCase[0]);
                 var app = new SpringApplication(TnbpApplication.class);
-                List<String> args = new ArrayList<>(List.of("--server.port=0", "--spring.main.banner-mode=off"));
+                List<String> args = new ArrayList<>(List.of("--server.port=0", "--spring.main.banner-mode=off", "--api.version.mode=compatible"));
                 PostgresFixture.configure((key, value) -> args.add("--" + key + "=" + value));
                 org.assertj.core.api.Assertions.assertThatThrownBy(() -> {
                     try (var unexpected = app.run(args.toArray(String[]::new))) { /* Schließt einen irrtümlich erlaubten Start. */ }
-                }).as(testCase[0]).isInstanceOf(IllegalStateException.class).hasStackTraceContaining(testCase[2]);
+                }).as(testCase[0]).hasRootCauseInstanceOf(IllegalStateException.class).hasStackTraceContaining(testCase[2]);
             } finally { PostgresFixture.ADMIN.execute(testCase[1]); }
         }
     }
@@ -435,7 +438,7 @@ class RegistrationIT {
                 });
                 org.assertj.core.api.Assertions.assertThatThrownBy(() -> {
                     try (var unexpected = app.run(args.toArray(String[]::new))) { /* Schließt einen irrtümlich erlaubten Start. */ }
-                }).isInstanceOf(IllegalStateException.class)
+                }).hasRootCauseInstanceOf(IllegalStateException.class)
                     .hasStackTraceContaining("Die Laufzeitrolle darf weder privilegiert noch Tabellenbesitzer sein.");
             }
         } finally {

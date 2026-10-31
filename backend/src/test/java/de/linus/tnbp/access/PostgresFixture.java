@@ -13,7 +13,8 @@ public final class PostgresFixture {
 
     private static EmbeddedPostgres start() {
         try {
-            var postgres = EmbeddedPostgres.builder().setPort(0).start();
+            var postgres = EmbeddedPostgres.builder().setPort(0)
+                .setRegisterShutdownHook(System.getenv("E2E_PERSISTENT_DATABASE_DIR") == null).start();
             var admin = new JdbcTemplate(postgres.getPostgresDatabase());
             admin.execute("CREATE ROLE tnbp_migrator LOGIN PASSWORD 'migration-test-only' NOSUPERUSER NOBYPASSRLS NOCREATEDB NOCREATEROLE");
             admin.execute("CREATE ROLE tnbp_runtime LOGIN PASSWORD 'runtime-test-only' NOSUPERUSER NOBYPASSRLS NOCREATEDB NOCREATEROLE");

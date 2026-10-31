@@ -29,17 +29,18 @@ async function login(page: Page, email: string): Promise<void> {
   await page.getByRole('link', { name: 'Sparziele', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Sparziel speichern', exact: true })).toBeEnabled();
 }
-async function create(page: Page, amount = '100', name = 'Reise', date = '2028-02-29'): Promise<any> {
+async function create(page: Page, amount = '100', name = 'Reise', date = '2028-02-29'): Promise<{ id: string }> {
   await page.getByLabel('Name des Sparziels').fill(name);
   await page.getByLabel('Zielbetrag in Euro').fill(amount);
   await page.getByLabel('Zieldatum (optional)').fill(date);
-  const responseBody = page.waitForResponse(response => response.url().endsWith('/savings-goals') && response.request().method() === 'POST')
-    .then(response => { expect(response.status()).toBe(201); return response.json(); });
-  const [, goal] = await Promise.all([
-    page.getByRole('button', { name: 'Sparziel speichern', exact: true }).click(), responseBody
-  ]);
+  const response = page.waitForResponse(response => response.url().endsWith('/savings-goals') && response.request().method() === 'POST');
+  await page.getByRole('button', { name: 'Sparziel speichern', exact: true }).click();
+  expect((await response).status()).toBe(201);
   await expect(page.locator('#goal-status')).toHaveText('Dein Sparziel wurde gespeichert.');
-  return goal;
+  await expect(page.getByLabel('Name des Sparziels')).toBeFocused();
+  const title = page.getByRole('heading', { name, exact: true, level: 3 });
+  await expect(title).toHaveAttribute('id', /^goal-title-[0-9a-f-]{36}$/);
+  return { id: (await title.getAttribute('id'))!.slice('goal-title-'.length) };
 }
 async function edit(page: Page, value: string): Promise<void> {
   await page.getByRole('button', { name: 'Fortschritt aktualisieren:', exact: false }).click();
@@ -160,7 +161,8 @@ test('verlorene Commitbestätigung behält Entwurf und alten Fortschritt; Neulad
 });
 
 test('nur passende geprüfte 200-Antworten bestätigen den Fortschritt; Fehler erhalten den Entwurf', async ({ page, request }) => {
-  await login(page, await account(request)); const goal = await create(page);
+  await login(page, await account(request));
+  const goal = { ...await create(page), name: 'Reise', targetAmountCents: 10000, progressCents: 0, targetDate: '2028-02-29' };
   await edit(page, '30');
   for (const failure of [
     { status: 201, json: { ...goal, progressCents: 3000 } },

@@ -20,13 +20,14 @@ Der abgeschlossene v1-Umfang umfasst Epics 1–2 mit den neun Stories
 einschließlich Identitätsprüfung sowie für alle vier Ausgabenoperationen API v2
 (`/api/v2/expenses`). Budget (`GET`/`PUT /api/v2/budget`) und Monatsübersicht
 (`GET /api/v2/month-summary`) und alle fünf Sparzieloperationen (`/api/v2/savings-goals`)
-verwenden ebenfalls v2. Die neue Oberfläche bleibt bis zum vollständigen
-Freigabenachweis ein interner Prüfstand; v1 bleibt für Altoberflächen unterstützt.
+verwenden ebenfalls v2. Die Anwendung bleibt für synthetische Daten vorgesehen.
+V1 bleibt im Kompatibilitätsmodus unterstützt; nach dem geschützten Versionswechsel
+verweist eine frühe Sperre auf den vollständigen Aktualisierungspfad.
 Beide Ausgabenversionen verwenden dieselben Daten und dieselbe Finanztransaktion.
 Nach einer unbestätigten Ausgabenmutation sperrt die Oberfläche weitere Mutationen,
 bis die Historie erfolgreich neu geladen und ausdrücklich geprüft wurde.
-Entwürfe bleiben dabei nur im offenen Tab erhalten. Weitere v2-,
-Oberflächen- und Automatikarbeiten aus Epics 3–4 sind noch offen.
+Entwürfe bleiben dabei nur im offenen Tab erhalten. Negative Fortschrittspersistenz
+und Monatsautomatik aus Epics 3–4 sind noch nicht freigegeben.
 Den Arbeitsstand dokumentieren [Sprintstatus](_bmad-output/implementation-artifacts/sprint-status.yaml)
 und die zugehörigen Story-Specs. Retrospektiven bleiben optional;
 die [Voraussetzungen für Produktivbetrieb](#vor-echten-nutzerdaten)
@@ -42,7 +43,9 @@ sind weiterhin offen.
   Die Docker-CLI allein enthält Compose nicht zwingend. Unter Ubuntu mit Docker
   aus den Ubuntu-Paketquellen installiert `sudo apt-get install docker-compose-v2`
   das Plugin. Danach sollte `docker compose version` erfolgreich sein.
-- Für Prüfungen: Linux x86_64, Python 3, curl, Git, sha256sum und **unzip**.
+- Für Start und Prüfungen: Linux x86_64, [Python ab 3.11](https://docs.python.org/3/library/hashlib.html#hashlib.file_digest), curl, Git, sha256sum und **unzip**.
+  Der API-Guard benötigt [Linux ab Kernel 5.3](https://man7.org/linux/man-pages/man2/pidfd_open.2.html) mit `/proc`, verfügbaren
+  `pidfd_open`-/`pidfd_send_signal`-APIs und `prctl(PR_SET_CHILD_SUBREAPER)`.
   Der unveränderte Herstellerwrapper benötigt unzip für das mit ZIP-Prüfsumme
   gepinnte Maven-Archiv; sein TAR-Fallback passt nicht zu dieser Prüfsumme.
 - Spring Boot **4.1.1**, Angular **22.2.3**, OpenAPI Generator **7.26.0** und
@@ -157,7 +160,9 @@ Neuladen muss der ursprüngliche Link erneut geöffnet werden. E-Mail, Passwort,
 
 Der lokale Proxy leitet `/api/**` an `127.0.0.1:8080` weiter. Der statische
 Produktionsbuild liegt unter `frontend/dist/tnbp/browser`; ein späterer Webserver
-muss SPA-Routen auf `index.html` zurückführen und `/api/v1` zur API weiterleiten.
+muss SPA-Routen auf `index.html` zurückführen und `/api/*` einschließlich v2 zur API
+weiterleiten. Fehlende Dateien dürfen keinen erfolgreichen HTML-Fallback erhalten.
+Die reproduzierbare HTTPS-Vorschau steht in `deploy/Caddyfile.preview`.
 
 ## Registrierung konfigurieren, rotieren und widerrufen
 
@@ -401,12 +406,18 @@ wiederholen. Der v2-Vertrag umfasst außerdem GET/POST `/expenses` und PUT/DELET
 `/savings-goals`, PUT/DELETE `/savings-goals/{id}` und PUT
 `/savings-goals/{id}/progress`. Der Browser verwendet für sämtliche Operationen die generierten
 v2-Clients. Beide Finanzversionen teilen denselben Bestand und die äußere
-Finanzkoordination; v1 bleibt für Altoberflächen verfügbar. V2-Operationen erhalten
+Finanzkoordination; v1 bleibt im Kompatibilitätsmodus für Altoberflächen verfügbar. V2-Operationen erhalten
 den Bearer ausschließlich über den Interceptor für dieselbe Herkunft und die
-unterstützten Hauptversionen. V1-Stilllegung, negative Schreibfreigabe und
-Produktionsfreigabe folgen gesondert.
+unterstützten Hauptversionen. Der [geschützte Ablöseweg](deploy/api-transition.md)
+legt v1 dauerhaft still. Negative Schreibfreigabe und Produktionsfreigabe bleiben
+weiterhin geschlossen.
 
 ## Finanzmodule auf V9 umstellen und wiederanlaufen lassen
+
+Der folgende Abschnitt bewahrt den historischen Story-3.3-Nachweis. Nach Anwendung
+von V10 gelten für jeden unterstützten Start und jede Rücknahme zusätzlich die
+verbindlichen Prüfungen aus [API-Übergang](deploy/api-transition.md); der frühere
+V9-Nachweis allein berechtigt keinen Altstart auf dem aktuellen Schema.
 
 Story 3.3 verschiebt mit der neuen Migration
 `V9__split_finance_schemas.sql` die vorhandenen Tabellen mittels `SET SCHEMA`:
@@ -516,6 +527,41 @@ Befehle bilden diese Prüfungen lokal ab.
 Die Browserprüfungen prüfen die echten Secure-Cookies über HTTPS einschließlich Reload/Rotation, Logout, späten Antworten und axe. Playwright vertraut ausschließlich im Test dem lokalen Entwicklungszertifikat. Die Test-API hat einen festen synthetischen Schlüssel; Anwendungsschlüssel werden nicht eingebaut.
 
 ## Vor echten Nutzerdaten
+
+Der lokale Start verwendet den gemeinsamen geschützten API-Startguard und prüft
+Bereitschaft über `/api/v2/access/csrf`. Die Oberfläche spricht ausschließlich v2.
+Im Kompatibilitätsmodus bleibt v1 für die bisherigen Regressionstests verfügbar;
+nach bestätigter Stilllegung wird v1 bereits vor Controller-/Finanzarbeit mit
+401 `CLIENT_UPDATE_REQUIRED` abgewiesen. Negative Fortschritte und Monatsautomatik
+bleiben geschlossen.
+
+Der vollständige [Ablöse-, Fehler- und Rücknahmeweg](deploy/api-transition.md)
+beschreibt den registrierten Linux-Subreaper samt vollständiger Nachkommenschaft,
+die DB-Admission der konfigurierten Rollen, technische Versionsmarker und die
+zulässige Alt-JAR-Prüfung. Geschützte Metadaten binden Prozess und tatsächliche
+PostgreSQL-Datenbank; Konfigurationswechsel werden vor einem Stopp abgewiesen.
+Alle administrativen Phasen sind über DB-Advisory-Lock und eine geschützte feste
+Cluster-/DB-Sperre unabhängig vom Metadatenverzeichnis serialisiert, auch vor V10
+und bis zum Ende bereits gestarteter Migrationskinder nach einem Guardabbruch.
+Ein veralteter Ordner kann die Admission eines fremden aktiven Eigentümers nicht
+schließen. Nach Bereitschaft bleibt nur der dauerhafte Laufzeit-Lebenszyklus aktiv.
+Ein nachgewiesener anderer Hostboot hat einen kontrollierten Wiederanlauf,
+während ungeklärter Supervisorverlust im selben Boot gesperrt bleibt. Die
+Altprüfung belegt Cookieattribute bei Ausgabe/Rotation/Löschung, geschlossene
+Negativschreibwerte, Security-Ablehnungen, gespeicherte Mutationswirkungen und
+Kontotrennung mit zwei synthetischen Konten. Der bestehende geschützte volle Datenbankadministrator
+ist erforderlich; Web-/Migratorrollen erhalten keine zusätzlichen Betriebsrechte.
+Die exakt gebundene JAR migriert ohne HTTP-/Finanzannahme, bevor der endgültige
+Schema-/Rollenzustand und die instanzgebundene v2-Bereitschaft bestätigt werden. `npm --prefix frontend run
+e2e:transition` führt den gesonderten HTTPS-Übergang mit unverändertem Altbundle,
+aktuellem statischem Build und derselben flüchtigen PostgreSQL-Datenbank aus.
+Er benötigt vollständige lokale Git-Historie und lädt den festen Caddy-Testserver.
+
+Bei einem Aktualisierungshinweis „Seite vollständig neu laden“ auslösen.
+Gespeicherte Werte bleiben erhalten; nicht gespeicherte Entwürfe werden verworfen.
+Ein tatsächlich alter v1-Stand schließt seine persönliche Ansicht beim nächsten
+geschützten Zugriff beziehungsweise Refresh. Danach die öffentliche App-Adresse
+vollständig neu laden und vor einer erneuten Mutation den aktuellen Stand prüfen.
 
 Die lokale Anwendung ist für synthetische Daten vorgesehen. Vor dem Einsatz
 echter Finanzdaten sind laut [Architektur](_bmad-output/planning-artifacts/architecture/architecture-try-not-to-be-poor-2026-10-19/ARCHITECTURE-SPINE.md)

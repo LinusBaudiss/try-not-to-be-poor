@@ -24,6 +24,9 @@ class ReleaseTransitionIT {
         try (var db = new VersionDatabase(); var run = new Running(db, true)) {
             UUID user = UUID.randomUUID();
             db.admin.update("INSERT INTO access.accounts VALUES (?, ?, '$argon2id$synthetic', now())", user, user + "@example.org");
+            UUID goal = UUID.randomUUID();
+            db.admin.update("INSERT INTO savings_goals.goals(id,user_id,name,target_amount_cents) VALUES (?,?,'Signierter Prozessnachweis',10000)",goal,user);
+            run.environment.put("SIGNED_PROGRESS_ENABLED", "true");
             run.start(run.harness);
             var request = HttpRequest.newBuilder(URI.create(run.origin + "/api/v1/expense-budget/expenses"))
                 .header("X-Test-Hold", hold).header("X-Test-User", user.toString())
@@ -64,6 +67,14 @@ class ReleaseTransitionIT {
                 assertThat(rejected.body()).contains("CLIENT_UPDATE_REQUIRED");
             }
             assertThat(Files.exists(run.folder.resolve("ready"))).isFalse();
+            for (long cents : new long[] {-3000, 7000}) {
+                var signed = HttpClient.newHttpClient().send(HttpRequest.newBuilder(URI.create(run.origin + "/api/v2/savings-goals/" + goal + "/progress"))
+                    .header("Authorization", "Bearer " + token(user)).header("Content-Type", "application/json")
+                    .PUT(HttpRequest.BodyPublishers.ofString("{\"progressCents\":" + cents + "}")).build(), HttpResponse.BodyHandlers.ofString());
+                assertThat(signed.statusCode()).as(signed.body()).isEqualTo(200);
+                assertThat(db.admin.queryForObject("SELECT progress_cents FROM savings_goals.goals WHERE id=?", Long.class, goal)).isEqualTo(cents);
+            }
+            assertThat(db.admin.queryForObject("SELECT signed_progress_used FROM api_version.state", Boolean.class)).isTrue();
             run.finish();
             // Derselbe dauerhafte Nachweis gilt nach echtem Prozessneustart.
             run.start(RELEASE);
@@ -128,7 +139,7 @@ class ReleaseTransitionIT {
             run.finish();
             assertThat(run.guard("start", old).code).isNotZero();
             assertThat(run.guard("rollback", old).code).isNotZero();
-            // Der reale v1-Release wird isoliert gegen genau V10 und dieselben Rollen geprüft.
+            // Der reale v1-Release wird isoliert gegen genau V11 und dieselben Rollen geprüft.
             var certification = run.guard("certify-rollback", old, "--check-port", Integer.toString(run.port));
             assertThat(certification.code).as(certification.output).isZero();
             assertThat(run.guard("rollback", old).code).isZero();
@@ -137,7 +148,40 @@ class ReleaseTransitionIT {
                 HttpResponse.BodyHandlers.ofString()).statusCode()).isEqualTo(200);
             assertThat(run.guard("retire", RELEASE).code).isZero();
             run.finish();
-            db.runtime.execute("SELECT api_version.mark_usage('signed-progress')");
+            run.environment.put("SIGNED_PROGRESS_ENABLED", "true");
+            run.start(RELEASE);
+            UUID user = UUID.randomUUID(), goal = UUID.randomUUID();
+            db.admin.update("INSERT INTO access.accounts VALUES (?,?,'$argon2id$synthetic',now())",user,user+"@example.org");
+            db.admin.update("INSERT INTO savings_goals.goals(id,user_id,name,target_amount_cents) VALUES (?,?,'Echte Nutzung',10000)",goal,user);
+            for(long cents:new long[]{-3000,7000}) {
+                var result=HttpClient.newHttpClient().send(HttpRequest.newBuilder(URI.create(run.origin+"/api/v2/savings-goals/"+goal+"/progress"))
+                    .header("Authorization","Bearer "+token(user)).header("Content-Type","application/json")
+                    .PUT(HttpRequest.BodyPublishers.ofString("{\"progressCents\":"+cents+"}")).build(),HttpResponse.BodyHandlers.ofString());
+                assertThat(result.statusCode()).as(result.body()).isEqualTo(200);
+                if(cents<0) {
+                    run.finish();run.environment.remove("SIGNED_PROGRESS_ENABLED");run.start(RELEASE);
+                    var registered=JSON.readValue(Files.readString(run.folder.resolve("instance.json")),Map.class);
+                    var processIdentity=(Map<String,Object>)registered.get("process");
+                    var environmentNames=Arrays.stream(Files.readString(Path.of("/proc/"+processIdentity.get("pid")+"/environ"))
+                        .split(String.valueOf((char)0))).map(value->value.split("=",2)[0]).toList();
+                    assertThat(environmentNames).doesNotContain("SIGNED_PROGRESS_ENABLED","API_FEATURES_SIGNED_PROGRESS","SPRING_APPLICATION_JSON")
+                        .noneMatch(name->name.startsWith("SPRING_CONFIG_"));
+                    var capability=HttpClient.newHttpClient().send(HttpRequest.newBuilder(URI.create(run.origin+"/api/v2/capabilities"))
+                        .header("Authorization","Bearer "+token(user)).GET().build(),HttpResponse.BodyHandlers.ofString());
+                    assertThat(capability.statusCode()).isEqualTo(200);assertThat(JSON.readTree(capability.body()).get("signedProgressAvailable").asBoolean()).isFalse();
+                    var readable=HttpClient.newHttpClient().send(HttpRequest.newBuilder(URI.create(run.origin+"/api/v2/savings-goals"))
+                        .header("Authorization","Bearer "+token(user)).GET().build(),HttpResponse.BodyHandlers.ofString());
+                    assertThat(readable.statusCode()).isEqualTo(200);assertThat(JSON.readTree(readable.body()).get(0).get("progressCents").asLong()).isEqualTo(-3000);
+                    var rejected=HttpClient.newHttpClient().send(HttpRequest.newBuilder(URI.create(run.origin+"/api/v2/savings-goals/"+goal+"/progress"))
+                        .header("Authorization","Bearer "+token(user)).header("Content-Type","application/json")
+                        .PUT(HttpRequest.BodyPublishers.ofString("{\"progressCents\":-4000}")).build(),HttpResponse.BodyHandlers.ofString());
+                    assertThat(rejected.statusCode()).as(rejected.body()).isEqualTo(409);assertThat(JSON.readTree(rejected.body()).get("code").asText()).isEqualTo("FEATURE_NOT_AVAILABLE");
+                    assertThat(db.admin.queryForObject("SELECT progress_cents FROM savings_goals.goals WHERE id=?",Long.class,goal)).isEqualTo(-3000);
+                    assertThat(db.admin.queryForObject("SELECT signed_progress_used FROM api_version.state",Boolean.class)).isTrue();
+                }
+            }
+            run.finish();
+            assertThat(db.admin.queryForObject("SELECT signed_progress_used FROM api_version.state",Boolean.class)).isTrue();
             assertThat(db.admin.queryForObject("SELECT count(*) FROM savings_goals.goals WHERE progress_cents<0", Integer.class)).isZero();
             var directSupervisor=run.guard("supervise",old);
             assertThat(directSupervisor.code).isNotZero();
@@ -154,6 +198,18 @@ class ReleaseTransitionIT {
             assertThat(Files.readString(directLog)).contains("Altprüfung ohne eindeutigen ungenutzten Versionszustand");
             assertThat(db.admin.queryForObject("SELECT count(*) FROM pg_stat_activity WHERE datname=current_database() AND usename='tnbp_runtime'", Integer.class)).isZero();
             run.start(RELEASE);
+            var deleted=HttpClient.newHttpClient().send(HttpRequest.newBuilder(URI.create(run.origin+"/api/v2/savings-goals/"+goal))
+                .header("Authorization","Bearer "+token(user)).DELETE().build(),HttpResponse.BodyHandlers.ofString());
+            assertThat(deleted.statusCode()).as(deleted.body()).isEqualTo(204);
+            run.finish();run.start(RELEASE);
+            assertThat(db.admin.queryForObject("SELECT count(*) FROM savings_goals.goals",Integer.class)).isZero();
+            assertThat(db.admin.queryForObject("SELECT signed_progress_used FROM api_version.state",Boolean.class)).isTrue();
+            run.finish();
+            var rollbackAfterDelete=run.guard("rollback",old);
+            assertThat(rollbackAfterDelete.code).isNotZero();assertThat(rollbackAfterDelete.output).contains("Rücknahme nach technischer Nutzung dauerhaft ausgeschlossen");
+            assertThat(run.guard("start",old).code).isNotZero();
+            var certificationAfterDelete=run.guard("certify-rollback",old,"--check-port",Integer.toString(run.port));
+            assertThat(certificationAfterDelete.code).isNotZero();assertThat(certificationAfterDelete.output).contains("Altprüfung ohne eindeutigen ungenutzten Versionszustand");
         }
     }
 
@@ -313,11 +369,11 @@ class ReleaseTransitionIT {
         try (var db = new VersionDatabase(); var run = new Running(db, false)) {
             run.start(RELEASE);
             assertThat(run.guard("retire", RELEASE).code).isZero(); run.finish();
-            Path next = run.variant(RELEASE, "next.jar", Map.of("BOOT-INF/classes/db/migration/V11__synthetic_followup.sql",
+            Path next = run.variant(RELEASE, "next.jar", Map.of("BOOT-INF/classes/db/migration/V12__synthetic_followup.sql",
                 "CREATE TABLE api_version.synthetic_followup (id integer PRIMARY KEY);"));
             var migrated = run.guard("retire", next);
             assertThat(migrated.code).as(migrated.output).isZero();
-            assertThat(db.admin.queryForObject("SELECT max(version::integer) FROM access.flyway_schema_history WHERE version IS NOT NULL", Integer.class)).isEqualTo(11);
+            assertThat(db.admin.queryForObject("SELECT max(version::integer) FROM access.flyway_schema_history WHERE version IS NOT NULL", Integer.class)).isEqualTo(12);
             for (int restart=0; restart<2; restart++) { run.start(next); run.finish(); }
             assertThat(db.admin.queryForObject("SELECT v1_retired FROM api_version.state", Boolean.class)).isTrue();
         }
@@ -554,7 +610,7 @@ class ReleaseTransitionIT {
         try(var db=new VersionDatabase();var run=new Running(db,false)) {
             run.start(RELEASE);assertThat(run.guard("retire",RELEASE).code).isZero();run.finish();
             var before=db.admin.queryForMap("SELECT * FROM api_version.state");
-            Path broken=run.variant(RELEASE,"failed-migration.jar",Map.of("BOOT-INF/classes/db/migration/V11__broken.sql",
+            Path broken=run.variant(RELEASE,"failed-migration.jar",Map.of("BOOT-INF/classes/db/migration/V12__broken.sql",
                 "CREATE TABLE api_version.must_rollback(id integer); SELECT synthetic_missing_function();"));
             var rejected=run.guard("retire",broken);
             assertThat(rejected.code).isNotZero();assertThat(rejected.output).contains("Administrative Migration fehlgeschlagen");
@@ -851,6 +907,8 @@ class ReleaseTransitionIT {
                 "--ready-url", origin + "/api/v2/access/csrf", "--timeout", "45"));
             command.addAll(List.of(extra));
             var builder = new ProcessBuilder(command).directory(ROOT.toFile()).redirectErrorStream(true);
+            builder.environment().remove("SIGNED_PROGRESS_ENABLED");
+            builder.environment().remove("API_FEATURES_SIGNED_PROGRESS");
             builder.environment().putAll(environment);
             if (!release.equals(harness) || harness.equals(RELEASE)) builder.environment().remove("SPRING_MAIN_SOURCES");
             return builder;

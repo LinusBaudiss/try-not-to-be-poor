@@ -339,7 +339,7 @@ for (const operation of ['Anlage', 'Zielbearbeitung', 'Fortschritt', 'Löschen']
     await reload.click(); await expect(page.locator('.savings-cards li')).toHaveCount(operation === 'Löschen' ? 0 : 1);
     await expect(page.getByRole('button', { name: 'Sparziel speichern', exact: true })).toBeDisabled();
     await expect(page.getByRole('button', { name: 'Ich habe die Sparziele geprüft', exact: true })).toBeEnabled();
-    await page.getByRole('button', { name: 'Ich habe die Sparziele geprüft', exact: true }).press('Enter');
+    await page.getByRole('button', { name: 'Ich habe die Sparziele geprüft', exact: true }).click();
     await expect(page.getByLabel('Name des Sparziels', { exact: true })).toBeFocused();
     await expect(page.getByRole('button', { name: 'Sparziel speichern', exact: true })).toBeEnabled();
   });
@@ -427,6 +427,9 @@ test('beide Sparzielprüfaktionen bleiben getrennt, sichtbar fokussiert und kont
       expect(visibility.insideViewport).toBe(true); expect(visibility.unobscured).toBe(true);
     }
   }
+  await page.keyboard.press('Enter');
+  await expect(page.getByLabel('Name des Sparziels', { exact: true })).toBeFocused();
+  await expect(page.getByRole('button', { name: 'Sparziel speichern', exact: true })).toBeEnabled();
 });
 
 test('Touch ermöglicht verpflichtende Zielprüfung und ausdrückliche Wiederfreigabe am Smartphone', async ({ browser, request }) => {

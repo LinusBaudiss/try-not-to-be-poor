@@ -20,7 +20,7 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 class FinanceMigrationIT {
     private static final JsonMapper JSON = JsonMapper.builder().build();
     @ParameterizedTest @ValueSource(booleans = {false, true})
-    void frischerUndBefuellterV8StandVerwendenDieselbeVerlustfreieMigration(boolean existing) throws Exception {
+    void frischerUndBefuellterV8StandVerwendenDieselbeVerlustfreieMigrationBisSigniertemV11Stand(boolean existing) throws Exception {
         String name = "migration_" + UUID.randomUUID().toString().replace("-", "");
         var server = new JdbcTemplate(PostgresFixture.POSTGRES.getPostgresDatabase());
         server.execute("CREATE DATABASE " + name + " OWNER tnbp_migrator");
@@ -80,8 +80,42 @@ class FinanceMigrationIT {
             assertThat(runtime.queryForObject("SELECT has_column_privilege(current_user, 'expenses.expenses', 'recorded_on', 'UPDATE')", Boolean.class)).isFalse();
             assertThat(admin.queryForObject("SELECT rolcreaterole OR rolsuper OR rolbypassrls FROM pg_roles WHERE rolname = 'tnbp_migrator'", Boolean.class)).isFalse();
             assertThat(runtime.queryForObject("SELECT pg_has_role(current_user, 'tnbp_migrator', 'MEMBER')", Boolean.class)).isFalse();
+            assertThat(admin.queryForObject("SELECT pg_get_constraintdef(oid) FROM pg_constraint WHERE conrelid='savings_goals.goals'::regclass AND conname='goals_progress_cents_check'", String.class))
+                .contains("-9007199254740991", "9007199254740991");
+            assertThat(new de.linus.tnbp.shared.ApiVersionState(runtime, "compatible", "", "", true).signedProgressAvailable()).isFalse();
+            assertThat(runtime.queryForObject("SELECT has_function_privilege(current_user,'api_version.signed_progress_available(boolean,uuid,text,text,text,timestamptz)','EXECUTE')", Boolean.class)).isTrue();
             restartPackagedRelease(url, admin, accounts, expenses, budgets, goals);
         } finally { server.execute("DROP DATABASE " + name + " WITH (FORCE)"); }
+    }
+
+    @ParameterizedTest @ValueSource(booleans = {false, true})
+    void signierterV11ConstraintMigriertFrischenUndBefuelltenV10StandOhneDatenverlust(boolean existing) {
+        String name="signed_migration_"+UUID.randomUUID().toString().replace("-", "");
+        var server=new JdbcTemplate(PostgresFixture.POSTGRES.getPostgresDatabase());
+        server.execute("CREATE DATABASE "+name+" OWNER tnbp_migrator");
+        String url="jdbc:postgresql://localhost:"+PostgresFixture.POSTGRES.getPort()+"/"+name;
+        var admin=new JdbcTemplate(new DriverManagerDataSource(url,"postgres","postgres"));
+        try {
+            Flyway.configure().dataSource(url,"tnbp_migrator","migration-test-only").schemas("access").defaultSchema("access").target("10").load().migrate();
+            UUID user=UUID.randomUUID();
+            if(existing) {
+                admin.update("INSERT INTO access.accounts VALUES (?,?,'$argon2id$synthetic',now())",user,user+"@example.org");
+                for(long progress:new long[]{0,7000,15000,9007199254740991L})
+                    admin.update("INSERT INTO savings_goals.goals VALUES (?,?,'Bestand',10000,?,DATE '2028-02-29')",UUID.randomUUID(),user,progress);
+            }
+            var before=admin.queryForList("SELECT * FROM savings_goals.goals ORDER BY id");
+            Flyway.configure().dataSource(url,"tnbp_migrator","migration-test-only").schemas("access").defaultSchema("access").load().migrate();
+            assertThat(admin.queryForList("SELECT * FROM savings_goals.goals ORDER BY id")).isEqualTo(before);
+            assertThat(admin.queryForObject("SELECT relrowsecurity AND relforcerowsecurity FROM pg_class WHERE oid='savings_goals.goals'::regclass",Boolean.class)).isTrue();
+            if(!existing)admin.update("INSERT INTO access.accounts VALUES (?,?,'$argon2id$synthetic',now())",user,user+"@example.org");
+            for(long progress:new long[]{-9007199254740991L,-3000,0,9007199254740991L})
+                admin.update("INSERT INTO savings_goals.goals VALUES (?,?,'Grenze',1,?,NULL)",UUID.randomUUID(),user,progress);
+            for(long progress:new long[]{-9007199254740992L,9007199254740992L})
+                assertThatThrownBy(()->admin.update("INSERT INTO savings_goals.goals VALUES (?,?,'Grenze',1,?,NULL)",UUID.randomUUID(),user,progress)).isInstanceOf(org.springframework.dao.DataAccessException.class);
+            var runtime=new JdbcTemplate(new DriverManagerDataSource(url,"tnbp_runtime","runtime-test-only"));
+            assertThat(runtime.queryForObject("SELECT count(*) FROM savings_goals.goals",Integer.class)).isZero();
+            assertThat(new de.linus.tnbp.shared.ApiVersionState(runtime,"compatible","","",true).signedProgressAvailable()).isFalse();
+        } finally {server.execute("DROP DATABASE "+name+" WITH (FORCE)");}
     }
 
     private void restartPackagedRelease(String url, JdbcTemplate admin, List<Map<String, Object>> accounts,

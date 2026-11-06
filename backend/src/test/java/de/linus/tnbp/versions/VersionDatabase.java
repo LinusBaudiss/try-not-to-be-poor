@@ -15,7 +15,7 @@ final class VersionDatabase implements AutoCloseable {
     final JdbcTemplate runtime;
     static final String HASH = "a".repeat(64);
 
-    VersionDatabase() { this("10"); }
+    VersionDatabase() { this("11"); }
     VersionDatabase(String target) { this(PostgresFixture.POSTGRES, target); }
     VersionDatabase(io.zonky.test.db.postgres.embedded.EmbeddedPostgres postgres, String target) {
         url = "jdbc:postgresql://localhost:" + postgres.getPort() + "/" + name;

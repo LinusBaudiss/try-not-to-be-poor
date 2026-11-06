@@ -243,3 +243,68 @@ test('neuer Client erkennt Aktualisierung vor Refresh/Retry auch bei direkten Si
     await isolated.close();
   }
 });
+
+
+test('signierter Gesamtfortschritt ist nach realer Stilllegung in vier Größen und bei 200 Prozent Text vollständig bedienbar', async ({ page }) => {
+  test.setTimeout(240_000);
+  execFileSync('python3', [path.resolve('../scripts/e2e-transition.py'), '--signed-progress'], { timeout: 120_000, stdio: 'pipe' });
+  for (const viewport of [{ width: 320, height: 568 }, { width: 390, height: 844 }, { width: 768, height: 1024 }, { width: 1280, height: 800 }]) {
+    await page.setViewportSize(viewport);
+    await completeV2Flow(page, true);
+    expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
+  }
+});
+
+
+test('signierter Entwurf übersteht Offline, Feldfehler und verlorene Commitbestätigung; Sitzungsende entkräftet späte Antworten', async ({ page, context, request }) => {
+  test.setTimeout(180_000);
+  execFileSync('python3', [path.resolve('../scripts/e2e-transition.py'), '--signed-progress'], { timeout: 120_000, stdio: 'pipe' });
+  const email = `signed-errors-${crypto.randomUUID()}@example.org`;
+  expect((await request.post('http://127.0.0.1:8080/api/v2/access/registrations', { data: { registrationToken: 'a'.repeat(43), email, password } })).status()).toBe(201);
+  await login(page, email);
+  await page.getByRole('link', { name: 'Sparziele', exact: true }).click();
+  await expect(page.locator('#goal-capabilities-status')).toHaveText('Negative Gesamtfortschritte sind verfügbar.');
+  await page.getByLabel('Name des Sparziels', { exact: true }).fill('Signierter Entwurf');
+  await page.getByLabel('Zielbetrag in Euro', { exact: true }).fill('100');
+  await page.getByRole('button', { name: 'Sparziel speichern', exact: true }).click();
+  await expect(page.locator('#goal-status')).toHaveClass(/success/);
+  await page.getByRole('button', { name: 'Fortschritt aktualisieren: Signierter Entwurf', exact: true }).click();
+  const input = page.getByLabel('Gesamtfortschritt in Euro');
+  await input.fill('-30');
+  await context.setOffline(true);
+  await expect(page.getByRole('button', { name: 'Fortschritt speichern', exact: true })).toBeDisabled();
+  await expect(input).toHaveValue('-30'); await context.setOffline(false);
+  const endpoint = '**/api/v2/savings-goals/*/progress';
+  await page.route(endpoint, route => route.fulfill({ status: 400, json: { code: 'VALIDATION_FAILED', fieldErrors: { progressCents: 'Prüfe den Gesamtfortschritt.' } } }));
+  await input.press('Enter'); await expect(page.locator('#goal-progress-error')).toHaveText('Prüfe den Gesamtfortschritt.');
+  await expect(input).toHaveValue('-30'); await expect(input).toBeFocused();
+  await page.unroute(endpoint);
+  let sends = 0;
+  await page.route(endpoint, async route => { sends++; const saved = await route.fetch(); expect(saved.status()).toBe(200); await route.abort('failed'); });
+  await input.press('Enter'); await expect(page.locator('#goal-progress-status')).toContainText('nicht bestätigt');
+  await expect(input).toHaveValue('-30'); await expect(page.getByRole('button', { name: 'Fortschritt speichern', exact: true })).toBeDisabled();
+  await page.getByRole('button', { name: 'Sparziele zur Prüfung laden', exact: true }).click();
+  await expect(page.locator('.savings-cards')).toContainText('−30,00 €');
+  await page.getByRole('button', { name: 'Ich habe die Sparziele geprüft', exact: true }).click();
+  await expect(input).toHaveValue('-30'); await expect(input).toBeFocused(); expect(sends).toBe(1); await page.unroute(endpoint);
+  let release!: () => void;
+  const held = new Promise<void>(resolve => release = resolve);
+  let committed = false;
+  await page.route(endpoint, async route => { const response = await route.fetch(); expect(response.status()).toBe(200); committed = true; await held; await route.fulfill({ response }); });
+  try {
+    await input.fill('-40'); await page.getByRole('button', { name: 'Fortschritt speichern', exact: true }).click();
+    await expect.poll(() => committed, { timeout: 15_000 }).toBe(true);
+    await expect(page.getByRole('button', { name: 'Fortschritt wird gespeichert …' })).toBeDisabled();
+    await page.getByRole('button', { name: 'Abmelden', exact: true }).click();
+    await expect(page).toHaveURL('/anmelden');
+  } finally { release(); }
+  await expect(page.locator('app-savings-goals')).toHaveCount(0);
+  await expect(page.getByText(/wurde mit .* gespeichert/)).toHaveCount(0);
+  const other = `signed-other-${crypto.randomUUID()}@example.org`;
+  expect((await request.post('http://127.0.0.1:8080/api/v2/access/registrations', { data: { registrationToken: 'a'.repeat(43), email: other, password } })).status()).toBe(201);
+  await login(page, other); await page.getByRole('link', { name: 'Sparziele', exact: true }).click();
+  await expect(page.getByText('Noch keine Sparziele angelegt.', { exact: true })).toBeVisible();
+  await expect(page.getByText('Signierter Entwurf', { exact: true })).toHaveCount(0);
+  await expect(page.locator('#goal-progress-amount')).toHaveCount(0);
+  expect(await page.evaluate(() => ({ local: localStorage.length, session: sessionStorage.length }))).toEqual({ local: 0, session: 0 });
+});

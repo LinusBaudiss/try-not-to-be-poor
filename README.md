@@ -337,11 +337,18 @@ vergangene Daten sind erlaubt. Neue Ziele beginnen mit `0,00 €` Fortschritt.
 es werden keine einzelnen Beiträge oder Verläufe gespeichert. Null und Beträge
 über dem Zielbetrag sind erlaubt. Die Anzeige nennt den tatsächlichen Betrag,
 Anteil und gegebenenfalls die Überschreitung; ausschließlich der Balken bleibt auf
-0–100 % begrenzt. Der v2-Antwortvertrag und die exakte Anzeige unterstützen bereits
-signierte Fortschritte bis ±9007199254740991 Cent. Negative Schreibwerte bleiben
-serverseitig mit 409 `FEATURE_NOT_AVAILABLE` gesperrt, bis die vollständige
-v1-Lese-/Schreibbarriere nachgewiesen ist. Die Datenbankgrenze bleibt unverändert
-nichtnegativ; es gibt keinen Freigabeschalter.
+0–100 % begrenzt. Nach dem [geschützten Freigabeablauf](deploy/api-transition.md#signierten-gesamtfortschritt-freigeben)
+sind negative Gesamtfortschritte mit führendem ASCII-Minus bis
+`-9007199254740991` Cent eingebbar; auch Vorbelegen und erneutes Laden erhalten
+das Vorzeichen. V11 erweitert ausschließlich den Fortschritts-Constraint.
+`SIGNED_PROGRESS_ENABLED` ist standardmäßig `false`; allein der Schalter öffnet
+keine Funktion. Der aktuelle vollständige Stilllegungsbeleg und der signierte
+Constraint werden für jede negative Mutation unter einer Versionssperre erneut
+geprüft. Ohne Freigabe gilt 409 `FEATURE_NOT_AVAILABLE`, nichtnegative Pflege bleibt nutzbar.
+Die sitzungsgebundene Abfrage `GET /api/v2/capabilities` liefert ausschließlich
+`signedProgressAvailable` und `Cache-Control: no-store`. Bei Ladefehlern oder
+Funktionssperre bleibt ein offener Entwurf erhalten; „Fortschrittseingabe erneut
+prüfen“ wiederholt nur die Abfrage. Nach 409 wird die Freigabe frisch geladen.
 Zielbetrag und Fortschritt dürfen jeweils höchstens `9007199254740991` Cent
 betragen. Es gelten dieselben Euro-Eingaberegeln wie beim Budget.
 
@@ -409,8 +416,8 @@ v2-Clients. Beide Finanzversionen teilen denselben Bestand und die äußere
 Finanzkoordination; v1 bleibt im Kompatibilitätsmodus für Altoberflächen verfügbar. V2-Operationen erhalten
 den Bearer ausschließlich über den Interceptor für dieselbe Herkunft und die
 unterstützten Hauptversionen. Der [geschützte Ablöseweg](deploy/api-transition.md)
-legt v1 dauerhaft still. Negative Schreibfreigabe und Produktionsfreigabe bleiben
-weiterhin geschlossen.
+legt v1 dauerhaft still. Signierte Fortschritte benötigen anschließend die gesonderte
+Freigabe; Monatsautomatik und Produktionsbetrieb bleiben geschlossen.
 
 ## Finanzmodule auf V9 umstellen und wiederanlaufen lassen
 
@@ -532,8 +539,8 @@ Der lokale Start verwendet den gemeinsamen geschützten API-Startguard und prüf
 Bereitschaft über `/api/v2/access/csrf`. Die Oberfläche spricht ausschließlich v2.
 Im Kompatibilitätsmodus bleibt v1 für die bisherigen Regressionstests verfügbar;
 nach bestätigter Stilllegung wird v1 bereits vor Controller-/Finanzarbeit mit
-401 `CLIENT_UPDATE_REQUIRED` abgewiesen. Negative Fortschritte und Monatsautomatik
-bleiben geschlossen.
+401 `CLIENT_UPDATE_REQUIRED` abgewiesen. Negative Fortschritte bleiben bis zur
+gesonderten Freigabe geschlossen; Monatsautomatik bleibt gesperrt.
 
 Der vollständige [Ablöse-, Fehler- und Rücknahmeweg](deploy/api-transition.md)
 beschreibt den registrierten Linux-Subreaper samt vollständiger Nachkommenschaft,

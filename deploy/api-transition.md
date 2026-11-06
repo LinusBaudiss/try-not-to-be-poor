@@ -217,6 +217,52 @@ erfolgreichen v1-Finanzzugriff. Im neuen Client führen auch frühere öffentlic
 Anmelde-/Registrierungsseiten und interne Navigation bei erkanntem Updatezustand
 zur festen Reloadaktion zurück; alte Formulare und Entwürfe erscheinen nicht erneut.
 
+## Signierten Gesamtfortschritt freigeben
+
+V11 erweitert nur `savings_goals.goals.progress_cents` auf den sicheren signierten
+Centbereich. Alle anderen Betragsregeln, Eigentümer und RLS bleiben erhalten.
+Die Migration allein öffnet negative API-Mutationen nicht.
+
+Nach erfolgreichem administrativem `retire` den aktuellen Release mit dem
+zusätzlichen geschützten Wert `SIGNED_PROGRESS_ENABLED=true` starten. Der
+Standard ist `false`. Derselbe konfigurierte Release muss zum bestätigten
+Stilllegungsbeleg passen; bei einem neuen Release den dokumentierten
+Stilllegungs-/Migrationsweg erneut vollständig durchlaufen.
+
+```sh
+# Nur nach bestätigter Stilllegung; dieselbe geschützte Konfiguration und JAR:
+SIGNED_PROGRESS_ENABLED=true python3 scripts/api-release.py start \
+  --release /geschuetzter-pfad/neue-api.jar
+```
+
+`GET /api/v2/capabilities` ist Bearer-geschützt, rein lesend und `no-store`.
+`signedProgressAvailable` ist nur bei aktivem Schalter, zum Startbeleg identischem
+vollständigem Versionszustand und tatsächlich signiertem validiertem Constraint
+wahr. Fehlende, widersprüchliche oder veraltete Voraussetzungen halten das Gate
+geschlossen. Jede negative Mutation prüft dies erneut auf derselben Verbindung
+wie die kontogesperrte Zieländerung. Die schmale SECURITY-DEFINER-Prüffunktion
+sperrt dabei die Versionszeile gegen Rücknahme bis zum äußeren Commit; die
+Laufzeitrolle besitzt lediglich EXECUTE und keine erweiterten Tabellenrechte.
+
+Beim ersten negativen Commit werden Zielersatz und dauerhafter
+`signed_progress_used`-Marker gemeinsam gespeichert. Ein Fehler einschließlich
+Commitfehler verwirft beide Wirkungen. Danach verhindern alle unterstützten
+Altstart-/Rücknahmewege dauerhaft die Wiederöffnung von v1, auch nach erneutem
+Ersetzen von −30 € durch 70 €. `SIGNED_PROGRESS_ENABLED=false` schließt weitere
+negative Eingaben, entfernt aber weder Werte noch Marker und öffnet v1 nicht.
+Nichtnegative Fortschrittspflege bleibt verfügbar. Monatsautomatik bleibt
+unabhängig davon geschlossen.
+
+Der isolierte HTTPS-Nachweis `npm --prefix frontend run e2e:transition` verwendet
+mit `scripts/e2e-transition.py --signed-progress` genau den administrativen
+Stilllegungsweg vor der zusätzlichen Testfreigabe. Es werden ausschließlich
+synthetische Konten verwendet. Tastatur, ARIA-Snapshots und Axe sind automatisierte
+assistive Nachweise; ein tatsächlich ausgeführter Screenreaderlauf wird gesondert
+angegeben und daraus nicht abgeleitet. Die Viewport-/Tastaturautomation belegt die
+implementierte ASCII-Minuseingabe und die vorzeichenfähige Eingabehilfe im Browser.
+Sie führt keine reale Smartphone-Softwaretastatur aus; das Verhalten konkreter
+mobiler Tastaturen wurde damit nicht manuell geprüft.
+
 ## Geprüfte Rücknahme
 
 Die technische Rücknahme verändert keine Finanzdaten. Vor der ersten Nutzung
@@ -270,14 +316,14 @@ Prüfung entzieht zuerst eine vorhandene Freigabe. Explizite Prüfexceptions ble
 auch mit `PYTHONOPTIMIZE=1` wirksam. Beide eindeutigen synthetischen Konten werden auch
 nach Fehlern zwischen bestätigter Registrierung und erfolgreichem Login bereinigt.
 
-Die späteren technischen Marker werden nur vorwärts in derselben äußeren
+Die technischen Marker werden nur vorwärts in derselben äußeren
 Finanztransaktion gesetzt; Rollback nimmt den unbestätigten Marker zurück. Nach
 Commit eines Markers verweigern Datenbankfunktion und alle unterstützten
 Start-/Rücknahmewege dauerhaft den Rückfall auf v1, auch wenn sämtliche aktuellen
 Testwerte nichtnegativ sind. Dann nur v2-kompatibel korrigieren oder eine geprüft
 wiederhergestellte Version verwenden; Wiederherstellung öffnet keine alten
-Freigaben automatisch. Diese Story setzt Marker ausschließlich in synthetischen
-Tests und aktiviert keine Finanzwirkung.
+Freigaben automatisch. Die signierte manuelle Fortschrittseingabe setzt den Marker
+bei der ersten bestätigten negativen Wirkung; Monatsautomatik bleibt geschlossen.
 
 ## Weiter offene Betriebsbedingungen
 

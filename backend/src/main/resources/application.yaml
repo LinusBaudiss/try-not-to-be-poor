@@ -30,6 +30,8 @@ access:
     audience: ${SESSION_AUDIENCE:}
     origin: ${SESSION_ORIGIN:}
 api:
+  features:
+    signed-progress: ${SIGNED_PROGRESS_ENABLED:false}
   version:
     mode: ${API_VERSION_MODE:compatible}
     instance-id: ${API_INSTANCE_ID:}

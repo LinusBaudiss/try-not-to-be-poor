@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Import;
 
 /** Dieselbe echte PostgreSQL-/HTTP-Matrix wie v1, ergänzt um das geschlossene signierte Gate. */
 @Import(SavingsGoalIT.Time.class)
+@org.springframework.test.context.TestPropertySource(properties = "api.features.signed-progress=true")
 class SavingsGoalV2IT extends SavingsGoalIT {
     @Override String path() { return "/api/v2/savings-goals"; }
 
@@ -16,11 +17,16 @@ class SavingsGoalV2IT extends SavingsGoalIT {
         String id = goal(first);
         assertThat(progress(id, "{\"progressCents\":7000}", token(first)).statusCode()).isEqualTo(200);
         String before = call("GET", null, token(first)).body();
+        var capability = HttpClient.newHttpClient().send(HttpRequest.newBuilder(URI.create("http://localhost:" + port + "/api/v2/capabilities"))
+            .header("Authorization", "Bearer " + token(first)).GET().build(), HttpResponse.BodyHandlers.ofString());
+        assertThat(capability.statusCode()).isEqualTo(200);
+        assertThat(JSON.readTree(capability.body()).get("signedProgressAvailable").asBoolean()).isFalse();
         for (long cents : new long[] {-1, -3000, -9007199254740991L}) {
             var rejected = progress(id, "{\"progressCents\":" + cents + "}", token(first));
             assertThat(rejected.statusCode()).isEqualTo(409);
             assertThat(JSON.readTree(rejected.body()).get("code").asText()).isEqualTo("FEATURE_NOT_AVAILABLE");
             assertThat(call("GET", null, token(first)).body()).isEqualTo(before);
+            assertThat(jdbc.queryForObject("SELECT signed_progress_used FROM api_version.state", Boolean.class)).isFalse();
         }
         for (String value : List.of("-9007199254740992", "-9223372036854775808", "-1.0", "-1e1", "\"-1\""))
             assertThat(progress(id, "{\"progressCents\":" + value + "}", token(first)).statusCode()).isEqualTo(400);
@@ -29,6 +35,7 @@ class SavingsGoalV2IT extends SavingsGoalIT {
         var missing = progress(UUID.randomUUID().toString(), "{\"progressCents\":-1}", token(first));
         assertThat(foreign.statusCode()).isEqualTo(404);
         assertThat(foreign.body()).isEqualTo(missing.body());
+        assertThat(jdbc.queryForObject("SELECT signed_progress_used FROM api_version.state", Boolean.class)).isFalse();
         var request = HttpRequest.newBuilder(URI.create("http://localhost:" + port + "/api/v1/savings-goals"))
             .header("Authorization", "Bearer " + token(first)).GET().build();
         assertThat(HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString()).body()).isEqualTo(before);

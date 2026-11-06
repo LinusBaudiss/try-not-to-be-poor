@@ -2,6 +2,8 @@
 
 Stand der Einrichtung: 31.10.2026.
 
+Betriebsweise seit 06.11.2026: manueller Einmalabgleich per Skill; die Automation ist pausiert.
+
 ## Auftrag und Quelle
 
 Alle Epics und Stories werden als Issues in [LinusBaudiss/try-not-to-be-poor](https://github.com/LinusBaudiss/try-not-to-be-poor/issues) gespiegelt. Der Nutzer hat das Anlegen und den dauerhaften Abgleich einschließlich nativer Parent-, Development- und Blockierungsbeziehungen beauftragt; ein separates GitHub-Projects-Board ist nicht gewünscht.
@@ -13,11 +15,25 @@ Die verbindlichen Quellen sind die veröffentlichten Dateien auf `main`:
 
 Lokale Entwicklungszweige werden nicht automatisch veröffentlicht. Ihre Änderungen gelangen nach dem Merge auf `main` in den Spiegel. Der Abgleich schreibt keine GitHub-Änderungen zurück in die BMAD-Dateien und nimmt keine fachliche Abnahme vor. Ein gemergter PR oder `done` in einer Implementierungs-Spec ersetzt den Sprintstatus nicht.
 
-## Laufender Abgleich
+## Manueller Abgleich
 
-Die aktive Codex-Automation **BMAD-Issues synchron halten**, ID `bmad-issues-synchron-halten`, kehrt stündlich in den Einrichtungs-Chat zurück. Sie verwendet die GitHub-Anbindung und enthält den vollständigen Ablauf in ihrem gespeicherten Prompt. Rechner und Codex-App müssen für den lokalen Ablauf laufen. Änderungen, Fehler und erforderliche Entscheidungen werden gemeldet; unveränderte erfolgreiche Abgleiche bleiben still.
+Die Codex-Automation **BMAD-Issues synchron halten**, ID `bmad-issues-synchron-halten`, ist auf Nutzerwunsch pausiert. Der Abgleich wird ausschließlich auf manuellen Auftrag ausgeführt; ein Merge oder eine lokale Statusänderung startet keinen Lauf.
 
-Nach Veröffentlichung von BMAD-Änderungen kann derselbe Abgleich sofort im aktuellen Chat ausgeführt werden. Die Automation übernimmt den regelmäßigen Nachlauf. Sie ist keine GitHub-Action und kein dauerhaft auf GitHub laufender Dienst.
+Den persönlichen Skill in einem Projekt-Chat aufrufen:
+
+```text
+$github-bmad-mirror
+```
+
+Dieser Aufruf führt den nachstehenden Abgleich einmal aus und schreibt erforderliche Änderungen nach GitHub. Ein weiterer Abgleich erfolgt erst auf erneuten Auftrag. Zum ausschließlichen Prüfen:
+
+```text
+$github-bmad-mirror nur prüfen
+```
+
+Der Prüfmodus liest Quellen, Issues, PRs und Beziehungen und berichtet geplante Änderungen ohne Schreibzugriffe. Beide Aufrufe verwenden den veröffentlichten Stand auf `main` und erhalten manuelle Ergänzungen.
+
+Der persönliche Skill liegt unter `~/.codex/skills/github-bmad-mirror/`. Er ist nur für ausdrücklichen Aufruf eingerichtet. Die vollständigen Regeln bleiben in dieser Projektanleitung; die folgenden historischen Tabellen sind keine feste Obergrenze und kein Ersatz für die aktuelle Quelle.
 
 ## Regeln für jeden Abgleich
 
@@ -40,7 +56,7 @@ Die bestehenden Issues geben das Format vor: BMAD-ID und Status, Quelllinks auf 
 
 Erweiterung vom 31.10.2026: Textlinks und Aufgabenlisten allein erfüllen diese Anforderungen nicht. Jede Story ist ein tatsächliches Sub-Issue ihres Epic-Parents. Implementierungs- und zugehörige Korrektur-PRs stehen im nativen Bereich Development; dokumentierte Voraussetzungen werden als gerichtete blocks/blocked by-Beziehungen abgebildet.
 
-Die GitHub-Anbindung stellt die notwendigen Schreibfunktionen derzeit nicht bereit. Der vorhandene direkte GitHub-Zugang über `gh api` funktioniert mit Netzwerkfreigabe. Eine fehlgeschlagene Authentifizierungsprüfung ohne Netzwerkzugriff darf nicht als sicherer Beleg für ungültige Zugangsdaten behandelt werden. Kein Ersatz durch bloße Textlinks und keine Änderung von Zugangsdaten oder Zugriffsrechten.
+Nutze die GitHub-Anbindung für die angebotenen Funktionen. Falls native Beziehungsschreibzugriffe fehlen, verwende den vorhandenen direkten GitHub-Zugang über `gh api` mit Netzwerkfreigabe. Eine fehlgeschlagene Authentifizierungsprüfung ohne Netzwerkzugriff darf nicht als sicherer Beleg für ungültige Zugangsdaten behandelt werden. Kein Ersatz durch bloße Textlinks und keine Änderung von Zugangsdaten oder Zugriffsrechten.
 
 - Parent: `POST /repos/{owner}/{repo}/issues/{epic_number}/sub_issues` mit `sub_issue_id` als Datenbank-ID der Story. Parent und Sub-Issue-Liste anschließend nachlesen. Einen abweichenden manuellen Parent nicht stillschweigend ersetzen. [GitHub: Sub-Issues](https://docs.github.com/en/rest/issues/sub-issues)
 - Development: GraphQL `addCloseIssueReferences(input:{issueId:ISSUE_NODE_ID,pullRequestIds:[PR_NODE_ID,...]})`. Über `closedByPullRequestsReferences(first:100,includeClosedPrs:true)` einschließlich historischer gemergter PRs verifizieren; Pagination beachten. Keine PR-Beschreibung als Ersatz umschreiben. GitHub kann verknüpfte Issues beim Merge schließen; der BMAD-Sprintstatus bleibt für den Spiegel maßgeblich. [GitHub: PR-Verknüpfung](https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/linking-a-pull-request-to-an-issue)
@@ -103,7 +119,7 @@ Das sind 72 native gerichtete Beziehungen. Explizit genannte Bereiche werden vol
 
 Für Story 3.8 und Stories 4.1 bis 4.8 existiert zum Einrichtungszeitpunkt noch kein zugehöriger PR. Die bestätigte Ausgangszuordnung begrenzt spätere PR-Ergänzungen nicht.
 
-Abschlusskontrolle am 31.10.2026: 25 korrekte Parent-Zuordnungen einschließlich inverser Sub-Issue-Listen, 17 Development-Verknüpfungen für 16 Stories und 72 Blockierungsbeziehungen in beiden Richtungen über GitHub erneut gelesen. Alle 29 Eigentumsmarker stimmen mit den eingerichteten Beziehungen überein; Story-Inhalte, Titel und Statuswerte sind unverändert. Die aktive stündliche Automation wurde um dieselben Regeln erweitert.
+Abschlusskontrolle am 31.10.2026: 25 korrekte Parent-Zuordnungen einschließlich inverser Sub-Issue-Listen, 17 Development-Verknüpfungen für 16 Stories und 72 Blockierungsbeziehungen in beiden Richtungen über GitHub erneut gelesen. Alle 29 Eigentumsmarker stimmten mit den eingerichteten Beziehungen überein; Story-Inhalte, Titel und Statuswerte blieben unverändert. Die damals aktive Automation wurde um dieselben Regeln erweitert; seit 06.11.2026 ist sie pausiert.
 
 ## Verifizierter Anfangsbestand
 
@@ -141,4 +157,4 @@ Abschlusskontrolle am 31.10.2026: 25 korrekte Parent-Zuordnungen einschließlich
 | story-4.7 | [#54](https://github.com/LinusBaudiss/try-not-to-be-poor/issues/54) | `backlog` |
 | story-4.8 | [#55](https://github.com/LinusBaudiss/try-not-to-be-poor/issues/55) | `backlog` |
 
-Die Stories 3.1 bis 3.6 bleiben entsprechend dem Sprintstatus auf `main` in `review`, obwohl ihre PRs gemergt sind. Story 3.7 steht auf `main` noch in `backlog`; ein abweichender Stand im Entwicklungszweig wird erst nach Veröffentlichung gespiegelt.
+Zum Einrichtungsstand vom 31.10.2026 standen Stories 3.1 bis 3.6 auf `main` in `review` und Story 3.7 noch in `backlog`. Diese Angaben sind historisch; jeder manuelle Abgleich liest den aktuellen Sprintstatus auf `main` erneut.

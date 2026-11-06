@@ -3,12 +3,13 @@ import { Component, DestroyRef, ElementRef, ViewChild, HostListener, Injectable,
 import { FormsModule } from '@angular/forms';
 import { firstValueFrom, timeout } from 'rxjs';
 import { SavingsGoalResponse } from '../api/v2/model/savingsGoalResponse';
+import { CapabilitiesService } from '../api/v2/api/capabilities.service';
 import { SavingsGoalsService } from '../api/v2/api/savingsGoals.service';
 import { savingsProgress } from '../shared/savings-progress';
 import { Session } from '../session/session';
 import { LogoutButton } from '../session/logout-button';
 import { SessionsService } from '../api/v2/api/sessions.service';
-import { MAX_CENTS, euroInput, formatEuro, formatSignedEuro, parseEuro } from '../shared/money';
+import { MAX_CENTS, euroInput, signedEuroInput, formatSignedEuro, parseEuro, parseSignedEuro } from '../shared/money';
 
 // Nur Vorgangsflags überleben die Navigation; persönliche Werte bleiben in der Ansicht.
 @Injectable({ providedIn: 'root' })
@@ -53,6 +54,8 @@ class SavingsOperations {
           <button class="savings-review-action" type="button" (click)="confirmReview()" [disabled]="pending() || loading() || !reviewLoaded()">Ich habe die Sparziele geprüft</button>
         </div>
       }
+      <p id="goal-capabilities-status" role="status" aria-live="polite" [class.error]="capabilityState() === 'failed'">{{ capabilityStatus() }}</p>
+      <button type="button" (click)="loadCapabilities()" [attr.aria-disabled]="capabilityState() === 'loading' || !online()" [attr.aria-busy]="capabilityState() === 'loading'">Fortschrittseingabe erneut prüfen</button>
       @if (loaded()) {
         @if (items().length === 0) {
           <button id="goal-create" type="button" (click)="focusName()">Sparziel anlegen</button>
@@ -94,10 +97,10 @@ class SavingsOperations {
           <form (ngSubmit)="saveProgress()" novalidate [attr.aria-busy]="pending()">
             <div class="field">
               <label for="goal-progress-amount">Gesamtfortschritt in Euro</label>
-              <input id="goal-progress-amount" name="progressAmount" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" required
+              <input id="goal-progress-amount" name="progressAmount" type="text" inputmode="text" autocomplete="off" spellcheck="false" required
                 [readOnly]="pending()" [ngModel]="progressAmount" (ngModelChange)="editProgress($event)"
                 [attr.aria-invalid]="!!progressError()" [attr.aria-describedby]="progressError() ? 'goal-progress-hint goal-progress-error' : 'goal-progress-hint'">
-              <p id="goal-progress-hint" class="hint">Ersetzt den bisherigen Gesamtbetrag. Euro ohne Tausendertrennzeichen, höchstens zwei Nachkommastellen. Null und Beträge über dem Zielbetrag sind erlaubt.</p>
+              <p id="goal-progress-hint" class="hint">Ersetzt den bisherigen Gesamtbetrag. Euro ohne Tausendertrennzeichen, höchstens zwei Nachkommastellen. Null und Beträge über dem Zielbetrag sind erlaubt. {{ signedAvailable() ? 'Negative Beträge mit führendem Minus sind erlaubt.' : 'Negative Beträge sind derzeit nicht verfügbar.' }}</p>
               @if (progressError()) { <p id="goal-progress-error" class="field-error">{{ progressError() }}</p> }
             </div>
             <div class="savings-actions">
@@ -193,6 +196,15 @@ class SavingsOperations {
 export class SavingsGoals {
   protected readonly session = inject(Session);
   private readonly goals = inject(SavingsGoalsService);
+  private readonly capabilities = inject(CapabilitiesService);
+  private capabilitySequence = 0;
+  protected readonly capabilityState = signal<'unknown' | 'loading' | 'open' | 'closed' | 'failed'>('unknown');
+  protected readonly signedAvailable = computed(() => this.capabilityState() === 'open');
+  protected readonly capabilityStatus = computed(() => this.capabilityState() === 'loading' ? 'Fortschrittseingabe wird geprüft …'
+    : this.capabilityState() === 'open' ? 'Negative Gesamtfortschritte sind verfügbar.'
+    : this.capabilityState() === 'closed' ? 'Negative Gesamtfortschritte sind derzeit nicht verfügbar. Nichtnegative Beträge kannst du speichern.'
+    : this.capabilityState() === 'failed' ? 'Die Fortschrittseingabe konnte nicht geprüft werden. Nichtnegative Beträge kannst du speichern. Versuche die Prüfung erneut.'
+    : 'Die Fortschrittseingabe wurde noch nicht geprüft. Nichtnegative Beträge kannst du speichern.');
   private readonly operations = inject(SavingsOperations);
   private confirmedRevision = 0;
   private readonly access = inject(SessionsService);
@@ -248,6 +260,7 @@ export class SavingsGoals {
   protected readonly dateError = signal('');
   protected readonly money = formatSignedEuro;
   protected readonly date = (value: string) => value.split('-').reverse().join('.');
+  private readonly unavailableProgress = 'Negative Gesamtfortschritte sind derzeit nicht verfügbar. Prüfe die Fortschrittseingabe erneut; dein Entwurf bleibt erhalten.';
   private readonly positiveAmount = 'Gib einen positiven Zielbetrag bis 90071992547409,91 Euro ohne Tausendertrennzeichen mit höchstens zwei Nachkommastellen ein.';
 
   constructor() {
@@ -273,10 +286,26 @@ export class SavingsGoals {
       if (!this.accepts()) return;
       if (identity?.userId !== this.owner) throw new Error('Identität nicht bestätigt.');
       this.identityConfirmed.set(true); this.identityStatus.set('Du bist angemeldet. Deine persönlichen Sparziele sind geöffnet.');
-      await this.load();
+      await Promise.all([this.load(), this.loadCapabilities()]);
     } catch {
       if (this.accepts()) { this.identityConfirmed.set(false); this.identityFailed.set(true); this.identityStatus.set('Der Zugang konnte nicht geprüft werden.'); }
     } finally { if (this.accepts()) this.opening.set(false); }
+  }
+  protected async loadCapabilities(): Promise<void> {
+    if (!this.accepts() || !this.identityConfirmed() || !this.online() || this.capabilityState() === 'loading') return;
+    const sequence = ++this.capabilitySequence;
+    this.capabilityState.set('loading');
+    try {
+      const response = await firstValueFrom(this.capabilities.getCapabilities('response').pipe(timeout(30_000)));
+      if (!this.accepts() || sequence !== this.capabilitySequence) return;
+      const result = response.body;
+      if (response.status !== 200 || !result || Object.keys(result).length !== 1 || typeof result.signedProgressAvailable !== 'boolean')
+        throw new Error('Ungültiger Funktionszustand.');
+      this.capabilityState.set(result.signedProgressAvailable ? 'open' : 'closed');
+      if (result.signedProgressAvailable && this.progressError() === this.unavailableProgress) this.progressError.set('');
+    } catch {
+      if (this.accepts() && sequence === this.capabilitySequence) this.capabilityState.set('failed');
+    }
   }
   protected edit(field: 'name' | 'amount' | 'targetDate', value: string): void {
     this[field] = value; this.saved.set(false); this.failed.set(false); this.status.set('');
@@ -365,7 +394,7 @@ export class SavingsGoals {
   protected openProgress(goal: SavingsGoalResponse): void {
     if (!this.accepts() || this.pending() || this.loading() || this.targetEditing() || this.deleting()) return;
     if (this.editing()) { this.focus('goal-progress-amount'); return; }
-    this.editing.set(goal); this.progressAmount = goal.progressCents < 0 ? '' : euroInput(goal.progressCents); this.resetProgressStatus();
+    this.editing.set(goal); this.progressAmount = signedEuroInput(goal.progressCents); this.resetProgressStatus();
     this.focus('goal-progress-amount');
   }
   protected cancelProgress(): void {
@@ -382,10 +411,14 @@ export class SavingsGoals {
     const goal = this.editing();
     if (!goal || !this.accepts() || !this.identityConfirmed() || this.pending() || this.loading() || !this.loaded() || !this.online() || this.uncertain()) return;
     this.resetProgressStatus();
-    const progressCents = parseEuro(this.progressAmount);
+    const progressCents = parseSignedEuro(this.progressAmount);
     if (progressCents === null) {
-      this.progressError.set('Gib einen Fortschritt von 0 bis 90071992547409,91 Euro ohne Tausendertrennzeichen mit höchstens zwei Nachkommastellen ein.');
+      this.progressError.set('Gib einen Gesamtfortschritt zwischen -90071992547409,91 und 90071992547409,91 Euro ohne Tausendertrennzeichen mit höchstens zwei Nachkommastellen ein.');
       this.progressStatus.set('Prüfe den Gesamtfortschritt.'); this.progressFailed.set(true); this.focus('goal-progress-amount'); return;
+    }
+    if (progressCents < 0 && !this.signedAvailable()) {
+      this.progressError.set(this.unavailableProgress);
+      this.progressStatus.set('Der Fortschritt wurde nicht gespeichert.'); this.progressFailed.set(true); this.focus('goal-progress-amount'); return;
     }
     ++this.confirmedRevision;
     const operation = this.operations.begin(); this.progressPending.set(true); this.progressStatus.set('Fortschritt wird gespeichert …');
@@ -397,7 +430,7 @@ export class SavingsGoals {
         throw new Error('Fortschritt nicht bestätigt.');
       this.items.update(values => values.map(value => value.id === goal.id ? result : value));
       this.editing.set(null); this.progressAmount = ''; this.progressSaved.set(true);
-      this.progressStatus.set(`Der Gesamtfortschritt für „${result.name}“ wurde mit ${formatEuro(result.progressCents)} gespeichert.`); this.focus('goal-progress-' + goal.id);
+      this.progressStatus.set(`Der Gesamtfortschritt für „${result.name}“ wurde mit ${formatSignedEuro(result.progressCents)} gespeichert.`); this.focus('goal-progress-' + goal.id);
     } catch (failure) {
       if (!this.accepts()) return;
       this.progressFailed.set(true);
@@ -405,6 +438,10 @@ export class SavingsGoals {
         const message = failure.error?.fieldErrors?.progressCents;
         this.progressError.set(typeof message === 'string' ? message : 'Prüfe den Gesamtfortschritt in Euro.');
         this.progressStatus.set('Der Fortschritt wurde nicht gespeichert. Prüfe die Eingabe.'); this.focus('goal-progress-amount');
+      } else if (failure instanceof HttpErrorResponse && failure.status === 409 && failure.error?.code === 'FEATURE_NOT_AVAILABLE') {
+        ++this.capabilitySequence; this.capabilityState.set('closed');
+        this.progressStatus.set('Negative Gesamtfortschritte sind derzeit nicht verfügbar. Der Fortschritt wurde nicht gespeichert. Dein Entwurf bleibt erhalten.');
+        this.focus('goal-progress-status'); void this.loadCapabilities();
       } else {
         this.unconfirmed();
         this.progressStatus.set(failure instanceof HttpErrorResponse && failure.status === 404
@@ -552,6 +589,7 @@ export class SavingsGoals {
     return year > 0 && month > 0 && month <= 12 && day > 0 && day <= [31, leap ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month - 1];
   }
   private clear(): void {
+    ++this.capabilitySequence; this.capabilityState.set('unknown');
     this.closeDelete(); this.resetTarget(); this.resetMutationStatus(); this.targetPending.set(false);
     this.name = ''; this.amount = ''; this.targetDate = ''; this.progressAmount = ''; this.editing.set(null); this.resetProgressStatus(); this.progressPending.set(false); this.items.set([]); this.loaded.set(false); this.loading.set(false);
     this.reviewLoaded.set(false); this.opening.set(false); this.identityConfirmed.set(false); this.identityFailed.set(false); this.identityStatus.set('');

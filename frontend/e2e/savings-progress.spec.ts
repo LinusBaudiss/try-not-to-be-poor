@@ -71,8 +71,8 @@ async function retainComponent(page: Page): Promise<void> {
 async function expectCleared(page: Page): Promise<void> {
   expect(await page.evaluate(() => {
     const old = (window as any).closedGoals;
-    return { items: old.items(), editing: old.editing(), amount: old.progressAmount, error: old.progressError(), status: old.progressStatus(), pending: old.pending() };
-  })).toEqual({ items: [], editing: null, amount: '', error: '', status: '', pending: false });
+    return { items: old.items(), editing: old.editing(), amount: old.progressAmount, error: old.progressError(), status: old.progressStatus(), pending: old.pending(), capability: old.capabilityState() };
+  })).toEqual({ items: [], editing: null, amount: '', error: '', status: '', pending: false, capability: 'unknown' });
 }
 
 test('Gesamtfortschritt wird ersetzt und bleibt nach Neuladen erhalten; Beträge, Prozente und Überschreitung sind exakt', async ({ page, request }) => {
@@ -363,7 +363,7 @@ test('isolierte signierte Antworten zeigen tatsächliche Beträge und symmetrisc
       expect(accessible).toContain('definition: ' + value.percent);
       expect(accessible).not.toContain('progressbar');
       await page.getByRole('button', { name: 'Fortschritt aktualisieren: Signierte Darstellung', exact: true }).click();
-      await expect(page.getByLabel('Gesamtfortschritt in Euro')).toHaveValue('');
+      await expect(page.getByLabel('Gesamtfortschritt in Euro')).toHaveValue('-' + (BigInt(-value.progress) / 100n).toString() + ',' + (BigInt(-value.progress) % 100n).toString().padStart(2, '0'));
       await page.getByRole('button', { name: 'Abbrechen', exact: true }).click();
     } else await expect(bar).toHaveAttribute('aria-valuetext', `${value.amount} von ${value.target === 10000 ? '100,00' : value.target === 32 ? '0,32' : '0,01'} €, ${value.percent}`);
     for (const [width, height] of [[320, 568], [390, 844], [768, 1024], [1280, 800]]) {
@@ -376,4 +376,151 @@ test('isolierte signierte Antworten zeigen tatsächliche Beträge und symmetrisc
   await page.unroute('**/api/v2/savings-goals');
   await page.getByRole('button', { name: 'Sparziele aktualisieren', exact: true }).click();
   await expect(page.locator('.savings-cards li')).toHaveCount(0);
+});
+
+
+test('Capability-Ladefehler sperrt nur negatives Speichern; Retry und 409 erhalten den Entwurf', async ({ page, request }) => {
+  await page.route('**/api/v2/capabilities', route => route.fulfill({ status: 500, json: { code: 'CAPABILITIES_UNAVAILABLE', message: 'Erneut versuchen' } }));
+  await login(page, await account(request)); await create(page);
+  await expect(page.locator('#goal-capabilities-status')).toContainText('konnte nicht geprüft werden');
+  await page.unroute('**/api/v2/capabilities');
+  for (const invalid of [null, {}, { signedProgressAvailable: 'true' }, { signedProgressAvailable: true, diagnostic: 'fremd' }]) {
+    await page.route('**/api/v2/capabilities', route => route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(invalid) }));
+    await page.getByRole('button', { name: 'Fortschrittseingabe erneut prüfen', exact: true }).click();
+    await expect(page.locator('#goal-capabilities-status')).toContainText('konnte nicht geprüft werden');
+    await page.unroute('**/api/v2/capabilities');
+  }
+  let puts = 0;
+  page.on('request', item => { if (item.method() === 'PUT' && item.url().endsWith('/progress')) puts++; });
+  await edit(page, '-30'); await page.getByLabel('Gesamtfortschritt in Euro').press('Enter');
+  await expect(page.getByLabel('Gesamtfortschritt in Euro')).toHaveValue('-30');
+  await expect(page.locator('#goal-progress-error')).toContainText('derzeit nicht verfügbar');
+  await page.evaluate(() => document.documentElement.style.fontSize = '200%');
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  expect(await page.locator('.savings-editor').evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
+  expect(puts).toBe(0);
+  await page.getByLabel('Gesamtfortschritt in Euro').fill('70');
+  await page.getByLabel('Gesamtfortschritt in Euro').press('Enter');
+  await expect(page.locator('#goal-progress-status')).toHaveClass(/success/);
+  await page.unroute('**/api/v2/capabilities');
+  let capabilities = 0;
+  await page.route('**/api/v2/capabilities', route => route.fulfill({ status: 200, json: { signedProgressAvailable: ++capabilities === 1 } }));
+  await page.getByRole('button', { name: 'Fortschrittseingabe erneut prüfen', exact: true }).click();
+  await expect(page.locator('#goal-capabilities-status')).toHaveText('Negative Gesamtfortschritte sind verfügbar.');
+  await edit(page, '-30'); await page.getByLabel('Gesamtfortschritt in Euro').press('Enter');
+  await expect(page.locator('#goal-progress-status')).toContainText('nicht gespeichert');
+  await expect(page.locator('#goal-capabilities-status')).toContainText('derzeit nicht verfügbar');
+  await expect(page.getByLabel('Gesamtfortschritt in Euro')).toHaveValue('-30');
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  expect(await page.locator('.savings-editor').evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
+  await expect(page.locator('#goal-progress-status')).not.toHaveClass(/success/);
+  await expect(page.getByRole('button', { name: 'Sparziele zur Prüfung laden', exact: true })).toHaveCount(0);
+  expect(capabilities).toBe(2);
+});
+
+for (const boundary of ['Abmeldung', 'Kontowechsel', 'Tokenablauf']) {
+  test(`verspätete Capability-Freigabe nach ${boundary} bleibt wirkungslos`, async ({ page, context, request }) => {
+    if (boundary === 'Tokenablauf') await page.clock.install();
+    const ready = gate(), held = gate(), refreshReady = gate(), refreshHeld = gate();
+    let hold = boundary !== 'Tokenablauf';
+    await page.route('**/api/v2/capabilities', async route => {
+      if (!hold) { await route.fulfill({ status: 200, json: { signedProgressAvailable: false } }); return; }
+      ready.release(); await held.promise; await route.fulfill({ status: 200, json: { signedProgressAvailable: true } });
+    });
+    const first = await account(request), second = await account(request);
+    await login(page, first);
+    if (boundary === 'Tokenablauf') {
+      await page.route('**/api/v2/access/refresh', async route => { const response = await route.fetch(); refreshReady.release(); await refreshHeld.promise; await route.fulfill({ response }); });
+      await page.clock.fastForward(570_001); await refreshReady.promise; await page.clock.fastForward(28_000);
+      hold = true;
+      await page.getByRole('button', { name: 'Fortschrittseingabe erneut prüfen', exact: true }).click();
+    }
+    await ready.promise; await retainComponent(page);
+    if (boundary === 'Abmeldung') await page.getByRole('button', { name: 'Abmelden', exact: true }).click();
+    if (boundary === 'Kontowechsel') {
+      const other = await context.newPage(); await login(other, second);
+      await expect(other.locator('#goal-capabilities-status')).toContainText('derzeit nicht verfügbar');
+    }
+    if (boundary === 'Tokenablauf') await page.clock.fastForward(3_000);
+    await expect(page).toHaveURL('/anmelden');
+    const answered = page.waitForResponse('**/api/v2/capabilities'); held.release(); await answered;
+    if (boundary === 'Tokenablauf') {
+      const revoked = page.waitForResponse('**/api/v2/access/logout'); refreshHeld.release(); expect((await revoked).status()).toBe(204);
+    }
+    await expectCleared(page);
+    expect(await page.evaluate(() => (window as any).closedGoals.capabilityState())).toBe('unknown');
+  });
+}
+
+
+test('offline nach gehaltenem Identitätsreply lässt unbekannte Fortschrittseingabe online erneut prüfen', async ({ page, context, request }) => {
+  await login(page, await account(request));
+  await expect(page.locator('#goal-capabilities-status')).toContainText('derzeit nicht verfügbar');
+  await page.getByRole('link', { name: 'Monat', exact: true }).click();
+  await expect(page.getByLabel('Monatsbudget in Euro', { exact: true })).toBeVisible();
+  const ready = gate(), held = gate();
+  await page.route('**/api/v2/access/me', async route => { const response = await route.fetch(); ready.release(); await held.promise; await route.fulfill({ response }); });
+  let capabilities = 0;
+  page.on('request', item => { if (new URL(item.url()).pathname === '/api/v2/capabilities') capabilities++; });
+  await page.getByRole('link', { name: 'Sparziele', exact: true }).click(); await ready.promise;
+  await context.setOffline(true); held.release();
+  await expect(page.getByText('Du bist angemeldet. Deine persönlichen Sparziele sind geöffnet.')).toBeVisible();
+  await expect(page.locator('#goal-capabilities-status')).toContainText('noch nicht geprüft');
+  const retry = page.getByRole('button', { name: 'Fortschrittseingabe erneut prüfen', exact: true });
+  await expect(retry).toBeDisabled(); expect(capabilities).toBe(0);
+  await context.setOffline(false); await expect(retry).toBeEnabled();
+  await retry.click(); await expect(page.locator('#goal-capabilities-status')).toContainText('derzeit nicht verfügbar');
+  expect(capabilities).toBe(1);
+});
+
+
+test('sicherer 409 schließt die Mutation vor gehaltener Capability ab und Navigation erzeugt keine Unbestätigt-Sperre', async ({ page, request }) => {
+  const ready = gate(), held = gate(); let capabilities = 0;
+  await page.route('**/api/v2/capabilities', async route => {
+    const call = ++capabilities;
+    if (call === 1) { await route.fulfill({ status: 200, json: { signedProgressAvailable: true } }); return; }
+    if (call > 2) { await route.continue(); return; }
+    ready.release(); await held.promise; await route.fulfill({ status: 200, json: { signedProgressAvailable: true } });
+  });
+  await login(page, await account(request)); await create(page);
+  await expect(page.locator('#goal-capabilities-status')).toContainText('sind verfügbar');
+  await edit(page, '-30'); await page.getByRole('button', { name: 'Fortschritt speichern', exact: true }).click(); await ready.promise;
+  try {
+    await expect(page.locator('#goal-progress-status')).toContainText('nicht gespeichert');
+    await expect(page.getByLabel('Gesamtfortschritt in Euro')).toHaveValue('-30');
+    await expect(page.getByRole('button', { name: 'Abbrechen', exact: true })).toBeEnabled();
+    await expect(page.getByRole('button', { name: 'Sparziel speichern', exact: true })).toBeEnabled();
+    await page.getByRole('link', { name: 'Monat', exact: true }).click();
+    await page.getByRole('link', { name: 'Sparziele', exact: true }).click();
+    await expect(page.getByRole('button', { name: 'Sparziel speichern', exact: true })).toBeEnabled();
+    await expect(page.getByRole('button', { name: 'Sparziele zur Prüfung laden', exact: true })).toHaveCount(0);
+    await expect(page.locator('#goal-capabilities-status')).toContainText('derzeit nicht verfügbar');
+    const answered = page.waitForResponse('**/api/v2/capabilities'); held.release(); await answered;
+    await expect(page.locator('#goal-capabilities-status')).toContainText('derzeit nicht verfügbar');
+  } finally { held.release(); }
+});
+
+test('Capability-Retry behält Tastaturfokus während Laden sowie nach Ladefehler und Erfolg', async ({ page, request }) => {
+  const failedReady = gate(), failedHeld = gate(), successReady = gate(), successHeld = gate(); let calls = 0;
+  await page.route('**/api/v2/capabilities', async route => {
+    const call = ++calls;
+    if (call === 2) { failedReady.release(); await failedHeld.promise; }
+    if (call === 3) { successReady.release(); await successHeld.promise; }
+    await route.fulfill(call < 3 ? { status: 500, json: { code: 'CAPABILITIES_UNAVAILABLE' } }
+      : { status: 200, json: { signedProgressAvailable: true } });
+  });
+  await login(page, await account(request));
+  await expect(page.locator('#goal-capabilities-status')).toContainText('konnte nicht geprüft werden');
+  const retry = page.getByRole('button', { name: 'Fortschrittseingabe erneut prüfen', exact: true });
+  try {
+    await retry.focus(); await page.keyboard.press('Enter'); await failedReady.promise;
+    await expect(retry).toBeFocused(); await expect(retry).toBeDisabled();
+    await page.keyboard.press('Enter'); expect(calls).toBe(2);
+    failedHeld.release(); await expect(page.locator('#goal-capabilities-status')).toContainText('konnte nicht geprüft werden');
+    await expect(retry).toBeFocused(); await expect(retry).toBeEnabled();
+    await page.keyboard.press('Enter'); await successReady.promise;
+    await expect(retry).toBeFocused(); await expect(retry).toBeDisabled();
+    successHeld.release(); await expect(page.locator('#goal-capabilities-status')).toContainText('sind verfügbar');
+    await expect(retry).toBeFocused(); await expect(retry).toBeEnabled();
+  } finally { failedHeld.release(); successHeld.release(); }
 });

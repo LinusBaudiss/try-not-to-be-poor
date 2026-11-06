@@ -13,16 +13,22 @@ import org.springframework.context.annotation.DependsOn;
 public final class ApiVersionState {
     private final JdbcTemplate jdbc;
     private final boolean retired;
+    private final boolean signedProgressEnabled;
+    private final java.util.Map<String, Object> startupProof;
 
+    @org.springframework.beans.factory.annotation.Autowired
     public ApiVersionState(JdbcTemplate jdbc, @Value("${api.version.mode:compatible}") String mode,
             @Value("${api.version.release-sha256:}") String releaseHash,
-            @Value("${api.version.instance-id:}") String instance) {
+            @Value("${api.version.instance-id:}") String instance,
+            @Value("${api.features.signed-progress:false}") boolean signedProgressEnabled) {
         this.jdbc = jdbc;
+        this.signedProgressEnabled = signedProgressEnabled;
         var states = jdbc.queryForList("SELECT * FROM api_version.state WHERE singleton");
         if (states.size() != 1 || !(states.getFirst().get("v1_retired") instanceof Boolean value))
             throw new IllegalStateException("Eindeutiger Versionszustand erforderlich.");
         retired = value;
         var state = states.getFirst();
+        startupProof = new java.util.HashMap<>(state);
         if (!(state.get("signed_progress_used") instanceof Boolean signed)
                 || !(state.get("monthly_effects_used") instanceof Boolean monthly) || (signed || monthly) && !retired)
             throw new IllegalStateException("Widersprüchlicher Nutzungszustand.");
@@ -39,6 +45,26 @@ public final class ApiVersionState {
             if (!releaseHash.matches("[0-9a-f]{64}") || !releaseHash.equals(states.getFirst().get("release_sha256")))
                 throw new IllegalStateException("Der Release benötigt einen passenden Stilllegungsnachweis.");
         }
+    }
+
+    /** Bestehende interne Aufrufer behalten ein geschlossenes Funktionsgate. */
+    public ApiVersionState(JdbcTemplate jdbc, String mode, String releaseHash, String instance) {
+        this(jdbc, mode, releaseHash, instance, false);
+    }
+
+    public boolean signedProgressAvailable() { return signedProgressAvailable(false); }
+
+    public boolean lockSignedProgress(FinanceContext context) {
+        context.requireWrite();
+        return signedProgressAvailable(true);
+    }
+
+    private boolean signedProgressAvailable(boolean lock) {
+        if (!signedProgressEnabled || !retired) return false;
+        return Boolean.TRUE.equals(jdbc.queryForObject(
+            "SELECT api_version.signed_progress_available(?, ?, ?, ?, ?, ?)", Boolean.class, lock,
+            startupProof.get("stopped_instance"), startupProof.get("release_sha256"),
+            startupProof.get("schema_sha256"), startupProof.get("roles_sha256"), startupProof.get("retired_at")));
     }
 
     public boolean v1Retired() { return retired; }

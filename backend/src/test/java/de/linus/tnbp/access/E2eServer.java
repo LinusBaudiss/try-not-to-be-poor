@@ -40,6 +40,7 @@ public final class E2eServer {
         environment.put("DB_MIGRATION_USER", "tnbp_migrator"); environment.put("DB_MIGRATION_PASSWORD", "migration-test-only");
         environment.put("SESSION_SIGNING_KEY", java.util.Base64.getEncoder().encodeToString(new byte[32]));
         environment.put("SESSION_ISSUER", "tnbp-test"); environment.put("SESSION_AUDIENCE", "tnbp-spa-test");
+        environment.put("SIGNED_PROGRESS_ENABLED", "false");
         environment.put("SESSION_ORIGIN", "https://localhost:4200");
         environment.put("REGISTRATION_LINK_ENABLED", "true");
         environment.put("REGISTRATION_LINK_SHA256", RegistrationTest.sha256(RegistrationTest.TOKEN));

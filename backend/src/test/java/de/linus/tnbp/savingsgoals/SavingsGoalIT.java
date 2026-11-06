@@ -247,7 +247,7 @@ class SavingsGoalIT {
         for (String name : List.of("", " ", "\t", "\n\r", "\u00a0", "\u1680", "\u2003", "\u2007", "\u2028", "\u2029", "\u202f", "\u205f", "\u3000", "\uFEFF"))
             assertThatThrownBy(() -> PostgresFixture.ADMIN.update("INSERT INTO savings_goals.goals (id, user_id, name, target_amount_cents) VALUES (?, ?, ?, 1)", UUID.randomUUID(), first, name)).isInstanceOf(DataAccessException.class);
         for (long value : new long[] {0, -1, 9007199254740992L}) assertThatThrownBy(() -> PostgresFixture.ADMIN.update("INSERT INTO savings_goals.goals (id, user_id, name, target_amount_cents) VALUES (?, ?, 'Ziel', ?)", UUID.randomUUID(), first, value)).isInstanceOf(DataAccessException.class);
-        for (long value : new long[] {-1, 9007199254740992L}) assertThatThrownBy(() -> PostgresFixture.ADMIN.update("INSERT INTO savings_goals.goals (id, user_id, name, target_amount_cents, progress_cents) VALUES (?, ?, 'Ziel', 1, ?)", UUID.randomUUID(), first, value)).isInstanceOf(DataAccessException.class);
+        for (long value : new long[] {-9007199254740992L, 9007199254740992L}) assertThatThrownBy(() -> PostgresFixture.ADMIN.update("INSERT INTO savings_goals.goals (id, user_id, name, target_amount_cents, progress_cents) VALUES (?, ?, 'Ziel', 1, ?)", UUID.randomUUID(), first, value)).isInstanceOf(DataAccessException.class);
         assertThatThrownBy(() -> PostgresFixture.ADMIN.update("INSERT INTO savings_goals.goals (id, user_id, name, target_amount_cents) VALUES (?, ?, 'Unbekannt', 1)", UUID.randomUUID(), UUID.randomUUID())).isInstanceOf(DataAccessException.class);
     }
     String goal(UUID user) throws Exception {
@@ -360,7 +360,7 @@ class SavingsGoalIT {
                         .as(column).isInstanceOf(java.sql.SQLException.class);
                     connection.rollback();
                 }
-                for (long value : new long[] {-1, 9007199254740992L}) {
+                for (long value : new long[] {-9007199254740992L, 9007199254740992L}) {
                     context(connection, first);
                     assertThatThrownBy(() -> statement.executeUpdate("UPDATE savings_goals.goals SET progress_cents = " + value))
                         .isInstanceOf(java.sql.SQLException.class);

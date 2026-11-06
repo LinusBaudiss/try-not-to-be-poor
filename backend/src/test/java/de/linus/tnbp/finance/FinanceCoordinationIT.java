@@ -32,6 +32,7 @@ class FinanceCoordinationIT {
     static final Instant NOW = Instant.parse("2026-10-31T22:59:59Z");
     static final CountingClock CLOCK = new CountingClock();
     @Autowired FinanceApplication application;
+    @Autowired de.linus.tnbp.shared.ApiVersionState versions;
     @Autowired FinanceTransactions transactions;
     @Autowired Expenses expenses;
     @Autowired Budgets budgets;
@@ -268,7 +269,7 @@ class FinanceCoordinationIT {
             assertThat(writerCommitted.await(5, TimeUnit.SECONDS)).isTrue();
             return result;
         }).when(snapshotBudgets).current(org.mockito.ArgumentMatchers.any(), org.mockito.ArgumentMatchers.any());
-        var reader = new FinanceApplication(transactions, expenses, snapshotBudgets, goals);
+        var reader = new FinanceApplication(transactions, expenses, snapshotBudgets, goals, versions);
         CLOCK.calls.set(0);
         try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
             var pending = executor.submit(() -> reader.currentSummary(first));

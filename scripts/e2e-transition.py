@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Administrativer Testtreiber mit flüchtigem PostgreSQL; keine öffentliche Betriebsroute."""
+import argparse
 import json
 import os
 from pathlib import Path
@@ -11,12 +12,16 @@ FOLDER = ROOT / '.local/e2e-transition'
 RELEASE = ROOT / 'backend/target/tnbp-0.1.0-SNAPSHOT.jar'
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--signed-progress', action='store_true', help='Signierte Testeingabe erst nach tatsächlicher Stilllegung freigeben')
+    args = parser.parse_args()
     os.umask(0o077)
     environment = os.environ.copy()
     environment.update(json.loads((FOLDER / 'environment.json').read_text()))
     command = ['python3', str(ROOT / 'scripts/api-release.py')]
     common = ['--release', str(RELEASE), '--state-dir', environment['E2E_GUARD_STATE_DIR']]
     subprocess.run(command + ['retire'] + common, env=environment, check=True)
+    environment['SIGNED_PROGRESS_ENABLED'] = 'true' if args.signed_progress else 'false'
     with (FOLDER / 'retired-api.log').open('w') as log:
         process = subprocess.Popen(command + ['start'] + common, env=environment, stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
     try:

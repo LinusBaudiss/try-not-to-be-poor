@@ -24,7 +24,21 @@ function exactCents(amountCents: number): bigint {
   return BigInt(amountCents);
 }
 
-/** Signierte Anzeige; Eingaben bleiben ausschließlich nichtnegativ. */
+/** Signierter Gesamtfortschritt; andere Geldfelder verwenden weiterhin parseEuro/euroInput. */
+export function parseSignedEuro(input: string): number | null {
+  const value = input.trim();
+  if (!/^-?\d+(?:[,.]\d{1,2})?$/.test(value)) return null;
+  const negative = value.startsWith('-');
+  const cents = parseEuro(negative ? value.slice(1) : value);
+  return cents === null ? null : negative ? -cents : cents;
+}
+
+export function signedEuroInput(amountCents: number): string {
+  if (!Number.isSafeInteger(amountCents) || Math.abs(amountCents) > MAX_CENTS) throw new RangeError('Ungültiger Centbetrag.');
+  return `${amountCents < 0 ? '-' : ''}${euroInput(Math.abs(amountCents))}`;
+}
+
+/** Signierte Anzeige. */
 export function formatSignedEuro(amountCents: number): string {
   if (!Number.isSafeInteger(amountCents) || Math.abs(amountCents) > MAX_CENTS) throw new RangeError('Ungültiger Centbetrag.');
   return `${amountCents < 0 ? '−' : ''}${formatEuro(Math.abs(amountCents))}`;

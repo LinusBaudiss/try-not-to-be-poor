@@ -49,6 +49,7 @@ class DatabaseRoleVerifier implements InitializingBean {
               AND NOT has_any_column_privilege(current_user, 'api_version.lifecycle', 'INSERT,UPDATE')
               AND NOT has_function_privilege(current_user, 'api_version.set_retirement(boolean,uuid,text,text,text)', 'EXECUTE')
               AND has_function_privilege(current_user, 'api_version.mark_usage(text)', 'EXECUTE')
+              AND has_function_privilege(current_user, 'api_version.signed_progress_available(boolean,uuid,text,text,text,timestamptz)', 'EXECUTE')
             """, Boolean.class);
         if (!Boolean.TRUE.equals(protectedVersion))
             throw new IllegalStateException("Der Versionszustand benötigt minimale Laufzeitrechte.");

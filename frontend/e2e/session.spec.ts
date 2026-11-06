@@ -863,3 +863,17 @@ test('Updatezustand hält öffentliche History und interne Navigation bei der Re
   }
   expect(mutations).toBe(0);
 });
+
+
+test('v2-Nachweis erfasst auch beim Start abgebrochene alte Access-POSTs', async ({ page }) => {
+  await page.route('**/api/v1/access/login', route => route.abort('failed'));
+  let attempted: Promise<void> | undefined, failed = false;
+  page.on('requestfailed', item => { if (new URL(item.url()).pathname === '/api/v1/access/login') failed = true; });
+  page.on('request', item => {
+    if (!attempted && new URL(item.url()).pathname === '/api/v2/access/login') {
+      attempted = page.evaluate(async () => { try { await fetch('/api/v1/access/login', { method: 'POST', body: '{}' }); } catch { /* Gezielter abgebrochener Altversuch. */ } });
+    }
+  });
+  await expect(completeV2Flow(page)).rejects.toThrow('POST /api/v1/access/login');
+  await attempted; await expect.poll(() => failed).toBe(true);
+});

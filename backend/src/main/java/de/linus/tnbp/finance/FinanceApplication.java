@@ -3,6 +3,7 @@ package de.linus.tnbp.finance;
 import de.linus.tnbp.budget.Budgets;
 import de.linus.tnbp.expenses.Expenses;
 import de.linus.tnbp.savingsgoals.SavingsGoals;
+import de.linus.tnbp.shared.ApiVersionState;
 import de.linus.tnbp.shared.FinanceTransactions;
 import de.linus.tnbp.shared.Money;
 import java.time.LocalDate;
@@ -18,13 +19,17 @@ public class FinanceApplication {
     private final Expenses expenses;
     private final Budgets budgets;
     private final SavingsGoals goals;
+    private final ApiVersionState versions;
 
-    public FinanceApplication(FinanceTransactions transactions, Expenses expenses, Budgets budgets, SavingsGoals goals) {
+    public FinanceApplication(FinanceTransactions transactions, Expenses expenses, Budgets budgets, SavingsGoals goals, ApiVersionState versions) {
         this.transactions = transactions;
         this.expenses = expenses;
         this.budgets = budgets;
         this.goals = goals;
+        this.versions = versions;
     }
+
+    public boolean signedProgressAvailable() { return versions.signedProgressAvailable(); }
 
     public Long currentBudget(UUID userId) {
         return transactions.read(userId, context -> budgets.current(context, context.month()));
@@ -65,15 +70,16 @@ public class FinanceApplication {
         SavingsGoals.validateProgress(progressCents);
         return transactions.mutate(userId, context -> goals.progress(context, id, progressCents));
     }
-    /** Geschlossenes v2-Gate unter derselben Kontosperre wie sämtliche Finanzmutationen. */
+    /** Frisches v2-Gate unter derselben Kontosperre wie sämtliche Finanzmutationen. */
     public SavingsGoals.Goal progressGoalV2(UUID userId, UUID id, Long progressCents) {
         SavingsGoals.validateSignedProgress(progressCents);
         return transactions.mutate(userId, context -> {
             if (progressCents < 0) {
                 goals.requireGoal(context, id);
-                throw new FeatureNotAvailable();
+                if (!versions.lockSignedProgress(context)) throw new FeatureNotAvailable();
+                versions.markSignedProgress(context);
             }
-            return goals.progress(context, id, progressCents);
+            return goals.signedProgress(context, id, progressCents);
         });
     }
     public static final class FeatureNotAvailable extends RuntimeException {}

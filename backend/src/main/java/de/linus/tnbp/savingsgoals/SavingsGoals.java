@@ -31,6 +31,11 @@ public class SavingsGoals {
         context.requireWrite();
         return goals.progress(context.userId(), id, progressCents).orElseThrow(NotFound::new);
     }
+    public Goal signedProgress(FinanceContext context, UUID id, Long progressCents) {
+        validateSignedProgress(progressCents);
+        context.requireWrite();
+        return goals.progress(context.userId(), id, progressCents).orElseThrow(NotFound::new);
+    }
     public Goal update(FinanceContext context, UUID id, String name, Long targetAmountCents, LocalDate targetDate) {
         validate(name, targetAmountCents, targetDate);
         context.requireWrite();

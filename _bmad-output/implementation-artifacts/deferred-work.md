@@ -45,3 +45,10 @@
 - source_spec: `_bmad-output/implementation-artifacts/spec-3-5-monatsbudget-und-restbudget-ueber-api-v2-pruefen-und-aendern.md`
   summary: Abschlussnachweis eines nach Browsertimeout noch laufenden Budgetvorgangs vor weiteren Mutationen untersuchen.
   evidence: Der Timeoutnachweis hält eine bereits committete Antwort zurück. Ein ursprünglicher PUT kann dagegen noch auf der Kontosperre warten, während ein ungesperrter Prüf-GET bereits antwortet; dasselbe Risiko bestand beim früheren v1-Budget-Retry. Eine serverseitige Vorgangsidentität oder Abschlussbarriere wäre gesondert zu entwerfen.
+- source_spec: `_bmad-output/implementation-artifacts/spec-3-8-tatsaechlichen-gesamtfortschritt-auch-negativ-speichern.md`
+  summary: Allgemeine SQL-/Lockzeitgrenzen und Poolentlastung bei administrativ gehaltenen Datenbanksperren anhand des Betriebs-/Lastprofils bewerten.
+  evidence: Review B4; die neue technische Zeilensperre kann wie die bereits vorhandenen unbegrenzten Kontosperren aus FinanceTransactions Verbindungen binden. Der reguläre Versionsguard beendet API/DB-Arbeit vor seiner Zustandsänderung; eine langsame reguläre Nutzeroperation innerhalb der Versionssperre wurde nicht gezeigt. Vor einer breiten Timeoutgestaltung das konkrete Zielprofil, wartende Kontosperren und administrative Locks gemeinsam messen und sichere Abbruch-/Rollbackgrenzen nachweisen.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-3-8-tatsaechlichen-gesamtfortschritt-auch-negativ-speichern.md`
+  summary: Gesprochene Ausgabe des signierten Zielablaufs mit einem konkreten Screenreader nachweisen (mittlere Auswirkung unbestätigt).
+  evidence: Review N4; automatisierte ARIA-Snapshots, Tastatur-/Fokusnachweise und Axe zeigen tatsächliche signierte Beträge/Prozente sowie programmatische Fehler-/Statuszustände. Ob eine bestimmte Screenreader-/Browserkombination Vorzeichen, Funktionssperre und Speicherstatus korrekt und rechtzeitig spricht, wurde nicht praktisch ausgeführt; dafür vollständigen Ablauf mit dokumentierter Kombination und Ergebnis prüfen.

@@ -7,6 +7,35 @@ info:
 servers:
 - url: /api/v2
 paths:
+  /capabilities:
+    get:
+      tags: [Capabilities]
+      operationId: getCapabilities
+      summary: Aktuell verfügbare Fortschrittseingabe lesen
+      description: Rein lesend; Freigabe aus Funktionsschalter, vollständigem aktuellem Stilllegungsbeleg und signiertem Schema. Negative Mutationen prüfen die Voraussetzungen erneut. Keine Finanzwerte oder technischen Diagnosen.
+      security:
+        - AccessBearer: []
+      responses:
+        '200':
+          description: Aktueller Funktionszustand; no-store.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CapabilitiesResponse'
+        '401':
+          $ref: '#/components/responses/SessionRejected'
+        '500':
+          description: Funktionszustand nicht geladen; Freigabe unbekannt, no-store.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CapabilitiesError'
   /access/registrations:
     post:
       tags:
@@ -525,7 +554,7 @@ paths:
       tags: [SavingsGoals]
       operationId: putSavingsGoalProgress
       summary: Gesamtfortschritt eines eigenen Sparziels ersetzen
-      description: Idempotenter Ersatz in signierten ganzen EUR-Cent; übrige Zielfelder bleiben unverändert. Negative Werte bleiben mit 409 FEATURE_NOT_AVAILABLE gesperrt, bis alle v1-Lese- und Schreibvorgänge einschließlich Datenbankarbeit nachweislich beendet sind. Kein Konfigurationsschalter ersetzt diese Versionsbarriere. Ausschließlich geprüftes Bearer-sub bestimmt den Eigentümer. Erfolg erst nach Commit.
+      description: Idempotenter Ersatz in signierten ganzen EUR-Cent; übrige Zielfelder bleiben unverändert. Negative Werte benötigen die vollständige v1-Lese-/Schreibbarriere einschließlich beendeter Datenbankarbeit, einen gültigen aktuellen Stilllegungsbeleg samt signiertem Schema und die ausdrückliche serverseitige Funktionsfreigabe. Fehlt eine Voraussetzung, gilt 409 FEATURE_NOT_AVAILABLE ohne Mutation; kein Konfigurationsschalter ersetzt die Versionsbarriere. GET /capabilities liefert den lesbaren Funktionszustand, die Mutation prüft ihn erneut. Ausschließlich geprüftes Bearer-sub bestimmt den Eigentümer. Erfolg erst nach Commit.
       security:
         - AccessBearer: []
       requestBody:
@@ -733,7 +762,7 @@ components:
           schema:
             $ref: '#/components/schemas/SavingsGoalError'
     SavingsGoalFeatureNotAvailable:
-      description: Gültiger negativer Fortschritt ist bis zur nachgewiesenen vollständigen v1-Lese-/Schreibbarriere gesperrt; keine Mutation.
+      description: Gültiger negativer Fortschritt ist ohne vollständige v1-Lese-/Schreibbarriere, gültigen aktuellen Stilllegungsbeleg samt signiertem Schema oder ausdrückliche serverseitige Funktionsfreigabe gesperrt; keine Mutation. GET /capabilities liefert den lesbaren Funktionszustand.
       headers:
         Cache-Control:
           $ref: '#/components/headers/NoStore'
@@ -742,6 +771,23 @@ components:
           schema:
             $ref: '#/components/schemas/SavingsGoalFeatureNotAvailableError'
   schemas:
+    CapabilitiesResponse:
+      type: object
+      additionalProperties: false
+      required: [signedProgressAvailable]
+      properties:
+        signedProgressAvailable:
+          type: boolean
+    CapabilitiesError:
+      type: object
+      additionalProperties: false
+      required: [code, message]
+      properties:
+        code:
+          type: string
+          enum: [CAPABILITIES_UNAVAILABLE]
+        message:
+          type: string
     SavingsGoalRequest:
       type: object
       additionalProperties: false
@@ -772,7 +818,7 @@ components:
           format: int64
           minimum: -9007199254740991
           maximum: 9007199254740991
-          description: Neuer Gesamtfortschritt in signierten ganzen EUR-Cent; keine Rundung oder Typumwandlung. Negative Schreibwerte bleiben bis zur nachgewiesenen v1-Barriere mit 409 FEATURE_NOT_AVAILABLE gesperrt.
+          description: Neuer Gesamtfortschritt in signierten ganzen EUR-Cent; keine Rundung oder Typumwandlung. Negative Schreibwerte benötigen vollständige v1-Barriere, gültigen aktuellen Stilllegungsbeleg samt signiertem Schema und ausdrückliche serverseitige Funktionsfreigabe; andernfalls 409 FEATURE_NOT_AVAILABLE. GET /capabilities zeigt den lesbaren Funktionszustand.
     SavingsGoalNotFoundError:
       type: object
       additionalProperties: false

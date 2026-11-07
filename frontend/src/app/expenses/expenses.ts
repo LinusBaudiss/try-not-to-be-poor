@@ -266,7 +266,10 @@ export class Expenses {
     this.deleting.set(expense); this.deleteStatus.set(''); this.status.set(''); this.failed.set(false); this.saved.set(false);
     requestAnimationFrame(() => {
       if (!this.accepts() || this.deleting()?.id !== expense.id) return;
-      this.deleteDialog?.nativeElement.showModal(); this.focus('expense-delete-cancel');
+      const dialog = this.deleteDialog?.nativeElement;
+      dialog?.showModal();
+      // Kein späterer Frame darf die erste Tastaturnavigation zurücksetzen.
+      dialog?.querySelector<HTMLButtonElement>('#expense-delete-cancel')?.focus();
     });
   }
   protected cancelDelete(event?: Event): void {

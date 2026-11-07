@@ -8,14 +8,14 @@ DECLARE
     relation regclass;
     columns text;
 BEGIN
-    FOREACH schema_name IN ARRAY ARRAY['expense_budget', 'expenses', 'budget', 'savings_goals'] LOOP
+    FOREACH schema_name IN ARRAY ARRAY['expense_budget', 'expenses', 'budget', 'savings_goals', 'monthly_surplus'] LOOP
         IF EXISTS (SELECT 1 FROM pg_namespace WHERE nspname = schema_name) THEN
             EXECUTE format('REVOKE ALL ON SCHEMA %I FROM PUBLIC, tnbp_runtime', schema_name);
             EXECUTE format('GRANT USAGE ON SCHEMA %I TO tnbp_runtime', schema_name);
         END IF;
     END LOOP;
     FOREACH relation_name IN ARRAY ARRAY['expense_budget.expenses', 'expense_budget.budgets',
-                                         'expenses.expenses', 'budget.budgets', 'savings_goals.goals'] LOOP
+                                         'expenses.expenses', 'budget.budgets', 'savings_goals.goals', 'monthly_surplus.activations'] LOOP
         relation := to_regclass(relation_name);
         IF relation IS NULL THEN CONTINUE; END IF;
         SELECT string_agg(quote_ident(attname), ', ') INTO columns
@@ -27,9 +27,13 @@ BEGIN
             EXECUTE format('GRANT UPDATE (amount_cents) ON TABLE %s TO tnbp_runtime', relation);
         ELSIF relation_name LIKE '%.expenses' THEN
             EXECUTE format('GRANT UPDATE (name, amount_cents), DELETE ON TABLE %s TO tnbp_runtime', relation);
-        ELSE
+        ELSIF relation_name = 'savings_goals.goals' THEN
             EXECUTE format('GRANT UPDATE (name, target_amount_cents, target_date, progress_cents), DELETE ON TABLE %s TO tnbp_runtime', relation);
         END IF;
     END LOOP;
+    IF to_regprocedure('api_version.monthly_automation_available(boolean,uuid,text,text,text,timestamptz)') IS NOT NULL THEN
+        REVOKE ALL ON FUNCTION api_version.monthly_automation_available(boolean,uuid,text,text,text,timestamptz) FROM PUBLIC, tnbp_runtime;
+        GRANT EXECUTE ON FUNCTION api_version.monthly_automation_available(boolean,uuid,text,text,text,timestamptz) TO tnbp_runtime;
+    END IF;
 END
 $grants$;

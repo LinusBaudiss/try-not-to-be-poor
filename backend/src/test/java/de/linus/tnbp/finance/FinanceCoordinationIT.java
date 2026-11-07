@@ -37,6 +37,8 @@ class FinanceCoordinationIT {
     @Autowired Expenses expenses;
     @Autowired Budgets budgets;
     @Autowired SavingsGoals goals;
+    @Autowired de.linus.tnbp.monthlysurplus.MonthlySurplus monthlySurplus;
+    @Autowired MonthlyAutomationReadiness readiness;
     @Autowired JdbcTemplate jdbc;
     @Autowired DataSource source;
     UUID first, second;
@@ -269,7 +271,7 @@ class FinanceCoordinationIT {
             assertThat(writerCommitted.await(5, TimeUnit.SECONDS)).isTrue();
             return result;
         }).when(snapshotBudgets).current(org.mockito.ArgumentMatchers.any(), org.mockito.ArgumentMatchers.any());
-        var reader = new FinanceApplication(transactions, expenses, snapshotBudgets, goals, versions);
+        var reader = new FinanceApplication(transactions, expenses, snapshotBudgets, goals, versions, monthlySurplus, readiness);
         CLOCK.calls.set(0);
         try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
             var pending = executor.submit(() -> reader.currentSummary(first));

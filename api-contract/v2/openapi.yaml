@@ -7,12 +7,50 @@ info:
 servers:
 - url: /api/v2
 paths:
+  /monthly-surplus/activation:
+    get:
+      tags: [MonthlySurplus]
+      operationId: getMonthlySurplusActivation
+      summary: Eigenen unveränderlichen Automatikstart lesen
+      description: Rein lesend, ohne automatische Aktivierung. Ausschließlich das verifizierte Bearer-sub bestimmt das Konto. Gespeicherter Status bleibt auch bei gesperrter Gesamtfunktion lesbar.
+      security:
+        - AccessBearer: []
+      responses:
+        '200':
+          $ref: '#/components/responses/MonthlySurplusActivation'
+        '401':
+          $ref: '#/components/responses/SessionRejected'
+        '500':
+          $ref: '#/components/responses/MonthlySurplusUnavailable'
+    post:
+      tags: [MonthlySurplus]
+      operationId: postMonthlySurplusActivation
+      summary: Monatsautomatik ausdrücklich für das eigene Konto aktivieren
+      description: Keine fachlichen Eingabefelder. Konto und laufender Monat werden serverseitig bestimmt, der Zeitpunkt erst nach Erwerb der Kontosperre. Aktivierung ist ohne Budget oder Ziel möglich und verändert keine Geldwerte. Der gesamte erste Monat zählt; frühere Monate sind ausgeschlossen. Erst nach äußerem Commit wird 200 bestätigt. Zulässige Wiederholung erhält den gespeicherten Erstmonat. Die vollständige Gesamtfreigabe und ein frischer v1-Stilllegungsbeleg sind unabhängig erforderlich; ein einfacher Funktionsschalter genügt nicht.
+      security:
+        - AccessBearer: []
+      responses:
+        '200':
+          $ref: '#/components/responses/MonthlySurplusActivation'
+        '401':
+          $ref: '#/components/responses/SessionRejected'
+        '409':
+          description: Gesamtfunktion oder Versionsvoraussetzung nicht verfügbar; keine Mutation, no-store.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MonthlySurplusFeatureNotAvailableError'
+        '500':
+          $ref: '#/components/responses/MonthlySurplusUnavailable'
   /capabilities:
     get:
       tags: [Capabilities]
       operationId: getCapabilities
-      summary: Aktuell verfügbare Fortschrittseingabe lesen
-      description: Rein lesend; Freigabe aus Funktionsschalter, vollständigem aktuellem Stilllegungsbeleg und signiertem Schema. Negative Mutationen prüfen die Voraussetzungen erneut. Keine Finanzwerte oder technischen Diagnosen.
+      summary: Aktuell verfügbare Finanzfunktionen lesen
+      description: Rein lesend; negative Fortschrittseingabe benötigt Funktionsschalter, vollständigen aktuellen Stilllegungsbeleg und signiertes Schema. Monatsautomatik benötigt unabhängig davon die vollständige Gesamtbereitschaft und einen frischen Stilllegungsbeleg; ein einfacher Schalter öffnet sie nicht. Mutationen prüfen die Voraussetzungen erneut. Keine Finanzwerte oder technischen Diagnosen.
       security:
         - AccessBearer: []
       responses:
@@ -629,6 +667,24 @@ components:
       schema:
         type: string
   responses:
+    MonthlySurplusActivation:
+      description: Tatsächlich gespeicherter eigener Status; Erfolg bei Mutation erst nach Commit, no-store.
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/NoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/MonthlySurplusActivationResponse'
+    MonthlySurplusUnavailable:
+      description: Lesen oder Aktivierung nicht bestätigt; vor Wiederholung tatsächlichen Zustand laden, no-store.
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/NoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/MonthlySurplusError'
     SessionCreated:
       description: Erst nach Commit; no-store. Set-Cookie rotiert __Host-tnbp-refresh (HttpOnly; Secure; SameSite=Strict;
         Path=/; kein Domain).
@@ -771,6 +827,39 @@ components:
           schema:
             $ref: '#/components/schemas/SavingsGoalFeatureNotAvailableError'
   schemas:
+    MonthlySurplusActivationResponse:
+      type: object
+      additionalProperties: false
+      required: [active, activationMonth]
+      properties:
+        active:
+          type: boolean
+        activationMonth:
+          type: string
+          format: date
+          nullable: true
+          pattern: '^(?!0000)\d{4}-(0[1-9]|1[0-2])-01$'
+          description: Unveränderlicher erster Herkunftsmonat; null genau ohne Aktivierung.
+    MonthlySurplusError:
+      type: object
+      additionalProperties: false
+      required: [code, message]
+      properties:
+        code:
+          type: string
+          enum: [MONTHLY_SURPLUS_UNAVAILABLE]
+        message:
+          type: string
+    MonthlySurplusFeatureNotAvailableError:
+      type: object
+      additionalProperties: false
+      required: [code, message]
+      properties:
+        code:
+          type: string
+          enum: [FEATURE_NOT_AVAILABLE]
+        message:
+          type: string
     CapabilitiesResponse:
       type: object
       additionalProperties: false
@@ -778,6 +867,9 @@ components:
       properties:
         signedProgressAvailable:
           type: boolean
+        monthlyAutomationAvailable:
+          type: boolean
+          description: Nur bei tatsächlich gültiger Gesamtfreigabe und Versionsbarriere wahr. Fehlendes oder ungültiges Feld gibt keine Aktivierung frei.
     CapabilitiesError:
       type: object
       additionalProperties: false

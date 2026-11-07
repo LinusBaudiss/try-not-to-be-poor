@@ -31,6 +31,7 @@ class ApiVersionStateIT {
         try (var db = new VersionDatabase()) {
             var state = new ApiVersionState(db.runtime, "compatible", "", "");
             assertThat(state.v1Retired()).isFalse();
+            assertThat(state.monthlyAutomationAvailable()).isFalse();
             assertThatThrownBy(() -> new ApiVersionState(db.runtime, "retired", VersionDatabase.HASH, UUID.randomUUID().toString()))
                 .isInstanceOf(IllegalStateException.class);
             for (String sql : new String[]{"UPDATE api_version.state SET v1_retired=true", "DELETE FROM api_version.state",
@@ -49,6 +50,20 @@ class ApiVersionStateIT {
             db.admin.execute("ALTER TABLE api_version.state DISABLE TRIGGER monotone_usage");
             db.admin.execute("DELETE FROM api_version.state");
             assertThatThrownBy(() -> new ApiVersionState(db.runtime, "compatible", "", "")).isInstanceOf(IllegalStateException.class);
+        }
+    }
+
+    @Test void automatikPrueftDenFrischenVersionsbelegOhneSigniertenFunktionsschalter() {
+        try (var db = new VersionDatabase("12")) {
+            db.retire();
+            var state = new ApiVersionState(db.runtime, "retired", VersionDatabase.HASH, UUID.randomUUID().toString());
+            assertThat(state.signedProgressAvailable()).isFalse();
+            assertThat(state.monthlyAutomationAvailable()).isTrue();
+            db.admin.execute("UPDATE api_version.state SET roles_sha256=repeat('b',64)");
+            assertThat(state.monthlyAutomationAvailable()).isFalse();
+            assertThat(db.admin.queryForObject("SELECT proconfig::text FROM pg_proc WHERE oid='api_version.monthly_automation_available(boolean,uuid,text,text,text,timestamptz)'::regprocedure", String.class))
+                .contains("search_path=pg_catalog, api_version, pg_temp");
+            assertThat(db.admin.queryForObject("SELECT EXISTS(SELECT FROM pg_proc p,aclexplode(p.proacl) a WHERE p.oid='api_version.monthly_automation_available(boolean,uuid,text,text,text,timestamptz)'::regprocedure AND a.grantee=0)", Boolean.class)).isFalse();
         }
     }
 

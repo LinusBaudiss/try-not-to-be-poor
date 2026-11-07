@@ -14,4 +14,9 @@ test('Reguläre Auslieferung bietet keine Aktivierung an und sperrt direktes HTT
   expect(response.status()).toBe(409); expect((await response.json()).code).toBe('FEATURE_NOT_AVAILABLE'); expect(response.headers()['cache-control']).toBe('no-store');
   const state = await request.get('http://127.0.0.1:8080/api/v2/monthly-surplus/activation', { headers: { Authorization: bearer } });
   expect(await state.json()).toEqual({ active: false, activationMonth: null });
+  const pending = await request.get('http://127.0.0.1:8080/api/v2/monthly-surplus/pending', { headers: { Authorization: bearer } });
+  expect(pending.status()).toBe(200); expect(await pending.json()).toEqual({ pendingCents: 0 });
+  expect(pending.headers()['cache-control']).toBe('no-store');
+  await expect(page.locator('#pending-state')).toContainText('Vor deiner ausdrücklichen Aktivierung');
+  expect((await request.post('http://127.0.0.1:8080/api/v2/monthly-surplus/pending', { headers: { Authorization: bearer } })).status()).toBe(403);
 });

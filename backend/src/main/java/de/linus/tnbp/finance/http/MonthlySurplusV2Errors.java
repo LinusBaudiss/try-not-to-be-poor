@@ -18,11 +18,13 @@ class MonthlySurplusV2Errors {
             MonthlySurplusFeatureNotAvailableError.CodeEnum.FEATURE_NOT_AVAILABLE, "Die Monatsautomatik ist derzeit nicht verfügbar."));
     }
     @ExceptionHandler(Exception.class)
-    ResponseEntity<MonthlySurplusError> unconfirmed() {
+    ResponseEntity<MonthlySurplusError> unconfirmed(jakarta.servlet.http.HttpServletRequest request) {
         org.slf4j.LoggerFactory.getLogger(MonthlySurplusV2Errors.class)
             .error("Automatikanfrage nicht bestätigt; Fehlerkategorie=MONTHLY_SURPLUS_UNAVAILABLE");
         return ResponseEntity.internalServerError().header("Cache-Control", "no-store").body(new MonthlySurplusError(
             MonthlySurplusError.CodeEnum.MONTHLY_SURPLUS_UNAVAILABLE,
-            "Die Automatikanfrage wurde nicht bestätigt. Lade den aktuellen Aktivierungszustand vor einem weiteren Versuch."));
+            request.getServletPath().equals("/api/v2/monthly-surplus/pending")
+                ? "Deine Vormerkung konnte nicht geladen werden. Versuche es erneut."
+                : "Die Automatikanfrage wurde nicht bestätigt. Lade den aktuellen Aktivierungszustand vor einem weiteren Versuch."));
     }
 }

@@ -381,8 +381,24 @@ Die öffentliche Gesamtfreigabe bleibt im Anwendungscode geschlossen. Der
 Automatikabschnitt in Sparziele zeigt Zustand und Verfügbarkeit getrennt;
 direkte Aktivierungsaufrufe erhalten `409 FEATURE_NOT_AVAILABLE`. Gespeicherte
 Starts bleiben auch bei gesperrter Funktion lesbar. Es gibt keinen öffentlichen
-Konfigurationsschalter zum Umgehen dieser Grenze. Monatsabschluss, Vormerkung,
-Zielauswahl und Hintergrundlauf sind damit noch nicht freigegeben.
+Konfigurationsschalter zum Umgehen dieser Grenze. Der interne Einmonatsabschluss
+(Story 4.2) ist ausführbar, bleibt aber im regulären Auslieferungszustand ebenfalls
+gesperrt. Er verwendet den historischen Budgetstand und die damaligen Ausgaben
+ab dem Erstmonat; `max(0, Budget − Ausgaben)` wird je abgeschlossenem Monat
+getrennt gespeichert. Ohne Budget bleibt ein eigener Nachweis ohne Geldbetrag,
+budgetierte Nullmonate bleiben offen. Wiederholung erhält den Erstnachweis.
+Nachweis, exakte Summenprüfung und dauerhafter Nutzungsmarker committen gemeinsam;
+auch Null-/Ohne-Budget-Nachweise schließen die Rücknahme auf v1 aus.
+
+`GET /api/v2/monthly-surplus/pending` liest ausschließlich die eigene exakte
+offene Summe (`pendingCents`, leer = 0) und führt keinen Abschluss aus. Der
+Bearer-geschützte Leseweg bleibt bei geschlossenem Gesamtgate verfügbar,
+verwendet `no-store` und bestätigt bei Ladefehlern keinen Betrag. Der Abschnitt
+„Monatsautomatik“ in Sparziele unterscheidet fehlende Aktivierung, Laden,
+Ladefehler und gespeicherte Vormerkung; Rückkehr, Fokus und Monatswechsel laden
+neu. Die Beträge sind noch keinem Ziel angerechnet; manuelle Zielpflege bleibt
+unabhängig. Zielauswahl, Übernahme, historische Korrektur und Hintergrundlauf
+bleiben Folgeumfang. Es gibt keinen öffentlichen Abschluss-/Jobauslöser.
 
 Der zusätzliche HTTPS-Positivnachweis läuft ausschließlich mit synthetischen
 Daten und Testklassen. Er startet und beendet zuerst einen echten kompatiblen
@@ -394,7 +410,8 @@ Commitgrenze bleiben wirksam. Ports 8080, 8081, 4200 und 18082 müssen frei sein
 npm --prefix frontend run e2e:automation
 ```
 
-Die testinterne Uhr und Bereitschaft sind weder Bestandteil des Java-Releases
+Die testinterne Uhr, Bereitschaft, historischen Quellen und Abschlusssteuerung
+sind weder Bestandteil des Java-Releases
 noch Produktionskonfiguration. Der reguläre Browserlauf prüft die geschlossene
 Auslieferung zusätzlich zu den bisherigen manuellen Kernfunktionen. Diese
 Prüfungen erteilen keine öffentliche Automatik- oder Produktionsfreigabe.

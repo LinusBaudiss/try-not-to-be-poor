@@ -20,6 +20,30 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 class FinanceMigrationIT {
     private static final JsonMapper JSON = JsonMapper.builder().build();
     @ParameterizedTest @ValueSource(booleans = {false, true})
+    void monatsnachweisV13ErhaeltAlleV12DatenOhneAutomatischeAbschluesse(boolean existing) {
+        String name="month_migration_"+UUID.randomUUID().toString().replace("-","");
+        var server=new JdbcTemplate(PostgresFixture.POSTGRES.getPostgresDatabase());
+        server.execute("CREATE DATABASE "+name+" OWNER tnbp_migrator");
+        String url="jdbc:postgresql://localhost:"+PostgresFixture.POSTGRES.getPort()+"/"+name;
+        var admin=new JdbcTemplate(new DriverManagerDataSource(url,"postgres","postgres"));
+        try {
+            Flyway.configure().dataSource(url,"tnbp_migrator","migration-test-only").schemas("access").defaultSchema("access").target("12").load().migrate();
+            if(existing) {
+                UUID user=UUID.randomUUID(); admin.update("INSERT INTO access.accounts VALUES (?,?,'$argon2id$synthetic',now())",user,user+"@example.org");
+                admin.update("INSERT INTO monthly_surplus.activations VALUES (?,DATE '2026-10-01')",user);
+                admin.update("INSERT INTO budget.budgets VALUES (?,DATE '2026-09-01',100000)",user);
+                admin.update("INSERT INTO expenses.expenses VALUES (?,?,'Altbestand',80000,DATE '2026-10-01')",UUID.randomUUID(),user);
+                admin.update("INSERT INTO savings_goals.goals VALUES (?,?,'Altziel',100000,5000,NULL)",UUID.randomUUID(),user);
+            }
+            var before=new LinkedHashMap<String,List<Map<String,Object>>>();
+            for(String table:List.of("access.accounts","monthly_surplus.activations","budget.budgets","expenses.expenses","savings_goals.goals","api_version.state"))before.put(table,admin.queryForList("SELECT * FROM "+table));
+            Flyway.configure().dataSource(url,"tnbp_migrator","migration-test-only").schemas("access").defaultSchema("access").load().migrate();
+            before.forEach((table,rows)->assertThat(admin.queryForList("SELECT * FROM "+table)).isEqualTo(rows));
+            assertThat(admin.queryForObject("SELECT count(*) FROM monthly_surplus.month_records",Integer.class)).isZero();
+            assertThat(admin.queryForObject("SELECT relrowsecurity AND relforcerowsecurity FROM pg_class WHERE oid='monthly_surplus.month_records'::regclass",Boolean.class)).isTrue();
+        } finally {server.execute("DROP DATABASE "+name+" WITH (FORCE)");}
+    }
+    @ParameterizedTest @ValueSource(booleans = {false, true})
     void aktivierungsV12MigriertFrischenUndBefuelltenV11StandOhneAutomatischeKontostarts(boolean existing) {
         String name="activation_migration_"+UUID.randomUUID().toString().replace("-","");
         var server=new JdbcTemplate(PostgresFixture.POSTGRES.getPostgresDatabase());
@@ -39,7 +63,7 @@ class FinanceMigrationIT {
             Flyway.configure().dataSource(url,"tnbp_migrator","migration-test-only").schemas("access").defaultSchema("access").load().migrate();
             before.forEach((table,rows)->assertThat(admin.queryForList("SELECT * FROM "+table)).isEqualTo(rows));
             assertThat(admin.queryForObject("SELECT count(*) FROM monthly_surplus.activations",Integer.class)).isZero();
-            assertThat(admin.queryForList("SELECT tablename FROM pg_tables WHERE schemaname='monthly_surplus'",String.class)).containsExactly("activations");
+            assertThat(admin.queryForList("SELECT tablename FROM pg_tables WHERE schemaname='monthly_surplus'",String.class)).containsExactlyInAnyOrder("activations", "month_records");
             assertThat(admin.queryForObject("SELECT relrowsecurity AND relforcerowsecurity FROM pg_class WHERE oid='monthly_surplus.activations'::regclass",Boolean.class)).isTrue();
         } finally {server.execute("DROP DATABASE "+name+" WITH (FORCE)");}
     }
@@ -85,9 +109,14 @@ class FinanceMigrationIT {
             admin.execute("GRANT UPDATE (user_id) ON budget.budgets TO PUBLIC");
             admin.execute("GRANT UPDATE, DELETE ON monthly_surplus.activations TO tnbp_runtime");
             admin.execute("GRANT UPDATE (activation_month) ON monthly_surplus.activations TO PUBLIC");
+            admin.execute("GRANT UPDATE, DELETE ON monthly_surplus.month_records TO tnbp_runtime");
+            admin.execute("GRANT UPDATE (origin_month) ON monthly_surplus.month_records TO PUBLIC");
             provision(admin); provision(admin);
+            assertThat(admin.queryForObject("SELECT count(*) FROM monthly_surplus.month_records", Integer.class)).isZero();
+            var rights = new JdbcTemplate(new DriverManagerDataSource(url, "tnbp_runtime", "runtime-test-only"));
+            assertThat(rights.queryForObject("SELECT has_table_privilege(current_user, 'monthly_surplus.month_records', 'UPDATE,DELETE,TRUNCATE') OR has_any_column_privilege(current_user, 'monthly_surplus.month_records', 'UPDATE')", Boolean.class)).isFalse();
             assertThat(admin.queryForObject("SELECT count(*) FROM monthly_surplus.activations", Integer.class)).isZero();
-            assertThat(admin.queryForList("SELECT tablename FROM pg_tables WHERE schemaname='monthly_surplus'", String.class)).containsExactly("activations");
+            assertThat(admin.queryForList("SELECT tablename FROM pg_tables WHERE schemaname='monthly_surplus'", String.class)).containsExactlyInAnyOrder("activations", "month_records");
             assertThat(admin.queryForList("SELECT * FROM access.accounts ORDER BY id")).isEqualTo(accounts);
             assertThat(admin.queryForList("SELECT * FROM expenses.expenses ORDER BY id")).isEqualTo(expenses);
             assertThat(admin.queryForList("SELECT * FROM budget.budgets ORDER BY user_id, valid_from")).isEqualTo(budgets);
@@ -98,7 +127,7 @@ class FinanceMigrationIT {
             assertThat(admin.queryForObject("SELECT rolpassword FROM pg_authid WHERE rolname = 'tnbp_migrator'", String.class)).isEqualTo(migratorPassword);
             assertThat(admin.queryForObject("SELECT rolpassword FROM pg_authid WHERE rolname = 'tnbp_runtime'", String.class)).isEqualTo(runtimePassword);
             var runtime = new JdbcTemplate(new DriverManagerDataSource(url, "tnbp_runtime", "runtime-test-only"));
-            for (String table : List.of("expenses.expenses", "budget.budgets", "savings_goals.goals", "monthly_surplus.activations")) {
+            for (String table : List.of("expenses.expenses", "budget.budgets", "savings_goals.goals", "monthly_surplus.activations", "monthly_surplus.month_records")) {
                 assertThat(runtime.queryForObject("SELECT count(*) FROM " + table, Integer.class)).isZero();
                 assertThat(admin.queryForObject("SELECT relrowsecurity AND relforcerowsecurity FROM pg_class WHERE oid = ?::regclass", Boolean.class, table)).isTrue();
                 assertThat(runtime.queryForObject("SELECT has_column_privilege(current_user, ?, 'user_id', 'UPDATE')", Boolean.class, table)).isFalse();

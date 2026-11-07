@@ -155,6 +155,28 @@ public final class MonthlyAutomationE2eServer {
             byte[] body=CLOCK.now.toString().getBytes(java.nio.charset.StandardCharsets.UTF_8);exchange.sendResponseHeaders(200,body.length);exchange.getResponseBody().write(body);exchange.close();
         });
         controls.createContext("/readiness",exchange->{READY.open=Boolean.parseBoolean(new String(exchange.getRequestBody().readAllBytes(),java.nio.charset.StandardCharsets.UTF_8));exchange.sendResponseHeaders(204,-1);exchange.close();});
+        // Ausschließlich Loopback/Testklassenpfad: synthetische Quellen, echte äußere Abschlusskoordination.
+        var finance=application.getBean(de.linus.tnbp.finance.FinanceApplication.class);
+        controls.createContext("/pending-fixture",exchange->{
+            try {
+                String email=new String(exchange.getRequestBody().readAllBytes(),java.nio.charset.StandardCharsets.UTF_8);
+                UUID user=PostgresFixture.ADMIN.queryForObject("SELECT id FROM access.accounts WHERE email=?",UUID.class,email);
+                CLOCK.now=Instant.parse("2026-10-31T22:59:59Z"); finance.activateMonthlyAutomation(user);
+                PostgresFixture.ADMIN.update("INSERT INTO budget.budgets VALUES (?,DATE '2026-09-01',100000),(?,DATE '2026-11-01',20000),(?,DATE '2026-12-01',999999)",user,user,user);
+                PostgresFixture.ADMIN.update("INSERT INTO expenses.expenses VALUES (?,?,'Septemberbestand',90000,DATE '2026-09-30'),(?,?,'Oktober vor Aktivierung',80000,DATE '2026-10-01'),(?,?,'Novemberbestand',10000,DATE '2026-11-01')",UUID.randomUUID(),user,UUID.randomUUID(),user,UUID.randomUUID(),user);
+                var goal=finance.saveGoal(user,"Vorhandenes Ziel",100000L,null); finance.progressGoal(user,goal.id(),5000L);
+                CLOCK.now=Instant.parse("2026-12-01T12:00:00Z");
+                finance.closeMonthlySurplusMonth(user,LocalDate.of(2026,10,1));
+                exchange.sendResponseHeaders(204,-1);
+            } catch(RuntimeException failure) {exchange.sendResponseHeaders(500,-1);} finally {exchange.close();}
+        });
+        controls.createContext("/close-month",exchange->{
+            try {
+                String[] data=new String(exchange.getRequestBody().readAllBytes(),java.nio.charset.StandardCharsets.UTF_8).split("\\n");
+                UUID user=PostgresFixture.ADMIN.queryForObject("SELECT id FROM access.accounts WHERE email=?",UUID.class,data[0]);
+                finance.closeMonthlySurplusMonth(user,LocalDate.parse(data[1])); exchange.sendResponseHeaders(204,-1);
+            } catch(RuntimeException failure) {exchange.sendResponseHeaders(500,-1);} finally {exchange.close();}
+        });
         controls.start();
         } catch(Exception|Error failure) {try{resources.close();}catch(Exception cleanup){failure.addSuppressed(cleanup);}throw failure;}
     }

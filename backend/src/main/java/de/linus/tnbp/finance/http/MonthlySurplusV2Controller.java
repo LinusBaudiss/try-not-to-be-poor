@@ -2,6 +2,7 @@ package de.linus.tnbp.finance.http;
 
 import de.linus.tnbp.contract.v2.api.MonthlySurplusApi;
 import de.linus.tnbp.contract.v2.model.MonthlySurplusActivationResponse;
+import de.linus.tnbp.contract.v2.model.MonthlySurplusPendingResponse;
 import de.linus.tnbp.finance.FinanceApplication;
 import de.linus.tnbp.monthlysurplus.MonthlySurplus;
 import java.util.UUID;
@@ -20,6 +21,9 @@ public class MonthlySurplusV2Controller implements MonthlySurplusApi {
     }
     @Override public ResponseEntity<MonthlySurplusActivationResponse> postMonthlySurplusActivation() {
         return response(finance.activateMonthlyAutomation(userId()));
+    }
+    @Override public ResponseEntity<MonthlySurplusPendingResponse> getMonthlySurplusPending() {
+        return ResponseEntity.ok().header("Cache-Control", "no-store").body(new MonthlySurplusPendingResponse(finance.monthlyPending(userId())));
     }
     private UUID userId() { return UUID.fromString(SecurityContextHolder.getContext().getAuthentication().getName()); }
     private ResponseEntity<MonthlySurplusActivationResponse> response(MonthlySurplus.Activation state) {

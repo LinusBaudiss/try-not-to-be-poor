@@ -64,7 +64,8 @@ development_status:
 
   epic-4: in-progress
   4-1-monatsautomatik-ausdrücklich-ab-dem-ersten-aktivierungsmonat: review
-  4-2-abgeschlossene-monatsüberschüsse-ohne-ziel-vormerken: backlog
+  # 4.2: Umsetzung und technisches Review abgeschlossen; vollständiger Gesamtlauf erfolgreich.
+  4-2-abgeschlossene-monatsüberschüsse-ohne-ziel-vormerken: review
   4-3-eigenes-ziel-auswählen-und-alle-offenen-vormerkungen-überneh: backlog
   4-4-historische-ausgaben-mit-ihrer-monatsüberschusskorrektur-änd: backlog
   4-5-sparziel-löschen-und-seine-historischen-monatsbindungen-verb: backlog

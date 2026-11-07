@@ -46,6 +46,21 @@ public class FinanceApplication {
             return monthlySurplus.activate(context);
         });
     }
+    public long monthlyPending(UUID userId) {
+        return transactions.read(userId, monthlySurplus::pending);
+    }
+    /** Interner Einmonatsfall für vertrauenswürdige Koordination; kein HTTP-Auslöser. */
+    public boolean closeMonthlySurplusMonth(UUID userId, LocalDate month) {
+        return transactions.mutate(userId, context -> {
+            if (!automationReadiness.available() || !versions.lockMonthlyAutomation(context)) throw new FeatureNotAvailable();
+            if (!monthlySurplus.needsClosing(context, month)) return false;
+            Long budget = budgets.current(context, month);
+            long total = expenses.monthTotal(context, month);
+            boolean created = monthlySurplus.closeMonth(context, month, budget, total);
+            if (created) versions.markMonthlyEffect(context);
+            return created;
+        });
+    }
 
     public Long currentBudget(UUID userId) {
         return transactions.read(userId, context -> budgets.current(context, context.month()));

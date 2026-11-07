@@ -97,6 +97,16 @@ class ArchitectureTest {
         }
     }
 
+    @Test void monatsabschlussBleibtInternUndOhneFremdeTabellenOderOeffentlichenAusloeser() throws Exception {
+        Path root = projectRoot();
+        String contract = Files.readString(root.resolve("api-contract/v2/openapi.yaml"));
+        assertThat(contract).contains("/monthly-surplus/pending:", "operationId: getMonthlySurplusPending");
+        try (var files = Files.walk(root.resolve("backend/src/main/java/de/linus/tnbp/finance/http"))) {
+            for (Path file : files.filter(path -> path.toString().endsWith("Controller.java")).toList())
+                assertThat(Files.readString(file)).doesNotContain("closeMonthlySurplusMonth", "closeMonth", "needsClosing");
+        }
+        assertThat(Files.readString(root.resolve("backend/src/main/java/de/linus/tnbp/finance/MonthlyAutomationReadiness.java"))).contains("return false;");
+    }
     @Test void oeffentlicheProjektionenExportierenKeineRepositorytypen() {
         for (Class<?> facade : List.of(Expenses.class, Budgets.class, SavingsGoals.class, de.linus.tnbp.monthlysurplus.MonthlySurplus.class)) {
             for (var method : facade.getMethods()) {

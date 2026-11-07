@@ -4,6 +4,7 @@ import { firstValueFrom, timeout } from 'rxjs';
 import { MonthlySurplusService } from '../api/v2/api/monthlySurplus.service';
 import { MonthlySurplusActivationResponse } from '../api/v2/model/monthlySurplusActivationResponse';
 import { Session } from '../session/session';
+import { MAX_CENTS, formatSignedEuro } from '../shared/money';
 
 // Nur Vorgangsflags überleben die Navigation, persönliche Werte bleiben in der Ansicht.
 @Injectable({ providedIn: 'root' })
@@ -71,6 +72,21 @@ type Capability = 'unknown' | 'loading' | 'open' | 'closed' | 'failed';
     }
     <button type="button" class="secondary" (click)="load()" [attr.aria-disabled]="pending() || loadState() === 'loading' || !online()" [attr.aria-busy]="loadState() === 'loading'">Aktivierungszustand laden</button>
     <button type="button" class="secondary" (click)="retry()" [attr.aria-disabled]="capability() === 'loading' || !online()" [attr.aria-busy]="capability() === 'loading'">Verfügbarkeit der Monatsautomatik prüfen</button>
+    <div class="monthly-pending" aria-labelledby="pending-title">
+      <h3 id="pending-title">Vorgemerkte Monatsüberschüsse</h3>
+      <p id="pending-state" role="status" aria-live="polite" aria-atomic="true" [class.error]="pendingLoadState() === 'failed'">
+        @if (loadState() === 'loaded' && !state()?.active) { Vor deiner ausdrücklichen Aktivierung werden keine Monatsüberschüsse vorgemerkt. }
+        @else if (pendingLoadState() === 'loading') { Deine Vormerkung wird geladen … }
+        @else if (pendingLoadState() === 'failed') { Deine Vormerkung konnte nicht geladen werden. Versuche es erneut. }
+        @else if (pendingLoadState() === 'loaded') { <strong class="pending-money">Vorgemerkt: {{ money(pendingCents()!) }}</strong> }
+        @else { Deine Vormerkung ist noch nicht geladen. }
+      </p>
+      @if (state()?.active) {
+        <p>Die vorgemerkten Beträge sind noch keinem Sparziel angerechnet. Dein manuell gespeicherter Zielfortschritt bleibt davon unabhängig. Die Zielauswahl wird später verfügbar.</p>
+        @if (!online()) { <p class="error" role="status">Die Vormerkung kann offline nicht aktualisiert werden. Es gibt keine Offline-Synchronisation.</p> }
+        <button type="button" class="secondary" (click)="loadPending()" [attr.aria-disabled]="pendingLoadState() === 'loading' || !online()" [attr.aria-busy]="pendingLoadState() === 'loading'">Vormerkung aktualisieren</button>
+      }
+    </div>
   </section>`
 })
 export class MonthlyAutomation {
@@ -83,6 +99,13 @@ export class MonthlyAutomation {
   private readonly version = this.session.generation();
   private active = true;
   private sequence = 0;
+  private pendingSequence = 0;
+  private readonly monthFormatter = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Berlin', year: 'numeric', month: '2-digit' });
+  private observedMonth: string | null = null;
+  private serverTime: { epoch: number; monotonic: number } | null = null;
+  protected readonly money = formatSignedEuro;
+  protected readonly pendingCents = signal<number | null>(null);
+  protected readonly pendingLoadState = signal<'unknown' | 'loading' | 'loaded' | 'failed'>('unknown');
   protected readonly pending = this.operations.activationPending;
   protected readonly uncertain = this.operations.activationUncertain;
   protected readonly state = signal<MonthlySurplusActivationResponse | null>(null);
@@ -101,24 +124,57 @@ export class MonthlyAutomation {
       if (wasPending && !pending && this.accepts() && this.loadState() === 'unknown') void this.load();
       wasPending = pending;
     });
-    inject(DestroyRef).onDestroy(() => { this.operations.abandonActivation(); this.active = false; this.clear(); });
+    const timer = setInterval(() => this.checkMonth(), 1_000);
+    inject(DestroyRef).onDestroy(() => { clearInterval(timer); this.operations.abandonActivation(); this.active = false; this.clear(); });
     void this.load();
   }
-  @HostListener('window:online') connected(): void { this.online.set(true); }
+  @HostListener('window:online') connected(): void { this.online.set(true); this.refresh(); }
   @HostListener('window:offline') disconnected(): void { this.online.set(false); }
+  @HostListener('window:focus')
+  @HostListener('document:visibilitychange') returned(): void {
+    if (document.visibilityState === 'visible') this.refresh();
+  }
+  private refresh(): void {
+    if (this.state()?.active) void this.loadPending(true);
+    else void this.load(true);
+  }
+  private checkMonth(): void {
+    if (!this.online() || !this.serverTime || document.visibilityState !== 'visible') return;
+    const month = this.monthFormatter.format(new Date(this.serverTime.epoch + performance.now() - this.serverTime.monotonic));
+    if (month !== this.observedMonth) { this.observedMonth = month; void this.loadPending(true); }
+  }
+  protected async loadPending(refresh = false): Promise<void> {
+    if (!this.accepts() || !this.state()?.active || !this.online() || !refresh && this.pendingLoadState() === 'loading') return;
+    const sequence = ++this.pendingSequence;
+    this.pendingCents.set(null); this.pendingLoadState.set('loading');
+    try {
+      const response = await firstValueFrom(this.api.getMonthlySurplusPending('response').pipe(timeout(30_000)));
+      if (!this.accepts() || sequence !== this.pendingSequence) return;
+      const body = response.body;
+      if (response.status !== 200 || !body || Object.keys(body).length !== 1 || !Object.hasOwn(body, 'pendingCents')
+        || !Number.isSafeInteger(body.pendingCents) || body.pendingCents < 0 || body.pendingCents > MAX_CENTS) throw new Error('Ungültige Vormerkung.');
+      this.pendingCents.set(body.pendingCents); this.pendingLoadState.set('loaded');
+      const now = Date.parse(response.headers.get('Date') ?? '');
+      if (Number.isFinite(now)) { this.serverTime = { epoch: now, monotonic: performance.now() }; this.observedMonth = this.monthFormatter.format(new Date(now)); }
+    } catch {
+      if (this.accepts() && sequence === this.pendingSequence) this.pendingLoadState.set('failed');
+    }
+  }
   protected retry(): void {
     if (this.accepts() && this.online() && this.capability() !== 'loading') this.retryCapability.emit();
   }
-  protected async load(): Promise<void> {
-    if (!this.accepts() || this.pending() || !this.online() || this.loadState() === 'loading') return;
+  protected async load(refresh = false): Promise<void> {
+    if (!this.accepts() || this.pending() || !this.online() || !refresh && this.loadState() === 'loading') return;
     const sequence = ++this.sequence;
-    this.loadState.set('loading'); this.state.set(null);
+    this.loadState.set('loading');
     try {
       const response = await firstValueFrom(this.api.getMonthlySurplusActivation('response').pipe(timeout(30_000)));
       if (!this.accepts() || sequence !== this.sequence) return;
       if (response.status !== 200 || !this.valid(response.body)) throw new Error('Aktivierungszustand nicht bestätigt.');
       this.state.set(response.body); this.loadState.set('loaded'); this.uncertain.set(false);
       this.result.set(''); this.failed.set(false);
+      if (response.body.active) void this.loadPending(true);
+      else this.clearPending();
     } catch {
       if (this.accepts() && sequence === this.sequence) this.loadState.set('failed');
     }
@@ -135,6 +191,7 @@ export class MonthlyAutomation {
       if (response.status !== 200 || !this.valid(response.body) || !response.body.active) throw new Error('Aktivierung nicht bestätigt.');
       this.state.set(response.body); this.loadState.set('loaded');
       this.result.set('Deine Monatsautomatik wurde aktiviert.');
+      void this.loadPending(true);
     } catch (failure) {
       if (!this.accepts()) return;
       this.failed.set(true);
@@ -160,5 +217,6 @@ export class MonthlyAutomation {
       && (state.active ? typeof state.activationMonth === 'string' && /^(?!0000)\d{4}-(0[1-9]|1[0-2])-01$/.test(state.activationMonth) : state.activationMonth === null);
   }
   private accepts(): boolean { return this.active && !!this.owner && this.owner === this.session.userId() && this.version === this.session.generation(); }
-  private clear(): void { ++this.sequence; this.state.set(null); this.loadState.set('unknown'); this.result.set(''); this.failed.set(false); this.blocked.set(false); }
+  private clearPending(): void { ++this.pendingSequence; this.pendingCents.set(null); this.pendingLoadState.set('unknown'); this.serverTime = null; this.observedMonth = null; }
+  private clear(): void { this.clearPending(); ++this.sequence; this.state.set(null); this.loadState.set('unknown'); this.result.set(''); this.failed.set(false); this.blocked.set(false); }
 }

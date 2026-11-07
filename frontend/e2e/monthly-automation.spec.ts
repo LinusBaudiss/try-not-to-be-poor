@@ -1,5 +1,5 @@
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test, Page, APIRequestContext } from '@playwright/test';
+import { expect, test, Page, APIRequestContext, Request } from '@playwright/test';
 
 const password = '  Grüner 🦊 im Baum  ';
 const endpoint = '**/api/v2/monthly-surplus/activation';
@@ -7,11 +7,26 @@ const activate = (page: Page) => page.getByRole('button', { name: 'Monatsautomat
 const reload = (page: Page) => page.getByRole('button', { name: 'Aktivierungszustand laden', exact: true });
 function gate() { let release!: () => void; return { promise: new Promise<void>(resolve => { release = resolve; }), release: () => release() }; }
 async function deliver(page: Page, release: () => void, paths: { path: string; method: string }[]): Promise<void> {
-  const responses = paths.map(({ path, method }) => page.waitForResponse(response => response.url().endsWith(path) && response.request().method() === method));
-  release();
-  await Promise.all(responses.map(async pending => expect(await (await pending).finished()).toBeNull()));
-  // Nach Netzwerkende auch RxJS-Fortsetzungen und den anschließenden Angular-Render abwarten.
-  await page.evaluate(() => new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
+  const ended = new Map<Request, string | null>();
+  const finished = (request: Request) => { ended.set(request, null); };
+  const failed = (request: Request) => { ended.set(request, request.failure()?.errorText ?? 'Unbekannter Netzwerkfehler'); };
+  // Vor Freigabe registrieren: Ein terminales Ereignis kann schon vor der Response-Fortsetzung eintreffen.
+  page.on('requestfinished', finished); page.on('requestfailed', failed);
+  try {
+    const responses = paths.map(({ path, method }) => page.waitForResponse(response => response.url().endsWith(path) && response.request().method() === method));
+    release();
+    const delivered = await Promise.all(responses);
+    await expect.poll(() => delivered.every(response => ended.has(response.request())), { message: 'Jede freigegebene Antwort erreicht ein terminales Netzwerkereignis' }).toBe(true);
+    for (const response of delivered) {
+      // Ein verworfener/ersetzter Angular-Abruf darf nach Empfang der Antwort abbrechen.
+      // Response.finished() wird von Playwright nur bei requestfinished aufgelöst, nicht bei requestfailed.
+      expect([null, 'net::ERR_ABORTED']).toContain(ended.get(response.request()));
+    }
+    // Nach Netzwerkende auch RxJS-Fortsetzungen und den anschließenden Angular-Render abwarten.
+    await page.evaluate(() => new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
+  } finally {
+    page.off('requestfinished', finished); page.off('requestfailed', failed);
+  }
 }
 async function account(request: APIRequestContext): Promise<string> {
   const email = `automation-${crypto.randomUUID()}@example.org`;

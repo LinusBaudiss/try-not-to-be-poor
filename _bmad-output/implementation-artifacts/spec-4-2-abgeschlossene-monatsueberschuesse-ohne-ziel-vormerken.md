@@ -152,3 +152,15 @@ SHA-256 des vollständigen Git-Diffs gegen `baseline_commit` einschließlich neu
 | `npm --prefix frontend run e2e:automation` | 51 erfolgreich, einschließlich aller Reviewregressionen und vier Prüfgrößen | `/tmp/story42-final-automation.log` |
 
 Die neue Migration und die interne Abschlussfunktion sind enthalten; öffentliche Gesamtfreigabe bleibt geschlossen. Auswahl, Übernahme, historische Korrektur und Worker bleiben die bereits geplanten Folgestories. Kein GitHub-Abgleich und keine Bereitstellung.
+
+### CI-Nachprüfung des Browser-Testhelfers
+
+Die ersten GitHub-Browserläufe von PR #58 zeigten in unterschiedlichen Fällen denselben Timeout beim Warten auf `Response.finished()` im Helfer `deliver`. Die vorherigen fachlichen Assertions waren erfolgreich. Der installierte Playwright-Client löst dieses Promise über `requestfinished` auf; `requestfailed` löst es nicht auf. Ein nach Antwortempfang verworfener Abruf konnte dadurch den Testhelfer bis zum Testtimeout warten lassen.
+
+Der Helfer registriert jetzt vor Freigabe beide terminalen Ereignisse und ordnet sie der konkreten empfangenen Anfrage zu. Ein Browserabbruch `net::ERR_ABORTED` ist zulässig; andere Netzwerkfehler schlagen weiterhin fehl. Anschließend werden die RxJS-/Renderfortsetzungen abgewartet; sämtliche fachlichen Zustands-/Entwurfs-/Sitzungsassertionen bleiben erhalten. Geändert wurden Testhelfer und dieser Nachweis.
+
+- Ausgangscommit: `0031dee961d70cdbe1e39d52a27d810ce670464d`.
+- Tatsächlicher Aufruf: `npm --prefix frontend run e2e:automation -- --repeat-each=3`.
+- Ergebnis: **153/153 erfolgreich**, einschließlich aller zuvor betroffenen Fokus-/Ablauf-/Ladefälle; keine Wiederholungs-Retries oder größeren Timeouts eingerichtet.
+- Log: `/tmp/story42-ci-browser-repeat.log`.
+- SHA-256 von `frontend/e2e/monthly-automation.spec.ts`: `3d7b2dd2ec5fc51b84139d73719c41659b259b067e4ed60a97221734bc14eb64`.

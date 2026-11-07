@@ -9,6 +9,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 
 class ApiVersionStateIT {
+    @Test void monatsnachweiseBenoetigenKeineErweitertenVersionsOderTabellenrechte() {
+        try (var db = new VersionDatabase("13")) {
+            assertThat(db.runtime.queryForObject("SELECT has_table_privilege(current_user,'monthly_surplus.month_records','SELECT') AND has_table_privilege(current_user,'monthly_surplus.month_records','INSERT') AND NOT has_table_privilege(current_user,'monthly_surplus.month_records','UPDATE,DELETE,TRUNCATE')",Boolean.class)).isTrue();
+            assertThat(db.admin.queryForObject("SELECT relrowsecurity AND relforcerowsecurity FROM pg_class WHERE oid='monthly_surplus.month_records'::regclass",Boolean.class)).isTrue();
+        }
+    }
     @Test void jederBelegbestandteilWirdInSqlUndBeimFruehenJavaStartErzwungen() {
         try (var db = new VersionDatabase()) {
             db.retire();

@@ -15,7 +15,7 @@ BEGIN
         END IF;
     END LOOP;
     FOREACH relation_name IN ARRAY ARRAY['expense_budget.expenses', 'expense_budget.budgets',
-                                         'expenses.expenses', 'budget.budgets', 'savings_goals.goals', 'monthly_surplus.activations'] LOOP
+                                         'expenses.expenses', 'budget.budgets', 'savings_goals.goals', 'monthly_surplus.activations', 'monthly_surplus.month_records'] LOOP
         relation := to_regclass(relation_name);
         IF relation IS NULL THEN CONTINUE; END IF;
         SELECT string_agg(quote_ident(attname), ', ') INTO columns

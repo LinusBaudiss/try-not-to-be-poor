@@ -7,6 +7,35 @@ info:
 servers:
 - url: /api/v2
 paths:
+  /monthly-surplus/pending:
+    get:
+      tags: [MonthlySurplus]
+      operationId: getMonthlySurplusPending
+      summary: Eigene offene Monatsüberschüsse lesen
+      description: Rein lesend, erzeugt oder verarbeitet keine Monatsnachweise. Ausschließlich das verifizierte Bearer-sub bestimmt das Konto. Ohne offene Vormerkung ist pendingCents null Cent; ein Ladefehler bestätigt keinen Betrag. Auch bei gesperrter Gesamtfunktion lesbar.
+      security:
+        - AccessBearer: []
+      responses:
+        '200':
+          description: Exakte noch keinem Ziel angerechnete Gesamtsumme; no-store.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MonthlySurplusPendingResponse'
+        '401':
+          $ref: '#/components/responses/SessionRejected'
+        '500':
+          description: Vormerkung konnte nicht geladen werden; kein Betrag bestätigt, no-store.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MonthlySurplusError'
   /monthly-surplus/activation:
     get:
       tags: [MonthlySurplus]
@@ -827,6 +856,17 @@ components:
           schema:
             $ref: '#/components/schemas/SavingsGoalFeatureNotAvailableError'
   schemas:
+    MonthlySurplusPendingResponse:
+      type: object
+      additionalProperties: false
+      required: [pendingCents]
+      properties:
+        pendingCents:
+          type: integer
+          format: int64
+          minimum: 0
+          maximum: 9007199254740991
+          description: Exakte offene EUR-Cent; leere Menge ergibt 0.
     MonthlySurplusActivationResponse:
       type: object
       additionalProperties: false

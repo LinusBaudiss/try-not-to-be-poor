@@ -1,5 +1,5 @@
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test, Page, APIRequestContext } from '@playwright/test';
+import { expect, test, Page, APIRequestContext, Request } from '@playwright/test';
 
 const password = '  Grüner 🦊 im Baum  ';
 const endpoint = '**/api/v2/monthly-surplus/activation';
@@ -7,11 +7,26 @@ const activate = (page: Page) => page.getByRole('button', { name: 'Monatsautomat
 const reload = (page: Page) => page.getByRole('button', { name: 'Aktivierungszustand laden', exact: true });
 function gate() { let release!: () => void; return { promise: new Promise<void>(resolve => { release = resolve; }), release: () => release() }; }
 async function deliver(page: Page, release: () => void, paths: { path: string; method: string }[]): Promise<void> {
-  const responses = paths.map(({ path, method }) => page.waitForResponse(response => response.url().endsWith(path) && response.request().method() === method));
-  release();
-  await Promise.all(responses.map(async pending => expect(await (await pending).finished()).toBeNull()));
-  // Nach Netzwerkende auch RxJS-Fortsetzungen und den anschließenden Angular-Render abwarten.
-  await page.evaluate(() => new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
+  const ended = new Map<Request, string | null>();
+  const finished = (request: Request) => { ended.set(request, null); };
+  const failed = (request: Request) => { ended.set(request, request.failure()?.errorText ?? 'Unbekannter Netzwerkfehler'); };
+  // Vor Freigabe registrieren: Ein terminales Ereignis kann schon vor der Response-Fortsetzung eintreffen.
+  page.on('requestfinished', finished); page.on('requestfailed', failed);
+  try {
+    const responses = paths.map(({ path, method }) => page.waitForResponse(response => response.url().endsWith(path) && response.request().method() === method));
+    release();
+    const delivered = await Promise.all(responses);
+    await expect.poll(() => delivered.every(response => ended.has(response.request())), { message: 'Jede freigegebene Antwort erreicht ein terminales Netzwerkereignis' }).toBe(true);
+    for (const response of delivered) {
+      // Ein verworfener/ersetzter Angular-Abruf darf nach Empfang der Antwort abbrechen.
+      // Response.finished() wird von Playwright nur bei requestfinished aufgelöst, nicht bei requestfailed.
+      expect([null, 'net::ERR_ABORTED']).toContain(ended.get(response.request()));
+    }
+    // Nach Netzwerkende auch RxJS-Fortsetzungen und den anschließenden Angular-Render abwarten.
+    await page.evaluate(() => new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
+  } finally {
+    page.off('requestfinished', finished); page.off('requestfailed', failed);
+  }
 }
 async function account(request: APIRequestContext): Promise<string> {
   const email = `automation-${crypto.randomUUID()}@example.org`;
@@ -323,3 +338,215 @@ for (const viewport of [{ width: 320, height: 568 }, { width: 390, height: 844 }
     await expect(page.locator('.monthly-automation')).not.toContainText('Europe/Berlin');
   });
 }
+
+const pendingEndpoint = '**/api/v2/monthly-surplus/pending';
+const pendingReload = (page: Page) => page.getByRole('button', { name: 'Vormerkung aktualisieren', exact: true });
+async function pendingLoading(page: Page): Promise<void> {
+  await expect(page.locator('#pending-state')).toHaveText('Deine Vormerkung wird geladen …');
+  await expect(page.locator('.pending-money')).toHaveCount(0);
+  await expect(page.locator('#pending-state')).not.toContainText('€');
+}
+async function pendingAccount(request: APIRequestContext): Promise<string> {
+  const email = await account(request);
+  expect((await request.post('http://127.0.0.1:8081/pending-fixture', { data: email })).status()).toBe(204);
+  return email;
+}
+async function closeNovember(request: APIRequestContext, email: string): Promise<void> {
+  expect((await request.post('http://127.0.0.1:8081/close-month', { data: `${email}\n2026-11-01` })).status()).toBe(204);
+}
+
+test('Echte historische Abschlüsse ergeben 300 Euro; Ziel bleibt bei 50 Euro und GET rechnet nichts an', async ({ page, request }) => {
+  const email = await pendingAccount(request); await closeNovember(request, email); await login(page, email);
+  await expect(page.locator('#pending-state')).toHaveText('Vorgemerkt: 300,00 €');
+  await expect(page.locator('.monthly-pending')).toContainText('noch keinem Sparziel angerechnet');
+  await expect(page.locator('.savings-cards li').filter({ hasText: 'Vorhandenes Ziel' })).toContainText('50,00');
+  await pendingReload(page).click(); await expect(page.locator('#pending-state')).toHaveText('Vorgemerkt: 300,00 €');
+  expect(await page.getByRole('button', { name: /auswählen|übernehmen/i }).count()).toBe(0);
+});
+
+test('Vormerkung lädt unabhängig; Fehler, Offline und Rückkehr erhalten einen Zielentwurf', async ({ page, request, context }) => {
+  const email = await pendingAccount(request); await login(page, email);
+  await expect(page.locator('#pending-state')).toContainText('200,00');
+  const name = page.getByLabel('Name des Sparziels', { exact: true }); await name.fill('Offener eigener Entwurf');
+  await page.route(pendingEndpoint, route => route.fulfill({ status: 500, json: { code: 'MONTHLY_SURPLUS_UNAVAILABLE', message: 'Laden fehlgeschlagen' } }));
+  await pendingReload(page).click(); await expect(page.locator('#pending-state')).toContainText('konnte nicht geladen werden');
+  await expect(page.locator('#pending-state')).not.toContainText('0,00'); await expect(name).toHaveValue('Offener eigener Entwurf');
+  await expect(page.getByRole('button', { name: 'Sparziel speichern', exact: true })).toBeEnabled();
+  await context.setOffline(true); await expect(page.locator('.monthly-pending')).toContainText('offline nicht aktualisiert');
+  await expect(name).toHaveValue('Offener eigener Entwurf'); await page.unroute(pendingEndpoint);
+  await closeNovember(request, email); await context.setOffline(false);
+  await expect(page.locator('#pending-state')).toContainText('300,00'); await expect(name).toHaveValue('Offener eigener Entwurf');
+  await page.getByRole('link', { name: 'Monat', exact: true }).click(); await page.getByRole('link', { name: 'Sparziele', exact: true }).click();
+  await expect(page.locator('#pending-state')).toContainText('300,00');
+});
+
+for (const candidate of [
+  { pendingCents: -1 }, { pendingCents: 9007199254740992 }, { pendingCents: .1 }, { pendingCents: '30000' }, {},
+  { pendingCents: null }, { pendingCents: 1, diagnostic: 'fremd' }
+]) test(`Ungültige Vormerkungsantwort ${JSON.stringify(candidate)} bestätigt keinen Betrag`, async ({ page, request }) => {
+  await login(page, await pendingAccount(request)); await expect(page.locator('#pending-state')).toContainText('200,00');
+  await page.route(pendingEndpoint, route => route.fulfill({ json: candidate }));
+  await pendingReload(page).click(); await expect(page.locator('#pending-state')).toContainText('konnte nicht geladen werden');
+  await expect(page.locator('#pending-state')).not.toContainText('Vorgemerkt:');
+});
+
+test('Nur erfolgreich geladene Null ist eine Vormerkung; Zustand ohne Aktivierung bleibt unterscheidbar', async ({ page, request }) => {
+  await login(page, await account(request));
+  await expect(page.locator('#pending-state')).toContainText('Vor deiner ausdrücklichen Aktivierung');
+  await activate(page).click(); await expect(page.locator('#pending-state')).toHaveText('Vorgemerkt: 0,00 €');
+  await page.route(pendingEndpoint, route => route.fulfill({ status: 500, json: { code: 'MONTHLY_SURPLUS_UNAVAILABLE', message: 'Nicht geladen' } }));
+  await pendingReload(page).click(); await expect(page.locator('#pending-state')).toContainText('konnte nicht geladen werden');
+  await page.unroute(pendingEndpoint); await pendingReload(page).click(); await expect(page.locator('#pending-state')).toHaveText('Vorgemerkt: 0,00 €');
+});
+
+test('Frische Fokusabfrage entkräftet eine ältere laufende Antwort und erhält Fortschrittsentwurf', async ({ page, request }) => {
+  const email = await pendingAccount(request); await login(page, email); await expect(page.locator('#pending-state')).toContainText('200,00');
+  await page.getByRole('button', { name: 'Fortschritt aktualisieren: Vorhandenes Ziel', exact: true }).click();
+  const draft = page.getByLabel('Gesamtfortschritt in Euro', { exact: true }); await draft.fill('123,45');
+  const held = gate(), ready = gate(); let hold = true;
+  await page.route(pendingEndpoint, async route => {
+    if (!hold) { await route.continue(); return; }
+    const response = await route.fetch(); ready.release(); await held.promise; await route.fulfill({ response });
+  });
+  await pendingReload(page).click(); await ready.promise; await pendingLoading(page); await closeNovember(request, email); hold = false;
+  await page.evaluate(() => dispatchEvent(new Event('focus')));
+  await expect(page.locator('#pending-state')).toContainText('300,00');
+  await deliver(page, held.release, [{ path: '/monthly-surplus/pending', method: 'GET' }]);
+  await expect(page.locator('#pending-state')).toContainText('300,00'); await expect(draft).toHaveValue('123,45');
+});
+
+for (const ending of ['Abmeldung', 'Ablauf', 'Kontowechsel']) test(`Späte Vormerkung nach ${ending} bleibt verworfen`, async ({ page, request, context }) => {
+  if (ending === 'Ablauf') await page.clock.install();
+  const second = await account(request), first = await pendingAccount(request); await closeNovember(request, first); await login(page, first);
+  await expect(page.locator('#pending-state')).toContainText('300,00');
+  const refreshHeld = gate(), refreshReady = gate(), refreshDelivered = gate();
+  if (ending === 'Ablauf') {
+    await page.route('**/api/v2/access/refresh', async route => {
+      const response = await route.fetch(); refreshReady.release(); await refreshHeld.promise;
+      await route.fulfill({ response }); refreshDelivered.release();
+    });
+    await page.clock.fastForward(570_001); await refreshReady.promise; await page.clock.fastForward(20_000);
+  }
+  const held = gate(), ready = gate(); let hold = true;
+  await page.route(pendingEndpoint, async route => {
+    if (!hold) { await route.continue(); return; } const response = await route.fetch(); ready.release(); await held.promise; await route.fulfill({ response });
+  });
+  await page.evaluate(() => { (window as any).oldPending = (window as any).ng.getComponent(document.querySelector('app-monthly-automation')); });
+  await pendingReload(page).click(); await ready.promise;
+  if (ending === 'Abmeldung') await page.getByRole('button', { name: 'Abmelden', exact: true }).click();
+  else if (ending === 'Ablauf') await page.clock.fastForward(10_000);
+  else { const other = await context.newPage(); await login(other, second); await other.close(); }
+  await expect(page.getByRole('heading', { name: 'Anmelden', exact: true })).toBeVisible(); hold = false;
+  if (ending === 'Ablauf') { refreshHeld.release(); await refreshDelivered.promise; await page.unroute('**/api/v2/access/refresh'); }
+  await login(page, second); await deliver(page, held.release, [{ path: '/monthly-surplus/pending', method: 'GET' }]);
+  await expect(page.locator('#pending-state')).toContainText('Vor deiner ausdrücklichen Aktivierung');
+  expect(await page.evaluate(() => { const old = (window as any).oldPending; return { cents: old.pendingCents(), state: old.pendingLoadState() }; })).toEqual({ cents: null, state: 'unknown' });
+  expect(await page.evaluate(() => ({ local: Object.keys(localStorage), session: Object.keys(sessionStorage) }))).toEqual({ local: [], session: [] });
+});
+
+for (const viewport of [{ width: 320, height: 568 }, { width: 390, height: 844 }, { width: 768, height: 1024 }, { width: 1280, height: 800 }]) {
+  test(`Vormerkung mit echtem Abschluss, Fehler, langem Betrag und 200 % Text bei ${viewport.width}×${viewport.height}`, async ({ page, request }) => {
+    await page.setViewportSize(viewport); const email = await pendingAccount(request); await closeNovember(request, email); await login(page, email);
+    await expect(page.locator('#pending-state')).toHaveText('Vorgemerkt: 300,00 €');
+    await page.evaluate(() => document.documentElement.style.fontSize = '200%'); await accessibleAutomation(page);
+    await page.screenshot({ path: `test-results/monthly-pending-${viewport.width}.png`, fullPage: true });
+    await pendingReload(page).focus(); await page.keyboard.press('Enter'); await expect(page.locator('#pending-state')).toContainText('300,00'); await expect(pendingReload(page)).toBeFocused();
+    await page.route(pendingEndpoint, route => route.fulfill({ json: { pendingCents: 9007199254740991 } }));
+    await pendingReload(page).click(); await expect(page.locator('#pending-state')).toContainText('90.071.992.547.409,91'); await accessibleAutomation(page);
+    await page.unroute(pendingEndpoint); await page.route(pendingEndpoint, route => route.fulfill({ status: 500, json: { code: 'MONTHLY_SURPLUS_UNAVAILABLE', message: 'Nicht geladen' } }));
+    await pendingReload(page).click(); await expect(page.locator('#pending-state')).toContainText('konnte nicht geladen werden'); await accessibleAutomation(page);
+    await expect(page.locator('#pending-state')).toHaveAttribute('role', 'status'); await expect(page.locator('.monthly-automation')).not.toContainText('Europe/Berlin');
+  });
+}
+
+test('Verspätete Vormerkung einer verlassenen Ansicht überschreibt die Rückkehr nicht', async ({ page, request }) => {
+  const email = await pendingAccount(request); await login(page, email); await expect(page.locator('#pending-state')).toContainText('200,00');
+  const held = gate(), ready = gate(); let hold = true;
+  await page.route(pendingEndpoint, async route => {
+    if (!hold) { await route.continue(); return; } const response = await route.fetch(); ready.release(); await held.promise; await route.fulfill({ response });
+  });
+  await pendingReload(page).click(); await ready.promise;
+  await page.getByRole('link', { name: 'Monat', exact: true }).click(); await closeNovember(request, email); hold = false;
+  await page.getByRole('link', { name: 'Sparziele', exact: true }).click(); await expect(page.locator('#pending-state')).toContainText('300,00');
+  await deliver(page, held.release, [{ path: '/monthly-surplus/pending', method: 'GET' }]);
+  await expect(page.locator('#pending-state')).toContainText('300,00');
+});
+
+test('Monatswechsel nach der Serverzeit lädt die Vormerkung im offenen Tab neu', async ({ page, request }) => {
+  await page.clock.install(); const email = await pendingAccount(request);
+  let requests = 0;
+  await page.route(pendingEndpoint, async route => {
+    requests++; const response = await route.fetch();
+    await route.fulfill({ response, headers: { ...response.headers(), date: 'Thu, 31 Dec 2026 22:59:59 GMT' } });
+  });
+  await login(page, email); await expect(page.locator('#pending-state')).toContainText('200,00');
+  await closeNovember(request, email); const before = requests; await page.clock.fastForward(2_001);
+  await expect(page.locator('#pending-state')).toContainText('300,00'); expect(requests).toBeGreaterThan(before);
+});
+
+
+test('Vormerkung kündigt initiales Laden und Aktualisierung ohne bestätigten oder erfundenen Betrag an', async ({ page, request }) => {
+  const email = await pendingAccount(request); let held = gate(), ready = gate();
+  await page.route(pendingEndpoint, async route => {
+    const waiting = held, started = ready, response = await route.fetch();
+    started.release(); await waiting.promise; await route.fulfill({ response });
+  });
+  await login(page, email); await ready.promise; await pendingLoading(page);
+  await deliver(page, held.release, [{ path: '/monthly-surplus/pending', method: 'GET' }]);
+  await expect(page.locator('#pending-state')).toContainText('200,00');
+  held = gate(); ready = gate(); await closeNovember(request, email);
+  await pendingReload(page).click(); await ready.promise; await pendingLoading(page);
+  await deliver(page, held.release, [{ path: '/monthly-surplus/pending', method: 'GET' }]);
+  await expect(page.locator('#pending-state')).toContainText('300,00');
+});
+
+test('Reconnect ersetzt eine noch laufende alte Vormerkungsantwort durch eine neue Abfrage', async ({ page, request, context }) => {
+  const email = await pendingAccount(request); await login(page, email); await expect(page.locator('#pending-state')).toContainText('200,00');
+  const old = gate(), oldReady = gate(), fresh = gate(), freshReady = gate(); let calls = 0;
+  await page.route(pendingEndpoint, async route => {
+    const attempt = ++calls, response = await route.fetch();
+    const ready = attempt === 1 ? oldReady : freshReady, waiting = attempt === 1 ? old : fresh;
+    ready.release(); await waiting.promise; await route.fulfill({ response });
+  });
+  await pendingReload(page).click(); await oldReady.promise; await pendingLoading(page);
+  await context.setOffline(true); await closeNovember(request, email); await context.setOffline(false);
+  await freshReady.promise; expect(calls).toBe(2); await pendingLoading(page);
+  await deliver(page, fresh.release, [{ path: '/monthly-surplus/pending', method: 'GET' }]);
+  await expect(page.locator('#pending-state')).toContainText('300,00');
+  await deliver(page, old.release, [{ path: '/monthly-surplus/pending', method: 'GET' }]);
+  await expect(page.locator('#pending-state')).toContainText('300,00');
+});
+
+for (const prior of ['inaktiv', 'nicht geladen']) test(`Rückkehr erkennt die Aktivierung aus einem anderen Tab bei zuvor ${prior}`, async ({ page, request, context }) => {
+  const email = await account(request);
+  if (prior === 'nicht geladen') await page.route(endpoint, route => route.fulfill({ status: 500, json: { code: 'MONTHLY_SURPLUS_UNAVAILABLE', message: 'Nicht geladen' } }));
+  await login(page, email);
+  await expect(page.locator('#automation-state')).toContainText(prior === 'inaktiv' ? 'noch nicht aktiviert' : 'konnte nicht geladen werden');
+  const other = await context.newPage();
+  try {
+    await other.goto('/sparziele'); await expect(activate(other)).toBeEnabled();
+    await activate(other).click(); await expect(other.locator('#automation-state')).toContainText('aktiv seit Oktober 2026');
+    if (prior === 'nicht geladen') await page.unroute(endpoint);
+    await page.bringToFront();
+    // Beide Browser-Rückkehrsignale verwenden dieselbe Aktualisierung.
+    await page.evaluate(() => { dispatchEvent(new Event('focus')); document.dispatchEvent(new Event('visibilitychange')); });
+    await expect(page.locator('#automation-state')).toContainText('aktiv seit Oktober 2026');
+    await expect(page.locator('#pending-state')).toHaveText('Vorgemerkt: 0,00 €');
+    await expect(activate(page)).toHaveCount(0);
+  } finally { await other.close(); }
+});
+
+test('Bestätigte Aktivierung erhält unabhängiges Vormerkungsladen während und nach Aktivierungs-Ladefehler', async ({ page, request }) => {
+  const email = await pendingAccount(request); await login(page, email); await expect(page.locator('#pending-state')).toContainText('200,00');
+  const held = gate(), ready = gate();
+  await page.route(endpoint, async route => {
+    ready.release(); await held.promise;
+    await route.fulfill({ status: 500, json: { code: 'MONTHLY_SURPLUS_UNAVAILABLE', message: 'Nicht geladen' } });
+  });
+  await reload(page).click(); await ready.promise; await expect(page.locator('#automation-state')).toContainText('wird geladen');
+  await expect(pendingReload(page)).toBeVisible(); await pendingReload(page).click(); await expect(page.locator('#pending-state')).toContainText('200,00');
+  await deliver(page, held.release, [{ path: '/monthly-surplus/activation', method: 'GET' }]);
+  await expect(page.locator('#automation-state')).toContainText('konnte nicht geladen werden');
+  await closeNovember(request, email); await pendingReload(page).click(); await expect(page.locator('#pending-state')).toContainText('300,00');
+  await expect(page.locator('#automation-state')).toContainText('konnte nicht geladen werden');
+});

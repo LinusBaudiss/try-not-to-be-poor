@@ -391,6 +391,12 @@ class RegistrationIT {
                 "Die Finanzschemas benötigen minimale Laufzeitrechte und erzwungene RLS."},
             {"GRANT CREATE ON SCHEMA savings_goals TO tnbp_runtime", "REVOKE CREATE ON SCHEMA savings_goals FROM tnbp_runtime",
                 "Die Laufzeitrolle darf weder privilegiert noch Tabellenbesitzer sein."},
+            {"GRANT UPDATE ON monthly_surplus.activations TO tnbp_runtime", "REVOKE UPDATE ON monthly_surplus.activations FROM tnbp_runtime",
+                "Der Aktivierungsbeginn benötigt unveränderliche minimale Laufzeitrechte."},
+            {"GRANT DELETE ON monthly_surplus.activations TO tnbp_runtime", "REVOKE DELETE ON monthly_surplus.activations FROM tnbp_runtime",
+                "Der Aktivierungsbeginn benötigt unveränderliche minimale Laufzeitrechte."},
+            {"GRANT UPDATE (activation_month) ON monthly_surplus.activations TO PUBLIC", "REVOKE UPDATE (activation_month) ON monthly_surplus.activations FROM PUBLIC",
+                "Der Aktivierungsbeginn benötigt unveränderliche minimale Laufzeitrechte."},
             {"GRANT EXECUTE ON FUNCTION api_version.set_retirement(boolean,uuid,text,text,text) TO tnbp_runtime",
                 "REVOKE EXECUTE ON FUNCTION api_version.set_retirement(boolean,uuid,text,text,text) FROM tnbp_runtime",
                 "Der Versionszustand benötigt minimale Laufzeitrechte."}

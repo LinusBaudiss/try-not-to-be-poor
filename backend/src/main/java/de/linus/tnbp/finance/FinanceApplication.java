@@ -3,6 +3,7 @@ package de.linus.tnbp.finance;
 import de.linus.tnbp.budget.Budgets;
 import de.linus.tnbp.expenses.Expenses;
 import de.linus.tnbp.savingsgoals.SavingsGoals;
+import de.linus.tnbp.monthlysurplus.MonthlySurplus;
 import de.linus.tnbp.shared.ApiVersionState;
 import de.linus.tnbp.shared.FinanceTransactions;
 import de.linus.tnbp.shared.Money;
@@ -20,16 +21,31 @@ public class FinanceApplication {
     private final Budgets budgets;
     private final SavingsGoals goals;
     private final ApiVersionState versions;
+    private final MonthlySurplus monthlySurplus;
+    private final MonthlyAutomationReadiness automationReadiness;
 
-    public FinanceApplication(FinanceTransactions transactions, Expenses expenses, Budgets budgets, SavingsGoals goals, ApiVersionState versions) {
+    public FinanceApplication(FinanceTransactions transactions, Expenses expenses, Budgets budgets, SavingsGoals goals, ApiVersionState versions,
+            MonthlySurplus monthlySurplus, MonthlyAutomationReadiness automationReadiness) {
         this.transactions = transactions;
         this.expenses = expenses;
         this.budgets = budgets;
         this.goals = goals;
         this.versions = versions;
+        this.monthlySurplus = monthlySurplus;
+        this.automationReadiness = automationReadiness;
     }
 
     public boolean signedProgressAvailable() { return versions.signedProgressAvailable(); }
+    public boolean monthlyAutomationAvailable() { return automationReadiness.available() && versions.monthlyAutomationAvailable(); }
+    public MonthlySurplus.Activation monthlyActivation(UUID userId) {
+        return transactions.read(userId, monthlySurplus::state);
+    }
+    public MonthlySurplus.Activation activateMonthlyAutomation(UUID userId) {
+        return transactions.mutate(userId, context -> {
+            if (!automationReadiness.available() || !versions.lockMonthlyAutomation(context)) throw new FeatureNotAvailable();
+            return monthlySurplus.activate(context);
+        });
+    }
 
     public Long currentBudget(UUID userId) {
         return transactions.read(userId, context -> budgets.current(context, context.month()));

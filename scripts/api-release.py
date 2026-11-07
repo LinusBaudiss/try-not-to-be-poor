@@ -25,7 +25,7 @@ import uuid
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
-SCHEMAS = "('access','expense_budget','expenses','budget','savings_goals','api_version')"
+SCHEMAS = "('access','expense_budget','expenses','budget','savings_goals','monthly_surplus','api_version')"
 SNAPSHOT = f"""
 SELECT json_build_object('schema', json_build_object(
  'migrations', (SELECT json_agg(x ORDER BY version) FROM

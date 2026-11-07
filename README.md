@@ -371,6 +371,34 @@ Neuladen, Abmeldung, Sitzungsende und Kontowechsel verwerfen offene Entwürfe.
 
 ## Prüfen
 
+Die Aktivierungsgrundlage der Monatsautomatik (Story 4.1) besitzt eigene
+v2-GET-/POST-Routen unter `/api/v2/monthly-surplus/activation`. Lesen erzeugt
+keinen Start. Eine zulässige Erstaktivierung speichert den gesamten laufenden
+Monat; spätere Aufrufe erhalten diesen Start unverändert. Sie verändert keine
+Geldwerte und benötigt weder Budget noch Sparziel.
+
+Die öffentliche Gesamtfreigabe bleibt im Anwendungscode geschlossen. Der
+Automatikabschnitt in Sparziele zeigt Zustand und Verfügbarkeit getrennt;
+direkte Aktivierungsaufrufe erhalten `409 FEATURE_NOT_AVAILABLE`. Gespeicherte
+Starts bleiben auch bei gesperrter Funktion lesbar. Es gibt keinen öffentlichen
+Konfigurationsschalter zum Umgehen dieser Grenze. Monatsabschluss, Vormerkung,
+Zielauswahl und Hintergrundlauf sind damit noch nicht freigegeben.
+
+Der zusätzliche HTTPS-Positivnachweis läuft ausschließlich mit synthetischen
+Daten und Testklassen. Er startet und beendet zuerst einen echten kompatiblen
+API-Prozess über den geschützten Stilllegungsablauf; erst danach ersetzt der
+Test die Gesamtbereitschaft. JWT, frischer Versionsbeleg, Runtime-Rolle, RLS und
+Commitgrenze bleiben wirksam. Ports 8080, 8081, 4200 und 18082 müssen frei sein:
+
+```sh
+npm --prefix frontend run e2e:automation
+```
+
+Die testinterne Uhr und Bereitschaft sind weder Bestandteil des Java-Releases
+noch Produktionskonfiguration. Der reguläre Browserlauf prüft die geschlossene
+Auslieferung zusätzlich zu den bisherigen manuellen Kernfunktionen. Diese
+Prüfungen erteilen keine öffentliche Automatik- oder Produktionsfreigabe.
+
 ```bash
 ./scripts/check-contract.sh
 python3 -m unittest discover -s scripts/tests -v

@@ -1,49 +1,26 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, DestroyRef, ElementRef, ViewChild, HostListener, Injectable, computed, effect, inject, signal } from '@angular/core';
+import { Component, DestroyRef, ElementRef, ViewChild, HostListener, computed, effect, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { firstValueFrom, timeout } from 'rxjs';
 import { SavingsGoalResponse } from '../api/v2/model/savingsGoalResponse';
 import { CapabilitiesService } from '../api/v2/api/capabilities.service';
 import { SavingsGoalsService } from '../api/v2/api/savingsGoals.service';
+import { MonthlyAutomation, SavingsOperations } from './monthly-automation';
 import { savingsProgress } from '../shared/savings-progress';
 import { Session } from '../session/session';
 import { LogoutButton } from '../session/logout-button';
 import { SessionsService } from '../api/v2/api/sessions.service';
 import { MAX_CENTS, euroInput, signedEuroInput, formatSignedEuro, parseEuro, parseSignedEuro } from '../shared/money';
 
-// Nur Vorgangsflags überleben die Navigation; persönliche Werte bleiben in der Ansicht.
-@Injectable({ providedIn: 'root' })
-class SavingsOperations {
-  private readonly session = inject(Session);
-  private version = this.session.generation();
-  private sequence = 0;
-  readonly pending = signal(false);
-  readonly uncertain = signal(false);
-  constructor() { effect(() => { this.session.generation(); this.synchronize(); }); }
-  synchronize(): void {
-    if (this.version === this.session.generation()) return;
-    this.version = this.session.generation(); ++this.sequence;
-    this.pending.set(false); this.uncertain.set(false);
-  }
-  begin(): { version: number; sequence: number } {
-    this.synchronize(); this.pending.set(true);
-    return { version: this.version, sequence: ++this.sequence };
-  }
-  abandon(): void { this.synchronize(); if (this.pending()) this.uncertain.set(true); }
-  settle(operation: { version: number; sequence: number }): void {
-    this.synchronize();
-    if (operation.version === this.version && operation.sequence === this.sequence) this.pending.set(false);
-  }
-}
-
 @Component({
   selector: 'app-savings-goals',
-  imports: [FormsModule, LogoutButton],
+  imports: [FormsModule, LogoutButton, MonthlyAutomation],
   template: `<section class="auth-card" aria-labelledby="savings-title">
     <h1 id="savings-title" tabindex="-1">Sparziele</h1>
     <p role="status" aria-live="polite" [class.error]="identityFailed()">{{ identityStatus() }}</p>
     @if (identityFailed()) { <button type="button" (click)="open()" [disabled]="opening() || !online()">Zugang erneut prüfen</button> }
     @if (identityConfirmed()) {
+      <app-monthly-automation [capability]="monthlyCapabilityState()" (retryCapability)="loadCapabilities()" />
       <h2 id="goals-list-title">Deine Sparziele</h2>
       <p id="goals-list-status" role="status" aria-live="polite" aria-atomic="true" [class.savings-placeholder]="loading()" [class.error]="loadFailed()">{{ listStatus() }}</p>
       @if (pending() && !loaded()) { <p role="status">Ein Sparzielvorgang läuft noch. Warte auf die Bestätigung, bevor du den aktuellen Stand prüfst.</p> }
@@ -199,6 +176,7 @@ export class SavingsGoals {
   private readonly capabilities = inject(CapabilitiesService);
   private capabilitySequence = 0;
   protected readonly capabilityState = signal<'unknown' | 'loading' | 'open' | 'closed' | 'failed'>('unknown');
+  protected readonly monthlyCapabilityState = signal<'unknown' | 'loading' | 'open' | 'closed' | 'failed'>('unknown');
   protected readonly signedAvailable = computed(() => this.capabilityState() === 'open');
   protected readonly capabilityStatus = computed(() => this.capabilityState() === 'loading' ? 'Fortschrittseingabe wird geprüft …'
     : this.capabilityState() === 'open' ? 'Negative Gesamtfortschritte sind verfügbar.'
@@ -294,17 +272,18 @@ export class SavingsGoals {
   protected async loadCapabilities(): Promise<void> {
     if (!this.accepts() || !this.identityConfirmed() || !this.online() || this.capabilityState() === 'loading') return;
     const sequence = ++this.capabilitySequence;
-    this.capabilityState.set('loading');
+    this.capabilityState.set('loading'); this.monthlyCapabilityState.set('loading');
     try {
       const response = await firstValueFrom(this.capabilities.getCapabilities('response').pipe(timeout(30_000)));
       if (!this.accepts() || sequence !== this.capabilitySequence) return;
       const result = response.body;
-      if (response.status !== 200 || !result || Object.keys(result).length !== 1 || typeof result.signedProgressAvailable !== 'boolean')
+      if (response.status !== 200 || !result || Object.keys(result).some(key => !['signedProgressAvailable', 'monthlyAutomationAvailable'].includes(key)) || typeof result.signedProgressAvailable !== 'boolean')
         throw new Error('Ungültiger Funktionszustand.');
       this.capabilityState.set(result.signedProgressAvailable ? 'open' : 'closed');
+      this.monthlyCapabilityState.set(result.monthlyAutomationAvailable === true ? 'open' : 'closed');
       if (result.signedProgressAvailable && this.progressError() === this.unavailableProgress) this.progressError.set('');
     } catch {
-      if (this.accepts() && sequence === this.capabilitySequence) this.capabilityState.set('failed');
+      if (this.accepts() && sequence === this.capabilitySequence) { this.capabilityState.set('failed'); this.monthlyCapabilityState.set('failed'); }
     }
   }
   protected edit(field: 'name' | 'amount' | 'targetDate', value: string): void {
@@ -589,7 +568,7 @@ export class SavingsGoals {
     return year > 0 && month > 0 && month <= 12 && day > 0 && day <= [31, leap ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month - 1];
   }
   private clear(): void {
-    ++this.capabilitySequence; this.capabilityState.set('unknown');
+    ++this.capabilitySequence; this.capabilityState.set('unknown'); this.monthlyCapabilityState.set('unknown');
     this.closeDelete(); this.resetTarget(); this.resetMutationStatus(); this.targetPending.set(false);
     this.name = ''; this.amount = ''; this.targetDate = ''; this.progressAmount = ''; this.editing.set(null); this.resetProgressStatus(); this.progressPending.set(false); this.items.set([]); this.loaded.set(false); this.loading.set(false);
     this.reviewLoaded.set(false); this.opening.set(false); this.identityConfirmed.set(false); this.identityFailed.set(false); this.identityStatus.set('');

@@ -137,3 +137,13 @@ h1:focus, #expense-delete-status:focus { outline: 3px solid var(--focus-ring); o
 .savings-uncertainty { padding: min(1rem, 16px); margin-block: 1.5rem; border: 2px solid var(--error); border-radius: .5rem; }
 .savings-review-action + .savings-review-action { margin-top: .75rem; }
 .savings-delete-dialog .savings-review-action + .savings-review-action { margin-bottom: 1rem; }
+/* Der Automatikabschnitt bleibt auch mit leerer Zielliste eigenständig lesbar. */
+.monthly-automation { margin-block: 1.5rem; padding: 1rem; border: 1px solid var(--border, #6b7280); border-radius: .75rem; overflow-wrap: anywhere; }
+.monthly-automation button { display: block; min-height: 44px; max-width: 100%; margin-block: .75rem; white-space: normal; }
+.monthly-automation button[aria-disabled="true"] { cursor: default; opacity: .7; }
+.monthly-automation button:focus { outline: 3px solid var(--focus-ring); outline-offset: 3px; }
+@media (max-width: 30rem) {
+  .monthly-automation, .monthly-automation button { padding-inline: .25rem; }
+}
+#automation-result:empty { margin: 0; }
+#automation-result:focus { outline: 3px solid var(--focus-ring); outline-offset: 3px; }

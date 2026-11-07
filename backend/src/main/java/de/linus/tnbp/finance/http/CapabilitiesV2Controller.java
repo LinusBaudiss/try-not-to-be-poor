@@ -16,13 +16,13 @@ public class CapabilitiesV2Controller implements CapabilitiesApi {
     public CapabilitiesV2Controller(FinanceApplication versions) { this.versions = versions; }
     @Override public ResponseEntity<CapabilitiesResponse> getCapabilities() {
         return ResponseEntity.ok().header("Cache-Control", "no-store")
-            .body(new CapabilitiesResponse(versions.signedProgressAvailable()));
+            .body(new CapabilitiesResponse(versions.signedProgressAvailable()).monthlyAutomationAvailable(versions.monthlyAutomationAvailable()));
     }
     @ExceptionHandler(Exception.class)
     ResponseEntity<CapabilitiesError> unavailable() {
         org.slf4j.LoggerFactory.getLogger(CapabilitiesV2Controller.class).error("Funktionszustand konnte nicht geladen werden; Fehlerkategorie=CAPABILITIES_UNAVAILABLE");
         return ResponseEntity.internalServerError().header("Cache-Control", "no-store")
             .body(new CapabilitiesError(CapabilitiesError.CodeEnum.CAPABILITIES_UNAVAILABLE,
-                "Die Fortschrittseingabe konnte nicht geprüft werden. Versuche es erneut."));
+                "Der Funktionszustand konnte nicht geprüft werden. Versuche es erneut."));
     }
 }

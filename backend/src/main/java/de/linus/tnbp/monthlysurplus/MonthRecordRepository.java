@@ -15,10 +15,20 @@ class MonthRecordRepository {
             Boolean.class, userId, month));
     }
     BigDecimal pending(UUID userId) {
-        return jdbc.queryForObject("SELECT COALESCE(SUM(surplus_cents), 0) FROM monthly_surplus.month_records WHERE user_id = ? AND surplus_cents IS NOT NULL",
+        return jdbc.queryForObject("SELECT COALESCE(SUM(surplus_cents), 0) FROM monthly_surplus.month_records WHERE user_id = ? AND surplus_cents IS NOT NULL AND goal_id IS NULL",
             BigDecimal.class, userId);
     }
     void insert(UUID userId, LocalDate month, Long surplusCents) {
-        jdbc.update("INSERT INTO monthly_surplus.month_records(user_id, origin_month, surplus_cents) VALUES (?, ?, ?)", userId, month, surplusCents);
+        insert(userId, month, surplusCents, null, false);
+    }
+    void insert(UUID userId, LocalDate month, Long surplusCents, UUID goalId, boolean consumed) {
+        jdbc.update("INSERT INTO monthly_surplus.month_records(user_id, origin_month, surplus_cents, goal_id, consumed) VALUES (?, ?, ?, ?, ?)",
+            userId, month, surplusCents, goalId, consumed);
+    }
+    void bindOpen(UUID userId, UUID goalId) {
+        jdbc.update("""
+            UPDATE monthly_surplus.month_records SET goal_id = ?
+            WHERE user_id = ? AND surplus_cents IS NOT NULL AND goal_id IS NULL
+            """, goalId, userId);
     }
 }

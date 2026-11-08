@@ -6,6 +6,7 @@ import de.linus.tnbp.savingsgoals.SavingsGoals;
 import de.linus.tnbp.monthlysurplus.MonthlySurplus;
 import de.linus.tnbp.shared.ApiVersionState;
 import de.linus.tnbp.shared.FinanceTransactions;
+import de.linus.tnbp.shared.FinanceContext;
 import de.linus.tnbp.shared.Money;
 import java.time.LocalDate;
 import java.util.List;
@@ -16,6 +17,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class FinanceApplication {
     public record Summary(LocalDate month, Long budgetCents, long expensesCents, Long remainingCents) {}
+    public record MonthlyOverview(boolean active, LocalDate activationMonth, LocalDate currentMonth,
+        UUID selectedGoalId, long pendingCents, List<SavingsGoals.Goal> goals) {}
     private final FinanceTransactions transactions;
     private final Expenses expenses;
     private final Budgets budgets;
@@ -49,17 +52,55 @@ public class FinanceApplication {
     public long monthlyPending(UUID userId) {
         return transactions.read(userId, monthlySurplus::pending);
     }
+    public MonthlyOverview monthlyOverview(UUID userId) {
+        return transactions.read(userId, this::monthlyOverview);
+    }
+    private MonthlyOverview monthlyOverview(FinanceContext context) {
+        var activation = monthlySurplus.state(context);
+        UUID selected = monthlySurplus.selected(context, context.month());
+        if (selected != null && !goals.exists(context, selected)) selected = null;
+        return new MonthlyOverview(activation.active(), activation.activationMonth(), context.month(), selected,
+            monthlySurplus.pending(context), goals.all(context));
+    }
+    public MonthlyOverview selectMonthlyGoal(UUID userId, UUID goalId) {
+        if (goalId == null) throw new InvalidSelection();
+        return transactions.mutate(userId, context -> {
+            // Keine Nachholwirkung für eine fremde oder fehlende Zielwahl.
+            goals.requireGoal(context, goalId);
+            if (!automationReadiness.available() || !versions.lockMonthlyAutomation(context)) throw new FeatureNotAvailable();
+            var activation = monthlySurplus.state(context);
+            if (!activation.active()) throw new AutomationNotActive();
+            for (LocalDate month = activation.activationMonth(); month.isBefore(context.month()); month = month.plusMonths(1))
+                closeMonthlySurplusMonth(context, month);
+            long pending = monthlySurplus.pending(context);
+            goals.applyDifference(context, goalId, pending);
+            // Nullmonate ebenfalls binden; Herkunftsbeträge bleiben erhalten.
+            monthlySurplus.bindOpen(context, goalId);
+            monthlySurplus.select(context, goalId);
+            versions.markMonthlyEffect(context);
+            return monthlyOverview(context);
+        });
+    }
+    public static final class InvalidSelection extends RuntimeException {}
+    public static final class AutomationNotActive extends RuntimeException {}
     /** Interner Einmonatsfall für vertrauenswürdige Koordination; kein HTTP-Auslöser. */
     public boolean closeMonthlySurplusMonth(UUID userId, LocalDate month) {
         return transactions.mutate(userId, context -> {
             if (!automationReadiness.available() || !versions.lockMonthlyAutomation(context)) throw new FeatureNotAvailable();
-            if (!monthlySurplus.needsClosing(context, month)) return false;
-            Long budget = budgets.current(context, month);
-            long total = expenses.monthTotal(context, month);
-            boolean created = monthlySurplus.closeMonth(context, month, budget, total);
-            if (created) versions.markMonthlyEffect(context);
-            return created;
+            return closeMonthlySurplusMonth(context, month);
         });
+    }
+    private boolean closeMonthlySurplusMonth(FinanceContext context, LocalDate month) {
+        if (!monthlySurplus.needsClosing(context, month)) return false;
+        Long budget = budgets.current(context, month);
+        long total = expenses.monthTotal(context, month);
+        UUID selected = monthlySurplus.selected(context, month);
+        boolean consumed = selected != null && !goals.exists(context, selected);
+        Long surplus = MonthlySurplus.surplus(budget, total);
+        if (selected != null && !consumed && surplus != null) goals.applyDifference(context, selected, surplus);
+        boolean created = monthlySurplus.closeMonth(context, month, budget, total, selected, consumed);
+        if (created) versions.markMonthlyEffect(context);
+        return created;
     }
 
     public Long currentBudget(UUID userId) {

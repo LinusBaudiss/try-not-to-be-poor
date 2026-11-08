@@ -100,7 +100,7 @@ class ArchitectureTest {
     @Test void monatsabschlussBleibtInternUndOhneFremdeTabellenOderOeffentlichenAusloeser() throws Exception {
         Path root = projectRoot();
         String contract = Files.readString(root.resolve("api-contract/v2/openapi.yaml"));
-        assertThat(contract).contains("/monthly-surplus/pending:", "operationId: getMonthlySurplusPending");
+        assertThat(contract).contains("/monthly-surplus/pending:", "operationId: getMonthlySurplusPending", "operationId: getMonthlySurplus", "operationId: putMonthlySurplusSelection");
         try (var files = Files.walk(root.resolve("backend/src/main/java/de/linus/tnbp/finance/http"))) {
             for (Path file : files.filter(path -> path.toString().endsWith("Controller.java")).toList())
                 assertThat(Files.readString(file)).doesNotContain("closeMonthlySurplusMonth", "closeMonth", "needsClosing");

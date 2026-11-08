@@ -49,6 +49,19 @@ public class SavingsGoals {
         context.requireRead();
         if (!goals.exists(context.userId(), id)) throw new NotFound();
     }
+    /** Schmale eigene Projektion, ohne Name/Zielbetrag/Datum für Monatsanrechnung. */
+    public boolean exists(FinanceContext context, UUID id) {
+        context.requireRead();
+        return goals.exists(context.userId(), id);
+    }
+    /** Differenz auf den unter Kontosperre gelesenen tatsächlichen Gesamtstand. */
+    public void applyDifference(FinanceContext context, UUID id, long differenceCents) {
+        context.requireWrite();
+        Money.exact(differenceCents);
+        long current = goals.currentProgress(context.userId(), id).orElseThrow(NotFound::new);
+        long result = Money.exact(java.math.BigDecimal.valueOf(current).add(java.math.BigDecimal.valueOf(differenceCents)));
+        goals.setProgress(context.userId(), id, result);
+    }
     public static void validateSignedProgress(Long progressCents) {
         if (progressCents == null || progressCents < -Money.MAX_CENTS || progressCents > Money.MAX_CENTS)
             throw new InvalidGoal(Map.of("progressCents", "Gib einen gültigen Gesamtfortschritt in ganzen Cent ein."));

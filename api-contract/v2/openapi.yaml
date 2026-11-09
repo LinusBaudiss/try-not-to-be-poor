@@ -7,6 +7,69 @@ info:
 servers:
 - url: /api/v2
 paths:
+  /monthly-surplus:
+    get:
+      tags: [MonthlySurplus]
+      operationId: getMonthlySurplus
+      summary: Eigenen gemeinsamen Automatik- und Zielstand lesen
+      description: Rein lesender gemeinsamer Snapshot aus Aktivierung, heutiger Auswahl, offener Summe und allen eigenen Zielen; erzeugt keine Monatsnachweise. Ein serverseitiger Monat und eine read-only REPEATABLE-READ-Transaktion. Auch bei gesperrter Gesamtfunktion lesbar.
+      security:
+        - AccessBearer: []
+      responses:
+        '200':
+          $ref: '#/components/responses/MonthlySurplusOverview'
+        '401':
+          $ref: '#/components/responses/SessionRejected'
+        '500':
+          $ref: '#/components/responses/MonthlySurplusUnavailable'
+  /monthly-surplus/selection:
+    put:
+      tags: [MonthlySurplus]
+      operationId: putMonthlySurplusSelection
+      summary: Eigenes Ziel auswählen und alle offenen Vormerkungen übernehmen
+      description: Nur nach ausdrücklicher Aktivierung und gültiger Gesamtfreigabe. Vor der neuen Auswahl alle fälligen Lücken historisch nachholen, anschließend alle offenen budgetierten Nachweise einschließlich Nullmonaten genau einmal binden. Auswahl gilt ab dem serverseitigen laufenden Monat; frühere Bindungen bleiben erhalten. Sämtliche Nachhol-, Fortschritts-, Bindungs-, Auswahl- und Markeränderungen werden gemeinsam committed oder verworfen. Keine Teilübernahme und keine Auswahl null. 200 bestätigt den gesamten Commit; bei ungewissem Ausgang vor Wiederholung GET laden.
+      security:
+        - AccessBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MonthlySurplusSelectionRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/MonthlySurplusOverview'
+        '400':
+          description: Ungültige Auswahl; keine Mutation, no-store.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MonthlySurplusSelectionError'
+        '401':
+          $ref: '#/components/responses/SessionRejected'
+        '404':
+          description: Eigenes Ziel nicht gefunden; fremde und fehlende IDs identisch, no-store.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MonthlySurplusSelectionError'
+        '409':
+          description: FEATURE_NOT_AVAILABLE, AUTOMATION_NOT_ACTIVE oder AMOUNT_LIMIT_EXCEEDED; gesamter Vorgang ohne bestätigte Mutation, no-store.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MonthlySurplusSelectionError'
+        '500':
+          $ref: '#/components/responses/MonthlySurplusUnavailable'
   /monthly-surplus/pending:
     get:
       tags: [MonthlySurplus]
@@ -696,6 +759,15 @@ components:
       schema:
         type: string
   responses:
+    MonthlySurplusOverview:
+      description: Gemeinsamer eigener Zustand; bei PUT erst nach äußerem Commit bestätigt, no-store.
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/NoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/MonthlySurplusOverviewResponse'
     MonthlySurplusActivation:
       description: Tatsächlich gespeicherter eigener Status; Erfolg bei Mutation erst nach Commit, no-store.
       headers:
@@ -856,6 +928,56 @@ components:
           schema:
             $ref: '#/components/schemas/SavingsGoalFeatureNotAvailableError'
   schemas:
+    MonthlySurplusSelectionRequest:
+      type: object
+      additionalProperties: false
+      required: [goalId]
+      properties:
+        goalId:
+          type: string
+          format: uuid
+          description: Erforderliche eigene vorhandene Ziel-ID; null ist kein Auswahlbefehl.
+    MonthlySurplusSelectionError:
+      type: object
+      additionalProperties: false
+      required: [code, message]
+      properties:
+        code:
+          type: string
+          enum: [INVALID_SELECTION, GOAL_NOT_FOUND, FEATURE_NOT_AVAILABLE, AUTOMATION_NOT_ACTIVE, AMOUNT_LIMIT_EXCEEDED]
+        message:
+          type: string
+    MonthlySurplusOverviewResponse:
+      type: object
+      additionalProperties: false
+      required: [active, activationMonth, currentMonth, selectedGoalId, pendingCents, goals]
+      properties:
+        active:
+          type: boolean
+        activationMonth:
+          type: string
+          format: date
+          nullable: true
+          pattern: '^(?!0000)\d{4}-(0[1-9]|1[0-2])-01$'
+          description: Unveränderlicher erster Herkunftsmonat; null genau ohne Aktivierung.
+        currentMonth:
+          type: string
+          format: date
+          pattern: '^(?!0000)\d{4}-(0[1-9]|1[0-2])-01$'
+        selectedGoalId:
+          type: string
+          format: uuid
+          nullable: true
+          description: Heutige gespeicherte Auswahl, null ohne eigenes vorhandenes ausgewähltes Ziel.
+        pendingCents:
+          type: integer
+          format: int64
+          minimum: 0
+          maximum: 9007199254740991
+        goals:
+          type: array
+          items:
+            $ref: '#/components/schemas/SavingsGoalResponse'
     MonthlySurplusPendingResponse:
       type: object
       additionalProperties: false

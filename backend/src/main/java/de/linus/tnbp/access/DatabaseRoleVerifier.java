@@ -33,10 +33,10 @@ class DatabaseRoleVerifier implements InitializingBean {
             throw new IllegalStateException("Die Laufzeitrolle darf weder privilegiert noch Tabellenbesitzer sein.");
         }
         Boolean protectedFinance = jdbc.queryForObject("""
-            SELECT count(*) = 5 AND bool_and(c.relrowsecurity AND c.relforcerowsecurity
+            SELECT count(*) = 6 AND bool_and(c.relrowsecurity AND c.relforcerowsecurity
                 AND has_schema_privilege(current_user, n.oid, 'USAGE'))
             FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
-            WHERE (n.nspname, c.relname) IN (('expenses', 'expenses'), ('budget', 'budgets'), ('savings_goals', 'goals'), ('monthly_surplus', 'activations'), ('monthly_surplus', 'month_records'))
+            WHERE (n.nspname, c.relname) IN (('expenses', 'expenses'), ('budget', 'budgets'), ('savings_goals', 'goals'), ('monthly_surplus', 'activations'), ('monthly_surplus', 'month_records'), ('monthly_surplus', 'selections'))
             """, Boolean.class);
         if (!Boolean.TRUE.equals(protectedFinance)) {
             throw new IllegalStateException("Die Finanzschemas benötigen minimale Laufzeitrechte und erzwungene RLS.");
@@ -53,10 +53,26 @@ class DatabaseRoleVerifier implements InitializingBean {
             SELECT has_table_privilege(current_user, 'monthly_surplus.month_records', 'SELECT')
                 AND has_table_privilege(current_user, 'monthly_surplus.month_records', 'INSERT')
                 AND NOT has_table_privilege(current_user, 'monthly_surplus.month_records', 'UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER')
-                AND NOT has_any_column_privilege(current_user, 'monthly_surplus.month_records', 'UPDATE,REFERENCES')
+                AND has_column_privilege(current_user, 'monthly_surplus.month_records', 'goal_id', 'UPDATE')
+                AND NOT has_column_privilege(current_user, 'monthly_surplus.month_records', 'consumed', 'UPDATE')
+                AND NOT has_column_privilege(current_user, 'monthly_surplus.month_records', 'user_id', 'UPDATE')
+                AND NOT has_column_privilege(current_user, 'monthly_surplus.month_records', 'origin_month', 'UPDATE')
+                AND NOT has_column_privilege(current_user, 'monthly_surplus.month_records', 'surplus_cents', 'UPDATE')
+                AND NOT has_any_column_privilege(current_user, 'monthly_surplus.month_records', 'REFERENCES')
             """, Boolean.class);
         if (!Boolean.TRUE.equals(immutableRecords))
-            throw new IllegalStateException("Monatsnachweise benötigen minimale Lese-/Erstanlagerechte.");
+            throw new IllegalStateException("Monatsnachweise benötigen minimale Herkunfts-/Bindungsrechte.");
+        Boolean selectionRights = jdbc.queryForObject("""
+            SELECT has_table_privilege(current_user, 'monthly_surplus.selections', 'SELECT')
+                AND has_table_privilege(current_user, 'monthly_surplus.selections', 'INSERT')
+                AND has_column_privilege(current_user, 'monthly_surplus.selections', 'goal_id', 'UPDATE')
+                AND NOT has_table_privilege(current_user, 'monthly_surplus.selections', 'UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER')
+                AND NOT has_column_privilege(current_user, 'monthly_surplus.selections', 'user_id', 'UPDATE')
+                AND NOT has_column_privilege(current_user, 'monthly_surplus.selections', 'effective_month', 'UPDATE')
+                AND NOT has_any_column_privilege(current_user, 'monthly_surplus.selections', 'REFERENCES')
+            """, Boolean.class);
+        if (!Boolean.TRUE.equals(selectionRights))
+            throw new IllegalStateException("Auswahlhistorie benötigt minimale Auswahlrechte.");
         Boolean protectedVersion = jdbc.queryForObject("""
             SELECT has_table_privilege(current_user, 'api_version.state', 'SELECT')
               AND NOT has_table_privilege(current_user, 'api_version.state', 'INSERT,UPDATE,DELETE,TRUNCATE')

@@ -249,7 +249,7 @@ class FinanceCoordinationIT {
                 try (var st = connection.createStatement(); var rs = st.executeQuery("SELECT NULLIF(current_setting('app.user_id', true), '') IS NULL")) {
                     rs.next(); assertThat(rs.getBoolean(1)).isTrue();
                 }
-                for (String table : List.of("budget.budgets", "expenses.expenses", "savings_goals.goals", "monthly_surplus.activations", "monthly_surplus.month_records")) {
+                for (String table : List.of("budget.budgets", "expenses.expenses", "savings_goals.goals", "monthly_surplus.activations", "monthly_surplus.month_records", "monthly_surplus.selections")) {
                     try (var st = connection.createStatement(); var rs = st.executeQuery("SELECT count(*) FROM " + table)) {
                         rs.next(); assertThat(rs.getInt(1)).isZero();
                     }
@@ -313,18 +313,18 @@ class FinanceCoordinationIT {
         assertThat(waiting).as("Finanzmutation wartet nachweislich auf dieselbe Seed-14-Kontosperre").isTrue();
     }
     private void assertNoFinanceRows(UUID user) {
-        for (String table : List.of("budget.budgets", "expenses.expenses", "savings_goals.goals", "monthly_surplus.activations", "monthly_surplus.month_records"))
+        for (String table : List.of("budget.budgets", "expenses.expenses", "savings_goals.goals", "monthly_surplus.activations", "monthly_surplus.month_records", "monthly_surplus.selections"))
             assertThat(PostgresFixture.ADMIN.queryForObject("SELECT count(*) FROM " + table + " WHERE user_id = ?", Integer.class, user)).isZero();
     }
     private void createProbe() {
         PostgresFixture.ADMIN.execute("CREATE TABLE public.finance_probe (table_name text, pid integer, transaction_id bigint, account text, isolation_level text, read_only text)");
         PostgresFixture.ADMIN.execute("GRANT INSERT ON public.finance_probe TO tnbp_runtime");
         PostgresFixture.ADMIN.execute("CREATE FUNCTION public.finance_probe() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN INSERT INTO public.finance_probe VALUES (TG_TABLE_SCHEMA, pg_backend_pid(), txid_current(), current_setting('app.user_id'), current_setting('transaction_isolation'), current_setting('transaction_read_only')); RETURN NEW; END $$");
-        for (String table : List.of("budget.budgets", "expenses.expenses", "savings_goals.goals", "monthly_surplus.activations", "monthly_surplus.month_records"))
+        for (String table : List.of("budget.budgets", "expenses.expenses", "savings_goals.goals", "monthly_surplus.activations", "monthly_surplus.month_records", "monthly_surplus.selections"))
             PostgresFixture.ADMIN.execute("CREATE TRIGGER finance_probe AFTER INSERT ON " + table + " FOR EACH ROW EXECUTE FUNCTION public.finance_probe()");
     }
     private void dropProbe() {
-        for (String table : List.of("budget.budgets", "expenses.expenses", "savings_goals.goals", "monthly_surplus.activations", "monthly_surplus.month_records"))
+        for (String table : List.of("budget.budgets", "expenses.expenses", "savings_goals.goals", "monthly_surplus.activations", "monthly_surplus.month_records", "monthly_surplus.selections"))
             PostgresFixture.ADMIN.execute("DROP TRIGGER finance_probe ON " + table);
         PostgresFixture.ADMIN.execute("DROP FUNCTION public.finance_probe()");
         PostgresFixture.ADMIN.execute("DROP TABLE public.finance_probe");

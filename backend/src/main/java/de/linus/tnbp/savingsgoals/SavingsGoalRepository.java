@@ -23,6 +23,14 @@ class SavingsGoalRepository {
         return Boolean.TRUE.equals(jdbc.queryForObject(
             "SELECT EXISTS(SELECT 1 FROM savings_goals.goals WHERE user_id = ? AND id = ?)", Boolean.class, userId, id));
     }
+    Optional<Long> currentProgress(UUID userId, UUID id) {
+        return jdbc.query("SELECT progress_cents FROM savings_goals.goals WHERE user_id = ? AND id = ?",
+            (row, index) -> row.getLong(1), userId, id).stream().findFirst();
+    }
+    void setProgress(UUID userId, UUID id, long progressCents) {
+        if (jdbc.update("UPDATE savings_goals.goals SET progress_cents = ? WHERE user_id = ? AND id = ?",
+                progressCents, userId, id) != 1) throw new SavingsGoals.NotFound();
+    }
     Optional<Goal> progress(UUID userId, UUID id, long progressCents) {
         return jdbc.query("""
             UPDATE savings_goals.goals SET progress_cents = ? WHERE user_id = ? AND id = ?

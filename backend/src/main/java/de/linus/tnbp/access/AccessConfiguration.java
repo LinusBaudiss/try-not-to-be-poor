@@ -104,8 +104,8 @@ class AccessConfiguration {
                     "/api/v1/access/refresh", "/api/v1/access/logout", "/api/v2/access/registrations",
                     "/api/v2/access/login", "/api/v2/access/refresh", "/api/v2/access/logout").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/access/csrf", "/api/v2/access/csrf").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/v1/access/me", "/api/v2/access/me", "/api/v2/capabilities", "/api/v1/expense-budget/budget", "/api/v1/expense-budget/expenses", "/api/v2/expenses", "/api/v2/budget", "/api/v2/month-summary", "/api/v1/expense-budget/month-summary", "/api/v1/savings-goals", "/api/v2/savings-goals", "/api/v2/monthly-surplus/activation", "/api/v2/monthly-surplus/pending").authenticated()
-                .requestMatchers(HttpMethod.PUT, "/api/v1/expense-budget/budget", "/api/v2/budget", "/api/v1/savings-goals/*/progress", "/api/v2/savings-goals/*/progress").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/v1/access/me", "/api/v2/access/me", "/api/v2/capabilities", "/api/v1/expense-budget/budget", "/api/v1/expense-budget/expenses", "/api/v2/expenses", "/api/v2/budget", "/api/v2/month-summary", "/api/v1/expense-budget/month-summary", "/api/v1/savings-goals", "/api/v2/savings-goals", "/api/v2/monthly-surplus/activation", "/api/v2/monthly-surplus/pending", "/api/v2/monthly-surplus").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/v2/monthly-surplus/selection", "/api/v1/expense-budget/budget", "/api/v2/budget", "/api/v1/savings-goals/*/progress", "/api/v2/savings-goals/*/progress").authenticated()
                 .requestMatchers(HttpMethod.POST, "/api/v1/expense-budget/expenses", "/api/v2/expenses", "/api/v1/savings-goals", "/api/v2/savings-goals", "/api/v2/monthly-surplus/activation").authenticated()
                 .requestMatchers(HttpMethod.PUT, "/api/v1/expense-budget/expenses/*", "/api/v2/expenses/*", "/api/v1/savings-goals/*", "/api/v2/savings-goals/*").authenticated()
                 .requestMatchers(HttpMethod.DELETE, "/api/v1/expense-budget/expenses/*", "/api/v2/expenses/*", "/api/v1/savings-goals/*", "/api/v2/savings-goals/*").authenticated()
@@ -119,6 +119,8 @@ class AccessConfiguration {
                         || request.getServletPath().equals("/api/v2/capabilities")
                         || request.getServletPath().equals("/api/v2/monthly-surplus/activation")
                         || request.getServletPath().equals("/api/v2/monthly-surplus/pending")
+                        || request.getServletPath().equals("/api/v2/monthly-surplus")
+                        || request.getServletPath().equals("/api/v2/monthly-surplus/selection")
                         || request.getServletPath().equals("/api/v1/expense-budget/budget")
                         || request.getServletPath().equals("/api/v2/budget")
                         || request.getServletPath().equals("/api/v2/month-summary")
@@ -140,7 +142,7 @@ class AccessConfiguration {
         String path = request.getServletPath(), method = request.getMethod();
         if (method.equals("POST")) return path.equals("/api/v2/monthly-surplus/activation") || path.equals("/api/v1/access/registrations") || path.equals("/api/v2/access/registrations")
             || path.equals("/api/v1/expense-budget/expenses") || path.equals("/api/v2/expenses") || path.equals("/api/v1/savings-goals") || path.equals("/api/v2/savings-goals");
-        if (method.equals("PUT") && (path.equals("/api/v1/expense-budget/budget") || path.equals("/api/v2/budget")
+        if (method.equals("PUT") && (path.equals("/api/v2/monthly-surplus/selection") || path.equals("/api/v1/expense-budget/budget") || path.equals("/api/v2/budget")
             || path.matches("/api/v1/savings-goals/[^/]+/progress") || path.matches("/api/v2/savings-goals/[^/]+/progress"))) return true;
         return (method.equals("PUT") || method.equals("DELETE")) && (path.matches("/api/v1/expense-budget/expenses/[^/]+")
             || path.matches("/api/v2/expenses/[^/]+") || path.matches("/api/v1/savings-goals/[^/]+") || path.matches("/api/v2/savings-goals/[^/]+"));

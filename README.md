@@ -386,7 +386,7 @@ Konfigurationsschalter zum Umgehen dieser Grenze. Der interne Einmonatsabschluss
 gesperrt. Er verwendet den historischen Budgetstand und die damaligen Ausgaben
 ab dem Erstmonat; `max(0, Budget − Ausgaben)` wird je abgeschlossenem Monat
 getrennt gespeichert. Ohne Budget bleibt ein eigener Nachweis ohne Geldbetrag,
-budgetierte Nullmonate bleiben offen. Wiederholung erhält den Erstnachweis.
+budgetierte Nullmonate bewahren ihre offene oder historische Zielbindung. Wiederholung erhält den Erstnachweis.
 Nachweis, exakte Summenprüfung und dauerhafter Nutzungsmarker committen gemeinsam;
 auch Null-/Ohne-Budget-Nachweise schließen die Rücknahme auf v1 aus.
 
@@ -397,8 +397,40 @@ verwendet `no-store` und bestätigt bei Ladefehlern keinen Betrag. Der Abschnitt
 „Monatsautomatik“ in Sparziele unterscheidet fehlende Aktivierung, Laden,
 Ladefehler und gespeicherte Vormerkung; Rückkehr, Fokus und Monatswechsel laden
 neu. Die Beträge sind noch keinem Ziel angerechnet; manuelle Zielpflege bleibt
-unabhängig. Zielauswahl, Übernahme, historische Korrektur und Hintergrundlauf
-bleiben Folgeumfang. Es gibt keinen öffentlichen Abschluss-/Jobauslöser.
+unabhängig. Die älteren Einzel-Lesewege bleiben kompatibel.
+
+Die gemeinsame Oberfläche verwendet `GET /api/v2/monthly-surplus`: Aktivierung,
+laufender Monat, gespeicherte Auswahl, offene Summe und vollständige eigene Ziele
+stammen aus derselben read-only REPEATABLE-READ-Transaktion. `PUT
+/api/v2/monthly-surplus/selection` nimmt ausschließlich eine eigene vorhandene
+`goalId` entgegen. Unter Kontosperre werden zuerst sämtliche fälligen Lücken
+chronologisch nach ihrer damaligen Auswahl geschlossen, dann alle offenen
+budgetierten Nachweise einschließlich Nullmonaten gebunden. Erst danach gilt die
+neue Auswahl ab dem laufenden Monat. 200 € + 100 € auf 50 € ergeben einmalig
+350 €, offene Summe 0; gespeicherte Herkunftsbeträge und frühere Zielbindungen
+bleiben erhalten. Eine fehlende historische Ziel-ID verbraucht den Monat ohne
+Umleitung. Auswahl, Nachholung, Anrechnung, Bindung und Nutzungsmarker teilen
+einen physischen Commit; auch ein späterer Grenz- oder Commitfehler rollt alle
+früheren Schritte zurück. V14 ergänzt diese Historie ohne Live-Ziel-Fremdschlüssel
+und erhält vorhandene offene V13-Nachweise.
+
+Die Zielauswahl ist ausdrücklich, ohne Vorauswahl des ersten Ziels. Zielanlage
+allein wählt nichts aus. Entwürfe bleiben bei Fehlern/offline im offenen Tab;
+ein unbestätigter Ausgang erfordert vor Wiederholung einen neuen gemeinsamen
+Stand. Während der Auswahl bleiben unabhängige manuelle Fortschrittskorrekturen
+erreichbar. Bei Übersicht-Ladefehler kann der eigene v2-Ziel-Leseweg die manuelle
+Pflege weiter ermöglichen; der Automatikteil bleibt ungeladen. Nach abgewiesener
+Authentifizierung gibt es keinen Ersatz-Leseweg. Bestätigte manuelle Mutationen entkräften
+ältere Übersichten und erneuern den gemeinsamen Stand im Hintergrund, ohne
+Entwürfe zu ersetzen. Ein Fehler dieser Aktualisierung erhält die bestätigten
+Zielwerte. Unbestätigte manuelle Mutationen warten auf den ausdrücklichen
+Prüf-/Ladeauftrag. Bei bekanntem Übersichtfehler liest die manuelle Ladeaktion
+direkt die eigenen Ziele; die Automatik-Ladeaktion versucht die gemeinsame
+Übersicht erneut. Nach weiterhin abgewiesener Authentifizierung schließt die
+persönliche Ansicht, ohne einen Ersatz-Leseweg zu öffnen.
+Historische Ausgabenkorrektur, vollständige Löschkoordination und Hintergrundlauf
+bleiben Folgeumfang. Die öffentliche Gesamtfreigabe bleibt geschlossen. Es gibt
+keinen öffentlichen Abschluss-/Jobauslöser.
 
 Der zusätzliche HTTPS-Positivnachweis läuft ausschließlich mit synthetischen
 Daten und Testklassen. Er startet und beendet zuerst einen echten kompatiblen

@@ -274,6 +274,9 @@ test('signierter Entwurf übersteht Offline, Feldfehler und verlorene Commitbest
   await context.setOffline(true);
   await expect(page.getByRole('button', { name: 'Fortschritt speichern', exact: true })).toBeDisabled();
   await expect(input).toHaveValue('-30'); await context.setOffline(false);
+  // Wiederverbinden lädt die gemeinsame Übersicht; erst danach ist Absenden wieder möglich.
+  await expect(page.getByRole('button', { name: 'Fortschritt speichern', exact: true })).toBeEnabled();
+  await expect(input).toHaveValue('-30');
   const endpoint = '**/api/v2/savings-goals/*/progress';
   await page.route(endpoint, route => route.fulfill({ status: 400, json: { code: 'VALIDATION_FAILED', fieldErrors: { progressCents: 'Prüfe den Gesamtfortschritt.' } } }));
   await input.press('Enter'); await expect(page.locator('#goal-progress-error')).toHaveText('Prüfe den Gesamtfortschritt.');

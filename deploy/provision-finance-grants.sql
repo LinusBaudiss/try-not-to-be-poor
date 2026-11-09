@@ -15,7 +15,7 @@ BEGIN
         END IF;
     END LOOP;
     FOREACH relation_name IN ARRAY ARRAY['expense_budget.expenses', 'expense_budget.budgets',
-                                         'expenses.expenses', 'budget.budgets', 'savings_goals.goals', 'monthly_surplus.activations', 'monthly_surplus.month_records'] LOOP
+                                         'expenses.expenses', 'budget.budgets', 'savings_goals.goals', 'monthly_surplus.activations', 'monthly_surplus.month_records', 'monthly_surplus.selections'] LOOP
         relation := to_regclass(relation_name);
         IF relation IS NULL THEN CONTINUE; END IF;
         SELECT string_agg(quote_ident(attname), ', ') INTO columns
@@ -29,6 +29,11 @@ BEGIN
             EXECUTE format('GRANT UPDATE (name, amount_cents), DELETE ON TABLE %s TO tnbp_runtime', relation);
         ELSIF relation_name = 'savings_goals.goals' THEN
             EXECUTE format('GRANT UPDATE (name, target_amount_cents, target_date, progress_cents), DELETE ON TABLE %s TO tnbp_runtime', relation);
+        ELSIF relation_name = 'monthly_surplus.selections' THEN
+            EXECUTE format('GRANT UPDATE (goal_id) ON TABLE %s TO tnbp_runtime', relation);
+        ELSIF relation_name = 'monthly_surplus.month_records' AND EXISTS (
+            SELECT 1 FROM pg_attribute WHERE attrelid = relation AND attname = 'goal_id' AND NOT attisdropped) THEN
+            EXECUTE format('GRANT UPDATE (goal_id) ON TABLE %s TO tnbp_runtime', relation);
         END IF;
     END LOOP;
     IF to_regprocedure('api_version.monthly_automation_available(boolean,uuid,text,text,text,timestamptz)') IS NOT NULL THEN

@@ -17,6 +17,19 @@ test('Reguläre Auslieferung bietet keine Aktivierung an und sperrt direktes HTT
   const pending = await request.get('http://127.0.0.1:8080/api/v2/monthly-surplus/pending', { headers: { Authorization: bearer } });
   expect(pending.status()).toBe(200); expect(await pending.json()).toEqual({ pendingCents: 0 });
   expect(pending.headers()['cache-control']).toBe('no-store');
+  const created = await request.post('http://127.0.0.1:8080/api/v2/savings-goals', {
+    headers: { Authorization: bearer }, data: { name: 'Eigenes Ziel', targetAmountCents: 10000 }
+  });
+  expect(created.status()).toBe(201); const goal = await created.json();
+  const selection = await request.put('http://127.0.0.1:8080/api/v2/monthly-surplus/selection', {
+    headers: { Authorization: bearer }, data: { goalId: goal.id }
+  });
+  expect(selection.status()).toBe(409); expect((await selection.json()).code).toBe('FEATURE_NOT_AVAILABLE');
+  expect(selection.headers()['cache-control']).toBe('no-store');
+  const overview = await request.get('http://127.0.0.1:8080/api/v2/monthly-surplus', { headers: { Authorization: bearer } });
+  expect(overview.status()).toBe(200); expect(overview.headers()['cache-control']).toBe('no-store');
+  expect(await overview.json()).toMatchObject({ active: false, activationMonth: null, selectedGoalId: null, pendingCents: 0,
+    goals: [{ id: goal.id, progressCents: 0 }] });
   await expect(page.locator('#pending-state')).toContainText('Vor deiner ausdrücklichen Aktivierung');
   expect((await request.post('http://127.0.0.1:8080/api/v2/monthly-surplus/pending', { headers: { Authorization: bearer } })).status()).toBe(403);
 });

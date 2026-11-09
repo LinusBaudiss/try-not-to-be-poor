@@ -144,7 +144,7 @@ public final class MonthlyAutomationE2eServer {
             "--api.version.release-sha256="+proof.get("release_sha256"),"--api.version.instance-id="+UUID.randomUUID(),
             "--access.session.signing-key="+Base64.getEncoder().encodeToString(new byte[32]),"--access.session.issuer=automation-test",
             "--access.session.audience=automation-spa","--access.session.origin=https://localhost:4200",
-            "--registration.link.enabled=true","--registration.link.sha256="+RegistrationTest.sha256(RegistrationTest.TOKEN),
+            "--api.features.signed-progress=true","--registration.link.enabled=true","--registration.link.sha256="+RegistrationTest.sha256(RegistrationTest.TOKEN),
             "--registration.link.issued-at="+CLOCK.now));
         var application=new SpringApplication(TnbpApplication.class,Controls.class).run(settings.toArray(String[]::new));
         resources.application=application;

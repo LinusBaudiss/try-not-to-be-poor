@@ -1,6 +1,8 @@
 package de.linus.tnbp.finance.http;
 
 import de.linus.tnbp.expenses.Expenses;
+import de.linus.tnbp.finance.FinanceApplication;
+import de.linus.tnbp.contract.v2.model.ExpenseCorrectionError;
 import de.linus.tnbp.contract.v2.model.ExpenseError;
 import de.linus.tnbp.contract.v2.model.ExpenseNotFoundError;
 import java.util.Map;
@@ -58,6 +60,19 @@ class ExpenseV2Errors {
     ResponseEntity<ExpenseError> limit() {
         return bad(ExpenseError.CodeEnum.MONTH_LIMIT_EXCEEDED, "Die Monatssumme würde die zulässige Centgrenze überschreiten.",
             Map.of("amountCents", "Dieser Betrag überschreitet die zulässige Monatssumme."));
+    }
+    @ExceptionHandler(ArithmeticException.class)
+    ResponseEntity<ExpenseCorrectionError> correctionLimit() {
+        return conflict(ExpenseCorrectionError.CodeEnum.AMOUNT_LIMIT_EXCEEDED,
+            "Die Ausgabe und ihre Monatskorrektur wurden nicht gespeichert. Die gemeinsame Finanzwirkung überschreitet die zulässige Centgrenze.");
+    }
+    @ExceptionHandler(FinanceApplication.FeatureNotAvailable.class)
+    ResponseEntity<ExpenseCorrectionError> correctionLocked() {
+        return conflict(ExpenseCorrectionError.CodeEnum.FEATURE_NOT_AVAILABLE,
+            "Die Ausgabe und ihre Monatskorrektur wurden nicht gespeichert. Die erforderliche Monatskorrektur ist derzeit gesperrt.");
+    }
+    private ResponseEntity<ExpenseCorrectionError> conflict(ExpenseCorrectionError.CodeEnum code, String message) {
+        return ResponseEntity.status(409).header("Cache-Control", "no-store").body(new ExpenseCorrectionError(code, message, Map.of()));
     }
     private ResponseEntity<ExpenseError> bad(ExpenseError.CodeEnum code, String message, Map<String, String> fields) {
         return ResponseEntity.badRequest().header("Cache-Control", "no-store").body(new ExpenseError(code, message, fields));

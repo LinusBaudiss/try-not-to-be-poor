@@ -21,6 +21,11 @@ public class Expenses {
         context.requireRead();
         return expenses.all(context.userId());
     }
+    /** Eigene unveränderte Herkunft für die äußere Mutationskoordination. */
+    public Expense find(FinanceContext context, UUID expenseId) {
+        context.requireRead();
+        return expenses.find(context.userId(), expenseId);
+    }
     public long monthTotal(FinanceContext context, LocalDate month) {
         context.requireRead();
         return Money.nonnegativeExact(expenses.monthTotal(context.userId(), month.withDayOfMonth(1)));

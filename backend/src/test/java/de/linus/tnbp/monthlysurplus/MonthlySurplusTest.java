@@ -29,4 +29,16 @@ class MonthlySurplusTest {
         assertThat(MonthlySurplus.eligible(null, november, october)).isFalse();
         assertThat(MonthlySurplus.eligible(october, october, october)).isFalse();
     }
+    @Test void ersatzsummePrueftDenNeuenGesamtstandOhneZwischenueberlauf() {
+        var open = new MonthlySurplus.MonthRecord(20000L,null,false);
+        assertThat(MonthlySurplus.replacementPending(java.math.BigDecimal.valueOf(30000),open,15000L)).isEqualTo(25000);
+        assertThat(MonthlySurplus.replacementPending(java.math.BigDecimal.valueOf(30000),open,0L)).isEqualTo(10000);
+        var atLimit = new MonthlySurplus.MonthRecord(Money.MAX_CENTS,null,false);
+        assertThat(MonthlySurplus.replacementPending(java.math.BigDecimal.valueOf(Money.MAX_CENTS),atLimit,Money.MAX_CENTS)).isEqualTo(Money.MAX_CENTS);
+        assertThatThrownBy(()->MonthlySurplus.replacementPending(java.math.BigDecimal.valueOf(Money.MAX_CENTS),open,20001L)).isInstanceOf(ArithmeticException.class);
+        var bound = new MonthlySurplus.MonthRecord(20000L,java.util.UUID.randomUUID(),true);
+        assertThat(MonthlySurplus.replacementPending(java.math.BigDecimal.ZERO,bound,15000L)).isZero();
+        var noBudget = new MonthlySurplus.MonthRecord(null,null,false);
+        assertThat(MonthlySurplus.replacementPending(java.math.BigDecimal.ZERO,noBudget,null)).isZero();
+    }
 }

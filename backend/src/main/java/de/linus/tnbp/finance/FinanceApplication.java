@@ -119,10 +119,41 @@ public class FinanceApplication {
     }
     public Expenses.Expense updateExpense(UUID userId, UUID id, String name, Long amountCents) {
         Expenses.validate(name, amountCents);
-        return transactions.mutate(userId, context -> expenses.update(context, id, name, amountCents));
+        return transactions.mutate(userId, context -> {
+            var previous = expenses.find(context, id);
+            LocalDate month = previous.recordedOn().withDayOfMonth(1);
+            boolean correction = previous.amountCents() != amountCents && monthlySurplus.requiresCorrection(context, month);
+            var result = expenses.update(context, id, name, amountCents);
+            if (correction) correctMonthlySurplusMonth(context, month);
+            return result;
+        });
     }
     public void deleteExpense(UUID userId, UUID id) {
-        transactions.mutate(userId, context -> { expenses.delete(context, id); return null; });
+        transactions.mutate(userId, context -> {
+            var previous = expenses.find(context, id);
+            LocalDate month = previous.recordedOn().withDayOfMonth(1);
+            boolean correction = monthlySurplus.requiresCorrection(context, month);
+            expenses.delete(context, id);
+            if (correction) correctMonthlySurplusMonth(context, month);
+            return null;
+        });
+    }
+    private void correctMonthlySurplusMonth(FinanceContext context, LocalDate month) {
+        // Erforderliche Korrekturen dürfen auch bei abgeschaltetem Gate nie übersprungen werden.
+        if (!automationReadiness.available() || !versions.lockMonthlyAutomation(context)) throw new FeatureNotAvailable();
+        var previous = monthlySurplus.record(context, month);
+        if (previous == null) {
+            closeMonthlySurplusMonth(context, month);
+            return;
+        }
+        Long surplus = MonthlySurplus.surplus(budgets.current(context, month), expenses.monthTotal(context, month));
+        boolean consumed = previous.consumed() || previous.goalId() != null && !goals.exists(context, previous.goalId());
+        if (previous.goalId() != null && !consumed) {
+            long difference = Money.subtract(surplus == null ? 0 : surplus, previous.surplusCents() == null ? 0 : previous.surplusCents());
+            goals.applyDifference(context, previous.goalId(), difference);
+        }
+        monthlySurplus.correct(context, month, surplus, consumed);
+        versions.markMonthlyEffect(context);
     }
     public Summary currentSummary(UUID userId) {
         return transactions.read(userId, context -> {

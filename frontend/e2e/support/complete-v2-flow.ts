@@ -59,10 +59,10 @@ export async function completeV2Flow(page: Page, signed = false): Promise<void> 
   await page.getByRole('button', { name: 'Netzwerkprüfung bearbeiten', exact: true }).click();
   await page.getByLabel('Betrag bearbeiten in Euro').fill('2');
   await page.getByRole('button', { name: 'Änderungen speichern', exact: true }).click();
-  await expect(page.locator('#expense-status')).toHaveText('Deine Ausgabe wurde geändert.');
+  await expect(page.locator('#expense-status')).toContainText('Deine Ausgabe wurde geändert.');
   await page.getByRole('button', { name: 'Netzwerkprüfung löschen', exact: true }).click();
   await page.getByRole('button', { name: 'Endgültig löschen', exact: true }).click();
-  await expect(page.locator('#expense-status')).toHaveText('Deine Ausgabe wurde gelöscht.');
+  await expect(page.locator('#expense-status')).toContainText('Deine Ausgabe wurde gelöscht.');
   await page.getByRole('link', { name: 'Sparziele', exact: true }).click();
   await expect(page.getByText('Du bist angemeldet. Deine persönlichen Sparziele sind geöffnet.')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Sparziel speichern', exact: true })).toBeEnabled();

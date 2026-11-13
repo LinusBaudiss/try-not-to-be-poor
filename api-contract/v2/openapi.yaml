@@ -406,7 +406,7 @@ paths:
       tags: [Expenses]
       operationId: putExpense
       summary: Name und Betrag einer eigenen Ausgabe ändern
-      description: ID, Eigentümer und ursprüngliches Kalenderdatum bleiben unverändert. Ersatzsumme im ursprünglichen Monat atomar prüfen; Erfolg erst nach Commit. Ausschließlich geprüftes Bearer-sub bestimmt den Eigentümer.
+      description: ID, Eigentümer und ursprüngliches Kalenderdatum bleiben unverändert. Ersatzsumme im ursprünglichen Monat atomar prüfen. Eine tatsächliche Betragsänderung eines abgeschlossenen Monats ab Aktivierung korrigiert dessen Vormerkung oder ausschließlich die Überschussdifferenz am ursprünglichen Sparziel. Ausgabe, Monatsnachweis, erforderlicher Fortschritt und Nutzungsmarker werden gemeinsam bestätigt, erst nach äußerem Commit. Reine Namensänderungen erzeugen keine Monatswirkung. Der Client liefert weder Differenz noch Ziel oder Herkunftsmonat. Ausschließlich geprüftes Bearer-sub bestimmt den Eigentümer.
       security:
         - AccessBearer: []
       requestBody:
@@ -417,7 +417,7 @@ paths:
               $ref: '#/components/schemas/ExpenseRequest'
       responses:
         '200':
-          description: Verbindlich geändert; no-store.
+          description: Ausgabe und erforderliche Monats-/Zielkorrektur gemeinsam verbindlich geändert; no-store.
           headers:
             Cache-Control:
               $ref: '#/components/headers/NoStore'
@@ -440,18 +440,20 @@ paths:
           $ref: '#/components/responses/SessionRejected'
         '404':
           $ref: '#/components/responses/ExpenseNotFound'
+        '409':
+          $ref: '#/components/responses/ExpenseCorrectionConflict'
         '500':
           $ref: '#/components/responses/ExpenseUnavailable'
     delete:
       tags: [Expenses]
       operationId: deleteExpense
       summary: Eine eigene Ausgabe endgültig löschen
-      description: Ausschließlich geprüftes Bearer-sub bestimmt den Eigentümer. Erfolg erst nach Commit.
+      description: Ausschließlich geprüftes Bearer-sub bestimmt den Eigentümer. Bei einer Ausgabe aus einem abgeschlossenen Monat ab Aktivierung gehört die erforderliche Korrektur von Vormerkung oder ursprünglichem Sparziel zur Löschung. Ausgabe, Nachweis, Fortschritt und Nutzungsmarker werden erst nach gemeinsamem äußerem Commit bestätigt. Der Client liefert keine Korrekturdifferenz, Ziel-ID oder Herkunftsmonat.
       security:
         - AccessBearer: []
       responses:
         '204':
-          description: Verbindlich gelöscht; leerer Antwortkörper, no-store.
+          description: Ausgabe samt erforderlicher Monats-/Zielkorrektur verbindlich gelöscht; leerer Antwortkörper, no-store.
           headers:
             Cache-Control:
               $ref: '#/components/headers/NoStore'
@@ -459,6 +461,8 @@ paths:
           $ref: '#/components/responses/SessionRejected'
         '404':
           $ref: '#/components/responses/ExpenseNotFound'
+        '409':
+          $ref: '#/components/responses/ExpenseCorrectionConflict'
         '500':
           $ref: '#/components/responses/ExpenseUnavailable'
   /budget:
@@ -836,6 +840,15 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ExpenseNotFoundError'
+    ExpenseCorrectionConflict:
+      description: AMOUNT_LIMIT_EXCEEDED bei unzulässiger gemeinsamer Finanzwirkung oder FEATURE_NOT_AVAILABLE bei gesperrter erforderlicher Korrektur. Gesamter Vorgang sicher ohne Mutation; no-store. Andere unbestätigte Fehler erlauben keine Rollbackaussage.
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/NoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ExpenseCorrectionError'
     ExpenseUnsupportedMediaType:
       description: Nicht unterstützter Content-Type; keine Mutation. Der Accept-Header nennt application/json.
       headers:
@@ -1264,6 +1277,20 @@ components:
         code:
           type: string
           enum: [EXPENSE_NOT_FOUND]
+        message:
+          type: string
+        fieldErrors:
+          type: object
+          additionalProperties:
+            type: string
+    ExpenseCorrectionError:
+      type: object
+      additionalProperties: false
+      required: [code, message, fieldErrors]
+      properties:
+        code:
+          type: string
+          enum: [AMOUNT_LIMIT_EXCEEDED, FEATURE_NOT_AVAILABLE]
         message:
           type: string
         fieldErrors:

@@ -289,7 +289,7 @@ class MonthlySelectionIT {
         fixture();var id=goal(first,5000);activated();application.selectMonthlyGoal(first,id);
         assertThat(jdbc.queryForObject("SELECT count(*) FROM monthly_surplus.selections",Integer.class)).isZero();
         transactions.read(second,context->{assertThat(jdbc.queryForList("SELECT * FROM monthly_surplus.selections WHERE user_id=?",first)).isEmpty();return null;});
-        for(String sql:List.of("UPDATE monthly_surplus.month_records SET consumed=true","UPDATE monthly_surplus.selections SET user_id=gen_random_uuid()","UPDATE monthly_surplus.selections SET effective_month=DATE '2026-01-01'","DELETE FROM monthly_surplus.selections","TRUNCATE monthly_surplus.selections")) assertThatThrownBy(()->jdbc.execute(sql)).isInstanceOf(org.springframework.dao.DataAccessException.class);
+        for(String sql:List.of("UPDATE monthly_surplus.selections SET user_id=gen_random_uuid()","UPDATE monthly_surplus.selections SET effective_month=DATE '2026-01-01'","DELETE FROM monthly_surplus.selections","TRUNCATE monthly_surplus.selections")) assertThatThrownBy(()->jdbc.execute(sql)).isInstanceOf(org.springframework.dao.DataAccessException.class);
         assertThatThrownBy(()->transactions.mutate(second,context->{jdbc.update("INSERT INTO monthly_surplus.selections VALUES (?,DATE '2026-12-01',?)",first,id);return null;})).isInstanceOf(org.springframework.dao.DataAccessException.class);
         assertThat(ADMIN.queryForObject("SELECT count(*) FROM pg_constraint WHERE conrelid IN ('monthly_surplus.selections'::regclass,'monthly_surplus.month_records'::regclass) AND confrelid='savings_goals.goals'::regclass",Integer.class)).isZero();
     }

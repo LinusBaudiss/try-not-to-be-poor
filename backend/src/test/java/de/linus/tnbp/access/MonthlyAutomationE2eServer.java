@@ -177,6 +177,14 @@ public final class MonthlyAutomationE2eServer {
                 finance.closeMonthlySurplusMonth(user,LocalDate.parse(data[1])); exchange.sendResponseHeaders(204,-1);
             } catch(RuntimeException failure) {exchange.sendResponseHeaders(500,-1);} finally {exchange.close();}
         });
+        controls.createContext("/correction-commit-failure",exchange->{
+            try {
+                boolean fail=Boolean.parseBoolean(new String(exchange.getRequestBody().readAllBytes(),java.nio.charset.StandardCharsets.UTF_8));
+                PostgresFixture.ADMIN.execute("DROP TRIGGER IF EXISTS reject_browser_correction ON monthly_surplus.month_records; DROP FUNCTION IF EXISTS monthly_surplus.reject_browser_correction()");
+                if(fail)PostgresFixture.ADMIN.execute("CREATE FUNCTION monthly_surplus.reject_browser_correction() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'synthetisch'; END $$; CREATE CONSTRAINT TRIGGER reject_browser_correction AFTER INSERT OR UPDATE ON monthly_surplus.month_records DEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION monthly_surplus.reject_browser_correction()");
+                exchange.sendResponseHeaders(204,-1);
+            } catch(RuntimeException failure) {exchange.sendResponseHeaders(500,-1);} finally {exchange.close();}
+        });
         controls.start();
         } catch(Exception|Error failure) {try{resources.close();}catch(Exception cleanup){failure.addSuppressed(cleanup);}throw failure;}
     }

@@ -250,7 +250,7 @@ class MonthlyPendingIT {
         assertThat(jdbc.queryForObject("SELECT count(*) FROM monthly_surplus.month_records",Integer.class)).isZero();
         assertThatThrownBy(()->transactions.mutate(second,ctx->{records.insert(first,OCT.plusMonths(1),1L);return null;})).isInstanceOf(org.springframework.dao.DataAccessException.class);
         assertThatThrownBy(()->transactions.mutate(first,ctx->{records.insert(first,OCT,1L);return null;})).isInstanceOf(org.springframework.dao.DuplicateKeyException.class);
-        for(String sql:List.of("UPDATE monthly_surplus.month_records SET surplus_cents=1","UPDATE monthly_surplus.month_records SET user_id=gen_random_uuid()","DELETE FROM monthly_surplus.month_records","TRUNCATE monthly_surplus.month_records"))
+        for(String sql:List.of("UPDATE monthly_surplus.month_records SET user_id=gen_random_uuid()","DELETE FROM monthly_surplus.month_records","TRUNCATE monthly_surplus.month_records"))
             assertThatThrownBy(()->transactions.mutate(first,ctx->{jdbc.execute(sql);return null;})).isInstanceOf(org.springframework.dao.DataAccessException.class);
         for(String month:List.of("2026-10-02","0001-01-02"))assertThatThrownBy(()->transactions.mutate(first,ctx->{records.insert(first,LocalDate.parse(month),1L);return null;})).isInstanceOf(org.springframework.dao.DataAccessException.class);
         for(long amount:new long[]{-1,de.linus.tnbp.shared.Money.MAX_CENTS+1})assertThatThrownBy(()->transactions.mutate(first,ctx->{records.insert(first,OCT.plusMonths(1),amount);return null;})).isInstanceOf(org.springframework.dao.DataAccessException.class);

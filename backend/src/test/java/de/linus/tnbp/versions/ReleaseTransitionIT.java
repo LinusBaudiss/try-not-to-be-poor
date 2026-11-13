@@ -356,7 +356,8 @@ class ReleaseTransitionIT {
             listener.start();
             run.environment.put("SERVER_ADDRESS", "127.0.0.2");
             try {
-                var rejected = run.guard("start", RELEASE, "--timeout", "5");
+                // Auch der Negativfall muss den echten Listener innerhalb des regulären Startbudgets erreichen.
+                var rejected = run.guard("start", RELEASE);
                 assertThat(rejected.code).isNotZero(); assertThat(rejected.output).contains("instanzgebundene v2-Bereitschaft fehlt");
                 assertThat(probes.get()).as("gleicher Port erreicht tatsächlich die accepted-socket-Prüfung").isPositive();
                 assertThat(db.admin.queryForObject("SELECT count(*) FROM pg_stat_activity WHERE datname=current_database() AND usename='tnbp_runtime'", Integer.class)).isZero();
@@ -369,11 +370,11 @@ class ReleaseTransitionIT {
         try (var db = new VersionDatabase(); var run = new Running(db, false)) {
             run.start(RELEASE);
             assertThat(run.guard("retire", RELEASE).code).isZero(); run.finish();
-            Path next = run.variant(RELEASE, "next.jar", Map.of("BOOT-INF/classes/db/migration/V15__synthetic_followup.sql",
+            Path next = run.variant(RELEASE, "next.jar", Map.of("BOOT-INF/classes/db/migration/V16__synthetic_followup.sql",
                 "CREATE TABLE api_version.synthetic_followup (id integer PRIMARY KEY);"));
             var migrated = run.guard("retire", next);
             assertThat(migrated.code).as(migrated.output).isZero();
-            assertThat(db.admin.queryForObject("SELECT max(version::integer) FROM access.flyway_schema_history WHERE version IS NOT NULL", Integer.class)).isEqualTo(15);
+            assertThat(db.admin.queryForObject("SELECT max(version::integer) FROM access.flyway_schema_history WHERE version IS NOT NULL", Integer.class)).isEqualTo(16);
             for (int restart=0; restart<2; restart++) { run.start(next); run.finish(); }
             assertThat(db.admin.queryForObject("SELECT v1_retired FROM api_version.state", Boolean.class)).isTrue();
         }
@@ -612,7 +613,7 @@ class ReleaseTransitionIT {
         try(var db=new VersionDatabase();var run=new Running(db,false)) {
             run.start(RELEASE);assertThat(run.guard("retire",RELEASE).code).isZero();run.finish();
             var before=db.admin.queryForMap("SELECT * FROM api_version.state");
-            Path broken=run.variant(RELEASE,"failed-migration.jar",Map.of("BOOT-INF/classes/db/migration/V15__broken.sql",
+            Path broken=run.variant(RELEASE,"failed-migration.jar",Map.of("BOOT-INF/classes/db/migration/V16__broken.sql",
                 "CREATE TABLE api_version.must_rollback(id integer); SELECT synthetic_missing_function();"));
             var rejected=run.guard("retire",broken);
             assertThat(rejected.code).isNotZero();assertThat(rejected.output).contains("Administrative Migration fehlgeschlagen");

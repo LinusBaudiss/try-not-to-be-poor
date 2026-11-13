@@ -638,3 +638,179 @@ test('Nur geladene Null gilt als bestätigte Vormerkung; Ladefehler bleibt unter
   await pendingReload(page).click(); await expect(page.locator('#pending-state')).toContainText('konnte nicht geladen werden');
   await page.unroute(endpoint); await pendingReload(page).click(); await expect(page.locator('#pending-state')).toHaveText('Vorgemerkt: 0,00 €');
 });
+
+async function editHistorical(page: Page, amount: string): Promise<void> {
+  await page.getByRole('link', { name: 'Ausgaben', exact: true }).click();
+  await page.getByRole('button', { name: 'Oktober vor Aktivierung bearbeiten', exact: true }).click();
+  await expect(page.locator('#expense-correction-hint')).toContainText('ursprünglichen Sparziels');
+  await page.getByLabel('Betrag bearbeiten in Euro', { exact: true }).fill(amount);
+  await page.getByRole('button', { name: 'Änderungen speichern', exact: true }).click();
+  await expect(page.locator('#expense-status')).toContainText('gemeinsam gespeichert');
+}
+async function setProgress(page: Page, amount: string, name = 'Berlin-Fahrt'): Promise<void> {
+  await card(page, name).getByRole('button', { name: `Fortschritt aktualisieren: ${name}`, exact: true }).click();
+  await page.getByLabel('Gesamtfortschritt in Euro', { exact: true }).fill(amount);
+  await page.getByRole('button', { name: 'Fortschritt speichern', exact: true }).click();
+  await expect(page.locator('#goal-progress-status')).toContainText('gespeichert');
+}
+for (const viewport of [{ width: 320, height: 568 }, { width: 390, height: 844 }, { width: 768, height: 1024 }, { width: 1280, height: 800 }]) {
+  test(`Historische Korrektur liefert frische Vormerkung und tatsächliche −30/70/150 Prozent bei ${viewport.width}`, async ({ page, request }) => {
+    await page.setViewportSize(viewport);
+    const email = await pendingAccount(request);
+    expect((await request.post('http://127.0.0.1:8081/close-month', { data: `${email}\n2026-11-01` })).status()).toBe(204);
+    await login(page, email); await expect(page.locator('#pending-state')).toContainText('300,00');
+    await editHistorical(page, '850');
+    let overviewReads = 0, summaryReads = 0;
+    page.on('request', req => { if (req.method() === 'GET' && req.url().endsWith('/monthly-surplus')) overviewReads++;
+      if (req.method() === 'GET' && req.url().endsWith('/month-summary')) summaryReads++; });
+    await page.getByRole('link', { name: 'Monat', exact: true }).click();
+    await expect(page.locator('app-month-summary')).toContainText('9.999,99'); expect(summaryReads).toBe(1);
+    await page.getByRole('link', { name: 'Sparziele', exact: true }).click();
+    await expect(page.locator('#pending-state')).toContainText('250,00'); expect(overviewReads).toBe(1);
+    await createGoal(page, 'Berlin-Fahrt'); await choose(page, 'Berlin-Fahrt'); await saveSelection(page).click();
+    await expect(card(page, 'Berlin-Fahrt')).toContainText('250,00'); await setProgress(page, '20');
+    await editHistorical(page, '900'); await page.getByRole('link', { name: 'Sparziele', exact: true }).click();
+    const target = card(page, 'Berlin-Fahrt');
+    await expect(target).toContainText('−30,00'); await expect(target).toContainText('−30 %');
+    await expect(target.locator('.savings-progress')).toHaveAttribute('aria-valuenow', '0');
+    await expect(target.locator('.savings-progress')).toHaveAttribute('aria-valuetext', /−30,00.*−30 %/);
+    await editHistorical(page, '800'); await page.getByRole('link', { name: 'Sparziele', exact: true }).click();
+    await expect(target).toContainText('70,00'); await expect(target).toContainText('70 %');
+    await editHistorical(page, '720'); await page.getByRole('link', { name: 'Sparziele', exact: true }).click();
+    await expect(target).toContainText('150,00'); await expect(target).toContainText('150 %');
+    await expect(target.getByRole('progressbar')).toHaveAttribute('aria-valuenow', '100');
+    await page.evaluate(() => document.documentElement.style.fontSize = '200%');
+    await expect(page.locator('html')).toHaveCSS('font-size', '32px');
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBeTruthy();
+    expect((await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze()).violations).toEqual([]);
+    await page.getByRole('link', { name: 'Ausgaben', exact: true }).click();
+    const trigger = page.getByRole('button', { name: 'Oktober vor Aktivierung löschen', exact: true });
+    await trigger.click(); const dialog = page.getByRole('dialog', { name: 'Ausgabe löschen?' });
+    await expect(dialog).toContainText('ursprünglichen Sparziels');
+    await expect(dialog.getByRole('button', { name: 'Abbrechen', exact: true })).toBeFocused();
+    await page.keyboard.press('Shift+Tab'); await expect(dialog.getByRole('button', { name: 'Endgültig löschen', exact: true })).toBeFocused();
+    await page.keyboard.press('Tab'); await page.keyboard.press('Escape'); await expect(trigger).toBeFocused();
+    await trigger.click();
+    if (viewport.width === 320) {
+      await dialog.getByRole('button', { name: 'Endgültig löschen', exact: true }).scrollIntoViewIfNeeded();
+      await page.screenshot({ path: '../.local/story-4.4-verification/final-320-200-dialog.png' });
+    }
+    await dialog.getByRole('button', { name: 'Endgültig löschen', exact: true }).click();
+    await expect(page.locator('#expense-status')).toContainText('gemeinsam gespeichert');
+    await expect(trigger).toHaveCount(0); await expect(page.locator('[data-expense-action]:focus')).toHaveCount(1);
+    await page.getByRole('link', { name: 'Sparziele', exact: true }).click(); await expect(target).toContainText('870,00');
+  });
+}
+
+test('Echte Gatesperre erhält historischen Entwurf, Listeneintrag und manuelle Reparatur', async ({ page, request, context }) => {
+  await login(page, await pendingAccount(request));
+  await page.getByRole('link', { name: 'Ausgaben', exact: true }).click();
+  await page.getByRole('button', { name: 'Oktober vor Aktivierung bearbeiten', exact: true }).click();
+  await page.getByLabel('Betrag bearbeiten in Euro', { exact: true }).fill('850');
+  await context.setOffline(true); await expect(page.getByRole('button', { name: 'Änderungen speichern', exact: true })).toBeDisabled();
+  await expect(page.getByLabel('Betrag bearbeiten in Euro', { exact: true })).toHaveValue('850');
+  await context.setOffline(false); await request.post('http://127.0.0.1:8081/readiness', { data: 'false' });
+  const failed = page.waitForResponse(response => response.url().includes('/expenses/') && response.request().method() === 'PUT');
+  await page.getByRole('button', { name: 'Änderungen speichern', exact: true }).click(); expect((await failed).status()).toBe(409);
+  await expect(page.locator('#expense-status')).toContainText('nicht gespeichert'); await expect(page.locator('#expense-status')).toContainText('gesperrt');
+  await expect(page.locator('.expense-uncertainty')).toHaveCount(0); await expect(page.getByLabel('Betrag bearbeiten in Euro', { exact: true })).toHaveValue('850');
+  await expect(page.locator('.expense-cards').getByText('800,00 €', { exact: true })).toHaveCount(1);
+  await page.getByRole('button', { name: 'Bearbeitung abbrechen', exact: true }).click();
+  await page.getByRole('button', { name: 'Oktober vor Aktivierung löschen', exact: true }).click();
+  await page.getByRole('button', { name: 'Endgültig löschen', exact: true }).click();
+  await expect(page.locator('#expense-delete-status')).toContainText('nicht gespeichert');
+  await expect(page.locator('.expense-uncertainty')).toHaveCount(0); await page.keyboard.press('Escape');
+  await page.getByRole('link', { name: 'Sparziele', exact: true }).click(); await setProgress(page, '20', 'Vorhandenes Ziel');
+  await expect(page.locator('#pending-state')).toContainText('200,00'); await expect(card(page)).toContainText('20,00');
+});
+for (const method of ['PUT', 'DELETE']) {
+  test(`Echter Commitfehler nach historischem ${method} bleibt unbestätigt und klärt den gemeinsamen Stand`, async ({ page, request }) => {
+    const email = await pendingAccount(request); await login(page, email);
+    await request.post('http://127.0.0.1:8081/correction-commit-failure', { data: 'true' });
+    try {
+      await page.getByRole('link', { name: 'Ausgaben', exact: true }).click();
+      if (method === 'PUT') {
+        await page.getByRole('button', { name: 'Oktober vor Aktivierung bearbeiten', exact: true }).click();
+        await page.getByLabel('Betrag bearbeiten in Euro', { exact: true }).fill('850');
+        await page.getByRole('button', { name: 'Änderungen speichern', exact: true }).click();
+        await expect(page.locator('#expense-status')).toContainText('nicht bestätigt');
+        await expect(page.getByLabel('Betrag bearbeiten in Euro', { exact: true })).toHaveValue('850');
+      } else {
+        await page.getByRole('button', { name: 'Oktober vor Aktivierung löschen', exact: true }).click();
+        await page.getByRole('button', { name: 'Endgültig löschen', exact: true }).click();
+        await expect(page.locator('#expense-delete-status')).toContainText('nicht bestätigt'); await page.keyboard.press('Escape');
+      }
+      await expect(page.locator('.expense-uncertainty')).toBeVisible();
+      await page.getByRole('button', { name: 'Historie zur Prüfung laden', exact: true }).click();
+      await expect(page.locator('.expense-cards')).toContainText('800,00');
+      await page.getByRole('button', { name: 'Ich habe die Historie geprüft', exact: true }).click();
+      await page.getByRole('link', { name: 'Sparziele', exact: true }).click();
+      await expect(page.locator('#pending-state')).toContainText('200,00'); await expect(card(page)).toContainText('50,00');
+    } finally { await request.post('http://127.0.0.1:8081/correction-commit-failure', { data: 'false' }); }
+  });
+}
+for (const method of ['PUT', 'DELETE']) test(`Späte historische ${method}-Bestätigung nach Kontowechsel belebt keine Finanzdaten oder Entwürfe`, async ({ page, request, context }) => {
+  const second = await account(request), first = await pendingAccount(request); await login(page, first);
+  await page.getByRole('link', { name: 'Ausgaben', exact: true }).click();
+  await page.getByRole('button', { name: 'Oktober vor Aktivierung bearbeiten', exact: true }).click();
+  await page.getByLabel('Betrag bearbeiten in Euro', { exact: true }).fill('850');
+  if (method === 'DELETE') await page.getByRole('button', { name: 'Oktober vor Aktivierung löschen', exact: true }).click();
+  await page.evaluate(() => { (window as any).historicalExpenses = (window as any).ng.getComponent(document.querySelector('app-expenses')); });
+  const held = gate(), ready = gate(); let path = '';
+  await page.route('**/api/v2/expenses/*', async route => {
+    const response = await route.fetch(); path = new URL(response.url()).pathname; ready.release(); await held.promise; await route.fulfill({ response });
+  });
+  await page.getByRole('button', { name: method === 'PUT' ? 'Änderungen speichern' : 'Endgültig löschen', exact: true }).click(); await ready.promise;
+  const other = await context.newPage(); await login(other, second); await expect(page).toHaveURL('/anmelden');
+  await expect(other.locator('#pending-state')).toContainText('Vor deiner ausdrücklichen Aktivierung');
+  await deliver(page, held.release, [{ path, method }]);
+  expect(await page.evaluate(() => { const old = (window as any).historicalExpenses; return { items: old.items(), editing: old.editing(), amount: old.editAmount, deleting: old.deleting(), status: old.status() }; }))
+    .toEqual({ items: [], editing: null, amount: '', deleting: null, status: '' });
+  await expect(other.locator('.savings-cards')).toHaveCount(0); await expect(page.locator('.expense-delete-dialog')).toHaveCount(0);
+  await other.getByRole('button', { name: 'Abmelden', exact: true }).click(); await login(page, first);
+  await expect(page.locator('#pending-state')).toContainText(method === 'PUT' ? '150,00' : '1.000,00');
+});
+
+test('Echter Korrekturgrenzfehler erhält den Entwurf bis zur manuellen Reparatur im zweiten Tab', async ({ page, request, context }) => {
+  await login(page, await pendingAccount(request)); await choose(page); await saveSelection(page).click();
+  await expect(card(page)).toContainText('350,00'); await expect(page.locator('#pending-state')).toContainText('0,00');
+  await setProgress(page, '90071992547409,91', 'Vorhandenes Ziel');
+  await expect(card(page)).toContainText('90.071.992.547.409,91');
+  await page.getByRole('link', { name: 'Ausgaben', exact: true }).click();
+  const originalRow = page.locator('.expense-cards li').filter({ has: page.getByRole('button', { name: 'Oktober vor Aktivierung bearbeiten', exact: true }) });
+  const confirmedRow = await originalRow.innerText();
+  await originalRow.getByRole('button', { name: 'Oktober vor Aktivierung bearbeiten', exact: true }).click();
+  await page.getByLabel('Name bearbeiten', { exact: true }).fill('Korrigierter Oktober');
+  await page.getByLabel('Betrag bearbeiten in Euro', { exact: true }).fill('750');
+  const rejected = page.waitForResponse(response => response.url().includes('/expenses/') && response.request().method() === 'PUT');
+  await page.getByRole('button', { name: 'Änderungen speichern', exact: true }).click();
+  const failure = await rejected;
+  expect(failure.status()).toBe(409); expect(failure.headers()['cache-control']).toBe('no-store');
+  expect((await failure.json()).code).toBe('AMOUNT_LIMIT_EXCEEDED');
+  await expect(page.locator('#expense-status')).toContainText('nicht gespeichert');
+  await expect(page.locator('#expense-status')).toContainText('manuelle Fortschrittspflege');
+  await expect(page.locator('.expense-uncertainty')).toHaveCount(0);
+  await expect(page.getByLabel('Name bearbeiten', { exact: true })).toHaveValue('Korrigierter Oktober');
+  await expect(page.getByLabel('Betrag bearbeiten in Euro', { exact: true })).toHaveValue('750');
+  await expect(originalRow).toHaveText(confirmedRow, { useInnerText: true });
+  const other = await context.newPage();
+  try {
+    await other.goto('/sparziele'); await expect(card(other)).toContainText('90.071.992.547.409,91');
+    await setProgress(other, '20', 'Vorhandenes Ziel'); await expect(card(other)).toContainText('20,00');
+    await page.bringToFront();
+    await expect(page.getByLabel('Name bearbeiten', { exact: true })).toHaveValue('Korrigierter Oktober');
+    await expect(page.getByLabel('Betrag bearbeiten in Euro', { exact: true })).toHaveValue('750');
+    await expect(originalRow).toHaveText(confirmedRow, { useInnerText: true });
+    const accepted = page.waitForResponse(response => response.url().includes('/expenses/') && response.request().method() === 'PUT');
+    await page.getByRole('button', { name: 'Änderungen speichern', exact: true }).click();
+    const success = await accepted; expect(success.status()).toBe(200);
+    expect(await success.json()).toMatchObject({ name: 'Korrigierter Oktober', amountCents: 75000, recordedOn: '2026-10-01' });
+    await expect(page.locator('#expense-status')).toContainText('gemeinsam gespeichert');
+    await expect(page.locator('.expense-editor')).toHaveCount(0);
+    const corrected = page.locator('.expense-cards li').filter({ has: page.getByRole('button', { name: 'Korrigierter Oktober bearbeiten', exact: true }) });
+    await expect(corrected).toContainText('750,00'); await expect(corrected).toContainText('01.10.2026');
+    await page.getByRole('link', { name: 'Sparziele', exact: true }).click();
+    await expect(card(page)).toContainText('70,00'); await expect(page.locator('#pending-state')).toContainText('0,00');
+    await pendingReload(other).click(); await expect(card(other)).toContainText('70,00');
+  } finally { await other.close(); }
+});

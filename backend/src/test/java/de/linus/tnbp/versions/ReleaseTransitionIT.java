@@ -356,7 +356,8 @@ class ReleaseTransitionIT {
             listener.start();
             run.environment.put("SERVER_ADDRESS", "127.0.0.2");
             try {
-                var rejected = run.guard("start", RELEASE, "--timeout", "5");
+                // Auch der Negativfall muss den echten Listener innerhalb des regulären Startbudgets erreichen.
+                var rejected = run.guard("start", RELEASE);
                 assertThat(rejected.code).isNotZero(); assertThat(rejected.output).contains("instanzgebundene v2-Bereitschaft fehlt");
                 assertThat(probes.get()).as("gleicher Port erreicht tatsächlich die accepted-socket-Prüfung").isPositive();
                 assertThat(db.admin.queryForObject("SELECT count(*) FROM pg_stat_activity WHERE datname=current_database() AND usename='tnbp_runtime'", Integer.class)).isZero();

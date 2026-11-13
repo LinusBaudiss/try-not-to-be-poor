@@ -20,6 +20,39 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 class FinanceMigrationIT {
     private static final JsonMapper JSON = JsonMapper.builder().build();
     @ParameterizedTest @ValueSource(booleans = {false, true})
+    void korrekturV15ErhaeltFrischenUndBefuelltenV14StandUndMinimaleRechte(boolean existing) throws Exception {
+        String name="correction_migration_"+UUID.randomUUID().toString().replace("-","");
+        var server=new JdbcTemplate(PostgresFixture.POSTGRES.getPostgresDatabase());
+        server.execute("CREATE DATABASE "+name+" OWNER tnbp_migrator");
+        String url="jdbc:postgresql://localhost:"+PostgresFixture.POSTGRES.getPort()+"/"+name;
+        var admin=new JdbcTemplate(new DriverManagerDataSource(url,"postgres","postgres"));
+        try {
+            Flyway.configure().dataSource(url,"tnbp_migrator","migration-test-only").schemas("access").defaultSchema("access").target("14").load().migrate();
+            if(existing)for(int account=0;account<2;account++) {
+                UUID user=UUID.randomUUID(),goal=UUID.randomUUID();
+                admin.update("INSERT INTO access.accounts VALUES (?,?,'$argon2id$synthetic',now())",user,user+"@example.org");
+                admin.update("INSERT INTO monthly_surplus.activations VALUES (?,DATE '2026-10-01')",user);
+                admin.update("INSERT INTO savings_goals.goals VALUES (?,?,'Bestand',10000,-3000,NULL)",goal,user);
+                admin.update("INSERT INTO monthly_surplus.selections VALUES (?,DATE '2026-10-01',?)",user,goal);
+                admin.update("INSERT INTO monthly_surplus.month_records VALUES (?,DATE '2026-10-01',20000,NULL,false),(?,DATE '2026-11-01',0,?,false),(?,DATE '2026-12-01',NULL,?,true)",user,user,goal,user,goal);
+                admin.update("INSERT INTO expenses.expenses VALUES (?,?,'Bestand',80000,DATE '2026-10-01')",UUID.randomUUID(),user);
+            }
+            var tables=List.of("access.accounts","monthly_surplus.activations","monthly_surplus.selections","monthly_surplus.month_records","savings_goals.goals","expenses.expenses","api_version.state");
+            var before=new LinkedHashMap<String,List<Map<String,Object>>>();
+            for(String table:tables)before.put(table,admin.queryForList("SELECT * FROM "+table+" ORDER BY 1,2"));
+            long oid=admin.queryForObject("SELECT 'monthly_surplus.month_records'::regclass::oid",Long.class);
+            Flyway.configure().dataSource(url,"tnbp_migrator","migration-test-only").schemas("access").defaultSchema("access").load().migrate();
+            provision(admin);provision(admin);
+            before.forEach((table,rows)->assertThat(admin.queryForList("SELECT * FROM "+table+" ORDER BY 1,2")).isEqualTo(rows));
+            assertThat(admin.queryForObject("SELECT 'monthly_surplus.month_records'::regclass::oid",Long.class)).isEqualTo(oid);
+            var runtime=new JdbcTemplate(new DriverManagerDataSource(url,"tnbp_runtime","runtime-test-only"));
+            for(String column:List.of("goal_id","surplus_cents","consumed"))assertThat(runtime.queryForObject("SELECT has_column_privilege(current_user,'monthly_surplus.month_records',?,'UPDATE')",Boolean.class,column)).isTrue();
+            for(String column:List.of("user_id","origin_month"))assertThat(runtime.queryForObject("SELECT has_column_privilege(current_user,'monthly_surplus.month_records',?,'UPDATE')",Boolean.class,column)).isFalse();
+            assertThat(runtime.queryForObject("SELECT has_table_privilege(current_user,'monthly_surplus.month_records','UPDATE,DELETE,TRUNCATE')",Boolean.class)).isFalse();
+            assertThat(runtime.queryForObject("SELECT count(*) FROM monthly_surplus.month_records",Integer.class)).isZero();
+        } finally {server.execute("DROP DATABASE "+name+" WITH (FORCE)");}
+    }
+    @ParameterizedTest @ValueSource(booleans = {false, true})
     void auswahlV14ErhaeltOffeneV13BestaendeEinschliesslichNullUndOhneBudget(boolean existing) throws Exception {
         String name="selection_migration_"+UUID.randomUUID().toString().replace("-","");
         var server=new JdbcTemplate(PostgresFixture.POSTGRES.getPostgresDatabase());

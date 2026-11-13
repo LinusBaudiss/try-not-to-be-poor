@@ -147,6 +147,8 @@ h1:focus, #expense-delete-status:focus { outline: 3px solid var(--focus-ring); o
   /* Text darf wachsen, ohne die mobile Inhaltsspalte durch verschachtelte Abstände zu verengen. */
   app-savings-goals .auth-card, app-savings-goals .savings-cards li { padding: 16px; }
   app-savings-goals button { padding-inline: min(.75rem, 12px); }
+  app-expenses-page .auth-card, .expense-editor, .expense-delete-dialog { padding: 16px; }
+  app-expenses-page button { padding-inline: min(.75rem, 12px); }
 }
 #automation-result:empty { margin: 0; }
 #automation-result:focus { outline: 3px solid var(--focus-ring); outline-offset: 3px; }

@@ -428,8 +428,31 @@ Prüf-/Ladeauftrag. Bei bekanntem Übersichtfehler liest die manuelle Ladeaktion
 direkt die eigenen Ziele; die Automatik-Ladeaktion versucht die gemeinsame
 Übersicht erneut. Nach weiterhin abgewiesener Authentifizierung schließt die
 persönliche Ansicht, ohne einen Ersatz-Leseweg zu öffnen.
-Historische Ausgabenkorrektur, vollständige Löschkoordination und Hintergrundlauf
-bleiben Folgeumfang. Die öffentliche Gesamtfreigabe bleibt geschlossen. Es gibt
+Historische Ausgabenänderungen und Löschungen (Story 4.4) korrigieren genau ihren
+abgeschlossenen Herkunftsmonat ab Aktivierung in derselben äußeren Transaktion.
+Ein fehlender Nachweis wird anhand des resultierenden Ausgabenstands und der
+damaligen Budget-/Zielauswahl erstmals geschlossen. Offene Vormerkungen werden
+ersetzt; bei gebundenen Monaten wirkt ausschließlich die Überschussdifferenz am
+aktuellen Gesamtfortschritt des ursprünglichen Ziels. Manuell 300 € minus 50 €
+ergeben 250 €, 20 € minus 50 € ergeben −30 €; spätere +100 € ergeben 70 €.
+Verbrauchte beziehungsweise fehlende historische Ziele werden weder neu angelegt
+noch umgeleitet. Budgetierte Nullmonate behalten ihre Bindung; ohne Budget bleibt
+der Betrag ausdrücklich fehlend. Unveränderter Betrag, reine Namensänderung,
+offener Monat und Monate vor Aktivierung haben keine Monatswirkung.
+
+V15 ergänzt ausschließlich Änderungsrechte für `surplus_cents` und `consumed`;
+Herkunftsidentitäten und alle Bestandsdaten bleiben erhalten. Fehler nach bereits
+ausgeführtem PUT/DELETE rollen Ausgabe, Nachweis, Fortschritt und Nutzungsmarker
+vollständig zurück. Bekannte 409-Codes `AMOUNT_LIMIT_EXCEEDED` und
+`FEATURE_NOT_AVAILABLE` bestätigen einen sicheren Fehlschlag; unbekannte oder
+unbestätigte Fehler erfordern vor Wiederholung die Zustandsprüfung. Der Browser
+berechnet keine Korrekturdifferenz. Die nächste Monats-/Sparzielansicht wird neu
+erzeugt und lädt den konsistenten gemeinsamen Stand, einschließlich tatsächlicher
+negativer und übererfüllter Fortschritte. PostgreSQL-Nachweise liegen in
+`MonthlyCorrectionIT`, HTTPS-Nachweise in `monthly-automation.spec.ts` und
+`expense-mutations.spec.ts`.
+
+Vollständige Löschkoordination und Hintergrundlauf bleiben Folgeumfang. Die öffentliche Gesamtfreigabe bleibt geschlossen. Es gibt
 keinen öffentlichen Abschluss-/Jobauslöser.
 
 Der zusätzliche HTTPS-Positivnachweis läuft ausschließlich mit synthetischen
@@ -442,7 +465,8 @@ Commitgrenze bleiben wirksam. Ports 8080, 8081, 4200 und 18082 müssen frei sein
 npm --prefix frontend run e2e:automation
 ```
 
-Die testinterne Uhr, Bereitschaft, historischen Quellen und Abschlusssteuerung
+Die testinterne Uhr, Bereitschaft, historischen Quellen, Abschlusssteuerung und
+gezielte Commitfehlersteuerung
 sind weder Bestandteil des Java-Releases
 noch Produktionskonfiguration. Der reguläre Browserlauf prüft die geschlossene
 Auslieferung zusätzlich zu den bisherigen manuellen Kernfunktionen. Diese

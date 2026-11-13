@@ -33,7 +33,7 @@ BEGIN
             EXECUTE format('GRANT UPDATE (goal_id) ON TABLE %s TO tnbp_runtime', relation);
         ELSIF relation_name = 'monthly_surplus.month_records' AND EXISTS (
             SELECT 1 FROM pg_attribute WHERE attrelid = relation AND attname = 'goal_id' AND NOT attisdropped) THEN
-            EXECUTE format('GRANT UPDATE (goal_id) ON TABLE %s TO tnbp_runtime', relation);
+            EXECUTE format('GRANT UPDATE (goal_id, surplus_cents, consumed) ON TABLE %s TO tnbp_runtime', relation);
         END IF;
     END LOOP;
     IF to_regprocedure('api_version.monthly_automation_available(boolean,uuid,text,text,text,timestamptz)') IS NOT NULL THEN

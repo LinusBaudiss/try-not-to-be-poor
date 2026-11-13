@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class MonthlySurplus {
     public record Activation(boolean active, LocalDate activationMonth) {}
+    /** Schmale eigene Herkunftsprojektion; null-Betrag bedeutet weiterhin ohne Budget. */
+    public record MonthRecord(Long surplusCents, UUID goalId, boolean consumed) {}
     private final ActivationRepository activations;
     private final MonthRecordRepository records;
     private final SelectionRepository selections;
@@ -43,6 +45,24 @@ public class MonthlySurplus {
         context.requireRead();
         return Money.nonnegativeExact(records.pending(context.userId()));
     }
+    public boolean requiresCorrection(FinanceContext context, LocalDate month) {
+        context.requireWrite();
+        return eligible(activations.month(context.userId()), context.month(), month);
+    }
+    public MonthRecord record(FinanceContext context, LocalDate month) {
+        context.requireRead();
+        return records.find(context.userId(), month);
+    }
+    /** Nur den Herkunftsbetrag ersetzen; vorhandene Zielbindung und Verbrauch erhalten. */
+    public void correct(FinanceContext context, LocalDate month, Long surplusCents, boolean consumed) {
+        context.requireWrite();
+        if (!requiresCorrection(context, month)) throw new IllegalStateException("Abgeschlossener aktivierter Monat erforderlich.");
+        MonthRecord previous = records.find(context.userId(), month);
+        if (previous == null) throw new IllegalStateException("Monatsnachweis erforderlich.");
+        if (surplusCents != null && !Money.nonnegative(surplusCents)) throw new ArithmeticException("Ungültige Centgrenze");
+        replacementPending(records.pending(context.userId()), previous, surplusCents);
+        records.correct(context.userId(), month, surplusCents, consumed);
+    }
     /** Vor Quellprojektionen prüfen; vorhandene Nachweise werden auch bei geänderten Quellen erhalten. */
     public boolean needsClosing(FinanceContext context, LocalDate month) {
         context.requireWrite();
@@ -59,6 +79,13 @@ public class MonthlySurplus {
         Money.nonnegativeExact(records.pending(context.userId()).add(BigDecimal.valueOf(surplus == null || goalId != null ? 0 : surplus)));
         records.insert(context.userId(), month, surplus, goalId, consumed);
         return true;
+    }
+    static long replacementPending(BigDecimal pending, MonthRecord previous, Long surplus) {
+        BigDecimal result = pending;
+        if (previous.goalId() == null) result = result
+            .subtract(BigDecimal.valueOf(previous.surplusCents() == null ? 0 : previous.surplusCents()))
+            .add(BigDecimal.valueOf(surplus == null ? 0 : surplus));
+        return Money.nonnegativeExact(result);
     }
     static boolean eligible(LocalDate activation, LocalDate current, LocalDate month) {
         return activation != null && month != null && month.getYear() >= 1 && month.getYear() <= 9999

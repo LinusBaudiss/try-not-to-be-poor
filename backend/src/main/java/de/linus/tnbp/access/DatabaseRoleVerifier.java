@@ -54,10 +54,10 @@ class DatabaseRoleVerifier implements InitializingBean {
                 AND has_table_privilege(current_user, 'monthly_surplus.month_records', 'INSERT')
                 AND NOT has_table_privilege(current_user, 'monthly_surplus.month_records', 'UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER')
                 AND has_column_privilege(current_user, 'monthly_surplus.month_records', 'goal_id', 'UPDATE')
-                AND NOT has_column_privilege(current_user, 'monthly_surplus.month_records', 'consumed', 'UPDATE')
+                AND has_column_privilege(current_user, 'monthly_surplus.month_records', 'consumed', 'UPDATE')
                 AND NOT has_column_privilege(current_user, 'monthly_surplus.month_records', 'user_id', 'UPDATE')
                 AND NOT has_column_privilege(current_user, 'monthly_surplus.month_records', 'origin_month', 'UPDATE')
-                AND NOT has_column_privilege(current_user, 'monthly_surplus.month_records', 'surplus_cents', 'UPDATE')
+                AND has_column_privilege(current_user, 'monthly_surplus.month_records', 'surplus_cents', 'UPDATE')
                 AND NOT has_any_column_privilege(current_user, 'monthly_surplus.month_records', 'REFERENCES')
             """, Boolean.class);
         if (!Boolean.TRUE.equals(immutableRecords))

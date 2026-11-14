@@ -1,0 +1,143 @@
+diff --git a/_bmad-output/implementation-artifacts/test-baseline/canonical-scenarios.csv b/_bmad-output/implementation-artifacts/test-baseline/canonical-scenarios.csv
+index 6e0a52a..c47134e 100644
+--- a/_bmad-output/implementation-artifacts/test-baseline/canonical-scenarios.csv
++++ b/_bmad-output/implementation-artifacts/test-baseline/canonical-scenarios.csv
+@@ -1594,7 +1594,7 @@ INF-13a38745b3ae58d9,infrastructure,PY:test_reference_release:ReferenceReleaseTe
+ INF-2273927df9df469d,infrastructure,PY:test_api_release_stop:StopRaceTest#test_weiter_vorhandenes_backend_verhindert_abschluss_in_beiden_stoppwegen,PY:test_api_release_stop:StopRaceTest#test_weiter_vorhandenes_backend_verhindert_abschluss_in_beiden_stoppwegen,"{""variant"": ""default"", ""bindings"": {}}","[""Both stop/recover paths raise \""konnte nicht beendet werden\""; lifecycle and assert_closed are not called; stopped remains false.""]",tool/infrastructure,SC:PY:test_api_release_stop:StopRaceTest#test_weiter_vorhandenes_backend_verhindert_abschluss_in_beiden_stoppwegen,[],"[""3.7/AC-2""]","[""tooling/infrastructure regression""]","[""Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution""]","[""Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.""]"
+ INF-318b4a0842fdff0e,infrastructure,PY:test_start_database:StartDatabaseTest#test_fehlgeschlagener_rechteabgleich_verhindert_den_erfolgreichen_start,PY:test_start_database:StartDatabaseTest#test_fehlgeschlagener_rechteabgleich_verhindert_den_erfolgreichen_start,"{""variant"": ""default"", ""bindings"": {}}","[""self.assertEqual(self.run_script().returncode, 29)"", ""self.assertEqual(len(self.operations()), 2)""]",tool/infrastructure,SC:PY:test_start_database:StartDatabaseTest#test_fehlgeschlagener_rechteabgleich_verhindert_den_erfolgreichen_start,[],"[""3.3/AC-7""]","[""tooling/infrastructure regression""]","[""Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution""]","[""Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.""]"
+ INF-434477e6c95d2a29,infrastructure,PY:test_test_baseline:BaselineTest#test_group_failure_stops_and_preserves_failed_log,PY:test_test_baseline:BaselineTest#test_group_failure_stops_and_preserves_failed_log,"{""variant"": ""default"", ""bindings"": {}}","[""self.assertEqual(data['status'], 'failed')"", ""self.assertEqual(data['runs'][0]['groups'][0]['exit_code'], 7)"", ""self.assertEqual(execute.call_count, 1)"", ""self.assertIsNone(data['summary']['median_seconds'])"", ""self.assertTrue((output / data['runs'][0]['groups'][0]['log']).exists())"", ""self.assertEqual(baseline.main(['--output', str(output), '--cache-note', 'test']), 1)""]",tool/infrastructure,SC:PY:test_test_baseline:BaselineTest#test_group_failure_stops_and_preserves_failed_log,[],"[""5.1/AC-8""]","[""tooling/infrastructure regression""]","[""Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution""]","[""Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.""]"
+-INF-4575d5bcc05c3643,infrastructure,PY:test_test_baseline:BaselineTest#test_success_executes_all_six_groups_for_all_five_runs,PY:test_test_baseline:BaselineTest#test_success_executes_all_six_groups_for_all_five_runs,"{""variant"": ""default"", ""bindings"": {}}","[""self.assertEqual(execute.call_count, 30)"", ""self.assertEqual([r['kind'] for r in data['runs']], ['warmup', 'measurement', 'measurement', 'measurement', 'clean'])"", ""self.assertTrue(data['summary']['local_evidence_complete'])"", ""self.assertEqual(data['status'], 'passed')"", ""self.assertEqual(baseline.main(['--output', str(output), '--cache-note', 'test']), 0)""]",tool/infrastructure,SC:PY:test_test_baseline:BaselineTest#test_success_executes_all_six_groups_for_all_five_runs,[],"[""5.1/AC-8""]","[""tooling/infrastructure regression""]","[""Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution""]","[""Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.""]"
++INF-4575d5bcc05c3643,infrastructure,PY:test_test_baseline:BaselineTest#test_success_executes_all_six_groups_for_all_five_runs,PY:test_test_baseline:BaselineTest#test_success_executes_all_six_groups_for_all_five_runs,"{""variant"": ""default"", ""bindings"": {}}","[""self.assertEqual(execute.call_count, 30)"", ""self.assertEqual([r['kind'] for r in data['runs']], ['warmup', 'measurement', 'measurement', 'measurement', 'clean'])"", ""self.assertTrue(data['summary']['local_evidence_complete'])"", ""self.assertEqual(data['status'], 'passed')"", ""self.assertEqual(baseline.main(['--output', str(output), '--cache-note', 'test']), 0)"", ""Phasenmessungsvariable ausschließlich an die echte Vertragsgruppe; Python-Testfixtures und andere Gruppen erhalten sie nicht.""]",tool/infrastructure,SC:PY:test_test_baseline:BaselineTest#test_success_executes_all_six_groups_for_all_five_runs,[],"[""5.1/AC-8""]","[""tooling/infrastructure regression""]","[""Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution""]","[""Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.""]"
+ INF-458dc6a1034092b1,infrastructure,PY:test_api_release_certificate:CertificateDurabilityTest#test_both_revocations_sync_the_directory_before_any_further_work,PY:test_api_release_certificate:CertificateDurabilityTest#test_both_revocations_sync_the_directory_before_any_further_work,"{""variant"": ""default"", ""bindings"": {}}","[""self.assertFalse((folder / 'rollback.json').exists())"", ""self.assertEqual(events, [False] if phase == 'begin' else [False, True, False])"", ""self.assertEqual(events, [False])"", ""self.assertTrue((folder / 'rollback.json').exists())"", ""self.assertRaisesRegex(RuntimeError, 'stop after')"", ""self.assertFalse(events[-1])""]",tool/infrastructure,SC:PY:test_api_release_certificate:CertificateDurabilityTest#test_both_revocations_sync_the_directory_before_any_further_work,[],"[""3.7/AC-1"", ""3.7/AC-3""]","[""tooling/infrastructure regression""]","[""Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution""]","[""Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.""]"
+ INF-541c42f279eb6e1c,infrastructure,PY:test_test_baseline:BaselineTest#test_incomplete_warmup_does_not_make_evidence_complete,PY:test_test_baseline:BaselineTest#test_incomplete_warmup_does_not_make_evidence_complete,"{""variant"": ""default"", ""bindings"": {}}","[""self.assertFalse(baseline.summarize([run(), run(), run(), warmup, run('clean')])['local_evidence_complete'])""]",tool/infrastructure,SC:PY:test_test_baseline:BaselineTest#test_incomplete_warmup_does_not_make_evidence_complete,[],"[""5.1/AC-8""]","[""tooling/infrastructure regression""]","[""Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution""]","[""Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.""]"
+ INF-552a8fd66a7f1c31,infrastructure,PY:test_contract_versions:ContractVersionsTest#test_fehlende_v2_basis_ist_ein_eigener_erstvertrag,PY:test_contract_versions:ContractVersionsTest#test_fehlende_v2_basis_ist_ein_eigener_erstvertrag,"{""variant"": ""default"", ""bindings"": {}}","[""self.assertEqual(result.returncode, 0, result.stderr)"", ""self.assertIn('COMPARE v1 basis -> basis', result.stdout)"", ""self.assertIn('Erstvertrag', result.stdout)"", ""self.assertIn(CONTRACTS[1], result.stdout)"", ""self.assertNotIn('COMPARE v2', result.stdout)""]",tool/infrastructure,SC:PY:test_contract_versions:ContractVersionsTest#test_fehlende_v2_basis_ist_ein_eigener_erstvertrag,[],"[""3.1/AC-2""]","[""tooling/infrastructure regression""]","[""Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution""]","[""Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.""]"
+diff --git a/_bmad-output/implementation-artifacts/test-baseline/manifest-refresh-verification.log b/_bmad-output/implementation-artifacts/test-baseline/manifest-refresh-verification.log
+index ad5bc65..74436a0 100644
+--- a/_bmad-output/implementation-artifacts/test-baseline/manifest-refresh-verification.log
++++ b/_bmad-output/implementation-artifacts/test-baseline/manifest-refresh-verification.log
+@@ -1,5 +1,5 @@
+ ............
+ ----------------------------------------------------------------------
+-Ran 12 tests in 1.751s
++Ran 12 tests in 1.823s
+ 
+ OK
+diff --git a/_bmad-output/implementation-artifacts/test-baseline/reviewed-scenario-manifest.json b/_bmad-output/implementation-artifacts/test-baseline/reviewed-scenario-manifest.json
+index 81bdd16..ded8226 100644
+--- a/_bmad-output/implementation-artifacts/test-baseline/reviewed-scenario-manifest.json
++++ b/_bmad-output/implementation-artifacts/test-baseline/reviewed-scenario-manifest.json
+@@ -22655,7 +22655,8 @@
+         "self.assertEqual([r['kind'] for r in data['runs']], ['warmup', 'measurement', 'measurement', 'measurement', 'clean'])",
+         "self.assertTrue(data['summary']['local_evidence_complete'])",
+         "self.assertEqual(data['status'], 'passed')",
+-        "self.assertEqual(baseline.main(['--output', str(output), '--cache-note', 'test']), 0)"
++        "self.assertEqual(baseline.main(['--output', str(output), '--cache-note', 'test']), 0)",
++        "Phasenmessungsvariable ausschließlich an die echte Vertragsgruppe; Python-Testfixtures und andere Gruppen erhalten sie nicht."
+       ],
+       "expected_variant": "default",
+       "discovery_status": "Python AST + successful unittest discovery",
+@@ -68573,7 +68574,8 @@
+         "self.assertEqual([r['kind'] for r in data['runs']], ['warmup', 'measurement', 'measurement', 'measurement', 'clean'])",
+         "self.assertTrue(data['summary']['local_evidence_complete'])",
+         "self.assertEqual(data['status'], 'passed')",
+-        "self.assertEqual(baseline.main(['--output', str(output), '--cache-note', 'test']), 0)"
++        "self.assertEqual(baseline.main(['--output', str(output), '--cache-note', 'test']), 0)",
++        "Phasenmessungsvariable ausschließlich an die echte Vertragsgruppe; Python-Testfixtures und andere Gruppen erhalten sie nicht."
+       ],
+       "primary_test_type": "tool/infrastructure",
+       "primary_source": "PY:test_test_baseline:BaselineTest#test_success_executes_all_six_groups_for_all_five_runs",
+@@ -69550,7 +69552,7 @@
+     "scripts/tests/test_create_registration_link.py": "4a3e0dd30c19a56d9ff0b673f737aaa81efc46a59b11a2a2cd654415bc1a15e0",
+     "scripts/tests/test_reference_release.py": "f3f330d12980719f7194f975fdb5d5b8e436f955cbc68b90361e94dbb34dc053",
+     "scripts/tests/test_start_database.py": "eaca9901d02badef799969ee35380b5a80f2711e0e1b5a37f80f8a5a0f1547e6",
+-    "scripts/tests/test_test_baseline.py": "f1326b5869d960b8f3288940ff7e9869404f7a6bdaefa81d79313c26e9abe3a1",
++    "scripts/tests/test_test_baseline.py": "44575fec7fc0d2b942e63c1cb09e26681d98bfc50f67200802fddc4dd95e8757",
+     "backend/src/test/java/de/linus/tnbp/versions/VersionDatabase.java": "c34bd5ff74010bc146d7fa550bbee921c4d4ad731b1967630d2fa29175e2fa3a",
+     "backend/src/test/java/de/linus/tnbp/versions/TransitionHooks.java": "1666ca0d50ec428484f8d01436ee0a51cc2b0c5c373d0edbbda7ee93a128b014",
+     "backend/src/test/java/de/linus/tnbp/access/PostgresFixture.java": "a581fd5dff63ab05a214aaaeb4b4f3423bdd63c4f14ab9666b9462e56ad6a9ff",
+@@ -123153,7 +123155,8 @@
+         "self.assertEqual([r['kind'] for r in data['runs']], ['warmup', 'measurement', 'measurement', 'measurement', 'clean'])",
+         "self.assertTrue(data['summary']['local_evidence_complete'])",
+         "self.assertEqual(data['status'], 'passed')",
+-        "self.assertEqual(baseline.main(['--output', str(output), '--cache-note', 'test']), 0)"
++        "self.assertEqual(baseline.main(['--output', str(output), '--cache-note', 'test']), 0)",
++        "Phasenmessungsvariable ausschließlich an die echte Vertragsgruppe; Python-Testfixtures und andere Gruppen erhalten sie nicht."
+       ],
+       "members": [
+         "SC:PY:test_test_baseline:BaselineTest#test_success_executes_all_six_groups_for_all_five_runs"
+diff --git a/_bmad-output/implementation-artifacts/test-baseline/source-inventory.json b/_bmad-output/implementation-artifacts/test-baseline/source-inventory.json
+index 711d814..a7a354e 100644
+--- a/_bmad-output/implementation-artifacts/test-baseline/source-inventory.json
++++ b/_bmad-output/implementation-artifacts/test-baseline/source-inventory.json
+@@ -33600,7 +33600,8 @@
+         "self.assertEqual([r['kind'] for r in data['runs']], ['warmup', 'measurement', 'measurement', 'measurement', 'clean'])",
+         "self.assertTrue(data['summary']['local_evidence_complete'])",
+         "self.assertEqual(data['status'], 'passed')",
+-        "self.assertEqual(baseline.main(['--output', str(output), '--cache-note', 'test']), 0)"
++        "self.assertEqual(baseline.main(['--output', str(output), '--cache-note', 'test']), 0)",
++        "Phasenmessungsvariable ausschließlich an die echte Vertragsgruppe; Python-Testfixtures und andere Gruppen erhalten sie nicht."
+       ],
+       "current_type": "tool/infrastructure",
+       "execution_paths": [
+@@ -33616,6 +33617,7 @@
+       "remaining_integration": "Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution",
+       "replacement_evidence": "OPEN; no replacement or removal",
+       "loops": [
++        "enumerate(execute.call_args_list)",
+         "data['runs']"
+       ],
+       "semantic_scenario": [
+@@ -33630,7 +33632,7 @@
+     {
+       "id": "PY:test_test_baseline:BaselineTest#test_phase_records_exit_code_and_inclusive_time",
+       "path": "scripts/tests/test_test_baseline.py",
+-      "line": 131,
++      "line": 134,
+       "variant": "default",
+       "observation": [
+         "self.assertEqual(event['name'], 'setup')",
+diff --git a/_bmad-output/implementation-artifacts/test-baseline/source-matrix.csv b/_bmad-output/implementation-artifacts/test-baseline/source-matrix.csv
+index 258729e..49841e0 100644
+--- a/_bmad-output/implementation-artifacts/test-baseline/source-matrix.csv
++++ b/_bmad-output/implementation-artifacts/test-baseline/source-matrix.csv
+@@ -743,5 +743,5 @@ PY:test_test_baseline:BaselineTest#test_fewer_than_three_measurements_rejected,s
+ PY:test_test_baseline:BaselineTest#test_existing_output_is_never_overwritten,scripts/tests/test_test_baseline.py,87,default,tool/infrastructure,"[""python:unittest discover""]","[""5.1/AC-8""]","[""self.assertRaises(FileExistsError)""]","[""tooling/infrastructure regression""]",tool/infrastructure,Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution,OPEN; no replacement or removal,"[""SC:PY:test_test_baseline:BaselineTest#test_existing_output_is_never_overwritten""]","[""INF-e0ba1e9eedfcfe1d""]",Python AST + successful unittest discovery
+ PY:test_test_baseline:BaselineTest#test_incomplete_warmup_does_not_make_evidence_complete,scripts/tests/test_test_baseline.py,92,default,tool/infrastructure,"[""python:unittest discover""]","[""5.1/AC-8""]","[""self.assertFalse(baseline.summarize([run(), run(), run(), warmup, run('clean')])['local_evidence_complete'])""]","[""tooling/infrastructure regression""]",tool/infrastructure,Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution,OPEN; no replacement or removal,"[""SC:PY:test_test_baseline:BaselineTest#test_incomplete_warmup_does_not_make_evidence_complete""]","[""INF-541c42f279eb6e1c""]",Python AST + successful unittest discovery
+ PY:test_test_baseline:BaselineTest#test_group_failure_stops_and_preserves_failed_log,scripts/tests/test_test_baseline.py,97,default,tool/infrastructure,"[""python:unittest discover""]","[""5.1/AC-8""]","[""self.assertEqual(data['status'], 'failed')"", ""self.assertEqual(data['runs'][0]['groups'][0]['exit_code'], 7)"", ""self.assertEqual(execute.call_count, 1)"", ""self.assertIsNone(data['summary']['median_seconds'])"", ""self.assertTrue((output / data['runs'][0]['groups'][0]['log']).exists())"", ""self.assertEqual(baseline.main(['--output', str(output), '--cache-note', 'test']), 1)""]","[""tooling/infrastructure regression""]",tool/infrastructure,Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution,OPEN; no replacement or removal,"[""SC:PY:test_test_baseline:BaselineTest#test_group_failure_stops_and_preserves_failed_log""]","[""INF-434477e6c95d2a29""]",Python AST + successful unittest discovery
+-PY:test_test_baseline:BaselineTest#test_success_executes_all_six_groups_for_all_five_runs,scripts/tests/test_test_baseline.py,114,default,tool/infrastructure,"[""python:unittest discover""]","[""5.1/AC-8""]","[""self.assertEqual(execute.call_count, 30)"", ""self.assertEqual([r['kind'] for r in data['runs']], ['warmup', 'measurement', 'measurement', 'measurement', 'clean'])"", ""self.assertTrue(data['summary']['local_evidence_complete'])"", ""self.assertEqual(data['status'], 'passed')"", ""self.assertEqual(baseline.main(['--output', str(output), '--cache-note', 'test']), 0)""]","[""tooling/infrastructure regression""]",tool/infrastructure,Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution,OPEN; no replacement or removal,"[""SC:PY:test_test_baseline:BaselineTest#test_success_executes_all_six_groups_for_all_five_runs""]","[""INF-4575d5bcc05c3643""]",Python AST + successful unittest discovery
+-PY:test_test_baseline:BaselineTest#test_phase_records_exit_code_and_inclusive_time,scripts/tests/test_test_baseline.py,131,default,tool/infrastructure,"[""python:unittest discover""]","[""5.1/AC-8""]","[""self.assertEqual(event['name'], 'setup')"", ""self.assertEqual(event['exit_code'], 3)"", ""self.assertGreaterEqual(event['seconds'], 0)"", ""self.assertEqual(baseline.measured_phase(['setup', 'false']), 3)""]","[""tooling/infrastructure regression""]",tool/infrastructure,Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution,OPEN; no replacement or removal,"[""SC:PY:test_test_baseline:BaselineTest#test_phase_records_exit_code_and_inclusive_time""]","[""INF-5e0ad876e38a783c""]",Python AST + successful unittest discovery
++PY:test_test_baseline:BaselineTest#test_success_executes_all_six_groups_for_all_five_runs,scripts/tests/test_test_baseline.py,114,default,tool/infrastructure,"[""python:unittest discover""]","[""5.1/AC-8""]","[""self.assertEqual(execute.call_count, 30)"", ""self.assertEqual([r['kind'] for r in data['runs']], ['warmup', 'measurement', 'measurement', 'measurement', 'clean'])"", ""self.assertTrue(data['summary']['local_evidence_complete'])"", ""self.assertEqual(data['status'], 'passed')"", ""self.assertEqual(baseline.main(['--output', str(output), '--cache-note', 'test']), 0)"", ""Phasenmessungsvariable ausschließlich an die echte Vertragsgruppe; Python-Testfixtures und andere Gruppen erhalten sie nicht.""]","[""tooling/infrastructure regression""]",tool/infrastructure,Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution,OPEN; no replacement or removal,"[""SC:PY:test_test_baseline:BaselineTest#test_success_executes_all_six_groups_for_all_five_runs""]","[""INF-4575d5bcc05c3643""]",Python AST + successful unittest discovery
++PY:test_test_baseline:BaselineTest#test_phase_records_exit_code_and_inclusive_time,scripts/tests/test_test_baseline.py,134,default,tool/infrastructure,"[""python:unittest discover""]","[""5.1/AC-8""]","[""self.assertEqual(event['name'], 'setup')"", ""self.assertEqual(event['exit_code'], 3)"", ""self.assertGreaterEqual(event['seconds'], 0)"", ""self.assertEqual(baseline.measured_phase(['setup', 'false']), 3)""]","[""tooling/infrastructure regression""]",tool/infrastructure,Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution,OPEN; no replacement or removal,"[""SC:PY:test_test_baseline:BaselineTest#test_phase_records_exit_code_and_inclusive_time""]","[""INF-5e0ad876e38a783c""]",Python AST + successful unittest discovery
+diff --git a/scripts/test-baseline.py b/scripts/test-baseline.py
+index 5951b98..27e137a 100755
+--- a/scripts/test-baseline.py
++++ b/scripts/test-baseline.py
+@@ -198,7 +198,13 @@ def main(argv=None):
+             with logfile.open('w') as log:
+                 try:
+                     phase_log = args.output / f'{index:02d}-{kind}-{name}-phases.jsonl'
+-                    env = dict(os.environ, TEST_BASELINE_PHASE_LOG=str(phase_log))
++                    env = dict(os.environ)
++                    # Only the real contract group owns these phase measurements.
++                    # Python contract fixtures run in isolated miniature repos and
++                    # must not inherit instrumentation of this outer invocation.
++                    env.pop('TEST_BASELINE_PHASE_LOG', None)
++                    if name == 'contract':
++                        env['TEST_BASELINE_PHASE_LOG'] = str(phase_log)
+                     exit_code = execute_group(command, log, env)
+                 except OSError as exc:
+                     log.write(str(exc) + '\n')
+diff --git a/scripts/tests/test_test_baseline.py b/scripts/tests/test_test_baseline.py
+index b71f757..5522d90 100644
+--- a/scripts/tests/test_test_baseline.py
++++ b/scripts/tests/test_test_baseline.py
+@@ -124,6 +124,9 @@ class BaselineTest(unittest.TestCase):
+                 self.assertEqual(baseline.main(['--output', str(output), '--cache-note', 'test']), 0)
+             data = json.loads((output / 'results.json').read_text())
+             self.assertEqual(execute.call_count, 30)
++            for index, call in enumerate(execute.call_args_list):
++                group = baseline.GROUPS[index % len(baseline.GROUPS)][0]
++                self.assertEqual('TEST_BASELINE_PHASE_LOG' in call.args[2], group == 'contract')
+             self.assertEqual([r['kind'] for r in data['runs']], ['warmup', 'measurement', 'measurement', 'measurement', 'clean'])
+             self.assertTrue(data['summary']['local_evidence_complete'])
+             self.assertEqual(data['status'], 'passed')

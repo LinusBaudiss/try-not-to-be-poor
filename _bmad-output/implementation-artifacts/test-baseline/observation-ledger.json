@@ -25438,9 +25438,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -25462,9 +25462,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -25486,9 +25486,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -25510,9 +25510,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -25534,9 +25534,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -25558,9 +25558,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -25582,9 +25582,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -25606,9 +25606,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -25630,9 +25630,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -25654,9 +25654,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -25678,9 +25678,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -25702,9 +25702,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -25726,9 +25726,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -25750,9 +25750,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -25776,9 +25776,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -25802,9 +25802,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -25828,9 +25828,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -25854,9 +25854,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -25880,9 +25880,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -25904,9 +25904,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -25928,9 +25928,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -25952,9 +25952,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -25976,9 +25976,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -26002,9 +26002,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -26028,9 +26028,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -26054,9 +26054,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -26080,9 +26080,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -26106,9 +26106,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -26130,9 +26130,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -26154,9 +26154,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -26178,9 +26178,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -26202,9 +26202,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -26226,9 +26226,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -26250,9 +26250,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -26274,9 +26274,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -26298,9 +26298,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -26322,9 +26322,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -26346,9 +26346,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -26370,9 +26370,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -26394,9 +26394,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -26418,9 +26418,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -26442,9 +26442,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -26466,9 +26466,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -26490,9 +26490,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -26514,9 +26514,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -26538,9 +26538,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -26562,9 +26562,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -26586,9 +26586,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -26610,9 +26610,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -26634,9 +26634,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -26658,9 +26658,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -26682,9 +26682,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -26706,9 +26706,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -26730,9 +26730,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -26753,9 +26753,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -26776,9 +26776,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -26799,9 +26799,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -26822,9 +26822,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -26845,9 +26845,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -26868,9 +26868,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -26891,9 +26891,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -26914,9 +26914,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -26937,9 +26937,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -26960,9 +26960,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -26983,9 +26983,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -27006,9 +27006,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -27029,9 +27029,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -27054,9 +27054,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -27079,9 +27079,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -27104,9 +27104,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -27129,9 +27129,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -27154,9 +27154,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -27179,9 +27179,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -27204,9 +27204,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -27229,9 +27229,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -27254,9 +27254,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -27279,9 +27279,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -27304,9 +27304,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -27329,9 +27329,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -27354,9 +27354,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -27379,9 +27379,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -27404,9 +27404,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -27429,9 +27429,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -27454,9 +27454,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -27479,9 +27479,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -27502,9 +27502,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -27525,9 +27525,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -27548,9 +27548,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -27571,9 +27571,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -27594,9 +27594,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -27617,9 +27617,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -27640,9 +27640,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -27663,9 +27663,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -27686,9 +27686,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -27709,9 +27709,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -27732,9 +27732,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -27755,9 +27755,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -27778,9 +27778,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -27801,9 +27801,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -27824,9 +27824,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -27847,9 +27847,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -27870,9 +27870,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -27893,9 +27893,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -27916,9 +27916,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -27939,9 +27939,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -27962,9 +27962,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -27985,9 +27985,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -28010,9 +28010,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -28035,9 +28035,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -28060,9 +28060,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -28085,9 +28085,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -28110,9 +28110,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -28135,9 +28135,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -28160,9 +28160,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -28185,9 +28185,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -28210,9 +28210,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -28235,9 +28235,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -28260,9 +28260,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -28285,9 +28285,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -28310,9 +28310,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -28335,9 +28335,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -28360,9 +28360,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -28385,9 +28385,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -28410,9 +28410,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -28435,9 +28435,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -28458,9 +28458,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -28481,9 +28481,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -28504,9 +28504,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -28527,9 +28527,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -28550,9 +28550,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -28573,9 +28573,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -28596,9 +28596,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -28619,9 +28619,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -28642,9 +28642,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -28666,9 +28666,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -28690,9 +28690,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -28716,9 +28716,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -28742,9 +28742,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -28766,9 +28766,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -28790,9 +28790,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -28814,9 +28814,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -28838,9 +28838,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -28864,9 +28864,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -28890,9 +28890,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -28914,9 +28914,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {
@@ -28938,9 +28938,9 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "primary_current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "primary_current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1"
     },
     {

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SavingsGoalRepository.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Try Not to Be Poor</a> &gt; <a href="index.source.html" class="el_package">de.linus.tnbp.savingsgoals</a> &gt; <span class="el_source">SavingsGoalRepository.java</span></div><h1>SavingsGoalRepository.java</h1><pre class="source lang-java linenums">package de.linus.tnbp.savingsgoals;
+
+import de.linus.tnbp.savingsgoals.SavingsGoals.Goal;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
+
+@Repository
+class SavingsGoalRepository {
+    private final JdbcTemplate jdbc;
+<span class="fc" id="L14">    SavingsGoalRepository(JdbcTemplate jdbc) { this.jdbc = jdbc; }</span>
+    List&lt;Goal&gt; all(UUID userId) {
+<span class="fc" id="L16">        return jdbc.query(&quot;&quot;&quot;</span>
+            SELECT id, name, target_amount_cents, progress_cents, target_date FROM savings_goals.goals
+            WHERE user_id = ? ORDER BY id
+<span class="fc" id="L19">            &quot;&quot;&quot;, (row, index) -&gt; new Goal(row.getObject(&quot;id&quot;, UUID.class), row.getString(&quot;name&quot;),</span>
+<span class="fc" id="L20">                row.getLong(&quot;target_amount_cents&quot;), row.getLong(&quot;progress_cents&quot;), row.getObject(&quot;target_date&quot;, LocalDate.class)), userId);</span>
+    }
+    boolean exists(UUID userId, UUID id) {
+<span class="fc" id="L23">        return Boolean.TRUE.equals(jdbc.queryForObject(</span>
+            &quot;SELECT EXISTS(SELECT 1 FROM savings_goals.goals WHERE user_id = ? AND id = ?)&quot;, Boolean.class, userId, id));
+    }
+    Optional&lt;Long&gt; currentProgress(UUID userId, UUID id) {
+<span class="fc" id="L27">        return jdbc.query(&quot;SELECT progress_cents FROM savings_goals.goals WHERE user_id = ? AND id = ?&quot;,</span>
+<span class="fc" id="L28">            (row, index) -&gt; row.getLong(1), userId, id).stream().findFirst();</span>
+    }
+    void setProgress(UUID userId, UUID id, long progressCents) {
+<span class="pc bpc" id="L31" title="1 of 2 branches missed.">        if (jdbc.update(&quot;UPDATE savings_goals.goals SET progress_cents = ? WHERE user_id = ? AND id = ?&quot;,</span>
+<span class="pc" id="L32">                progressCents, userId, id) != 1) throw new SavingsGoals.NotFound();</span>
+<span class="fc" id="L33">    }</span>
+    Optional&lt;Goal&gt; progress(UUID userId, UUID id, long progressCents) {
+<span class="fc" id="L35">        return jdbc.query(&quot;&quot;&quot;</span>
+            UPDATE savings_goals.goals SET progress_cents = ? WHERE user_id = ? AND id = ?
+            RETURNING id, name, target_amount_cents, progress_cents, target_date
+<span class="fc" id="L38">            &quot;&quot;&quot;, (row, index) -&gt; new Goal(row.getObject(&quot;id&quot;, UUID.class), row.getString(&quot;name&quot;),</span>
+<span class="fc" id="L39">                row.getLong(&quot;target_amount_cents&quot;), row.getLong(&quot;progress_cents&quot;), row.getObject(&quot;target_date&quot;, LocalDate.class)),</span>
+<span class="fc" id="L40">            progressCents, userId, id).stream().findFirst();</span>
+    }
+    Optional&lt;Goal&gt; update(UUID userId, UUID id, String name, long targetAmountCents, LocalDate targetDate) {
+<span class="fc" id="L43">        return jdbc.query(&quot;&quot;&quot;</span>
+            UPDATE savings_goals.goals SET name = ?, target_amount_cents = ?, target_date = ?
+            WHERE user_id = ? AND id = ?
+            RETURNING id, name, target_amount_cents, progress_cents, target_date
+<span class="fc" id="L47">            &quot;&quot;&quot;, (row, index) -&gt; new Goal(row.getObject(&quot;id&quot;, UUID.class), row.getString(&quot;name&quot;),</span>
+<span class="fc" id="L48">                row.getLong(&quot;target_amount_cents&quot;), row.getLong(&quot;progress_cents&quot;), row.getObject(&quot;target_date&quot;, LocalDate.class)),</span>
+<span class="fc" id="L49">            name, targetAmountCents, targetDate, userId, id).stream().findFirst();</span>
+    }
+    boolean delete(UUID userId, UUID id) {
+<span class="pc bpc" id="L52" title="1 of 2 branches missed.">        return jdbc.update(&quot;DELETE FROM savings_goals.goals WHERE user_id = ? AND id = ?&quot;, userId, id) == 1;</span>
+    }
+    void insert(UUID userId, Goal goal) {
+<span class="fc" id="L55">        jdbc.update(&quot;INSERT INTO savings_goals.goals (id, user_id, name, target_amount_cents, target_date) VALUES (?, ?, ?, ?, ?)&quot;,</span>
+<span class="fc" id="L56">            goal.id(), userId, goal.name(), goal.targetAmountCents(), goal.targetDate());</span>
+<span class="fc" id="L57">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

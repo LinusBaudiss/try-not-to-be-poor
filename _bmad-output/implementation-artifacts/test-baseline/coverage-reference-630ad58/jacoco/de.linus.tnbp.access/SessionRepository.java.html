@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SessionRepository.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Try Not to Be Poor</a> &gt; <a href="index.source.html" class="el_package">de.linus.tnbp.access</a> &gt; <span class="el_source">SessionRepository.java</span></div><h1>SessionRepository.java</h1><pre class="source lang-java linenums">package de.linus.tnbp.access;
+
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.util.Optional;
+import java.util.UUID;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public class SessionRepository {
+    private final JdbcTemplate jdbc;
+<span class="fc" id="L14">    public SessionRepository(JdbcTemplate jdbc) { this.jdbc = jdbc; }</span>
+<span class="fc" id="L15">    record Family(UUID id, UUID userId, Instant created, Instant lastUsed, boolean revoked) {}</span>
+<span class="fc" id="L16">    record Token(UUID familyId, boolean consumed) {}</span>
+
+    Optional&lt;Token&gt; token(String hash) {
+<span class="fc" id="L19">        return jdbc.query(&quot;SELECT family_id, consumed FROM access.refresh_tokens WHERE token_hash = ?&quot;,</span>
+<span class="fc" id="L20">            (r, i) -&gt; new Token(r.getObject(&quot;family_id&quot;, UUID.class), r.getBoolean(&quot;consumed&quot;)), hash).stream().findFirst();</span>
+    }
+    Family lock(UUID id) {
+<span class="fc" id="L23">        return jdbc.queryForObject(&quot;SELECT * FROM access.session_families WHERE id = ? FOR UPDATE&quot;, (r, i) -&gt;</span>
+<span class="fc" id="L24">            new Family(r.getObject(&quot;id&quot;, UUID.class), r.getObject(&quot;user_id&quot;, UUID.class),</span>
+<span class="fc" id="L25">                r.getTimestamp(&quot;created_at&quot;).toInstant(), r.getTimestamp(&quot;last_used_at&quot;).toInstant(), r.getBoolean(&quot;revoked&quot;)), id);</span>
+    }
+    void create(UUID id, UUID userId, Instant now) {
+<span class="fc" id="L28">        jdbc.update(&quot;INSERT INTO access.session_families (id, user_id, created_at, last_used_at) VALUES (?, ?, ?, ?)&quot;,</span>
+<span class="fc" id="L29">            id, userId, at(now), at(now));</span>
+<span class="fc" id="L30">    }</span>
+    void addToken(String hash, UUID family) {
+<span class="fc" id="L32">        jdbc.update(&quot;INSERT INTO access.refresh_tokens (token_hash, family_id) VALUES (?, ?)&quot;, hash, family);</span>
+<span class="fc" id="L33">    }</span>
+<span class="fc" id="L34">    void consume(String hash) { jdbc.update(&quot;UPDATE access.refresh_tokens SET consumed = TRUE WHERE token_hash = ?&quot;, hash); }</span>
+    void touch(UUID family, Instant now) {
+<span class="fc" id="L36">        jdbc.update(&quot;UPDATE access.session_families SET last_used_at = ? WHERE id = ?&quot;, at(now), family);</span>
+<span class="fc" id="L37">    }</span>
+<span class="fc" id="L38">    void revoke(UUID family) { jdbc.update(&quot;UPDATE access.session_families SET revoked = TRUE WHERE id = ?&quot;, family); }</span>
+<span class="fc" id="L39">    private static OffsetDateTime at(Instant instant) { return instant.atOffset(ZoneOffset.UTC); }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

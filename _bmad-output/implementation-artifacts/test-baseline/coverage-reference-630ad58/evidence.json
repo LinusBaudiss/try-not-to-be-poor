@@ -1,0 +1,2457 @@
+{
+  "reference_checkout": "630ad58c5ad688e6436d1c4edf1a4d354d63def5",
+  "provenance": "Vom Nutzer separat ausgeführtes -Pcoverage clean verify; erfolgreiche XML-Ergebnisse und JaCoCo-Berichte übernommen. Checkoutrevision jetzt gelesen, nicht durch Runner zur Coverage-Startzeit aufgezeichnet.",
+  "command": "./backend/mvnw -B -f backend/pom.xml -Pcoverage clean verify",
+  "instrumentation": "JaCoCo 0.8.14, Profil coverage; generierte Vertragspakete ausgeschlossen; separate Unter-JVMs nicht automatisch instrumentiert.",
+  "sessions": [
+    {
+      "id": "linus-desktop-2d452ccf",
+      "start": "1794681065456",
+      "dump": "1794681071719"
+    },
+    {
+      "id": "linus-desktop-9a8a1635",
+      "start": "1794681072462",
+      "dump": "1794682198633"
+    }
+  ],
+  "counters": {
+    "INSTRUCTION": {
+      "missed": 355,
+      "covered": 8106,
+      "percent": 95.804
+    },
+    "BRANCH": {
+      "missed": 106,
+      "covered": 654,
+      "percent": 86.053
+    },
+    "LINE": {
+      "missed": 37,
+      "covered": 1125,
+      "percent": 96.816
+    },
+    "COMPLEXITY": {
+      "missed": 112,
+      "covered": 704,
+      "percent": 86.275
+    },
+    "METHOD": {
+      "missed": 7,
+      "covered": 429,
+      "percent": 98.394
+    },
+    "CLASS": {
+      "missed": 2,
+      "covered": 79,
+      "percent": 97.531
+    }
+  },
+  "classes": [
+    {
+      "name": "de/linus/tnbp/savingsgoals/SavingsGoalRepository",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 5,
+          "covered": 256
+        },
+        "BRANCH": {
+          "missed": 2,
+          "covered": 2
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 22
+        },
+        "COMPLEXITY": {
+          "missed": 2,
+          "covered": 13
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 13
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/savingsgoals/SavingsGoals$NotFound",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 0,
+          "covered": 3
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 1
+        },
+        "COMPLEXITY": {
+          "missed": 0,
+          "covered": 1
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 1
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/savingsgoals/SavingsGoals",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 11,
+          "covered": 286
+        },
+        "BRANCH": {
+          "missed": 5,
+          "covered": 41
+        },
+        "LINE": {
+          "missed": 1,
+          "covered": 50
+        },
+        "COMPLEXITY": {
+          "missed": 5,
+          "covered": 33
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 15
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/savingsgoals/SavingsGoals$Goal",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 0,
+          "covered": 18
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 1
+        },
+        "COMPLEXITY": {
+          "missed": 0,
+          "covered": 1
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 1
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/savingsgoals/SavingsGoals$InvalidGoal",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 0,
+          "covered": 7
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 1
+        },
+        "COMPLEXITY": {
+          "missed": 0,
+          "covered": 1
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 1
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/TnbpApplication",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 49,
+          "covered": 3
+        },
+        "BRANCH": {
+          "missed": 2,
+          "covered": 0
+        },
+        "LINE": {
+          "missed": 10,
+          "covered": 1
+        },
+        "COMPLEXITY": {
+          "missed": 2,
+          "covered": 1
+        },
+        "METHOD": {
+          "missed": 1,
+          "covered": 1
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/monthlysurplus/MonthlySurplus",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 17,
+          "covered": 369
+        },
+        "BRANCH": {
+          "missed": 8,
+          "covered": 50
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 60
+        },
+        "COMPLEXITY": {
+          "missed": 8,
+          "covered": 39
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 18
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/monthlysurplus/SelectionRepository",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 0,
+          "covered": 75
+        },
+        "BRANCH": {
+          "missed": 0,
+          "covered": 2
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 7
+        },
+        "COMPLEXITY": {
+          "missed": 0,
+          "covered": 6
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 5
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/monthlysurplus/DeletedGoalRepository",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 0,
+          "covered": 40
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 4
+        },
+        "COMPLEXITY": {
+          "missed": 0,
+          "covered": 3
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 3
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/monthlysurplus/ActivationRepository",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 0,
+          "covered": 45
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 5
+        },
+        "COMPLEXITY": {
+          "missed": 0,
+          "covered": 4
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 4
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/monthlysurplus/MonthRecordRepository",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 8,
+          "covered": 185
+        },
+        "BRANCH": {
+          "missed": 0,
+          "covered": 2
+        },
+        "LINE": {
+          "missed": 2,
+          "covered": 19
+        },
+        "COMPLEXITY": {
+          "missed": 1,
+          "covered": 11
+        },
+        "METHOD": {
+          "missed": 1,
+          "covered": 10
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/monthlysurplus/MonthlySurplus$Activation",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 0,
+          "covered": 9
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 1
+        },
+        "COMPLEXITY": {
+          "missed": 0,
+          "covered": 1
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 1
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/monthlysurplus/MonthlySurplus$MonthRecord",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 0,
+          "covered": 12
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 1
+        },
+        "COMPLEXITY": {
+          "missed": 0,
+          "covered": 1
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 1
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/budget/Budgets$InvalidAmount",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 0,
+          "covered": 3
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 1
+        },
+        "COMPLEXITY": {
+          "missed": 0,
+          "covered": 1
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 1
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/budget/Budgets",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 0,
+          "covered": 51
+        },
+        "BRANCH": {
+          "missed": 0,
+          "covered": 6
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 11
+        },
+        "COMPLEXITY": {
+          "missed": 0,
+          "covered": 7
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 4
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/budget/BudgetRepository",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 0,
+          "covered": 57
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 6
+        },
+        "COMPLEXITY": {
+          "missed": 0,
+          "covered": 4
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 4
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/finance/FinanceApplication$AutomationNotActive",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 0,
+          "covered": 3
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 1
+        },
+        "COMPLEXITY": {
+          "missed": 0,
+          "covered": 1
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 1
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/finance/FinanceApplication",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 10,
+          "covered": 788
+        },
+        "BRANCH": {
+          "missed": 10,
+          "covered": 70
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 110
+        },
+        "COMPLEXITY": {
+          "missed": 10,
+          "covered": 69
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 39
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/finance/FinanceApplication$Summary",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 0,
+          "covered": 15
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 1
+        },
+        "COMPLEXITY": {
+          "missed": 0,
+          "covered": 1
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 1
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/finance/FinanceApplication$MonthlyOverview",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 0,
+          "covered": 21
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 1
+        },
+        "COMPLEXITY": {
+          "missed": 0,
+          "covered": 1
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 1
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/finance/MonthlyAutomationReadiness",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 0,
+          "covered": 5
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 2
+        },
+        "COMPLEXITY": {
+          "missed": 0,
+          "covered": 2
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 2
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/finance/FinanceApplication$FeatureNotAvailable",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 0,
+          "covered": 3
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 1
+        },
+        "COMPLEXITY": {
+          "missed": 0,
+          "covered": 1
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 1
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/finance/FinanceApplication$InvalidSelection",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 3,
+          "covered": 0
+        },
+        "LINE": {
+          "missed": 1,
+          "covered": 0
+        },
+        "COMPLEXITY": {
+          "missed": 1,
+          "covered": 0
+        },
+        "METHOD": {
+          "missed": 1,
+          "covered": 0
+        },
+        "CLASS": {
+          "missed": 1,
+          "covered": 0
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/access/SessionService$Issued",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 2,
+          "covered": 18
+        },
+        "LINE": {
+          "missed": 1,
+          "covered": 1
+        },
+        "COMPLEXITY": {
+          "missed": 1,
+          "covered": 1
+        },
+        "METHOD": {
+          "missed": 1,
+          "covered": 1
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/access/AccessConfiguration$2",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 0,
+          "covered": 24
+        },
+        "BRANCH": {
+          "missed": 0,
+          "covered": 4
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 4
+        },
+        "COMPLEXITY": {
+          "missed": 0,
+          "covered": 5
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 3
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/access/AccessConfiguration$1",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 0,
+          "covered": 128
+        },
+        "BRANCH": {
+          "missed": 1,
+          "covered": 29
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 25
+        },
+        "COMPLEXITY": {
+          "missed": 1,
+          "covered": 16
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 2
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/access/RegistrationV2Controller",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 0,
+          "covered": 23
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 5
+        },
+        "COMPLEXITY": {
+          "missed": 0,
+          "covered": 2
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 2
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/access/SessionController",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 2,
+          "covered": 119
+        },
+        "BRANCH": {
+          "missed": 1,
+          "covered": 1
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 13
+        },
+        "COMPLEXITY": {
+          "missed": 1,
+          "covered": 9
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 9
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/access/PasswordPolicy",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 2,
+          "covered": 130
+        },
+        "BRANCH": {
+          "missed": 6,
+          "covered": 20
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 20
+        },
+        "COMPLEXITY": {
+          "missed": 6,
+          "covered": 12
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 5
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/access/SessionErrors",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 2,
+          "covered": 77
+        },
+        "BRANCH": {
+          "missed": 2,
+          "covered": 14
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 10
+        },
+        "COMPLEXITY": {
+          "missed": 2,
+          "covered": 8
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 2
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/access/SessionService",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 19,
+          "covered": 311
+        },
+        "BRANCH": {
+          "missed": 5,
+          "covered": 21
+        },
+        "LINE": {
+          "missed": 1,
+          "covered": 47
+        },
+        "COMPLEXITY": {
+          "missed": 5,
+          "covered": 19
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 11
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/access/RegistrationService",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 2,
+          "covered": 133
+        },
+        "BRANCH": {
+          "missed": 2,
+          "covered": 14
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 30
+        },
+        "COMPLEXITY": {
+          "missed": 2,
+          "covered": 9
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 3
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/access/RegistrationLink",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 9,
+          "covered": 84
+        },
+        "BRANCH": {
+          "missed": 1,
+          "covered": 19
+        },
+        "LINE": {
+          "missed": 3,
+          "covered": 11
+        },
+        "COMPLEXITY": {
+          "missed": 2,
+          "covered": 12
+        },
+        "METHOD": {
+          "missed": 1,
+          "covered": 3
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/access/AccessConfiguration",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 0,
+          "covered": 580
+        },
+        "BRANCH": {
+          "missed": 0,
+          "covered": 78
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 68
+        },
+        "COMPLEXITY": {
+          "missed": 0,
+          "covered": 61
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 22
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/access/SessionRepository$Family",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 0,
+          "covered": 18
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 1
+        },
+        "COMPLEXITY": {
+          "missed": 0,
+          "covered": 1
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 1
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/access/RegistrationErrors",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 10,
+          "covered": 135
+        },
+        "BRANCH": {
+          "missed": 3,
+          "covered": 17
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 26
+        },
+        "COMPLEXITY": {
+          "missed": 3,
+          "covered": 14
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 7
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/access/SessionHttp",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 0,
+          "covered": 60
+        },
+        "BRANCH": {
+          "missed": 0,
+          "covered": 8
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 11
+        },
+        "COMPLEXITY": {
+          "missed": 0,
+          "covered": 6
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 2
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/access/SessionJwt",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 12,
+          "covered": 242
+        },
+        "BRANCH": {
+          "missed": 8,
+          "covered": 36
+        },
+        "LINE": {
+          "missed": 1,
+          "covered": 35
+        },
+        "COMPLEXITY": {
+          "missed": 8,
+          "covered": 19
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 5
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/access/SessionRepository",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 0,
+          "covered": 157
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 16
+        },
+        "COMPLEXITY": {
+          "missed": 0,
+          "covered": 11
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 11
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/access/SessionFailure",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 0,
+          "covered": 7
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 1
+        },
+        "COMPLEXITY": {
+          "missed": 0,
+          "covered": 1
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 1
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/access/SessionRepository$Token",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 0,
+          "covered": 9
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 1
+        },
+        "COMPLEXITY": {
+          "missed": 0,
+          "covered": 1
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 1
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/access/RegistrationService$EmailAddress",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 0,
+          "covered": 6
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 1
+        },
+        "COMPLEXITY": {
+          "missed": 0,
+          "covered": 1
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 1
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/access/DatabaseRoleVerifier",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 0,
+          "covered": 122
+        },
+        "BRANCH": {
+          "missed": 0,
+          "covered": 14
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 27
+        },
+        "COMPLEXITY": {
+          "missed": 0,
+          "covered": 10
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 3
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/access/RegistrationFailure",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 0,
+          "covered": 11
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 4
+        },
+        "COMPLEXITY": {
+          "missed": 0,
+          "covered": 2
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 2
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/access/AccountRepository$Credentials",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 0,
+          "covered": 9
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 1
+        },
+        "COMPLEXITY": {
+          "missed": 0,
+          "covered": 1
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 1
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/access/AccountRepository",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 0,
+          "covered": 58
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 9
+        },
+        "COMPLEXITY": {
+          "missed": 0,
+          "covered": 4
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 4
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/access/SessionSettings",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 2,
+          "covered": 15
+        },
+        "LINE": {
+          "missed": 1,
+          "covered": 1
+        },
+        "COMPLEXITY": {
+          "missed": 1,
+          "covered": 1
+        },
+        "METHOD": {
+          "missed": 1,
+          "covered": 1
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/access/SessionV2Controller",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 2,
+          "covered": 119
+        },
+        "BRANCH": {
+          "missed": 1,
+          "covered": 1
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 13
+        },
+        "COMPLEXITY": {
+          "missed": 1,
+          "covered": 9
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 9
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/access/RegistrationController",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 0,
+          "covered": 23
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 5
+        },
+        "COMPLEXITY": {
+          "missed": 0,
+          "covered": 2
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 2
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/finance/http/SavingsGoalV2Errors",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 1,
+          "covered": 253
+        },
+        "BRANCH": {
+          "missed": 2,
+          "covered": 22
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 32
+        },
+        "COMPLEXITY": {
+          "missed": 2,
+          "covered": 21
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 11
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/finance/http/ExpenseV2Errors",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 35,
+          "covered": 213
+        },
+        "BRANCH": {
+          "missed": 6,
+          "covered": 14
+        },
+        "LINE": {
+          "missed": 2,
+          "covered": 30
+        },
+        "COMPLEXITY": {
+          "missed": 6,
+          "covered": 17
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 13
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/finance/http/MonthlySurplusV2Controller",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 0,
+          "covered": 142
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 14
+        },
+        "COMPLEXITY": {
+          "missed": 0,
+          "covered": 10
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 10
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/finance/http/MonthSummaryV2Errors",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 0,
+          "covered": 24
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 3
+        },
+        "COMPLEXITY": {
+          "missed": 0,
+          "covered": 2
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 2
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/finance/http/ExpenseErrors",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 35,
+          "covered": 184
+        },
+        "BRANCH": {
+          "missed": 6,
+          "covered": 14
+        },
+        "LINE": {
+          "missed": 2,
+          "covered": 27
+        },
+        "COMPLEXITY": {
+          "missed": 6,
+          "covered": 14
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 10
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/finance/http/SavingsGoalController",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 0,
+          "covered": 141
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 12
+        },
+        "COMPLEXITY": {
+          "missed": 0,
+          "covered": 8
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 8
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/finance/http/MonthSummaryErrors",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 0,
+          "covered": 24
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 3
+        },
+        "COMPLEXITY": {
+          "missed": 0,
+          "covered": 2
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 2
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/finance/http/CapabilitiesV2Controller",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 0,
+          "covered": 51
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 6
+        },
+        "COMPLEXITY": {
+          "missed": 0,
+          "covered": 3
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 3
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/finance/http/SavingsGoalErrors",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 35,
+          "covered": 194
+        },
+        "BRANCH": {
+          "missed": 6,
+          "covered": 18
+        },
+        "LINE": {
+          "missed": 2,
+          "covered": 27
+        },
+        "COMPLEXITY": {
+          "missed": 6,
+          "covered": 15
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 9
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/finance/http/MonthlySurplusV2Errors",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 2,
+          "covered": 112
+        },
+        "BRANCH": {
+          "missed": 1,
+          "covered": 7
+        },
+        "LINE": {
+          "missed": 1,
+          "covered": 17
+        },
+        "COMPLEXITY": {
+          "missed": 1,
+          "covered": 11
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 8
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/finance/http/SavingsGoalV2Controller",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 0,
+          "covered": 185
+        },
+        "BRANCH": {
+          "missed": 2,
+          "covered": 4
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 22
+        },
+        "COMPLEXITY": {
+          "missed": 2,
+          "covered": 10
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 9
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/finance/http/MonthSummaryController",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 0,
+          "covered": 44
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 5
+        },
+        "COMPLEXITY": {
+          "missed": 0,
+          "covered": 2
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 2
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/finance/http/BudgetV2Errors",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 34,
+          "covered": 69
+        },
+        "BRANCH": {
+          "missed": 4,
+          "covered": 6
+        },
+        "LINE": {
+          "missed": 2,
+          "covered": 10
+        },
+        "COMPLEXITY": {
+          "missed": 4,
+          "covered": 4
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 3
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/finance/http/MonthSummaryV2Controller",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 0,
+          "covered": 44
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 5
+        },
+        "COMPLEXITY": {
+          "missed": 0,
+          "covered": 2
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 2
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/finance/http/BudgetController",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 0,
+          "covered": 47
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 5
+        },
+        "COMPLEXITY": {
+          "missed": 0,
+          "covered": 5
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 5
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/finance/http/SavingsGoalJson",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 0,
+          "covered": 15
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 3
+        },
+        "COMPLEXITY": {
+          "missed": 0,
+          "covered": 3
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 3
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/finance/http/ExpenseV2Controller",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 0,
+          "covered": 111
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 10
+        },
+        "COMPLEXITY": {
+          "missed": 0,
+          "covered": 7
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 7
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/finance/http/ExpenseController",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 0,
+          "covered": 111
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 10
+        },
+        "COMPLEXITY": {
+          "missed": 0,
+          "covered": 7
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 7
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/finance/http/SavingsGoalJson$CalendarDateDeserializer",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 24,
+          "covered": 19
+        },
+        "BRANCH": {
+          "missed": 0,
+          "covered": 4
+        },
+        "LINE": {
+          "missed": 3,
+          "covered": 6
+        },
+        "COMPLEXITY": {
+          "missed": 0,
+          "covered": 4
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 2
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/finance/http/BudgetV2Controller",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 0,
+          "covered": 47
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 5
+        },
+        "COMPLEXITY": {
+          "missed": 0,
+          "covered": 5
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 5
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/finance/http/SavingsGoalJson$CalendarDateInput",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 3,
+          "covered": 0
+        },
+        "LINE": {
+          "missed": 1,
+          "covered": 0
+        },
+        "COMPLEXITY": {
+          "missed": 1,
+          "covered": 0
+        },
+        "METHOD": {
+          "missed": 1,
+          "covered": 0
+        },
+        "CLASS": {
+          "missed": 1,
+          "covered": 0
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/finance/http/BudgetErrors",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 0,
+          "covered": 56
+        },
+        "BRANCH": {
+          "missed": 1,
+          "covered": 3
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 7
+        },
+        "COMPLEXITY": {
+          "missed": 1,
+          "covered": 4
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 3
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/shared/Money",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 0,
+          "covered": 66
+        },
+        "BRANCH": {
+          "missed": 0,
+          "covered": 16
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 9
+        },
+        "COMPLEXITY": {
+          "missed": 0,
+          "covered": 14
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 6
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/shared/ApiVersionState",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 5,
+          "covered": 355
+        },
+        "BRANCH": {
+          "missed": 13,
+          "covered": 45
+        },
+        "LINE": {
+          "missed": 1,
+          "covered": 48
+        },
+        "COMPLEXITY": {
+          "missed": 13,
+          "covered": 30
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 14
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/shared/FinanceTransactions",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 5,
+          "covered": 151
+        },
+        "BRANCH": {
+          "missed": 2,
+          "covered": 10
+        },
+        "LINE": {
+          "missed": 1,
+          "covered": 28
+        },
+        "COMPLEXITY": {
+          "missed": 2,
+          "covered": 10
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 6
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/shared/FinanceContext",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 1,
+          "covered": 136
+        },
+        "BRANCH": {
+          "missed": 3,
+          "covered": 13
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 29
+        },
+        "COMPLEXITY": {
+          "missed": 3,
+          "covered": 18
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 13
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/expenses/Expenses$InvalidExpense",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 0,
+          "covered": 7
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 1
+        },
+        "COMPLEXITY": {
+          "missed": 0,
+          "covered": 1
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 1
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/expenses/ExpenseRepository",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 8,
+          "covered": 181
+        },
+        "BRANCH": {
+          "missed": 2,
+          "covered": 2
+        },
+        "LINE": {
+          "missed": 1,
+          "covered": 18
+        },
+        "COMPLEXITY": {
+          "missed": 2,
+          "covered": 9
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 9
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/expenses/Expenses$Expense",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 0,
+          "covered": 15
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 1
+        },
+        "COMPLEXITY": {
+          "missed": 0,
+          "covered": 1
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 1
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/expenses/Expenses$MonthLimit",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 0,
+          "covered": 3
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 1
+        },
+        "COMPLEXITY": {
+          "missed": 0,
+          "covered": 1
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 1
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/expenses/Expenses$NotFound",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 0,
+          "covered": 3
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 1
+        },
+        "COMPLEXITY": {
+          "missed": 0,
+          "covered": 1
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 1
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    },
+    {
+      "name": "de/linus/tnbp/expenses/Expenses",
+      "counter": {
+        "INSTRUCTION": {
+          "missed": 0,
+          "covered": 231
+        },
+        "BRANCH": {
+          "missed": 1,
+          "covered": 27
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 39
+        },
+        "COMPLEXITY": {
+          "missed": 1,
+          "covered": 24
+        },
+        "METHOD": {
+          "missed": 0,
+          "covered": 11
+        },
+        "CLASS": {
+          "missed": 0,
+          "covered": 1
+        }
+      }
+    }
+  ],
+  "test_results": {
+    "surefire-reports": {
+      "tests": 49,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failsafe-reports": {
+      "tests": 433,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "file_sha256": {
+    "jacoco.exec": "024a3cf4c161fba3f009d2696c28cc28ba7eba3bf935336bf745161d100d5b62",
+    "failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlyDeletionIT.xml": "8cef8bb36ac6c084683ee067eb8a86ed1f3d776ddbd1f6c84fe433311f48cd3b",
+    "failsafe-reports/TEST-de.linus.tnbp.finance.FinanceCoordinationIT.xml": "28fc8b10c63c683f003ffb143a32cfe0f8a0213d593c98e0d643aa9ea1ea12f6",
+    "failsafe-reports/TEST-de.linus.tnbp.versions.ReleaseTransitionIT.xml": "d840e47b61d11d90a746463881c7958bf2a89e023aa62b9eb8855bce628ca49f",
+    "failsafe-reports/TEST-de.linus.tnbp.access.AccessVersionsIT.xml": "04724245f87669a81c5d0646a91cf61b9f5b25702dfb86d1d0754453461e15ab",
+    "failsafe-reports/TEST-de.linus.tnbp.savingsgoals.SavingsGoalV2IT.xml": "0ceec7566aa2c52e7dec8cc7e99b2491e2965b1b75589e0ccd08a642087fd934",
+    "failsafe-reports/TEST-de.linus.tnbp.expensebudget.MonthSummaryV2IT.xml": "1f51ec8e8955ba44d11bcb7f8c16b07e7c210f2e5f3e5a6b6c0d339a9c7eccc7",
+    "failsafe-reports/TEST-de.linus.tnbp.expensebudget.ExpenseIT.xml": "02b8938af42cff8d5e9ad65c09180de903966829bc1d08d71da5dc540d57697e",
+    "failsafe-reports/TEST-de.linus.tnbp.access.RegistrationIT.xml": "71f419f8323b3f0d2d6da1cfd81c2cd13148739ed0c790e511e8fe3909470a70",
+    "failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlyCorrectionIT.xml": "3a9b1731bf211b75858632b223bdf9d12c67c7b3163bbdec627e1aa79c206101",
+    "failsafe-reports/TEST-de.linus.tnbp.versions.AdministrativeSerializationIT.xml": "f104bfc2481436a15ff50b5176f0a6ad66e864eecee7bb6fb83e15a07ed34d26",
+    "failsafe-reports/TEST-de.linus.tnbp.expensebudget.ExpenseV2IT.xml": "e1f7ba5d0c8185d1b4787de958c6a894a68739bb8988f5f8279fceb6d5cc4a51",
+    "failsafe-reports/TEST-de.linus.tnbp.access.RegistrationV2IT.xml": "6669b309fed9b312e144cdf9124283227448b593e9952109493c8fb1ca87e73d",
+    "failsafe-reports/TEST-de.linus.tnbp.savingsgoals.SavingsGoalIT.xml": "547db0a7befb4b9511beb78b009aed8001f275bbe1158260cd41d27c1bfa53c1",
+    "failsafe-reports/failsafe-summary.xml": "5aefcefedcb2b2237227bfe042688472c34c136bff23af9a7ea670fc7e3fbb29",
+    "failsafe-reports/TEST-de.linus.tnbp.access.SessionV2IT.xml": "d47467c939860319ee31ebb67f1a68122091734adc9f5afa1eed591b07fc277d",
+    "failsafe-reports/TEST-de.linus.tnbp.access.SessionIT.xml": "cc8ad9bbfe9d79aefd7f7a508f6843b00b11181e402c88c67b53a69d3296c478",
+    "failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlySelectionIT.xml": "1d404cf23c339e89d5dd6e1f4c3753166851a36be38bac78b44fb510c7e1fb1e",
+    "failsafe-reports/TEST-de.linus.tnbp.savingsgoals.SignedProgressIT.xml": "ff8ce884af3cf328a9c406038a5d8f81488e5a53fc2e9c5f002ddb7c9e16c5a0",
+    "failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlyPendingIT.xml": "53ef81c48816382d471538252df5754cfefc61815fad55204276507e09185164",
+    "failsafe-reports/TEST-de.linus.tnbp.expensebudget.MonthSummaryIT.xml": "0d9b0fa9bb344ec7db68223e6ed1a78e9d1f51bd02914bd4993ef345645e944c",
+    "failsafe-reports/TEST-de.linus.tnbp.expensebudget.BudgetV2IT.xml": "7b27cc5504b7e3044f4fea023b5e3dd7370120848bb05892450d85e82ad4bc57",
+    "failsafe-reports/TEST-de.linus.tnbp.finance.FinanceMigrationIT.xml": "09c2cf37f9879a560520b05e7b3a28735d0c932669af88b528b77f6b5d86f680",
+    "failsafe-reports/TEST-de.linus.tnbp.versions.ApiVersionStateIT.xml": "663241478158fdecc2447571dcd2fcdbf0550198a4a2d4d28348c2019e811d99",
+    "failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlySurplusIT.xml": "b2cf4f79505b85fbd32e35535d245c6510a2b2040a12e914ad6b3abee00c8ade",
+    "failsafe-reports/TEST-de.linus.tnbp.versions.ApiRetirementIT.xml": "05a7b8cb2c176717578d2f975e8a466c3f02a2d82133401d972151618c83d0e1",
+    "failsafe-reports/TEST-de.linus.tnbp.expensebudget.BudgetIT.xml": "0afaa22be3bd10f7f8ae04ca1c64efb827b242408ef32fcc3fdf750c00a87471",
+    "jacoco/jacoco.xml": "ad99f6845fa0f06224999755e1dbbfe844a53f8f965d1ac59d024b8e981f29d6",
+    "jacoco/jacoco.csv": "d4fd1c6612b21b55ebf246be1cbcb45ef8bc59cf172055f3f51b23520afbd5f3",
+    "jacoco/index.html": "5b2840ca9fdcf6fa6916dfc543b1887e495650ff6130760f1081c675933dd6a0",
+    "jacoco/jacoco-sessions.html": "b490e7bebff3156c71d6e836b9e2a4ba8664396051b5315620336ac8e58ab5be",
+    "surefire-reports/TEST-de.linus.tnbp.access.RegistrationTest.xml": "01aed318ff428099c03af3fbf2bb5a2fcf4521a1710e78b3755b7adba6fa45c5",
+    "surefire-reports/TEST-de.linus.tnbp.expenses.ExpenseTest.xml": "e33d9aef54edd70d2f94d69849a91476359cba6784aa348c529dcd0bb5e2c06c",
+    "surefire-reports/TEST-de.linus.tnbp.access.MonthlyAutomationE2eServerTest.xml": "74a2158d20dd67eb7e8d373125f8d70b1af592f1ed9b8efbb5e42dd8dd56c060",
+    "surefire-reports/TEST-de.linus.tnbp.savingsgoals.SavingsGoalTest.xml": "0808d9b9e758584bd37469cc4fbe270bc572d8ca5054d04b2a40d7c55011813d",
+    "surefire-reports/TEST-de.linus.tnbp.budget.BudgetTest.xml": "aea1ed0c68b56b9a049b7a0dc39238824ba4d374335a6bbca70a738262854f3c",
+    "surefire-reports/TEST-de.linus.tnbp.shared.MoneyTest.xml": "e3b5a56e9a98afa04bdde0cae10a817dcbe1c2c024e82effd6e542e691e91df1",
+    "surefire-reports/TEST-de.linus.tnbp.access.SessionTest.xml": "778191e84c6849c09ccd301f96236abb0ddcfdf64e4254ec29c473e969e1c5bc",
+    "surefire-reports/TEST-de.linus.tnbp.finance.ArchitectureTest.xml": "0e9d1c0cc2171876a6d2b133aaf593628669b0d35f22bcd85ffa7b6913d8b5b5",
+    "surefire-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlySurplusTest.xml": "ac1ad176f1a3c2a0f30845aadb396e2c8f7d8019095d4f5065bb41b9dd890906",
+    "jacoco/jacoco-resources/method.gif": "6308ea5fba7f5e989f67e3e9bb3366f0cb4c90ab72e838af7ff813aca5aac487",
+    "jacoco/jacoco-resources/report.css": "0c464ff9ce9154fdf1a041b0efed7bc31da4a4c9744249d8ffa6b80f1c36ed9e",
+    "jacoco/jacoco-resources/greenbar.gif": "a29475aae8c0a107bc41459eb2ca079bc34fc5092f107a78a287c4864b325791",
+    "jacoco/jacoco-resources/branchfc.gif": "a90e2acee1486fcc06a9dc77dc3a2c7d1103f9f65a9c833834c22079ca446d76",
+    "jacoco/jacoco-resources/class.gif": "7ad9ac2c3f87d220f46d077e1b03d743ba45084cbbbccc2577e18c167f0fb2b1",
+    "jacoco/jacoco-resources/prettify.js": "743c6c4cab9499cd0bfe18a5a62281eccce843f47ec75eedb32eeb29c755aa68",
+    "jacoco/jacoco-resources/bundle.gif": "22656fa2e683f8e5f7adae31f091ce045fc91f042a8fed82ee7a05fc4029e0c2",
+    "jacoco/jacoco-resources/sort.js": "64407e72c5097000e41f9da4ac9a04131b8ec9479ca8987a5f5d5f2ad6383043",
+    "jacoco/jacoco-resources/redbar.gif": "906ce7fcec0fbac1a26c16521e375f020a513f0cf87888766b69c4bf63f4d9bd",
+    "jacoco/jacoco-resources/source.gif": "50257f70adf3ebe4d18bb2432a61370dac06dad7a45f235c8e5f376081251ac3",
+    "jacoco/jacoco-resources/branchnc.gif": "cfd1d5ad1e939c895fc6c3a4b621f5b4bec61a4b71f8386d3520f0920930ba1f",
+    "jacoco/jacoco-resources/prettify.css": "2247d0cf27cb7fd9cd850eb33444c059f261eb63a718c26b8f357a938401c5f9",
+    "jacoco/jacoco-resources/report.gif": "c765cafa65ec9a3c221b46062c6ef691f2dd5ff25628ee2c65cc9fe0b74aeea6",
+    "jacoco/jacoco-resources/sort.gif": "1875d39ff1be841991aa768486f1bcfc0ca02969323e2d2ec52ec156bb5cf240",
+    "jacoco/jacoco-resources/branchpc.gif": "a419dc4732e7c225b409bfd5457263de4f20b6aa9737f4636f6dfad36b194b1d",
+    "jacoco/jacoco-resources/group.gif": "eb39f2e57cabfd740ab8d0c5fb4b26fc5ca71b334e2cfc8d6481c34842b4c360",
+    "jacoco/jacoco-resources/session.gif": "1ec062e347bc7db837b9471b6c6128e1d0a5ae8d4c6a2eaa8fee4d5cb6441dab",
+    "jacoco/jacoco-resources/down.gif": "69233accdde9fbbeef01a6bb5c117a4af85f24f7312054bccbeb0f64b7bb437c",
+    "jacoco/jacoco-resources/package.gif": "82577b6b416bbf65cc99bc1c249e6462ae4ac708687fe2e1428b610c049300c2",
+    "jacoco/jacoco-resources/up.gif": "e1ce2c1d5128b701f2dc5bb5f63c5c402d5d8125ad9c3ffc31c6abc7767899a0",
+    "jacoco/de.linus.tnbp/index.html": "faf4fff6e9aba1ffccf71f8e7fb4bafde31f9fc0c0c8a15eb689e4381297cf8a",
+    "jacoco/de.linus.tnbp/TnbpApplication.html": "d3bfc6fec29ae21d203ec7341903d13e3c1da616390b4fe27ba2359bf7e37e8c",
+    "jacoco/de.linus.tnbp/TnbpApplication.java.html": "f54fa680d050149d58769c3190fa8e8b6db46319cdff268f00e3cbfae410f258",
+    "jacoco/de.linus.tnbp/index.source.html": "f7e31c1d67eb9e6a0697e3ac294bdc748a16620b5437f9e6715655e4a1e0bbf6",
+    "jacoco/de.linus.tnbp.access/SessionRepository$Token.html": "89acbd16275ddda43b12c051267d38c779a6c046bd8805901c8ed2656987b73c",
+    "jacoco/de.linus.tnbp.access/SessionErrors.html": "6d9acf07a3ef428f510001fbd02e250b81eff077978b9593c86ed95c926d1c6d",
+    "jacoco/de.linus.tnbp.access/AccountRepository$Credentials.html": "b8e23e3f6ce068981a5c242e70b17aee21b174ffe81c2abd183efdee84079596",
+    "jacoco/de.linus.tnbp.access/AccountRepository.java.html": "c89c2188094d15d8d53ce18ed07d674ed73efa1ea1961de4f7c5db302810bf8b",
+    "jacoco/de.linus.tnbp.access/SessionRepository.java.html": "c5c15fc49bd148764174371a79270b21ce9b55651219bd8bec060c9f056e7a77",
+    "jacoco/de.linus.tnbp.access/SessionController.html": "37272c7ef421ee566dc198d01987679a7c199a916d3eee2e8535a2ecf11fd937",
+    "jacoco/de.linus.tnbp.access/RegistrationService.java.html": "e15f0561f559a00002dce1a5f788737bd4cfed578de8523c25ff3349fe24045e",
+    "jacoco/de.linus.tnbp.access/SessionHttp.html": "fb57b307dd58746ee2a1ed312e64fde9df1dded590c31fb98a720b114acf6dee",
+    "jacoco/de.linus.tnbp.access/PasswordPolicy.java.html": "9b9e4f966bc0602acb07ab88b2526248c86f874f682742d0ef8a460a1ff8452a",
+    "jacoco/de.linus.tnbp.access/SessionErrors.java.html": "8473a3e2a39728653d7aadc38f0e82db8e981ed8e9922298b0350d84db2de43d",
+    "jacoco/de.linus.tnbp.access/SessionService$Issued.html": "b8cadb2644e323999fff884c3bcfc30503d67b3d52876a8c1fee9f10d5950239",
+    "jacoco/de.linus.tnbp.access/RegistrationFailure.html": "ef67716bd74642a0d9eaf7addf7c2e1195b876e1ce845d2b0c7d98665f0f637f",
+    "jacoco/de.linus.tnbp.access/SessionHttp.java.html": "23c812fe2fa91174f52e522ddfcd351c8483844759bcaa18c71219182b5abdd4",
+    "jacoco/de.linus.tnbp.access/RegistrationV2Controller.java.html": "1de251fe632fd03ef22af63204771765803bbb566bfe077d059089af5485055d",
+    "jacoco/de.linus.tnbp.access/SessionFailure.java.html": "1829d703c805ce6e3233beca6b2f2eb5657d6ca0a5cff09f588856ce19722b72",
+    "jacoco/de.linus.tnbp.access/AccessConfiguration.java.html": "5bc932ba42d8a52197c8df6d7b8bcf100c816f47529b54deb9ebad884f8aa6a9",
+    "jacoco/de.linus.tnbp.access/SessionController.java.html": "7482554fddcb556bd70f6f69d228a5979ee0f33b5084fe8abbf42e2eac700327",
+    "jacoco/de.linus.tnbp.access/DatabaseRoleVerifier.html": "90690bd8831c3019db4163190501a388105e18b3e08bd57b5f68077535ec719a",
+    "jacoco/de.linus.tnbp.access/AccessConfiguration$2.html": "73a133cf997ecfb8c602873631ca0c60f056dbbb7079dcd6f880e0dfef4808a6",
+    "jacoco/de.linus.tnbp.access/RegistrationLink.html": "fa76fbd5900053cbb03a725dac6bf758eb82d475755150f6c47374e164b1afe0",
+    "jacoco/de.linus.tnbp.access/RegistrationErrors.java.html": "44b8d946690dcee313ab5b2a0bc285d5d981db4076cf3798aaa969883afbb2fe",
+    "jacoco/de.linus.tnbp.access/SessionService.java.html": "60d56e5c64d54c9c6b3b6ce24b74da00dd41aafa66b18ec147bace01d136957b",
+    "jacoco/de.linus.tnbp.access/DatabaseRoleVerifier.java.html": "b155d6e89f04a14b758256e7d99dbfe18901a9f3a3ccca8bb984b02f3d4c482b",
+    "jacoco/de.linus.tnbp.access/SessionV2Controller.html": "8890eaa01b2d0c1bd4d962deb452caeb6e031114f1706c8611a7e47b549114f1",
+    "jacoco/de.linus.tnbp.access/AccessConfiguration.html": "eae0b49fff42081678375bf9dcaf4fd2d62935fd4697ce1232c9089f85bfdea4",
+    "jacoco/de.linus.tnbp.access/index.html": "402b81167e62863866ccc0b5924a3130047cbe717fd22699b6131e69de797ead",
+    "jacoco/de.linus.tnbp.access/RegistrationFailure.java.html": "8e77d2db563f33870792376c58d6ff93535279f113d34e7de22a46452caa4e72",
+    "jacoco/de.linus.tnbp.access/PasswordPolicy.html": "8ad8c8b6ecdee852c94889550c23c8366c3e2fb682987b3138fb5885bcf82655",
+    "jacoco/de.linus.tnbp.access/SessionSettings.html": "f0e12cbdfeaa5d0e95c9961b0e5767590bccb8e8e3570a9c9adafd5805dfd5c4",
+    "jacoco/de.linus.tnbp.access/RegistrationController.java.html": "58d4e15b97b9c60de4a9ec9a20cf205f928b7a95a2bce5624f2c47f13bcc080c",
+    "jacoco/de.linus.tnbp.access/SessionV2Controller.java.html": "be9db25ba6919e34fe5eb017db843ec4a50b2264e63ca892ec3136e7df8caf1e",
+    "jacoco/de.linus.tnbp.access/SessionRepository.html": "3736c92b34702f24b65ee7e74073549427c7da61fae25398b9cf72c1fc34f79b",
+    "jacoco/de.linus.tnbp.access/AccessConfiguration$1.html": "a7e1d8b745033b7ea6bf4920ba4b73fccd865ad360d20855d3c653445b6f8335",
+    "jacoco/de.linus.tnbp.access/SessionFailure.html": "b90b2f4bc090ed50f386b5d94ac9045c3b8e13de66bfa04afcb435be9e37e218",
+    "jacoco/de.linus.tnbp.access/SessionJwt.java.html": "3f5a7bc1d4702065fc407f7a9b3d8231376d3cde05e6d80f7dd80efbf7fce2ca",
+    "jacoco/de.linus.tnbp.access/SessionService.html": "309ae9753eed100dedfe74ce5541d1b611c31bbd62ab26f020328b075efabb96",
+    "jacoco/de.linus.tnbp.access/AccountRepository.html": "faeb7ef665c2ee2b6a34286c27fda1426d640804b0b28b4164d9511840aac636",
+    "jacoco/de.linus.tnbp.access/RegistrationErrors.html": "cf324b569280986d25575811a306d38ddc39e5c11e2a87a0c6a3be43358c69e6",
+    "jacoco/de.linus.tnbp.access/SessionRepository$Family.html": "e57956605792255992a00a58bd8d3806012cd3b20beeb9447b716526d7dc4573",
+    "jacoco/de.linus.tnbp.access/index.source.html": "e11c726a125cc872194c88259d5d2f9fcbfa55ca12017e4d0500af9d7a30f519",
+    "jacoco/de.linus.tnbp.access/SessionSettings.java.html": "badbc4b32d9da19b8b217263ded4d9b9e29a13d3556619b129f95127a85d1cee",
+    "jacoco/de.linus.tnbp.access/RegistrationService$EmailAddress.html": "af67adc991036636276d2bd54f4b3228c5d56f0baed1c6ee7cc3ef1bf1f94001",
+    "jacoco/de.linus.tnbp.access/RegistrationV2Controller.html": "3fdd1490dad18e42e9e024b072dec918eabc3fbf51757073668bc4b395559420",
+    "jacoco/de.linus.tnbp.access/SessionJwt.html": "26e58efc85c7842a845c4e378818b033674d8dd6a6160b7a891e2dcfc4e896c2",
+    "jacoco/de.linus.tnbp.access/RegistrationService.html": "5259daa7aac72c987887c1d95a6084f3b2779f6a4d2cfd31bb255bbe9d776540",
+    "jacoco/de.linus.tnbp.access/RegistrationLink.java.html": "3781b5605085d19e24b0aab3d3bcf352dd9681c1097487e36be877e529c85b53",
+    "jacoco/de.linus.tnbp.access/RegistrationController.html": "9e8ac472f3f29e1aceb3b8f6bd11aace8b350f628e58137c9422e4b1549f8b6a",
+    "jacoco/de.linus.tnbp.monthlysurplus/ActivationRepository.html": "94deb9d87b49df02033f99d45a061dc3717760885b3c4e91dd30062f41d67a65",
+    "jacoco/de.linus.tnbp.monthlysurplus/ActivationRepository.java.html": "3d3964eb34e4f6adf011686559fa976d431b592e5681c0e3d5a4d14270500d1f",
+    "jacoco/de.linus.tnbp.monthlysurplus/MonthlySurplus$Activation.html": "6024c96aeb94dde9831a0cf186fb4ff34a7197b4b01758668878893dd42ffb98",
+    "jacoco/de.linus.tnbp.monthlysurplus/MonthRecordRepository.java.html": "7f05b5aeb94105e9c402288675e12d38e2e770558d09f7796f70f44a9f237438",
+    "jacoco/de.linus.tnbp.monthlysurplus/index.html": "a917bd8eb6b27629b86f6820a7d34fe8716b643feba722e41f117b1b050a3d16",
+    "jacoco/de.linus.tnbp.monthlysurplus/MonthlySurplus.html": "64f2460dbb6f68695d8dcd540b0b16ec6d419e4a1014cd3482e5c0407ce68c6c",
+    "jacoco/de.linus.tnbp.monthlysurplus/MonthlySurplus.java.html": "17bed971c7aa015d6c838b15c6201f6b4c0cc608e3b418e8d73fb2e28f1626cc",
+    "jacoco/de.linus.tnbp.monthlysurplus/DeletedGoalRepository.html": "72c91b126650d7dc5a0cbf6ceb7b841b40118e3d179dd76494268bb6abb200fd",
+    "jacoco/de.linus.tnbp.monthlysurplus/DeletedGoalRepository.java.html": "de635c12c10914bfaee97c3735c2b8d177ed327d31bd80ada65b09698a45c87c",
+    "jacoco/de.linus.tnbp.monthlysurplus/MonthRecordRepository.html": "53580cbc110bf42999d5032afd607b689a256697721a25a93a38521411223ffb",
+    "jacoco/de.linus.tnbp.monthlysurplus/index.source.html": "91799f0dbe387e708ee98b47a4fd810192c9e5bb875ab7016375de946264a19e",
+    "jacoco/de.linus.tnbp.monthlysurplus/SelectionRepository.html": "9260b6d1af4c80839756aec96a96b9302d131993be8152abfb6894cef93f05d0",
+    "jacoco/de.linus.tnbp.monthlysurplus/SelectionRepository.java.html": "ca69ffcadd3fdfbc3437737e93c5796547a81e0fdc7f1f0bf6c763cefbb8759c",
+    "jacoco/de.linus.tnbp.monthlysurplus/MonthlySurplus$MonthRecord.html": "a0c6c0fbc412089ad276183bc0120ad8b319d98568bd9fdb2783437fe16f49dc",
+    "jacoco/de.linus.tnbp.finance/MonthlyAutomationReadiness.html": "79644db80811bf881b4b668fd11d223a658a007b9ed6d52de58e40b6dcd65cc8",
+    "jacoco/de.linus.tnbp.finance/FinanceApplication$FeatureNotAvailable.html": "b8e692c95c9a350e0da785227253493db2c35fceca01aac41bbe20701c3aff03",
+    "jacoco/de.linus.tnbp.finance/FinanceApplication$AutomationNotActive.html": "fb135948d1d0d19aa53c863ad103fd942e98ae230d0411c6761ca4f80026cea4",
+    "jacoco/de.linus.tnbp.finance/index.html": "335061841c554956716de48db682c5364cbc0ac712ed2480ae5a27e2d2b73ca0",
+    "jacoco/de.linus.tnbp.finance/FinanceApplication.java.html": "7b48c1b844f474ac13af143e8a0db12775e6afec28bd90e345f74a1c122344a8",
+    "jacoco/de.linus.tnbp.finance/FinanceApplication$Summary.html": "ff1fd886436f1352d7ed4c2c2d265e50be87931327a3f8add46bd87c75ecd9e8",
+    "jacoco/de.linus.tnbp.finance/FinanceApplication$InvalidSelection.html": "a54717eafd50b0ff0615d0a37c5aa50329d122fa8d5486b699d372598bfd568a",
+    "jacoco/de.linus.tnbp.finance/FinanceApplication.html": "93c9713819d3b34749ad5771e82fb13e1b335b589589ff46e5b4aa0b3014d19c",
+    "jacoco/de.linus.tnbp.finance/MonthlyAutomationReadiness.java.html": "78a3cd379751d289aac4ca53f18343d600695d02daae52e6605654a8bca927b5",
+    "jacoco/de.linus.tnbp.finance/index.source.html": "1eca8fea90932266bdc5a643762e425ee3d7fac6f9ab5ff7dc797e31d1f9e120",
+    "jacoco/de.linus.tnbp.finance/FinanceApplication$MonthlyOverview.html": "222abc48c4116f0ea3c6ad1a8f86700c2171513935a37070c9b9aa2d8a9d8d32",
+    "jacoco/de.linus.tnbp.finance.http/ExpenseV2Controller.java.html": "48376c3cd7fa77133fd452389e47b79fa260bef443b5d4874a3515b9815c8b0a",
+    "jacoco/de.linus.tnbp.finance.http/MonthSummaryErrors.java.html": "1c05b3537da435f2ba95d352ab97481db3795344ee7713c626895eab5ff50a62",
+    "jacoco/de.linus.tnbp.finance.http/SavingsGoalController.html": "b0f5bc274f58fb5164f2ebaece230ac9eb81b143b7c41c025ad55b391263cff6",
+    "jacoco/de.linus.tnbp.finance.http/MonthlySurplusV2Controller.html": "6d0959db16d2e28e211836fdc398bf79fac6cfac1ab55afe4a189d8fd01f0907",
+    "jacoco/de.linus.tnbp.finance.http/ExpenseErrors.java.html": "1bb2d81a929bd16fa1a9c44409556d71d214464778a3e9d6346a6d7546084933",
+    "jacoco/de.linus.tnbp.finance.http/ExpenseController.html": "e9d80020d6fea71ec301b8f3be40fcf1f6dfcf3afaeafaaea2c22d58685eee23",
+    "jacoco/de.linus.tnbp.finance.http/SavingsGoalV2Errors.java.html": "26f797f916b8d0d63f13b2bc884d57451859e1e8550b90857f03ff110c8cda8a",
+    "jacoco/de.linus.tnbp.finance.http/BudgetV2Controller.html": "9aed9b338ddaaaf156d047235ac2551c15f20bb32751894544e452fce5fed321",
+    "jacoco/de.linus.tnbp.finance.http/MonthSummaryV2Controller.html": "4fa7f2622797a58c9613ede7e8b8ea8c72f4bc2821af1afc544caf12fb67c29a",
+    "jacoco/de.linus.tnbp.finance.http/MonthSummaryV2Controller.java.html": "d39d1646fec75b6b7d43424ea6f5e328296074c1032382164e1c9a6dd9c0888f",
+    "jacoco/de.linus.tnbp.finance.http/ExpenseV2Errors.java.html": "6cb108caeb24c2b72b4dd439b2f3e79395decfbb7a95d0546dba7661aa278bd8",
+    "jacoco/de.linus.tnbp.finance.http/SavingsGoalJson.java.html": "059acb684c3ffac29dd38dc67dd48098ae7ae5a3c9564aff2803f3e5eb1b27a0",
+    "jacoco/de.linus.tnbp.finance.http/CapabilitiesV2Controller.html": "21ffc8711d63369734cc380ff1cf0f5096a64e1f0e5bd960f62ad9b91fb7e32f",
+    "jacoco/de.linus.tnbp.finance.http/SavingsGoalErrors.html": "4f94e75e40f593194946b5672ca4459fee16d246d6084cae86b8fbcb01f5b5f5",
+    "jacoco/de.linus.tnbp.finance.http/BudgetController.html": "0ac66cf3ff4d05b648823dfe49fbfa1ab619a430bef11a7739d56b70173b9128",
+    "jacoco/de.linus.tnbp.finance.http/CapabilitiesV2Controller.java.html": "b29b8197e9fc770f5c5293daf31593fb83b97211453efd60ab34756d159673ba",
+    "jacoco/de.linus.tnbp.finance.http/ExpenseV2Errors.html": "8b2438e022ed711b926dc3b3031f08be615d1c359b585b2023ef4ecd6d685c17",
+    "jacoco/de.linus.tnbp.finance.http/ExpenseV2Controller.html": "3c8d835bdfbb4f81b301d3b5aee54a269698e4dde297e480e69550f58c3df763",
+    "jacoco/de.linus.tnbp.finance.http/SavingsGoalV2Controller.java.html": "3869551777a3b5b2c13feae59d369c5c2f37ddbe323c5c3d8172ba984d4c8ddf",
+    "jacoco/de.linus.tnbp.finance.http/BudgetV2Errors.html": "3bdefe7f94e94284ff304edb0cba4fff02cc879bd5b0759ff2408c82688a770c",
+    "jacoco/de.linus.tnbp.finance.http/ExpenseController.java.html": "29d2052c7768093919cef0a7ed8e83e533f0482ea0addc366dec93f7dc88ed99",
+    "jacoco/de.linus.tnbp.finance.http/index.html": "5eb467082e011c9b85c663e9732e4892fc7117df07880adf3ecbc03b5fce33f1",
+    "jacoco/de.linus.tnbp.finance.http/MonthlySurplusV2Errors.java.html": "39e79c3d9c023d166dbb4cd76721185f66475c83fd26bdedc29d7561f7f8afb0",
+    "jacoco/de.linus.tnbp.finance.http/BudgetErrors.html": "41960053781aa33320d06f3f66ed38ae7eebcf6c05fb121e9296f56dbef7e5a1",
+    "jacoco/de.linus.tnbp.finance.http/MonthSummaryV2Errors.java.html": "c045e2154307ee3ace21d078c2b8564149546558c304d859ac5d4413a2c8291e",
+    "jacoco/de.linus.tnbp.finance.http/MonthSummaryV2Errors.html": "544739142f203854c94ee6dc3666f889c0548ef1a23cb1c295027c4c570a249d",
+    "jacoco/de.linus.tnbp.finance.http/BudgetV2Errors.java.html": "a480961175629cea30ad844cfca4517201fadb6890843f8e358def954542f32c",
+    "jacoco/de.linus.tnbp.finance.http/SavingsGoalJson.html": "3f60f6b708c221e978ee539234c2ed1bf3202b25a4b05dd9f4f54f1d161068cc",
+    "jacoco/de.linus.tnbp.finance.http/SavingsGoalV2Controller.html": "47f470af97a2c277abba81ebcadaa49622a38b9796697c104521d562f2696a76",
+    "jacoco/de.linus.tnbp.finance.http/MonthSummaryErrors.html": "6d1ef3d88379fec9c95fa02be2127ab53b0d73c33544694077e185324a938966",
+    "jacoco/de.linus.tnbp.finance.http/BudgetErrors.java.html": "456c8960294d6c98cdc08554ff8edaba8521b0e922615cb2be86e323be73ab46",
+    "jacoco/de.linus.tnbp.finance.http/MonthlySurplusV2Controller.java.html": "37f50da3997bc3e989ac2d10c3596de1de0380b91e3b1d200e0a162916217e3d",
+    "jacoco/de.linus.tnbp.finance.http/SavingsGoalJson$CalendarDateDeserializer.html": "3744c2f1d79b4f67284fa74906f7f23fd2ca935650a42f41229d5859d9be36a5",
+    "jacoco/de.linus.tnbp.finance.http/ExpenseErrors.html": "7c0c7c2264c89a09b79beb6a2b90768d1b47e9cb55bf893765977ec93847564b",
+    "jacoco/de.linus.tnbp.finance.http/index.source.html": "6a164685d6eaa6e963a8a081099f398b272b49a3018953172cdb073cdbb8877e",
+    "jacoco/de.linus.tnbp.finance.http/SavingsGoalErrors.java.html": "da2ccd7511136c2dbd79e9cd1bb3baeffab3a17ba3ddebff61542971a2a4ecfc",
+    "jacoco/de.linus.tnbp.finance.http/MonthSummaryController.java.html": "dae7af8809b95c14bbc86deba4b36aeae3b0ac9f172cfd4b57eeb08b45f5ca64",
+    "jacoco/de.linus.tnbp.finance.http/BudgetV2Controller.java.html": "4a9dfc62ad970ebd43b91cba1173ccd88fd3aa375b8c5075e7fc9ac2f921ad1c",
+    "jacoco/de.linus.tnbp.finance.http/SavingsGoalV2Errors.html": "e76a669483a5b0329b4de4b80bc6704da21def1d2552cb5a093cce62573fd217",
+    "jacoco/de.linus.tnbp.finance.http/BudgetController.java.html": "a0a7043b199119c30b2d11346af2127d0799f37674f5589f35f2a6b8a0e2ba1d",
+    "jacoco/de.linus.tnbp.finance.http/SavingsGoalController.java.html": "8cc271cd750d41c75597002ebddf179372db72812d34930cd062607eca03942b",
+    "jacoco/de.linus.tnbp.finance.http/MonthlySurplusV2Errors.html": "c3ad5613900ab9a46a83017e3c7e8a765578aabc0e12c0b5a7e12a9974bd2189",
+    "jacoco/de.linus.tnbp.finance.http/MonthSummaryController.html": "4e457493d9452a4da1b319e0ac0d57820546e17582e1dc86efb391ede1f9474d",
+    "jacoco/de.linus.tnbp.finance.http/SavingsGoalJson$CalendarDateInput.html": "18b115796c80583ba8fc43904ffe9f047c1d962030b77d5f8b1210d0cb3aa2ec",
+    "jacoco/de.linus.tnbp.savingsgoals/SavingsGoals$Goal.html": "93ccd40e8440fa624b100de77a5a8c51311a3a8df6f1428c60b5afc2b704ef30",
+    "jacoco/de.linus.tnbp.savingsgoals/SavingsGoals.java.html": "92e9d3230f0d9ea95a894ce145e5f4c3f2d147d4147e625c572fae98e374dde1",
+    "jacoco/de.linus.tnbp.savingsgoals/index.html": "b9ebc725107713fef460da65f3eea37725a93e5209435f234b61a60b09fbfb45",
+    "jacoco/de.linus.tnbp.savingsgoals/SavingsGoals.html": "d388b58fe024afc749eecb25797a19601fef9ac09ced63b3d61cfc1c62bcc49e",
+    "jacoco/de.linus.tnbp.savingsgoals/SavingsGoals$InvalidGoal.html": "b5a24213678c157d88a70679eabf9b04aa4830a3ec4380601bbfe876d005d28c",
+    "jacoco/de.linus.tnbp.savingsgoals/SavingsGoalRepository.java.html": "3242e4977a9cb2c5c76381a9138035a22775f80b7b1a4f34e5095188f8261bd0",
+    "jacoco/de.linus.tnbp.savingsgoals/SavingsGoalRepository.html": "2adeb3f049515c96037051451ada2eb8d1e76ffd027602df2f192c84de6ed188",
+    "jacoco/de.linus.tnbp.savingsgoals/index.source.html": "fc466a5b1bbf531fb220155c386ca6c4187ee826eab77c01c51cb51e978749cd",
+    "jacoco/de.linus.tnbp.savingsgoals/SavingsGoals$NotFound.html": "2a48b8d7ee27d666842ed9aee5377bf9aa4b36a109540a24b0cbd7f83f809d46",
+    "jacoco/de.linus.tnbp.shared/FinanceTransactions.java.html": "dee0031e589385c0fbc58b24217bb1c9e56093c5fe3e501f7ca834b89501b96c",
+    "jacoco/de.linus.tnbp.shared/Money.java.html": "338a27ea2c8d4733d35945abd55884854efb519f33fcac283be6fe4b90d0249b",
+    "jacoco/de.linus.tnbp.shared/index.html": "c6f50c364c4b09eecbc5cb8349f4a9194b429d0f6018615d7abe40a487aa5b95",
+    "jacoco/de.linus.tnbp.shared/FinanceContext.html": "2661a003c6878a268a6cecb4e30098cf8a45e9877872fb8eaae34838bde31744",
+    "jacoco/de.linus.tnbp.shared/ApiVersionState.java.html": "25c4052ec5510b92dd3be5fa6fe8bc94a3f477ed88fcfeec2aaa6710f3ee9088",
+    "jacoco/de.linus.tnbp.shared/FinanceContext.java.html": "6bf58df1d1540b460c4ec4b5931ba7523f394e2ca121501bd687b12705c18dbe",
+    "jacoco/de.linus.tnbp.shared/Money.html": "cb96613e4262f6102b77e084d1aa828119a946a695d13b922e9537f8c3cd6c23",
+    "jacoco/de.linus.tnbp.shared/ApiVersionState.html": "d14374feea73076104731e2434e61cf32aeda130eab48d0840afc635c0283129",
+    "jacoco/de.linus.tnbp.shared/index.source.html": "b9daae05b8f2cf63b6aa8f01582ef8f6da552454412aa7096cf5fdeca89b41dc",
+    "jacoco/de.linus.tnbp.shared/FinanceTransactions.html": "a30671d11d963eba4eaf0797a10204dc7eeac3164b086ab56f837d67645f2552",
+    "jacoco/de.linus.tnbp.budget/Budgets$InvalidAmount.html": "4f8d68cebae1ab06d70c54f026cb5f3169948a8265b1637b550b8d03dae141ec",
+    "jacoco/de.linus.tnbp.budget/BudgetRepository.html": "19f0878a26ac2c5e44c2f2acf199cd9cb17ad57e9f119600041f1d5c1b72459a",
+    "jacoco/de.linus.tnbp.budget/Budgets.html": "b8551bf6b6577ee30b37836a76dea855e47765ff47ff3db0029894d3c97e9124",
+    "jacoco/de.linus.tnbp.budget/BudgetRepository.java.html": "5f65acc943a4b2640477c00c3909d7a8a8bc618bf92c8521cde9a341cefbbd0c",
+    "jacoco/de.linus.tnbp.budget/index.html": "d9d571ed0cfd7de107d2f022954827b63123bad47b0ab5547dcef02b80e45f34",
+    "jacoco/de.linus.tnbp.budget/Budgets.java.html": "905aad5d66160795f5d0c207a7eaa3c82d3e03437c94777cc62c421cda06777c",
+    "jacoco/de.linus.tnbp.budget/index.source.html": "d27bc5abe8cbf368dbd61b50d41956190b80f5c5ec99a025dbdd8d96787a9c8b",
+    "jacoco/de.linus.tnbp.expenses/Expenses.html": "0d298dada785e0f12aab0909d589eaff48389450bd2a48de3796c69bf7a6a32a",
+    "jacoco/de.linus.tnbp.expenses/Expenses$MonthLimit.html": "b3129bde9992dd9697ed80ce4118a3a203809f9de91af09ee767beb64381e9ca",
+    "jacoco/de.linus.tnbp.expenses/Expenses$InvalidExpense.html": "3d47840b5f6bc6a5a9e69b986730a176cecf990bf0c7ea14377be5e1dd5d7258",
+    "jacoco/de.linus.tnbp.expenses/ExpenseRepository.java.html": "defa31cefc0dfb29bd9baf85af55ed55c1c708af191db5f0a4d913258ccbb68a",
+    "jacoco/de.linus.tnbp.expenses/index.html": "0f494688d90808e3101bf4bdad3867ec1a2b538c640d9591125f4b62649b7eeb",
+    "jacoco/de.linus.tnbp.expenses/ExpenseRepository.html": "0e64e91a1e15c42413f1e02d3393f42401898f0962bd51bb7f83ddcba37b6bf4",
+    "jacoco/de.linus.tnbp.expenses/Expenses$Expense.html": "9c85c89f6a5e5f26bb893539be22d7d1eb45696ec129625d5430b639ed98a656",
+    "jacoco/de.linus.tnbp.expenses/index.source.html": "51418a26567e9ddde77c2803e516c7cf6e043eccbdca76ddfdc67593bfea757b",
+    "jacoco/de.linus.tnbp.expenses/Expenses$NotFound.html": "ee3bb1d844ee54514e44a36b45cd6eb1c3075a59f9aa5ef742e3fa2d4e7361d2",
+    "jacoco/de.linus.tnbp.expenses/Expenses.java.html": "54927a4b59ca30cf86ad6c6bdf5b41133f2896242a29cabf8e816984844ec441"
+  }
+}

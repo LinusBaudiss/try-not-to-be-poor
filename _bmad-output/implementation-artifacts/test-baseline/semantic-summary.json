@@ -1,7 +1,7 @@
 {
-  "source_cases": 746,
-  "source_groups": 1534,
-  "canonical_scenarios": 1624,
+  "source_cases": 755,
+  "source_groups": 1543,
+  "canonical_scenarios": 1633,
   "inner_browser_loops": 99,
   "semantic_review_complete": true,
   "by_scope": {
@@ -11,9 +11,9 @@
       "unit_component_percent": 13.05,
       "types_including_infrastructure": {
         "HTTP/PostgreSQL": 758,
-        "PostgreSQL": 42,
+        "PostgreSQL": 82,
         "architecture": 27,
-        "process/PostgreSQL": 153,
+        "process/PostgreSQL": 113,
         "tool/infrastructure": 1,
         "unit": 143
       }
@@ -31,7 +31,7 @@
       "unit_component_scenarios": 0,
       "unit_component_percent": null,
       "types_including_infrastructure": {
-        "tool/infrastructure": 33
+        "tool/infrastructure": 42
       }
     }
   },

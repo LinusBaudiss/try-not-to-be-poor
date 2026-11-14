@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SessionV2Controller.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Try Not to Be Poor</a> &gt; <a href="index.source.html" class="el_package">de.linus.tnbp.access</a> &gt; <span class="el_source">SessionV2Controller.java</span></div><h1>SessionV2Controller.java</h1><pre class="source lang-java linenums">package de.linus.tnbp.access;
+
+import de.linus.tnbp.contract.v2.api.SessionsApi;
+import de.linus.tnbp.contract.v2.model.*;
+import jakarta.servlet.http.HttpServletRequest;
+import java.time.ZoneOffset;
+import java.util.Arrays;
+import java.util.UUID;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.csrf.CsrfToken;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping(&quot;/api/v2&quot;)
+public class SessionV2Controller implements SessionsApi {
+    private final SessionService sessions;
+    private final HttpServletRequest request;
+<span class="fc" id="L20">    public SessionV2Controller(SessionService sessions, HttpServletRequest request) { this.sessions = sessions; this.request = request; }</span>
+
+    @Override public ResponseEntity&lt;CsrfResponse&gt; sessionCsrf() {
+<span class="fc" id="L23">        var csrf = (CsrfToken) request.getAttribute(CsrfToken.class.getName());</span>
+<span class="fc" id="L24">        return ResponseEntity.ok(new CsrfResponse(csrf.getToken()));</span>
+    }
+    @Override public ResponseEntity&lt;SessionResponse&gt; login(String origin, String csrf, LoginRequest input) {
+<span class="fc" id="L27">        return response(sessions.login(input.getEmail(), input.getPassword(), refreshCookie()));</span>
+    }
+    @Override public ResponseEntity&lt;SessionResponse&gt; refreshSession(String origin, String csrf) {
+<span class="fc" id="L30">        return response(sessions.refresh(refreshCookie()));</span>
+    }
+    @Override public ResponseEntity&lt;Void&gt; logoutSession(String origin, String csrf) {
+<span class="fc" id="L33">        sessions.logout(refreshCookie());</span>
+<span class="fc" id="L34">        return ResponseEntity.noContent().header(&quot;Set-Cookie&quot;, SessionHttp.cookie(&quot;&quot;, 0)).build();</span>
+    }
+    @Override public ResponseEntity&lt;SessionIdentity&gt; sessionIdentity() {
+<span class="fc" id="L37">        return ResponseEntity.ok(new SessionIdentity(UUID.fromString(SecurityContextHolder.getContext().getAuthentication().getName())));</span>
+    }
+    private String refreshCookie() {
+<span class="pc bpc" id="L40" title="1 of 2 branches missed.">        if (request.getCookies() == null) return null;</span>
+<span class="fc" id="L41">        return Arrays.stream(request.getCookies()).filter(cookie -&gt; cookie.getName().equals(SessionHttp.COOKIE))</span>
+<span class="fc" id="L42">            .map(jakarta.servlet.http.Cookie::getValue).findFirst().orElse(null);</span>
+    }
+    private ResponseEntity&lt;SessionResponse&gt; response(SessionService.Issued issued) {
+<span class="fc" id="L45">        return ResponseEntity.ok().header(&quot;Set-Cookie&quot;, SessionHttp.cookie(issued.refreshToken(), issued.cookieSeconds()))</span>
+<span class="fc" id="L46">            .body(new SessionResponse(issued.accessToken(), issued.expiresAt().atOffset(ZoneOffset.UTC), issued.userId()));</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

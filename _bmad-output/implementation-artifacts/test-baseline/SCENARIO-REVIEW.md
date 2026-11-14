@@ -1,6 +1,6 @@
 # Abgeschlossener statischer Szenario-Abgleich — Story 5.1
 
-Referenz: `8f66421be3b7090c5cd384c9679657d9a17a6b3f`, geprüft am 2026-11-14. Dies schließt den **statischen fachlichen Abgleich** ab. Die erfolgreiche Ausführung der gesamten Integration, die Laufzeit-Baseline und Code-/Zweigabdeckung sind separate, weiterhin offene Nachweise; der Storystatus bleibt `in-progress`.
+Referenz: `8f66421be3b7090c5cd384c9679657d9a17a6b3f`, geprüft am 2026-11-14. Dies schließt den **statischen fachlichen Abgleich** ab. Die vollständige lokale Messserie und separate Coverage liegen inzwischen vor; aktueller Abnahmestand und Grenzen stehen in [REPORT.md](REPORT.md).
 
 ## Verbindliche Zählung
 
@@ -10,10 +10,10 @@ Das Manifest bewahrt die bisherigen `SC:`-Quellgruppen unverändert als Rückver
 
 | Bestand | Anzahl |
 | --- | ---: |
-| Zugeordnete Quellfälle einschließlich Werkzeugtests | 746 |
-| Erhaltene bisherige Quell-/Beobachtungsgruppen | 1534 |
+| Zugeordnete Quellfälle einschließlich Werkzeugtests | 755 |
+| Quell-/Beobachtungsgruppen einschließlich neuer Werkzeugregressionen | 1543 |
 | Geprüfte innere Browser-Schleifen | 99 |
-| Kanonische Einträge einschließlich Architektur/Infrastruktur | 1624 |
+| Kanonische Einträge einschließlich Architektur/Infrastruktur | 1633 |
 | Kanonische Einträge mit mehreren Quellfällen | 124 |
 
 | Bereich | Unterschiedliche Fach-/Schutzszenarien | Unit-/isolierte Komponentenszenarien | Anteil |
@@ -21,7 +21,7 @@ Das Manifest bewahrt die bisherigen `SC:`-Quellgruppen unverändert als Rückver
 | Backend | 1096 | 143 | 13.05 % |
 | Frontend | 467 | 0 | 0 % |
 
-Backend getrennt nach primärem Testnachweis: 143 Unit, 758 HTTP/PostgreSQL, 42 PostgreSQL und 153 Prozess/PostgreSQL. Zusätzlich 27 Architekturgruppen und eine Backend-Prozesshilfe außerhalb des fachlichen Nenners; weitere 33 Python-Werkzeuggruppen separat. Alle Frontendszenarien sind derzeit Browserprüfungen, auch bei HTTP-Stubs. Es gibt keine bestehenden isolierten Frontend-Komponententests. Der spätere Mehrheitswert ist im Bestand klar verfehlt; die Klassifikation wird nicht zur Quotenerfüllung geändert.
+Backend getrennt nach primärem Testnachweis: 143 Unit, 758 HTTP/PostgreSQL, 82 PostgreSQL und 113 Prozess/PostgreSQL. Zusätzlich 27 Architekturgruppen und eine Backend-Prozesshilfe außerhalb des fachlichen Nenners; weitere 42 Python-Werkzeuggruppen separat. Alle Frontendszenarien sind derzeit Browserprüfungen, auch bei HTTP-Stubs. Es gibt keine bestehenden isolierten Frontend-Komponententests. Der spätere Mehrheitswert ist im Bestand klar verfehlt; die Klassifikation wird nicht zur Quotenerfüllung geändert.
 
 Die kanonische Zahl kann trotz Zusammenführungen über der bisherigen Quellgruppenzahl liegen: Die alte Discovery hat innere Varianten nicht einzeln ausgewiesen. Nach dem Abgleich sind etwa einzelne JWT-Claims, vier historische Null-/Ohne-Budget-Zustände sowie innere Browser-Eingaben und Antwortvarianten ausdrücklich unterscheidbar. Das ist die Auflösung vorhandener Fälle, kein neuer Testbestand.
 
@@ -52,6 +52,8 @@ python3 _bmad-output/implementation-artifacts/test-baseline/semantic-scenarios.p
 python3 _bmad-output/implementation-artifacts/test-baseline/verify-manifest-refresh.py
 ```
 
-Die ersten beiden Befehle prüfen die explizite Zuordnung und erzeugen Inventar, `canonical-scenarios.csv` und `semantic-summary.json`. Sie vergeben keine neuen semantischen Zuordnungen automatisch. Neue/geänderte Quellen oder Fixtures, fehlende/verwaiste Zuordnungen, ein nicht vorhandener Primärnachweis, falsche Unit-Einstufung, verlorene Integrationsverweise und gemischte Backend-/Frontendzuordnungen führen zum Fehlerstatus. Zwölf gezielte Inventar-/Semantikprüfungen bestehen; sie ersetzen keinen Produktprüflauf.
+Die ersten beiden Befehle prüfen die explizite Zuordnung und erzeugen Inventar, `canonical-scenarios.csv` und `semantic-summary.json`. Sie vergeben keine neuen semantischen Zuordnungen automatisch. Neue/geänderte Quellen oder Fixtures, fehlende/verwaiste Zuordnungen, ein nicht vorhandener Primärnachweis, falsche Unit-Einstufung, verlorene Integrationsverweise und gemischte Backend-/Frontendzuordnungen führen zum Fehlerstatus. Vierzehn gezielte Inventar-/Semantikprüfungen bestehen; sie ersetzen keinen Produktprüflauf.
 
 Die 99 inneren Browser-Schleifen sind samt tatsächlichem Körper, aufgelösten Arrays, Quellhash und expliziter Entscheidung im Manifest erhalten. Die rohe AST-Extraktion lässt sich mit `node _bmad-output/implementation-artifacts/test-baseline/extract-browser-loops.cjs` reproduzieren; deren Ausgabe ist Quellmaterial für einen erneuten Review und überschreibt keine geprüfte Entscheidung. Dynamische Kontroll-/Fixturekollektionen zählen nicht als zusätzliche fachliche Eingaben.
+
+Abschlussreview: neun neue Werkzeugregressionen erhöhen nur den separaten Infrastrukturanteil; Fachnenner 1096/467 und Unitquote 143/1096 bleiben unverändert. FinanceMigrationIT ist als direkte PostgreSQL-/Flyway-Integration statt externer Anwendungsprozessprüfung klassifiziert. Neue Testdateien werden unabhängig von gecachter Discovery erkannt; ungültige Klassifikationswerte führen zum Fehlerstatus.

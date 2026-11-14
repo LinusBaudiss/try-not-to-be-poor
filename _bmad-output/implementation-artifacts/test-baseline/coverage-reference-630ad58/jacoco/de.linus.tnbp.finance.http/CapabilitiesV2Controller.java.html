@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CapabilitiesV2Controller.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Try Not to Be Poor</a> &gt; <a href="index.source.html" class="el_package">de.linus.tnbp.finance.http</a> &gt; <span class="el_source">CapabilitiesV2Controller.java</span></div><h1>CapabilitiesV2Controller.java</h1><pre class="source lang-java linenums">package de.linus.tnbp.finance.http;
+
+import de.linus.tnbp.contract.v2.api.CapabilitiesApi;
+import de.linus.tnbp.contract.v2.model.CapabilitiesResponse;
+import de.linus.tnbp.contract.v2.model.CapabilitiesError;
+import de.linus.tnbp.finance.FinanceApplication;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping(&quot;/api/v2&quot;)
+public class CapabilitiesV2Controller implements CapabilitiesApi {
+    private final FinanceApplication versions;
+<span class="fc" id="L16">    public CapabilitiesV2Controller(FinanceApplication versions) { this.versions = versions; }</span>
+    @Override public ResponseEntity&lt;CapabilitiesResponse&gt; getCapabilities() {
+<span class="fc" id="L18">        return ResponseEntity.ok().header(&quot;Cache-Control&quot;, &quot;no-store&quot;)</span>
+<span class="fc" id="L19">            .body(new CapabilitiesResponse(versions.signedProgressAvailable()).monthlyAutomationAvailable(versions.monthlyAutomationAvailable()));</span>
+    }
+    @ExceptionHandler(Exception.class)
+    ResponseEntity&lt;CapabilitiesError&gt; unavailable() {
+<span class="fc" id="L23">        org.slf4j.LoggerFactory.getLogger(CapabilitiesV2Controller.class).error(&quot;Funktionszustand konnte nicht geladen werden; Fehlerkategorie=CAPABILITIES_UNAVAILABLE&quot;);</span>
+<span class="fc" id="L24">        return ResponseEntity.internalServerError().header(&quot;Cache-Control&quot;, &quot;no-store&quot;)</span>
+<span class="fc" id="L25">            .body(new CapabilitiesError(CapabilitiesError.CodeEnum.CAPABILITIES_UNAVAILABLE,</span>
+                &quot;Der Funktionszustand konnte nicht geprüft werden. Versuche es erneut.&quot;));
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

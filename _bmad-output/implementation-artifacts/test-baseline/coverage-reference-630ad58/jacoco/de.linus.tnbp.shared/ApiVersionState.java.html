@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ApiVersionState.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Try Not to Be Poor</a> &gt; <a href="index.source.html" class="el_package">de.linus.tnbp.shared</a> &gt; <span class="el_source">ApiVersionState.java</span></div><h1>ApiVersionState.java</h1><pre class="source lang-java linenums">package de.linus.tnbp.shared;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.DependsOn;
+
+/** Dauerhafte Versionsbarriere; wird bereits beim Aufbau der HTTP-Sicherheitskette geprüft. */
+@Component
+@DependsOnDatabaseInitialization
+@DependsOn(&quot;databaseRoleVerifier&quot;)
+public final class ApiVersionState {
+    private final JdbcTemplate jdbc;
+    private final boolean retired;
+    private final boolean signedProgressEnabled;
+    private final java.util.Map&lt;String, Object&gt; startupProof;
+
+    @org.springframework.beans.factory.annotation.Autowired
+    public ApiVersionState(JdbcTemplate jdbc, @Value(&quot;${api.version.mode:compatible}&quot;) String mode,
+            @Value(&quot;${api.version.release-sha256:}&quot;) String releaseHash,
+            @Value(&quot;${api.version.instance-id:}&quot;) String instance,
+<span class="fc" id="L23">            @Value(&quot;${api.features.signed-progress:false}&quot;) boolean signedProgressEnabled) {</span>
+<span class="fc" id="L24">        this.jdbc = jdbc;</span>
+<span class="fc" id="L25">        this.signedProgressEnabled = signedProgressEnabled;</span>
+<span class="fc" id="L26">        var states = jdbc.queryForList(&quot;SELECT * FROM api_version.state WHERE singleton&quot;);</span>
+<span class="pc bpc" id="L27" title="1 of 4 branches missed.">        if (states.size() != 1 || !(states.getFirst().get(&quot;v1_retired&quot;) instanceof Boolean value))</span>
+<span class="fc" id="L28">            throw new IllegalStateException(&quot;Eindeutiger Versionszustand erforderlich.&quot;);</span>
+<span class="fc" id="L29">        retired = value;</span>
+<span class="fc" id="L30">        var state = states.getFirst();</span>
+<span class="fc" id="L31">        startupProof = new java.util.HashMap&lt;&gt;(state);</span>
+<span class="pc bpc" id="L32" title="1 of 2 branches missed.">        if (!(state.get(&quot;signed_progress_used&quot;) instanceof Boolean signed)</span>
+<span class="pc bpc" id="L33" title="3 of 8 branches missed.">                || !(state.get(&quot;monthly_effects_used&quot;) instanceof Boolean monthly) || (signed || monthly) &amp;&amp; !retired)</span>
+<span class="nc" id="L34">            throw new IllegalStateException(&quot;Widersprüchlicher Nutzungszustand.&quot;);</span>
+<span class="pc bpc" id="L35" title="2 of 6 branches missed.">        if (retired || state.get(&quot;stopped_instance&quot;) != null || state.get(&quot;retired_at&quot;) != null</span>
+<span class="pc bpc" id="L36" title="3 of 6 branches missed.">                || state.get(&quot;release_sha256&quot;) != null || state.get(&quot;schema_sha256&quot;) != null || state.get(&quot;roles_sha256&quot;) != null) {</span>
+<span class="fc bfc" id="L37" title="All 4 branches covered.">            if (!(state.get(&quot;stopped_instance&quot;) instanceof java.util.UUID) || state.get(&quot;retired_at&quot;) == null</span>
+<span class="fc bfc" id="L38" title="All 6 branches covered.">                    || !hash(state.get(&quot;release_sha256&quot;)) || !hash(state.get(&quot;schema_sha256&quot;)) || !hash(state.get(&quot;roles_sha256&quot;)))</span>
+<span class="fc" id="L39">                throw new IllegalStateException(&quot;Vollständiger technischer Stilllegungsbeleg erforderlich.&quot;);</span>
+        }
+<span class="pc bpc" id="L41" title="1 of 6 branches missed.">        if (!(mode.equals(&quot;compatible&quot;) || mode.equals(&quot;retired&quot;)) || retired != mode.equals(&quot;retired&quot;))</span>
+<span class="fc" id="L42">            throw new IllegalStateException(&quot;Versionskonfiguration widerspricht dem dauerhaften Zustand.&quot;);</span>
+<span class="fc bfc" id="L43" title="All 2 branches covered.">        if (retired) {</span>
+<span class="fc" id="L44">            java.util.UUID.fromString(instance);</span>
+<span class="pc bpc" id="L45" title="1 of 4 branches missed.">            if (!releaseHash.matches(&quot;[0-9a-f]{64}&quot;) || !releaseHash.equals(states.getFirst().get(&quot;release_sha256&quot;)))</span>
+<span class="fc" id="L46">                throw new IllegalStateException(&quot;Der Release benötigt einen passenden Stilllegungsnachweis.&quot;);</span>
+        }
+<span class="fc" id="L48">    }</span>
+
+    /** Bestehende interne Aufrufer behalten ein geschlossenes Funktionsgate. */
+    public ApiVersionState(JdbcTemplate jdbc, String mode, String releaseHash, String instance) {
+<span class="fc" id="L52">        this(jdbc, mode, releaseHash, instance, false);</span>
+<span class="fc" id="L53">    }</span>
+
+<span class="fc" id="L55">    public boolean signedProgressAvailable() { return signedProgressAvailable(false); }</span>
+
+    public boolean lockSignedProgress(FinanceContext context) {
+<span class="fc" id="L58">        context.requireWrite();</span>
+<span class="fc" id="L59">        return signedProgressAvailable(true);</span>
+    }
+
+    private boolean signedProgressAvailable(boolean lock) {
+<span class="fc bfc" id="L63" title="All 4 branches covered.">        if (!signedProgressEnabled || !retired) return false;</span>
+<span class="fc" id="L64">        return Boolean.TRUE.equals(jdbc.queryForObject(</span>
+<span class="fc" id="L65">            &quot;SELECT api_version.signed_progress_available(?, ?, ?, ?, ?, ?)&quot;, Boolean.class, lock,</span>
+<span class="fc" id="L66">            startupProof.get(&quot;stopped_instance&quot;), startupProof.get(&quot;release_sha256&quot;),</span>
+<span class="fc" id="L67">            startupProof.get(&quot;schema_sha256&quot;), startupProof.get(&quot;roles_sha256&quot;), startupProof.get(&quot;retired_at&quot;)));</span>
+    }
+
+<span class="fc" id="L70">    public boolean v1Retired() { return retired; }</span>
+
+<span class="fc" id="L72">    public boolean monthlyAutomationAvailable() { return monthlyAutomationAvailable(false); }</span>
+
+    public boolean lockMonthlyAutomation(FinanceContext context) {
+<span class="fc" id="L75">        context.requireWrite();</span>
+<span class="fc" id="L76">        return monthlyAutomationAvailable(true);</span>
+    }
+
+    private boolean monthlyAutomationAvailable(boolean lock) {
+<span class="fc bfc" id="L80" title="All 2 branches covered.">        if (!retired) return false;</span>
+<span class="fc" id="L81">        return Boolean.TRUE.equals(jdbc.queryForObject(</span>
+<span class="fc" id="L82">            &quot;SELECT api_version.monthly_automation_available(?, ?, ?, ?, ?, ?)&quot;, Boolean.class, lock,</span>
+<span class="fc" id="L83">            startupProof.get(&quot;stopped_instance&quot;), startupProof.get(&quot;release_sha256&quot;),</span>
+<span class="fc" id="L84">            startupProof.get(&quot;schema_sha256&quot;), startupProof.get(&quot;roles_sha256&quot;), startupProof.get(&quot;retired_at&quot;)));</span>
+    }
+
+<span class="pc bpc" id="L87" title="1 of 4 branches missed.">    private static boolean hash(Object value) { return value instanceof String text &amp;&amp; text.matches(&quot;[0-9a-f]{64}&quot;); }</span>
+
+<span class="fc" id="L89">    public void markSignedProgress(FinanceContext context) { mark(context, &quot;signed-progress&quot;); }</span>
+<span class="fc" id="L90">    public void markMonthlyEffect(FinanceContext context) { mark(context, &quot;monthly-effect&quot;); }</span>
+
+    private void mark(FinanceContext context, String kind) {
+<span class="fc" id="L93">        context.requireWrite();</span>
+<span class="fc" id="L94">        jdbc.query(&quot;SELECT api_version.mark_usage(?)&quot;, row -&gt; {}, kind);</span>
+<span class="fc" id="L95">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

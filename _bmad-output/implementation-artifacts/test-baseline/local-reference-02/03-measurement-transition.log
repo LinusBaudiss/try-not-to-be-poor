@@ -1,0 +1,41 @@
+
+> try-not-to-be-poor@0.1.0 e2e:transition
+> playwright test --config playwright.transition.config.ts
+
+[WebServer] {"level":"info","ts":1794689239.4624453,"msg":"using config from file","file":"deploy/Caddyfile.preview"}
+[WebServer] {"level":"info","ts":1794689239.4634593,"msg":"adapted config to JSON","adapter":"caddyfile"}
+[WebServer] {"level":"info","ts":1794689239.4637394,"logger":"tls.cache.maintenance","msg":"started background certificate maintenance","cache":"0xc000413c00"}
+[WebServer] {"level":"info","ts":1794689239.4639127,"logger":"http.auto_https","msg":"automatic HTTP->HTTPS redirects are disabled","server_name":"srv0"}
+[WebServer] {"level":"info","ts":1794689239.4642386,"logger":"tls.cache.maintenance","msg":"stopped background certificate maintenance","cache":"0xc000413c00"}
+[WebServer] {"level":"info","ts":1794689239.4642487,"logger":"http","msg":"servers shutting down with eternal grace period"}
+[WebServer] {"level":"info","ts":1794689239.4875307,"msg":"maxprocs: Leaving GOMAXPROCS=20: CPU quota undefined"}
+[WebServer] {"level":"info","ts":1794689239.4876332,"msg":"GOMEMLIMIT is updated","package":"github.com/KimMachineGun/automemlimit/memlimit","GOMEMLIMIT":60602742374,"previous":9223372036854775807}
+[WebServer] {"level":"info","ts":1794689239.4876513,"msg":"using config from file","file":"deploy/Caddyfile.preview"}
+[WebServer] {"level":"info","ts":1794689239.4886072,"msg":"adapted config to JSON","adapter":"caddyfile"}
+[WebServer] {"level":"warn","ts":1794689239.4889028,"logger":"admin","msg":"admin endpoint disabled"}
+[WebServer] {"level":"info","ts":1794689239.489029,"logger":"tls.cache.maintenance","msg":"started background certificate maintenance","cache":"0xc0005c6680"}
+[WebServer] {"level":"info","ts":1794689239.4891315,"logger":"http.auto_https","msg":"automatic HTTP->HTTPS redirects are disabled","server_name":"srv0"}
+[WebServer] {"level":"info","ts":1794689239.4894006,"logger":"pki.ca.local","msg":"root certificate trust store installation disabled; unconfigured clients may show warnings","path":"storage:pki/authorities/local/root.crt"}
+[WebServer] {"level":"info","ts":1794689239.4895282,"logger":"http","msg":"enabling HTTP/3 listener","addr":"127.0.0.1:4200"}
+[WebServer] {"level":"info","ts":1794689239.489622,"logger":"http","msg":"enabling HTTP/3 listener","addr":"[::1]:4200"}
+[WebServer] {"level":"info","ts":1794689239.4896755,"logger":"http.log","msg":"server running","name":"srv0","protocols":["h1","h2","h3"]}
+[WebServer] {"level":"info","ts":1794689239.4896812,"logger":"http","msg":"enabling automatic TLS certificate management","domains":["localhost"]}
+[WebServer] {"level":"warn","ts":1794689239.4898324,"logger":"tls","msg":"stapling OCSP","identifiers":["localhost"]}
+[WebServer] {"level":"info","ts":1794689239.489934,"msg":"autosaved config (load with --resume flag)","file":"/home/linus/dev/try-not-to-be-poor/.local/caddy-config/caddy/autosave.json"}
+[WebServer] {"level":"info","ts":1794689239.4899402,"msg":"serving initial configuration"}
+[WebServer] {"level":"info","ts":1794689239.493111,"logger":"tls","msg":"storage cleaning happened too recently; skipping for now","storage":"FileStorage:/home/linus/dev/try-not-to-be-poor/.local/caddy-data/caddy","instance":"ef38d452-1a82-47e9-905a-ec5783c2dc3b","try_again":1794775639.4931056,"try_again_in":86399.999999532}
+[WebServer] {"level":"info","ts":1794689239.4932172,"logger":"tls","msg":"finished cleaning storage units"}
+
+Running 5 tests using 1 worker
+
+  ✓  1 e2e/version-transition.spec.ts:24:5 › unveränderter Altbundle, echter API-Neustart, gespeicherter Bestand und vollständiger v2-Aktualisierungspfad (15.4s)
+  ✓  2 e2e/version-transition.spec.ts:194:5 › nach realer Stilllegung sind sämtliche v2-Zugangs- und Finanzoperationen über die statische Oberfläche nutzbar (9.7s)
+  ✓  3 e2e/version-transition.spec.ts:199:5 › neuer Client erkennt Aktualisierung vor Refresh/Retry auch bei direkten Sitzungsaufrufen und Registrierung (16.9s)
+  ✓  4 e2e/version-transition.spec.ts:248:5 › signierter Gesamtfortschritt ist nach realer Stilllegung in vier Größen und bei 200 Prozent Text vollständig bedienbar (32.4s)
+  ✓  5 e2e/version-transition.spec.ts:259:5 › signierter Entwurf übersteht Offline, Feldfehler und verlorene Commitbestätigung; Sitzungsende entkräftet späte Antworten (9.3s)
+[WebServer] {"level":"info","ts":1794689324.0105681,"msg":"shutting down apps, then terminating","signal":"SIGTERM"}
+[WebServer] {"level":"warn","ts":1794689324.010591,"msg":"exiting; byeee!! 👋","signal":"SIGTERM"}
+[WebServer] {"level":"info","ts":1794689324.0106142,"logger":"http","msg":"servers shutting down with eternal grace period"}
+[WebServer] {"level":"info","ts":1794689324.0107076,"msg":"shutdown complete","signal":"SIGTERM","exit_code":0}
+
+  5 passed (1.9m)

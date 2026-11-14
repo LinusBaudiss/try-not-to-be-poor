@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MonthlySurplusV2Errors.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Try Not to Be Poor</a> &gt; <a href="index.source.html" class="el_package">de.linus.tnbp.finance.http</a> &gt; <span class="el_source">MonthlySurplusV2Errors.java</span></div><h1>MonthlySurplusV2Errors.java</h1><pre class="source lang-java linenums">package de.linus.tnbp.finance.http;
+
+import de.linus.tnbp.contract.v2.model.MonthlySurplusError;
+import de.linus.tnbp.contract.v2.model.MonthlySurplusFeatureNotAvailableError;
+import de.linus.tnbp.contract.v2.model.MonthlySurplusSelectionError;
+import de.linus.tnbp.finance.FinanceApplication;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+@Order(Ordered.HIGHEST_PRECEDENCE)
+@RestControllerAdvice(assignableTypes = MonthlySurplusV2Controller.class)
+<span class="fc" id="L15">class MonthlySurplusV2Errors {</span>
+    @ExceptionHandler({FinanceApplication.InvalidSelection.class,
+        org.springframework.web.bind.MethodArgumentNotValidException.class,
+        org.springframework.http.converter.HttpMessageNotReadableException.class})
+    ResponseEntity&lt;MonthlySurplusSelectionError&gt; invalid() {
+<span class="fc" id="L20">        return selection(400, MonthlySurplusSelectionError.CodeEnum.INVALID_SELECTION, &quot;Wähle ein eigenes vorhandenes Sparziel aus.&quot;);</span>
+    }
+    @ExceptionHandler(de.linus.tnbp.savingsgoals.SavingsGoals.NotFound.class)
+    ResponseEntity&lt;MonthlySurplusSelectionError&gt; missing() {
+<span class="fc" id="L24">        return selection(404, MonthlySurplusSelectionError.CodeEnum.GOAL_NOT_FOUND, &quot;Das Sparziel wurde nicht gefunden.&quot;);</span>
+    }
+    @ExceptionHandler(FinanceApplication.AutomationNotActive.class)
+    ResponseEntity&lt;MonthlySurplusSelectionError&gt; inactive() {
+<span class="fc" id="L28">        return selection(409, MonthlySurplusSelectionError.CodeEnum.AUTOMATION_NOT_ACTIVE, &quot;Aktiviere zuerst ausdrücklich deine Monatsautomatik.&quot;);</span>
+    }
+    @ExceptionHandler(ArithmeticException.class)
+    ResponseEntity&lt;?&gt; amount(jakarta.servlet.http.HttpServletRequest request) {
+<span class="fc bfc" id="L32" title="All 2 branches covered.">        if (!request.getServletPath().equals(&quot;/api/v2/monthly-surplus/selection&quot;)) return unconfirmed(request);</span>
+<span class="fc" id="L33">        return selection(409, MonthlySurplusSelectionError.CodeEnum.AMOUNT_LIMIT_EXCEEDED,</span>
+            &quot;Die vollständige Übernahme würde die zulässige Betragsgrenze überschreiten. Prüfe den Gesamtfortschritt deiner Ziele.&quot;);
+    }
+    private ResponseEntity&lt;MonthlySurplusSelectionError&gt; selection(int status, MonthlySurplusSelectionError.CodeEnum code, String message) {
+<span class="fc" id="L37">        return ResponseEntity.status(status).header(&quot;Cache-Control&quot;, &quot;no-store&quot;).body(new MonthlySurplusSelectionError(code, message));</span>
+    }
+    @ExceptionHandler(FinanceApplication.FeatureNotAvailable.class)
+    ResponseEntity&lt;MonthlySurplusFeatureNotAvailableError&gt; unavailable() {
+<span class="fc" id="L41">        return ResponseEntity.status(409).header(&quot;Cache-Control&quot;, &quot;no-store&quot;).body(new MonthlySurplusFeatureNotAvailableError(</span>
+            MonthlySurplusFeatureNotAvailableError.CodeEnum.FEATURE_NOT_AVAILABLE, &quot;Die Monatsautomatik ist derzeit nicht verfügbar.&quot;));
+    }
+    @ExceptionHandler(Exception.class)
+    ResponseEntity&lt;MonthlySurplusError&gt; unconfirmed(jakarta.servlet.http.HttpServletRequest request) {
+<span class="fc" id="L46">        org.slf4j.LoggerFactory.getLogger(MonthlySurplusV2Errors.class)</span>
+<span class="fc" id="L47">            .error(&quot;Automatikanfrage nicht bestätigt; Fehlerkategorie=MONTHLY_SURPLUS_UNAVAILABLE&quot;);</span>
+<span class="fc" id="L48">        return ResponseEntity.internalServerError().header(&quot;Cache-Control&quot;, &quot;no-store&quot;).body(new MonthlySurplusError(</span>
+            MonthlySurplusError.CodeEnum.MONTHLY_SURPLUS_UNAVAILABLE,
+<span class="fc bfc" id="L50" title="All 2 branches covered.">            request.getServletPath().equals(&quot;/api/v2/monthly-surplus/pending&quot;)</span>
+<span class="fc" id="L51">                ? &quot;Deine Vormerkung konnte nicht geladen werden. Versuche es erneut.&quot;</span>
+<span class="fc bfc" id="L52" title="All 2 branches covered.">                : request.getServletPath().equals(&quot;/api/v2/monthly-surplus/selection&quot;)</span>
+<span class="fc" id="L53">                ? &quot;Die Auswahl wurde nicht bestätigt. Lade die gemeinsame Automatikübersicht vor einem weiteren Versuch.&quot;</span>
+<span class="pc bpc" id="L54" title="1 of 2 branches missed.">                : request.getServletPath().equals(&quot;/api/v2/monthly-surplus&quot;)</span>
+<span class="nc" id="L55">                ? &quot;Deine Automatikübersicht konnte nicht geladen werden. Versuche es erneut.&quot;</span>
+<span class="fc" id="L56">                : &quot;Die Automatikanfrage wurde nicht bestätigt. Lade den aktuellen Aktivierungszustand vor einem weiteren Versuch.&quot;));</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

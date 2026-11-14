@@ -1,0 +1,1044 @@
+{
+  "source": "ci-evidence.json; vorhandene erfolgreiche CI-Vorläufe, kein neu gestarteter CI-Lauf",
+  "note": "Jobschrittzeiten sind inklusive; interne Prozess-/Datenbankzeiten der Sammelbefehle werden nicht erfunden. Null bedeutet Zeitstempelauflösung, nicht kostenlos.",
+  "runs": [
+    {
+      "run_id": 43617756241,
+      "revision": "8f66421be3b7090c5cd384c9679657d9a17a6b3f",
+      "jobs": [
+        {
+          "name": "backend",
+          "job_seconds": 112.0,
+          "categories_seconds": {
+            "Werkzeug-/Runner-/Checkoutsetup": 3.0,
+            "Prüfgruppe einschließlich interner Builds/DB/Prozesse": 107.0,
+            "Cache-/Jobabschluss": 0.0
+          },
+          "steps": [
+            {
+              "step": "Set up job",
+              "seconds": 1.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run actions/checkout@v4",
+              "seconds": 1.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run actions/setup-java@v4",
+              "seconds": 1.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run ./backend/mvnw -B -f backend/pom.xml verify '-Dit.test=*IT,!ApiVersionStateIT,!ApiRetirementIT,!ReleaseTransitionIT,!AdministrativeSerializationIT'",
+              "seconds": 107.0,
+              "category": "Prüfgruppe einschließlich interner Builds/DB/Prozesse"
+            },
+            {
+              "step": "Post Run actions/setup-java@v4",
+              "seconds": 0.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Post Run actions/checkout@v4",
+              "seconds": 0.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Complete job",
+              "seconds": 0.0,
+              "category": "Cache-/Jobabschluss"
+            }
+          ]
+        },
+        {
+          "name": "contract",
+          "job_seconds": 47.0,
+          "categories_seconds": {
+            "Werkzeug-/Runner-/Checkoutsetup": 13.0,
+            "Prüfgruppe einschließlich interner Builds/DB/Prozesse": 30.0,
+            "Cache-/Jobabschluss": 0.0
+          },
+          "steps": [
+            {
+              "step": "Set up job",
+              "seconds": 1.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run actions/checkout@v4",
+              "seconds": 2.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run actions/setup-java@v4",
+              "seconds": 2.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run actions/setup-node@v4",
+              "seconds": 7.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run ./scripts/check-contract.sh",
+              "seconds": 30.0,
+              "category": "Prüfgruppe einschließlich interner Builds/DB/Prozesse"
+            },
+            {
+              "step": "Post Run actions/setup-node@v4",
+              "seconds": 1.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Post Run actions/setup-java@v4",
+              "seconds": 0.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Post Run actions/checkout@v4",
+              "seconds": 0.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Complete job",
+              "seconds": 0.0,
+              "category": "Cache-/Jobabschluss"
+            }
+          ]
+        },
+        {
+          "name": "browser-transition",
+          "job_seconds": 220.0,
+          "categories_seconds": {
+            "Werkzeug-/Runner-/Checkoutsetup": 11.0,
+            "npm-Abhängigkeiten": 6.0,
+            "Browserinstallation": 23.0,
+            "Prüfgruppe einschließlich interner Builds/DB/Prozesse": 177.0,
+            "Cache-/Jobabschluss": 0.0
+          },
+          "steps": [
+            {
+              "step": "Set up job",
+              "seconds": 2.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run actions/checkout@v4",
+              "seconds": 1.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run actions/setup-java@v4",
+              "seconds": 2.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run actions/setup-node@v4",
+              "seconds": 6.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run npm --prefix frontend ci",
+              "seconds": 6.0,
+              "category": "npm-Abhängigkeiten"
+            },
+            {
+              "step": "Run npx --prefix frontend playwright install --with-deps chromium",
+              "seconds": 23.0,
+              "category": "Browserinstallation"
+            },
+            {
+              "step": "Run npm --prefix frontend run e2e:transition",
+              "seconds": 177.0,
+              "category": "Prüfgruppe einschließlich interner Builds/DB/Prozesse"
+            },
+            {
+              "step": "Run actions/upload-artifact@v4",
+              "seconds": 0.0,
+              "category": "Prüfgruppe einschließlich interner Builds/DB/Prozesse"
+            },
+            {
+              "step": "Post Run actions/setup-node@v4",
+              "seconds": 0.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Post Run actions/setup-java@v4",
+              "seconds": 0.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Post Run actions/checkout@v4",
+              "seconds": 0.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Complete job",
+              "seconds": 0.0,
+              "category": "Cache-/Jobabschluss"
+            }
+          ]
+        },
+        {
+          "name": "browser",
+          "job_seconds": 471.0,
+          "categories_seconds": {
+            "Werkzeug-/Runner-/Checkoutsetup": 13.0,
+            "npm-Abhängigkeiten": 3.0,
+            "Browserinstallation": 37.0,
+            "Prüfgruppe einschließlich interner Builds/DB/Prozesse": 416.0,
+            "Cache-/Jobabschluss": 0.0
+          },
+          "steps": [
+            {
+              "step": "Set up job",
+              "seconds": 3.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run actions/checkout@v4",
+              "seconds": 5.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run actions/setup-java@v4",
+              "seconds": 1.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run actions/setup-node@v4",
+              "seconds": 4.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run npm --prefix frontend ci",
+              "seconds": 3.0,
+              "category": "npm-Abhängigkeiten"
+            },
+            {
+              "step": "Run npx --prefix frontend playwright install --with-deps chromium",
+              "seconds": 37.0,
+              "category": "Browserinstallation"
+            },
+            {
+              "step": "Run npm --prefix frontend run e2e",
+              "seconds": 284.0,
+              "category": "Prüfgruppe einschließlich interner Builds/DB/Prozesse"
+            },
+            {
+              "step": "Run npm --prefix frontend run e2e:automation",
+              "seconds": 132.0,
+              "category": "Prüfgruppe einschließlich interner Builds/DB/Prozesse"
+            },
+            {
+              "step": "Run actions/upload-artifact@v4",
+              "seconds": 0.0,
+              "category": "Prüfgruppe einschließlich interner Builds/DB/Prozesse"
+            },
+            {
+              "step": "Post Run actions/setup-node@v4",
+              "seconds": 0.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Post Run actions/setup-java@v4",
+              "seconds": 0.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Post Run actions/checkout@v4",
+              "seconds": 0.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Complete job",
+              "seconds": 0.0,
+              "category": "Cache-/Jobabschluss"
+            }
+          ]
+        },
+        {
+          "name": "backend-retirement",
+          "job_seconds": 1128.0,
+          "categories_seconds": {
+            "Werkzeug-/Runner-/Checkoutsetup": 5.0,
+            "Prüfgruppe einschließlich interner Builds/DB/Prozesse": 1121.0,
+            "Cache-/Jobabschluss": 0.0
+          },
+          "steps": [
+            {
+              "step": "Set up job",
+              "seconds": 1.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run actions/checkout@v4",
+              "seconds": 1.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run actions/setup-java@v4",
+              "seconds": 2.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run ./backend/mvnw -B -f backend/pom.xml verify -Dit.test=ApiVersionStateIT,ApiRetirementIT,ReleaseTransitionIT,AdministrativeSerializationIT",
+              "seconds": 1121.0,
+              "category": "Prüfgruppe einschließlich interner Builds/DB/Prozesse"
+            },
+            {
+              "step": "Run actions/upload-artifact@v4",
+              "seconds": 0.0,
+              "category": "Prüfgruppe einschließlich interner Builds/DB/Prozesse"
+            },
+            {
+              "step": "Post Run actions/setup-java@v4",
+              "seconds": 1.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Post Run actions/checkout@v4",
+              "seconds": 0.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Complete job",
+              "seconds": 0.0,
+              "category": "Cache-/Jobabschluss"
+            }
+          ]
+        },
+        {
+          "name": "link-generator",
+          "job_seconds": 6.0,
+          "categories_seconds": {
+            "Werkzeug-/Runner-/Checkoutsetup": 2.0,
+            "Prüfgruppe einschließlich interner Builds/DB/Prozesse": 2.0,
+            "Cache-/Jobabschluss": 0.0
+          },
+          "steps": [
+            {
+              "step": "Set up job",
+              "seconds": 1.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run actions/checkout@v4",
+              "seconds": 1.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run python3 -m unittest discover -s scripts/tests -v",
+              "seconds": 2.0,
+              "category": "Prüfgruppe einschließlich interner Builds/DB/Prozesse"
+            },
+            {
+              "step": "Post Run actions/checkout@v4",
+              "seconds": 0.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Complete job",
+              "seconds": 0.0,
+              "category": "Cache-/Jobabschluss"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "run_id": 43611663659,
+      "revision": "657e05d92fc07acc206e37db315cea003c9ba60e",
+      "jobs": [
+        {
+          "name": "backend",
+          "job_seconds": 89.0,
+          "categories_seconds": {
+            "Werkzeug-/Runner-/Checkoutsetup": 9.0,
+            "Prüfgruppe einschließlich interner Builds/DB/Prozesse": 79.0,
+            "Cache-/Jobabschluss": 0.0
+          },
+          "steps": [
+            {
+              "step": "Set up job",
+              "seconds": 2.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run actions/checkout@v4",
+              "seconds": 5.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run actions/setup-java@v4",
+              "seconds": 1.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run ./backend/mvnw -B -f backend/pom.xml verify '-Dit.test=*IT,!ApiVersionStateIT,!ApiRetirementIT,!ReleaseTransitionIT,!AdministrativeSerializationIT'",
+              "seconds": 79.0,
+              "category": "Prüfgruppe einschließlich interner Builds/DB/Prozesse"
+            },
+            {
+              "step": "Post Run actions/setup-java@v4",
+              "seconds": 0.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Post Run actions/checkout@v4",
+              "seconds": 1.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Complete job",
+              "seconds": 0.0,
+              "category": "Cache-/Jobabschluss"
+            }
+          ]
+        },
+        {
+          "name": "browser",
+          "job_seconds": 463.0,
+          "categories_seconds": {
+            "Werkzeug-/Runner-/Checkoutsetup": 12.0,
+            "npm-Abhängigkeiten": 4.0,
+            "Browserinstallation": 30.0,
+            "Prüfgruppe einschließlich interner Builds/DB/Prozesse": 414.0,
+            "Cache-/Jobabschluss": 1.0
+          },
+          "steps": [
+            {
+              "step": "Set up job",
+              "seconds": 2.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run actions/checkout@v4",
+              "seconds": 5.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run actions/setup-java@v4",
+              "seconds": 1.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run actions/setup-node@v4",
+              "seconds": 4.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run npm --prefix frontend ci",
+              "seconds": 4.0,
+              "category": "npm-Abhängigkeiten"
+            },
+            {
+              "step": "Run npx --prefix frontend playwright install --with-deps chromium",
+              "seconds": 30.0,
+              "category": "Browserinstallation"
+            },
+            {
+              "step": "Run npm --prefix frontend run e2e",
+              "seconds": 286.0,
+              "category": "Prüfgruppe einschließlich interner Builds/DB/Prozesse"
+            },
+            {
+              "step": "Run npm --prefix frontend run e2e:automation",
+              "seconds": 128.0,
+              "category": "Prüfgruppe einschließlich interner Builds/DB/Prozesse"
+            },
+            {
+              "step": "Run actions/upload-artifact@v4",
+              "seconds": 0.0,
+              "category": "Prüfgruppe einschließlich interner Builds/DB/Prozesse"
+            },
+            {
+              "step": "Post Run actions/setup-node@v4",
+              "seconds": 0.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Post Run actions/setup-java@v4",
+              "seconds": 0.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Post Run actions/checkout@v4",
+              "seconds": 0.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Complete job",
+              "seconds": 1.0,
+              "category": "Cache-/Jobabschluss"
+            }
+          ]
+        },
+        {
+          "name": "browser-transition",
+          "job_seconds": 221.0,
+          "categories_seconds": {
+            "Werkzeug-/Runner-/Checkoutsetup": 10.0,
+            "npm-Abhängigkeiten": 6.0,
+            "Browserinstallation": 22.0,
+            "Prüfgruppe einschließlich interner Builds/DB/Prozesse": 180.0,
+            "Cache-/Jobabschluss": 0.0
+          },
+          "steps": [
+            {
+              "step": "Set up job",
+              "seconds": 1.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run actions/checkout@v4",
+              "seconds": 1.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run actions/setup-java@v4",
+              "seconds": 2.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run actions/setup-node@v4",
+              "seconds": 5.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run npm --prefix frontend ci",
+              "seconds": 6.0,
+              "category": "npm-Abhängigkeiten"
+            },
+            {
+              "step": "Run npx --prefix frontend playwright install --with-deps chromium",
+              "seconds": 22.0,
+              "category": "Browserinstallation"
+            },
+            {
+              "step": "Run npm --prefix frontend run e2e:transition",
+              "seconds": 180.0,
+              "category": "Prüfgruppe einschließlich interner Builds/DB/Prozesse"
+            },
+            {
+              "step": "Run actions/upload-artifact@v4",
+              "seconds": 0.0,
+              "category": "Prüfgruppe einschließlich interner Builds/DB/Prozesse"
+            },
+            {
+              "step": "Post Run actions/setup-node@v4",
+              "seconds": 0.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Post Run actions/setup-java@v4",
+              "seconds": 1.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Post Run actions/checkout@v4",
+              "seconds": 0.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Complete job",
+              "seconds": 0.0,
+              "category": "Cache-/Jobabschluss"
+            }
+          ]
+        },
+        {
+          "name": "link-generator",
+          "job_seconds": 9.0,
+          "categories_seconds": {
+            "Werkzeug-/Runner-/Checkoutsetup": 6.0,
+            "Prüfgruppe einschließlich interner Builds/DB/Prozesse": 1.0,
+            "Cache-/Jobabschluss": 0.0
+          },
+          "steps": [
+            {
+              "step": "Set up job",
+              "seconds": 2.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run actions/checkout@v4",
+              "seconds": 4.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run python3 -m unittest discover -s scripts/tests -v",
+              "seconds": 1.0,
+              "category": "Prüfgruppe einschließlich interner Builds/DB/Prozesse"
+            },
+            {
+              "step": "Post Run actions/checkout@v4",
+              "seconds": 0.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Complete job",
+              "seconds": 0.0,
+              "category": "Cache-/Jobabschluss"
+            }
+          ]
+        },
+        {
+          "name": "contract",
+          "job_seconds": 43.0,
+          "categories_seconds": {
+            "Werkzeug-/Runner-/Checkoutsetup": 14.0,
+            "Prüfgruppe einschließlich interner Builds/DB/Prozesse": 28.0,
+            "Cache-/Jobabschluss": 0.0
+          },
+          "steps": [
+            {
+              "step": "Set up job",
+              "seconds": 3.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run actions/checkout@v4",
+              "seconds": 4.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run actions/setup-java@v4",
+              "seconds": 1.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run actions/setup-node@v4",
+              "seconds": 5.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run ./scripts/check-contract.sh",
+              "seconds": 28.0,
+              "category": "Prüfgruppe einschließlich interner Builds/DB/Prozesse"
+            },
+            {
+              "step": "Post Run actions/setup-node@v4",
+              "seconds": 0.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Post Run actions/setup-java@v4",
+              "seconds": 1.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Post Run actions/checkout@v4",
+              "seconds": 0.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Complete job",
+              "seconds": 0.0,
+              "category": "Cache-/Jobabschluss"
+            }
+          ]
+        },
+        {
+          "name": "backend-retirement",
+          "job_seconds": 1070.0,
+          "categories_seconds": {
+            "Werkzeug-/Runner-/Checkoutsetup": 7.0,
+            "Prüfgruppe einschließlich interner Builds/DB/Prozesse": 1060.0,
+            "Cache-/Jobabschluss": 0.0
+          },
+          "steps": [
+            {
+              "step": "Set up job",
+              "seconds": 2.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run actions/checkout@v4",
+              "seconds": 4.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run actions/setup-java@v4",
+              "seconds": 1.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run ./backend/mvnw -B -f backend/pom.xml verify -Dit.test=ApiVersionStateIT,ApiRetirementIT,ReleaseTransitionIT,AdministrativeSerializationIT",
+              "seconds": 1060.0,
+              "category": "Prüfgruppe einschließlich interner Builds/DB/Prozesse"
+            },
+            {
+              "step": "Run actions/upload-artifact@v4",
+              "seconds": 0.0,
+              "category": "Prüfgruppe einschließlich interner Builds/DB/Prozesse"
+            },
+            {
+              "step": "Post Run actions/setup-java@v4",
+              "seconds": 0.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Post Run actions/checkout@v4",
+              "seconds": 0.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Complete job",
+              "seconds": 0.0,
+              "category": "Cache-/Jobabschluss"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "run_id": 43611606779,
+      "revision": "657e05d92fc07acc206e37db315cea003c9ba60e",
+      "jobs": [
+        {
+          "name": "contract",
+          "job_seconds": 39.0,
+          "categories_seconds": {
+            "Werkzeug-/Runner-/Checkoutsetup": 9.0,
+            "Prüfgruppe einschließlich interner Builds/DB/Prozesse": 27.0,
+            "Cache-/Jobabschluss": 0.0
+          },
+          "steps": [
+            {
+              "step": "Set up job",
+              "seconds": 1.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run actions/checkout@v4",
+              "seconds": 1.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run actions/setup-java@v4",
+              "seconds": 1.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run actions/setup-node@v4",
+              "seconds": 5.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run ./scripts/check-contract.sh",
+              "seconds": 27.0,
+              "category": "Prüfgruppe einschließlich interner Builds/DB/Prozesse"
+            },
+            {
+              "step": "Post Run actions/setup-node@v4",
+              "seconds": 1.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Post Run actions/setup-java@v4",
+              "seconds": 0.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Post Run actions/checkout@v4",
+              "seconds": 0.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Complete job",
+              "seconds": 0.0,
+              "category": "Cache-/Jobabschluss"
+            }
+          ]
+        },
+        {
+          "name": "browser",
+          "job_seconds": 561.0,
+          "categories_seconds": {
+            "Werkzeug-/Runner-/Checkoutsetup": 11.0,
+            "npm-Abhängigkeiten": 6.0,
+            "Browserinstallation": 21.0,
+            "Prüfgruppe einschließlich interner Builds/DB/Prozesse": 520.0,
+            "Cache-/Jobabschluss": 0.0
+          },
+          "steps": [
+            {
+              "step": "Set up job",
+              "seconds": 1.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run actions/checkout@v4",
+              "seconds": 1.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run actions/setup-java@v4",
+              "seconds": 2.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run actions/setup-node@v4",
+              "seconds": 6.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run npm --prefix frontend ci",
+              "seconds": 6.0,
+              "category": "npm-Abhängigkeiten"
+            },
+            {
+              "step": "Run npx --prefix frontend playwright install --with-deps chromium",
+              "seconds": 21.0,
+              "category": "Browserinstallation"
+            },
+            {
+              "step": "Run npm --prefix frontend run e2e",
+              "seconds": 355.0,
+              "category": "Prüfgruppe einschließlich interner Builds/DB/Prozesse"
+            },
+            {
+              "step": "Run npm --prefix frontend run e2e:automation",
+              "seconds": 165.0,
+              "category": "Prüfgruppe einschließlich interner Builds/DB/Prozesse"
+            },
+            {
+              "step": "Run actions/upload-artifact@v4",
+              "seconds": 0.0,
+              "category": "Prüfgruppe einschließlich interner Builds/DB/Prozesse"
+            },
+            {
+              "step": "Post Run actions/setup-node@v4",
+              "seconds": 0.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Post Run actions/setup-java@v4",
+              "seconds": 0.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Post Run actions/checkout@v4",
+              "seconds": 1.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Complete job",
+              "seconds": 0.0,
+              "category": "Cache-/Jobabschluss"
+            }
+          ]
+        },
+        {
+          "name": "link-generator",
+          "job_seconds": 7.0,
+          "categories_seconds": {
+            "Werkzeug-/Runner-/Checkoutsetup": 3.0,
+            "Prüfgruppe einschließlich interner Builds/DB/Prozesse": 1.0,
+            "Cache-/Jobabschluss": 0.0
+          },
+          "steps": [
+            {
+              "step": "Set up job",
+              "seconds": 1.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run actions/checkout@v4",
+              "seconds": 1.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run python3 -m unittest discover -s scripts/tests -v",
+              "seconds": 1.0,
+              "category": "Prüfgruppe einschließlich interner Builds/DB/Prozesse"
+            },
+            {
+              "step": "Post Run actions/checkout@v4",
+              "seconds": 1.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Complete job",
+              "seconds": 0.0,
+              "category": "Cache-/Jobabschluss"
+            }
+          ]
+        },
+        {
+          "name": "browser-transition",
+          "job_seconds": 192.0,
+          "categories_seconds": {
+            "Werkzeug-/Runner-/Checkoutsetup": 8.0,
+            "npm-Abhängigkeiten": 4.0,
+            "Browserinstallation": 22.0,
+            "Prüfgruppe einschließlich interner Builds/DB/Prozesse": 155.0,
+            "Cache-/Jobabschluss": 0.0
+          },
+          "steps": [
+            {
+              "step": "Set up job",
+              "seconds": 1.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run actions/checkout@v4",
+              "seconds": 1.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run actions/setup-java@v4",
+              "seconds": 1.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run actions/setup-node@v4",
+              "seconds": 5.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run npm --prefix frontend ci",
+              "seconds": 4.0,
+              "category": "npm-Abhängigkeiten"
+            },
+            {
+              "step": "Run npx --prefix frontend playwright install --with-deps chromium",
+              "seconds": 22.0,
+              "category": "Browserinstallation"
+            },
+            {
+              "step": "Run npm --prefix frontend run e2e:transition",
+              "seconds": 155.0,
+              "category": "Prüfgruppe einschließlich interner Builds/DB/Prozesse"
+            },
+            {
+              "step": "Run actions/upload-artifact@v4",
+              "seconds": 0.0,
+              "category": "Prüfgruppe einschließlich interner Builds/DB/Prozesse"
+            },
+            {
+              "step": "Post Run actions/setup-node@v4",
+              "seconds": 0.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Post Run actions/setup-java@v4",
+              "seconds": 0.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Post Run actions/checkout@v4",
+              "seconds": 0.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Complete job",
+              "seconds": 0.0,
+              "category": "Cache-/Jobabschluss"
+            }
+          ]
+        },
+        {
+          "name": "backend-retirement",
+          "job_seconds": 1457.0,
+          "categories_seconds": {
+            "Werkzeug-/Runner-/Checkoutsetup": 4.0,
+            "Prüfgruppe einschließlich interner Builds/DB/Prozesse": 1450.0,
+            "Cache-/Jobabschluss": 0.0
+          },
+          "steps": [
+            {
+              "step": "Set up job",
+              "seconds": 1.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run actions/checkout@v4",
+              "seconds": 1.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run actions/setup-java@v4",
+              "seconds": 1.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run ./backend/mvnw -B -f backend/pom.xml verify -Dit.test=ApiVersionStateIT,ApiRetirementIT,ReleaseTransitionIT,AdministrativeSerializationIT",
+              "seconds": 1450.0,
+              "category": "Prüfgruppe einschließlich interner Builds/DB/Prozesse"
+            },
+            {
+              "step": "Run actions/upload-artifact@v4",
+              "seconds": 0.0,
+              "category": "Prüfgruppe einschließlich interner Builds/DB/Prozesse"
+            },
+            {
+              "step": "Post Run actions/setup-java@v4",
+              "seconds": 1.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Post Run actions/checkout@v4",
+              "seconds": 0.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Complete job",
+              "seconds": 0.0,
+              "category": "Cache-/Jobabschluss"
+            }
+          ]
+        },
+        {
+          "name": "backend",
+          "job_seconds": 96.0,
+          "categories_seconds": {
+            "Werkzeug-/Runner-/Checkoutsetup": 12.0,
+            "Prüfgruppe einschließlich interner Builds/DB/Prozesse": 79.0,
+            "Cache-/Jobabschluss": 0.0
+          },
+          "steps": [
+            {
+              "step": "Set up job",
+              "seconds": 3.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run actions/checkout@v4",
+              "seconds": 5.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run actions/setup-java@v4",
+              "seconds": 4.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Run ./backend/mvnw -B -f backend/pom.xml verify '-Dit.test=*IT,!ApiVersionStateIT,!ApiRetirementIT,!ReleaseTransitionIT,!AdministrativeSerializationIT'",
+              "seconds": 79.0,
+              "category": "Prüfgruppe einschließlich interner Builds/DB/Prozesse"
+            },
+            {
+              "step": "Post Run actions/setup-java@v4",
+              "seconds": 0.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Post Run actions/checkout@v4",
+              "seconds": 0.0,
+              "category": "Werkzeug-/Runner-/Checkoutsetup"
+            },
+            {
+              "step": "Complete job",
+              "seconds": 0.0,
+              "category": "Cache-/Jobabschluss"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

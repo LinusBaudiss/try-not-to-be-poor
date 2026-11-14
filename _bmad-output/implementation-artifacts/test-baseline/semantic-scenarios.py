@@ -8,17 +8,47 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[2]
+SCOPES = {'backend', 'frontend', 'infrastructure'}
+COUNTING = {'business', 'infrastructure'}
+TEST_TYPES = {'unit', 'component', 'adapter', 'architecture', 'tool/infrastructure',
+              'HTTP/PostgreSQL', 'PostgreSQL', 'process/PostgreSQL', 'browser'}
+
+
+def current_test_sources():
+    paths = list((ROOT / 'backend/src/test/java').rglob('*.java'))
+    paths += [p for p in (ROOT / 'frontend/e2e').rglob('*')
+              if p.is_file() and p.suffix in {'.ts', '.tsx', '.js', '.jsx', '.mts', '.cts', '.mjs', '.cjs', '.json'}]
+    paths += list((ROOT / 'frontend').glob('playwright*.config.*'))
+    paths += list((ROOT / 'scripts/tests').glob('*.py'))
+    return {str(path.relative_to(ROOT)) for path in paths}
+
+
+def validate_sources(manifest):
+    reviewed = {name for name in manifest['source_files_sha256']
+                if name.startswith(('backend/src/test/java/', 'frontend/e2e/', 'scripts/tests/'))
+                or (name.startswith('frontend/playwright') and '.config.' in name)}
+    current = current_test_sources()
+    if current != reviewed:
+        raise ValueError(f'Neue/entfallene Testquelle ohne Review: neu={sorted(current-reviewed)}, entfallen={sorted(reviewed-current)}')
+    for name, expected in manifest['source_files_sha256'].items():
+        if hashlib.sha256((ROOT / name).read_bytes()).hexdigest() != expected:
+            raise ValueError('Quelle/Fixture seit semantischem Review geändert: ' + name)
 
 
 def validate(manifest):
     if manifest.get('semantic_review_complete') is not True:
         raise ValueError('Semantischer Review ist nicht abgeschlossen')
-    for name, expected in manifest['source_files_sha256'].items():
-        if hashlib.sha256((ROOT / name).read_bytes()).hexdigest() != expected:
-            raise ValueError('Quelle/Fixture seit semantischem Review geändert: ' + name)
+    validate_sources(manifest)
     groups = manifest['scenarios']
     assignments = manifest['semantic_assignments']
     canonical = manifest['canonical_scenarios']
+    for cid, scenario in canonical.items():
+        for field, allowed in [('counting', COUNTING), ('scope', SCOPES), ('primary_test_type', TEST_TYPES)]:
+            if scenario.get(field) not in allowed:
+                raise ValueError('Unbekannter Klassifikationswert: ' + cid + '/' + field)
+    for gid, group in groups.items():
+        if group.get('primary_test_type') not in TEST_TYPES:
+            raise ValueError('Unbekannte Quelltestart: ' + gid)
     if set(assignments) != set(groups):
         raise ValueError('Quellgruppen ohne vollständige semantische Zuordnung')
     referenced = set()
@@ -95,7 +125,7 @@ def main():
     fields = ['id', 'scope', 'rule', 'label', 'input_state', 'expected_property', 'primary_test_type',
               'primary_member', 'supplementary_members', 'requirements', 'risks', 'required_integration', 'decision_reasons']
     with (HERE / 'canonical-scenarios.csv').open('w') as output:
-        writer = csv.DictWriter(output, fieldnames=fields, extrasaction='ignore')
+        writer = csv.DictWriter(output, fieldnames=fields, extrasaction='ignore', lineterminator='\n')
         writer.writeheader()
         for cid, row in sorted(canonical.items()):
             writer.writerow({'id': cid, **{k: json.dumps(v, ensure_ascii=False) if isinstance(v, (dict, list)) else v for k, v in row.items()}})

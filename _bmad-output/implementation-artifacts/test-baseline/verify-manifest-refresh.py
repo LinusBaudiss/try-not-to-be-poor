@@ -35,7 +35,7 @@ class ManifestRefreshTest(unittest.TestCase):
     def test_changed_source_fixture_requires_another_review(self):
         changed = copy.deepcopy(MANIFEST)
         changed['source_files_sha256'][next(iter(changed['source_files_sha256']))] = 'not-reviewed'
-        self.rejected(changed, 'Source changed since semantic review')
+        self.rejected(changed, 'Quelle/Fixture seit semantischem Review')
 
     def test_unknown_scenario_reference_is_rejected(self):
         changed = copy.deepcopy(MANIFEST)
@@ -50,6 +50,21 @@ class SemanticReviewTest(unittest.TestCase):
 
     def test_every_source_and_inner_loop_has_a_consistent_reviewed_assignment(self):
         self.api['validate'](MANIFEST)
+
+    def test_unknown_classification_cannot_silently_change_denominator(self):
+        for field in ('counting', 'scope', 'primary_test_type'):
+            with self.subTest(field=field):
+                changed = copy.deepcopy(MANIFEST)
+                next(iter(changed['canonical_scenarios'].values()))[field] = 'typo'
+                with self.assertRaisesRegex(ValueError, 'Unbekannter Klassifikationswert'):
+                    self.api['validate'](changed)
+
+    def test_new_browser_source_cannot_hide_behind_cached_discovery(self):
+        validate_sources = self.api['validate_sources']
+        original = validate_sources.__globals__['current_test_sources']
+        with patch.dict(validate_sources.__globals__, current_test_sources=lambda: original() | {'frontend/e2e/new.spec.ts'}):
+            with self.assertRaisesRegex(ValueError, 'Neue/entfallene Testquelle'):
+                validate_sources(MANIFEST)
 
     def test_unassigned_source_group_is_rejected(self):
         changed = copy.deepcopy(MANIFEST)

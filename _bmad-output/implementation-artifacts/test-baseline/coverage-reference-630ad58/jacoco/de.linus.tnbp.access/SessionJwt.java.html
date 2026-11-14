@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SessionJwt.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Try Not to Be Poor</a> &gt; <a href="index.source.html" class="el_package">de.linus.tnbp.access</a> &gt; <span class="el_source">SessionJwt.java</span></div><h1>SessionJwt.java</h1><pre class="source lang-java linenums">package de.linus.tnbp.access;
+
+import com.nimbusds.jose.*;
+import com.nimbusds.jose.crypto.MACSigner;
+import com.nimbusds.jose.crypto.MACVerifier;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.SignedJWT;
+import java.time.Clock;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.Base64;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import org.springframework.security.oauth2.jwt.BadJwtException;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.stereotype.Component;
+
+@Component
+class SessionJwt implements JwtDecoder {
+<span class="fc" id="L23">    static final Duration LIFETIME = Duration.ofMinutes(10);</span>
+    private final SessionSettings settings;
+    private final Clock clock;
+    private final byte[] key;
+
+<span class="fc" id="L28">    SessionJwt(SessionSettings settings, Clock clock) {</span>
+<span class="fc" id="L29">        this.settings = settings;</span>
+<span class="fc" id="L30">        this.clock = clock;</span>
+<span class="fc" id="L31">        byte[] decoded = null;</span>
+        try {
+<span class="pc bpc" id="L33" title="1 of 2 branches missed.">            decoded = Base64.getDecoder().decode(settings.signingKey() == null ? &quot;&quot; : settings.signingKey());</span>
+<span class="fc" id="L34">        } catch (IllegalArgumentException ignored) { /* Unvollständige Konfiguration sperrt Sitzungen. */ }</span>
+<span class="fc bfc" id="L35" title="All 4 branches covered.">        this.key = decoded != null &amp;&amp; decoded.length &gt;= 32 ? decoded : null;</span>
+<span class="fc" id="L36">    }</span>
+
+    boolean available() {
+<span class="pc bpc" id="L39" title="2 of 6 branches missed.">        return key != null &amp;&amp; settings.issuer() != null &amp;&amp; !settings.issuer().isBlank()</span>
+<span class="pc bpc" id="L40" title="2 of 4 branches missed.">            &amp;&amp; settings.audience() != null &amp;&amp; !settings.audience().isBlank()</span>
+<span class="pc bpc" id="L41" title="1 of 4 branches missed.">            &amp;&amp; settings.origin() != null &amp;&amp; settings.origin().matches(&quot;https://[^/]+(:[0-9]+)?&quot;);</span>
+    }
+
+    String issue(UUID userId, Instant now) {
+<span class="fc bfc" id="L45" title="All 2 branches covered.">        if (!available()) throw new SessionFailure(503);</span>
+        try {
+<span class="fc" id="L47">            var claims = new JWTClaimsSet.Builder().issuer(settings.issuer()).audience(settings.audience())</span>
+<span class="fc" id="L48">                .subject(userId.toString()).issueTime(Date.from(now)).notBeforeTime(Date.from(now))</span>
+<span class="fc" id="L49">                .expirationTime(Date.from(now.plus(LIFETIME))).jwtID(UUID.randomUUID().toString()).build();</span>
+<span class="fc" id="L50">            var jwt = new SignedJWT(new JWSHeader.Builder(JWSAlgorithm.HS256).type(JOSEObjectType.JWT).build(), claims);</span>
+<span class="fc" id="L51">            jwt.sign(new MACSigner(key));</span>
+<span class="fc" id="L52">            return jwt.serialize();</span>
+<span class="nc" id="L53">        } catch (JOSEException failure) { throw new SessionFailure(503); }</span>
+    }
+
+    @Override
+    public Jwt decode(String token) {
+        try {
+<span class="pc bpc" id="L59" title="1 of 2 branches missed.">            if (!available()) throw new IllegalArgumentException();</span>
+<span class="fc" id="L60">            var jwt = SignedJWT.parse(token);</span>
+<span class="fc bfc" id="L61" title="All 4 branches covered.">            if (!JWSAlgorithm.HS256.equals(jwt.getHeader().getAlgorithm()) || !jwt.verify(new MACVerifier(key)))</span>
+<span class="fc" id="L62">                throw new IllegalArgumentException();</span>
+<span class="fc" id="L63">            var claims = jwt.getJWTClaimsSet();</span>
+<span class="fc" id="L64">            Instant now = clock.instant();</span>
+<span class="fc" id="L65">            Instant issued = claims.getIssueTime().toInstant();</span>
+<span class="fc" id="L66">            Instant start = claims.getNotBeforeTime().toInstant();</span>
+<span class="fc" id="L67">            Instant end = claims.getExpirationTime().toInstant();</span>
+<span class="fc" id="L68">            String subject = claims.getSubject();</span>
+<span class="fc bfc" id="L69" title="All 4 branches covered.">            if (!settings.issuer().equals(claims.getIssuer()) || !List.of(settings.audience()).equals(claims.getAudience())</span>
+<span class="fc bfc" id="L70" title="All 6 branches covered.">                    || !UUID.fromString(subject).toString().equals(subject) || issued.isAfter(now) || start.isAfter(now)</span>
+<span class="pc bpc" id="L71" title="1 of 6 branches missed.">                    || !now.isBefore(end) || !end.isAfter(issued) || Duration.between(issued, end).compareTo(LIFETIME) &gt; 0)</span>
+<span class="fc" id="L72">                throw new IllegalArgumentException();</span>
+<span class="fc" id="L73">            return new Jwt(token, issued, end, Map.of(&quot;alg&quot;, &quot;HS256&quot;), claims.getClaims());</span>
+<span class="fc" id="L74">        } catch (Exception failure) { throw new BadJwtException(&quot;Ungültige Sitzung.&quot;); }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

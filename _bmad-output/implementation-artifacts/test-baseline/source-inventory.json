@@ -8366,7 +8366,7 @@
       "class": "FinanceMigrationIT",
       "variant": "false",
       "provider": "ValueSource",
-      "current_type": "process/PostgreSQL",
+      "current_type": "PostgreSQL",
       "execution_paths": [
         "maven:verify/failsafe"
       ],
@@ -8387,8 +8387,8 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1",
       "source_body_sha256": "7114cf708e584497b5575f62989573d7b707d1b5081c5660b64f6a9195503851",
       "source_body": "{\n        String name=\"deletion_migration_\"+UUID.randomUUID().toString().replace(\"-\",\"\");\n        var server=new JdbcTemplate(PostgresFixture.POSTGRES.getPostgresDatabase());\n        server.execute(\"CREATE DATABASE \"+name+\" OWNER tnbp_migrator\");\n        String url=\"jdbc:postgresql://localhost:\"+PostgresFixture.POSTGRES.getPort()+\"/\"+name;\n        var admin=new JdbcTemplate(new DriverManagerDataSource(url,\"postgres\",\"postgres\"));\n        try {\n            Flyway.configure().dataSource(url,\"tnbp_migrator\",\"migration-test-only\").schemas(\"access\").defaultSchema(\"access\").target(\"15\").load().migrate();\n            if(existing)for(int account=0;account<2;account++) {\n                UUID user=UUID.randomUUID(),goal=UUID.randomUUID();\n                admin.update(\"INSERT INTO access.accounts VALUES (?,?,'$argon2id$synthetic',now())\",user,user+\"@example.org\");\n                admin.update(\"INSERT INTO monthly_surplus.activations VALUES (?,DATE '2026-10-01')\",user);\n                admin.update(\"INSERT INTO savings_goals.goals VALUES (?,?,'Bestand',10000,-3000,NULL)\",goal,user);\n                admin.update(\"INSERT INTO monthly_surplus.selections VALUES (?,DATE '2026-10-01',?)\",user,goal);\n                admin.update(\"INSERT INTO monthly_surplus.month_records VALUES (?,DATE '2026-10-01',20000,?,false),(?,DATE '2026-11-01',0,?,false),(?,DATE '2026-12-01',NULL,?,true)\",user,goal,user,goal,user,goal);\n            }\n            var before=new LinkedHashMap<String,List<Map<String,Object>>>();\n            for(String table:List.of(\"access.accounts\",\"monthly_surplus.activations\",\"monthly_surplus.selections\",\"monthly_surplus.month_records\",\"savings_goals.goals\",\"api_version.state\"))\n                before.put(table,admin.queryForList(\"SELECT * FROM \"+table+\" ORDER BY 1,2\"));\n            Flyway.configure().dataSource(url,\"tnbp_migrator\",\"migration-test-only\").schemas(\"access\").defaultSchema(\"access\").load().migrate();\n            provision(admin);provision(admin);\n            before.forEach((table,rows)->assertThat(admin.queryForList(\"SELECT * FROM \"+table+\" ORDER BY 1,2\")).isEqualTo(rows));\n            assertThat(admin.queryForList(\"SELECT column_name FROM information_schema.columns WHERE table_schema='monthly_surplus' AND table_name='deleted_goals' ORDER BY ordinal_position\",String.class)).containsExactly(\"user_id\",\"goal_id\");\n            assertThat(admin.queryForObject(\"SELECT relrowsecurity AND relforcerowsecurity FROM pg_class WHERE oid='monthly_surplus.deleted_goals'::regclass\",Boolean.class)).isTrue();\n            assertThat(admin.queryForObject(\"SELECT is_nullable FROM information_schema.columns WHERE table_schema='monthly_surplus' AND table_name='selections' AND column_name='goal_id'\",String.class)).isEqualTo(\"YES\");\n            var runtime=new JdbcTemplate(new DriverManagerDataSource(url,\"tnbp_runtime\",\"runtime-test-only\"));\n            assertThat(runtime.queryForObject(\"SELECT has_table_privilege(current_user,'monthly_surplus.deleted_goals','SELECT') AND has_table_privilege(current_user,'monthly_surplus.deleted_goals','INSERT') AND NOT has_table_privilege(current_user,'monthly_surplus.deleted_goals','UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER') AND NOT has_any_column_privilege(current_user,'monthly_surplus.deleted_goals','UPDATE,REFERENCES')\",Boolean.class)).isTrue();\n            assertThat(runtime.queryForObject(\"SELECT count(*) FROM monthly_surplus.deleted_goals\",Integer.class)).isZero();\n        } finally {server.execute(\"DROP DATABASE \"+name+\" WITH (FORCE)\");}\n    }",
@@ -8435,7 +8435,7 @@
       "class": "FinanceMigrationIT",
       "variant": "true",
       "provider": "ValueSource",
-      "current_type": "process/PostgreSQL",
+      "current_type": "PostgreSQL",
       "execution_paths": [
         "maven:verify/failsafe"
       ],
@@ -8456,8 +8456,8 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1",
       "source_body_sha256": "7114cf708e584497b5575f62989573d7b707d1b5081c5660b64f6a9195503851",
       "source_body": "{\n        String name=\"deletion_migration_\"+UUID.randomUUID().toString().replace(\"-\",\"\");\n        var server=new JdbcTemplate(PostgresFixture.POSTGRES.getPostgresDatabase());\n        server.execute(\"CREATE DATABASE \"+name+\" OWNER tnbp_migrator\");\n        String url=\"jdbc:postgresql://localhost:\"+PostgresFixture.POSTGRES.getPort()+\"/\"+name;\n        var admin=new JdbcTemplate(new DriverManagerDataSource(url,\"postgres\",\"postgres\"));\n        try {\n            Flyway.configure().dataSource(url,\"tnbp_migrator\",\"migration-test-only\").schemas(\"access\").defaultSchema(\"access\").target(\"15\").load().migrate();\n            if(existing)for(int account=0;account<2;account++) {\n                UUID user=UUID.randomUUID(),goal=UUID.randomUUID();\n                admin.update(\"INSERT INTO access.accounts VALUES (?,?,'$argon2id$synthetic',now())\",user,user+\"@example.org\");\n                admin.update(\"INSERT INTO monthly_surplus.activations VALUES (?,DATE '2026-10-01')\",user);\n                admin.update(\"INSERT INTO savings_goals.goals VALUES (?,?,'Bestand',10000,-3000,NULL)\",goal,user);\n                admin.update(\"INSERT INTO monthly_surplus.selections VALUES (?,DATE '2026-10-01',?)\",user,goal);\n                admin.update(\"INSERT INTO monthly_surplus.month_records VALUES (?,DATE '2026-10-01',20000,?,false),(?,DATE '2026-11-01',0,?,false),(?,DATE '2026-12-01',NULL,?,true)\",user,goal,user,goal,user,goal);\n            }\n            var before=new LinkedHashMap<String,List<Map<String,Object>>>();\n            for(String table:List.of(\"access.accounts\",\"monthly_surplus.activations\",\"monthly_surplus.selections\",\"monthly_surplus.month_records\",\"savings_goals.goals\",\"api_version.state\"))\n                before.put(table,admin.queryForList(\"SELECT * FROM \"+table+\" ORDER BY 1,2\"));\n            Flyway.configure().dataSource(url,\"tnbp_migrator\",\"migration-test-only\").schemas(\"access\").defaultSchema(\"access\").load().migrate();\n            provision(admin);provision(admin);\n            before.forEach((table,rows)->assertThat(admin.queryForList(\"SELECT * FROM \"+table+\" ORDER BY 1,2\")).isEqualTo(rows));\n            assertThat(admin.queryForList(\"SELECT column_name FROM information_schema.columns WHERE table_schema='monthly_surplus' AND table_name='deleted_goals' ORDER BY ordinal_position\",String.class)).containsExactly(\"user_id\",\"goal_id\");\n            assertThat(admin.queryForObject(\"SELECT relrowsecurity AND relforcerowsecurity FROM pg_class WHERE oid='monthly_surplus.deleted_goals'::regclass\",Boolean.class)).isTrue();\n            assertThat(admin.queryForObject(\"SELECT is_nullable FROM information_schema.columns WHERE table_schema='monthly_surplus' AND table_name='selections' AND column_name='goal_id'\",String.class)).isEqualTo(\"YES\");\n            var runtime=new JdbcTemplate(new DriverManagerDataSource(url,\"tnbp_runtime\",\"runtime-test-only\"));\n            assertThat(runtime.queryForObject(\"SELECT has_table_privilege(current_user,'monthly_surplus.deleted_goals','SELECT') AND has_table_privilege(current_user,'monthly_surplus.deleted_goals','INSERT') AND NOT has_table_privilege(current_user,'monthly_surplus.deleted_goals','UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER') AND NOT has_any_column_privilege(current_user,'monthly_surplus.deleted_goals','UPDATE,REFERENCES')\",Boolean.class)).isTrue();\n            assertThat(runtime.queryForObject(\"SELECT count(*) FROM monthly_surplus.deleted_goals\",Integer.class)).isZero();\n        } finally {server.execute(\"DROP DATABASE \"+name+\" WITH (FORCE)\");}\n    }",
@@ -8504,7 +8504,7 @@
       "class": "FinanceMigrationIT",
       "variant": "false",
       "provider": "ValueSource",
-      "current_type": "process/PostgreSQL",
+      "current_type": "PostgreSQL",
       "execution_paths": [
         "maven:verify/failsafe"
       ],
@@ -8525,8 +8525,8 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1",
       "source_body_sha256": "353ab5024b36679bf59a48d5e087b40058897a74ded517ec6e1e96ab66dd4f71",
       "source_body": "{\n        String name=\"correction_migration_\"+UUID.randomUUID().toString().replace(\"-\",\"\");\n        var server=new JdbcTemplate(PostgresFixture.POSTGRES.getPostgresDatabase());\n        server.execute(\"CREATE DATABASE \"+name+\" OWNER tnbp_migrator\");\n        String url=\"jdbc:postgresql://localhost:\"+PostgresFixture.POSTGRES.getPort()+\"/\"+name;\n        var admin=new JdbcTemplate(new DriverManagerDataSource(url,\"postgres\",\"postgres\"));\n        try {\n            Flyway.configure().dataSource(url,\"tnbp_migrator\",\"migration-test-only\").schemas(\"access\").defaultSchema(\"access\").target(\"14\").load().migrate();\n            if(existing)for(int account=0;account<2;account++) {\n                UUID user=UUID.randomUUID(),goal=UUID.randomUUID();\n                admin.update(\"INSERT INTO access.accounts VALUES (?,?,'$argon2id$synthetic',now())\",user,user+\"@example.org\");\n                admin.update(\"INSERT INTO monthly_surplus.activations VALUES (?,DATE '2026-10-01')\",user);\n                admin.update(\"INSERT INTO savings_goals.goals VALUES (?,?,'Bestand',10000,-3000,NULL)\",goal,user);\n                admin.update(\"INSERT INTO monthly_surplus.selections VALUES (?,DATE '2026-10-01',?)\",user,goal);\n                admin.update(\"INSERT INTO monthly_surplus.month_records VALUES (?,DATE '2026-10-01',20000,NULL,false),(?,DATE '2026-11-01',0,?,false),(?,DATE '2026-12-01',NULL,?,true)\",user,user,goal,user,goal);\n                admin.update(\"INSERT INTO expenses.expenses VALUES (?,?,'Bestand',80000,DATE '2026-10-01')\",UUID.randomUUID(),user);\n            }\n            var tables=List.of(\"access.accounts\",\"monthly_surplus.activations\",\"monthly_surplus.selections\",\"monthly_surplus.month_records\",\"savings_goals.goals\",\"expenses.expenses\",\"api_version.state\");\n            var before=new LinkedHashMap<String,List<Map<String,Object>>>();\n            for(String table:tables)before.put(table,admin.queryForList(\"SELECT * FROM \"+table+\" ORDER BY 1,2\"));\n            long oid=admin.queryForObject(\"SELECT 'monthly_surplus.month_records'::regclass::oid\",Long.class);\n            Flyway.configure().dataSource(url,\"tnbp_migrator\",\"migration-test-only\").schemas(\"access\").defaultSchema(\"access\").load().migrate();\n            provision(admin);provision(admin);\n            before.forEach((table,rows)->assertThat(admin.queryForList(\"SELECT * FROM \"+table+\" ORDER BY 1,2\")).isEqualTo(rows));\n            assertThat(admin.queryForObject(\"SELECT 'monthly_surplus.month_records'::regclass::oid\",Long.class)).isEqualTo(oid);\n            var runtime=new JdbcTemplate(new DriverManagerDataSource(url,\"tnbp_runtime\",\"runtime-test-only\"));\n            for(String column:List.of(\"goal_id\",\"surplus_cents\",\"consumed\"))assertThat(runtime.queryForObject(\"SELECT has_column_privilege(current_user,'monthly_surplus.month_records',?,'UPDATE')\",Boolean.class,column)).isTrue();\n            for(String column:List.of(\"user_id\",\"origin_month\"))assertThat(runtime.queryForObject(\"SELECT has_column_privilege(current_user,'monthly_surplus.month_records',?,'UPDATE')\",Boolean.class,column)).isFalse();\n            assertThat(runtime.queryForObject(\"SELECT has_table_privilege(current_user,'monthly_surplus.month_records','UPDATE,DELETE,TRUNCATE')\",Boolean.class)).isFalse();\n            assertThat(runtime.queryForObject(\"SELECT count(*) FROM monthly_surplus.month_records\",Integer.class)).isZero();\n        } finally {server.execute(\"DROP DATABASE \"+name+\" WITH (FORCE)\");}\n    }",
@@ -8605,7 +8605,7 @@
       "class": "FinanceMigrationIT",
       "variant": "true",
       "provider": "ValueSource",
-      "current_type": "process/PostgreSQL",
+      "current_type": "PostgreSQL",
       "execution_paths": [
         "maven:verify/failsafe"
       ],
@@ -8626,8 +8626,8 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1",
       "source_body_sha256": "353ab5024b36679bf59a48d5e087b40058897a74ded517ec6e1e96ab66dd4f71",
       "source_body": "{\n        String name=\"correction_migration_\"+UUID.randomUUID().toString().replace(\"-\",\"\");\n        var server=new JdbcTemplate(PostgresFixture.POSTGRES.getPostgresDatabase());\n        server.execute(\"CREATE DATABASE \"+name+\" OWNER tnbp_migrator\");\n        String url=\"jdbc:postgresql://localhost:\"+PostgresFixture.POSTGRES.getPort()+\"/\"+name;\n        var admin=new JdbcTemplate(new DriverManagerDataSource(url,\"postgres\",\"postgres\"));\n        try {\n            Flyway.configure().dataSource(url,\"tnbp_migrator\",\"migration-test-only\").schemas(\"access\").defaultSchema(\"access\").target(\"14\").load().migrate();\n            if(existing)for(int account=0;account<2;account++) {\n                UUID user=UUID.randomUUID(),goal=UUID.randomUUID();\n                admin.update(\"INSERT INTO access.accounts VALUES (?,?,'$argon2id$synthetic',now())\",user,user+\"@example.org\");\n                admin.update(\"INSERT INTO monthly_surplus.activations VALUES (?,DATE '2026-10-01')\",user);\n                admin.update(\"INSERT INTO savings_goals.goals VALUES (?,?,'Bestand',10000,-3000,NULL)\",goal,user);\n                admin.update(\"INSERT INTO monthly_surplus.selections VALUES (?,DATE '2026-10-01',?)\",user,goal);\n                admin.update(\"INSERT INTO monthly_surplus.month_records VALUES (?,DATE '2026-10-01',20000,NULL,false),(?,DATE '2026-11-01',0,?,false),(?,DATE '2026-12-01',NULL,?,true)\",user,user,goal,user,goal);\n                admin.update(\"INSERT INTO expenses.expenses VALUES (?,?,'Bestand',80000,DATE '2026-10-01')\",UUID.randomUUID(),user);\n            }\n            var tables=List.of(\"access.accounts\",\"monthly_surplus.activations\",\"monthly_surplus.selections\",\"monthly_surplus.month_records\",\"savings_goals.goals\",\"expenses.expenses\",\"api_version.state\");\n            var before=new LinkedHashMap<String,List<Map<String,Object>>>();\n            for(String table:tables)before.put(table,admin.queryForList(\"SELECT * FROM \"+table+\" ORDER BY 1,2\"));\n            long oid=admin.queryForObject(\"SELECT 'monthly_surplus.month_records'::regclass::oid\",Long.class);\n            Flyway.configure().dataSource(url,\"tnbp_migrator\",\"migration-test-only\").schemas(\"access\").defaultSchema(\"access\").load().migrate();\n            provision(admin);provision(admin);\n            before.forEach((table,rows)->assertThat(admin.queryForList(\"SELECT * FROM \"+table+\" ORDER BY 1,2\")).isEqualTo(rows));\n            assertThat(admin.queryForObject(\"SELECT 'monthly_surplus.month_records'::regclass::oid\",Long.class)).isEqualTo(oid);\n            var runtime=new JdbcTemplate(new DriverManagerDataSource(url,\"tnbp_runtime\",\"runtime-test-only\"));\n            for(String column:List.of(\"goal_id\",\"surplus_cents\",\"consumed\"))assertThat(runtime.queryForObject(\"SELECT has_column_privilege(current_user,'monthly_surplus.month_records',?,'UPDATE')\",Boolean.class,column)).isTrue();\n            for(String column:List.of(\"user_id\",\"origin_month\"))assertThat(runtime.queryForObject(\"SELECT has_column_privilege(current_user,'monthly_surplus.month_records',?,'UPDATE')\",Boolean.class,column)).isFalse();\n            assertThat(runtime.queryForObject(\"SELECT has_table_privilege(current_user,'monthly_surplus.month_records','UPDATE,DELETE,TRUNCATE')\",Boolean.class)).isFalse();\n            assertThat(runtime.queryForObject(\"SELECT count(*) FROM monthly_surplus.month_records\",Integer.class)).isZero();\n        } finally {server.execute(\"DROP DATABASE \"+name+\" WITH (FORCE)\");}\n    }",
@@ -8706,7 +8706,7 @@
       "class": "FinanceMigrationIT",
       "variant": "false",
       "provider": "ValueSource",
-      "current_type": "process/PostgreSQL",
+      "current_type": "PostgreSQL",
       "execution_paths": [
         "maven:verify/failsafe"
       ],
@@ -8726,8 +8726,8 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1",
       "source_body_sha256": "b2d6f5d0289afa160ccfc2ea3f2a1cfb9235fe5c8481e6a3565c834bc0b8d6b5",
       "source_body": "{\n        String name=\"selection_migration_\"+UUID.randomUUID().toString().replace(\"-\",\"\");\n        var server=new JdbcTemplate(PostgresFixture.POSTGRES.getPostgresDatabase());\n        server.execute(\"CREATE DATABASE \"+name+\" OWNER tnbp_migrator\");\n        String url=\"jdbc:postgresql://localhost:\"+PostgresFixture.POSTGRES.getPort()+\"/\"+name;\n        var admin=new JdbcTemplate(new DriverManagerDataSource(url,\"postgres\",\"postgres\"));\n        try {\n            Flyway.configure().dataSource(url,\"tnbp_migrator\",\"migration-test-only\").schemas(\"access\").defaultSchema(\"access\").target(\"13\").load().migrate();\n            if(existing) for(int account=0;account<2;account++) {\n                UUID user=UUID.randomUUID();admin.update(\"INSERT INTO access.accounts VALUES (?,?,'$argon2id$synthetic',now())\",user,user+\"@example.org\");\n                admin.update(\"INSERT INTO monthly_surplus.activations VALUES (?,DATE '2026-10-01')\",user);\n                admin.update(\"INSERT INTO monthly_surplus.month_records VALUES (?,DATE '2026-10-01',20000),(?,DATE '2026-11-01',0),(?,DATE '2026-12-01',NULL)\",user,user,user);\n                admin.update(\"INSERT INTO savings_goals.goals VALUES (?,?,'Altziel',10000,-3000,NULL)\",UUID.randomUUID(),user);\n            }\n            var before=admin.queryForList(\"SELECT user_id,origin_month,surplus_cents FROM monthly_surplus.month_records ORDER BY user_id,origin_month\");\n            var goals=admin.queryForList(\"SELECT * FROM savings_goals.goals ORDER BY id\");\n            Flyway.configure().dataSource(url,\"tnbp_migrator\",\"migration-test-only\").schemas(\"access\").defaultSchema(\"access\").load().migrate();\n            assertThat(admin.queryForList(\"SELECT user_id,origin_month,surplus_cents FROM monthly_surplus.month_records ORDER BY user_id,origin_month\")).isEqualTo(before);\n            assertThat(admin.queryForList(\"SELECT * FROM savings_goals.goals ORDER BY id\")).isEqualTo(goals);\n            assertThat(admin.queryForObject(\"SELECT count(*) FROM monthly_surplus.month_records WHERE goal_id IS NOT NULL OR consumed\",Integer.class)).isZero();\n            assertThat(admin.queryForObject(\"SELECT count(*) FROM monthly_surplus.selections\",Integer.class)).isZero();\n            assertThat(admin.queryForObject(\"SELECT relrowsecurity AND relforcerowsecurity FROM pg_class WHERE oid='monthly_surplus.selections'::regclass\",Boolean.class)).isTrue();\n            provision(admin);provision(admin);\n        } finally {server.execute(\"DROP DATABASE \"+name+\" WITH (FORCE)\");}\n    }",
@@ -8760,7 +8760,7 @@
       "class": "FinanceMigrationIT",
       "variant": "true",
       "provider": "ValueSource",
-      "current_type": "process/PostgreSQL",
+      "current_type": "PostgreSQL",
       "execution_paths": [
         "maven:verify/failsafe"
       ],
@@ -8780,8 +8780,8 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1",
       "source_body_sha256": "b2d6f5d0289afa160ccfc2ea3f2a1cfb9235fe5c8481e6a3565c834bc0b8d6b5",
       "source_body": "{\n        String name=\"selection_migration_\"+UUID.randomUUID().toString().replace(\"-\",\"\");\n        var server=new JdbcTemplate(PostgresFixture.POSTGRES.getPostgresDatabase());\n        server.execute(\"CREATE DATABASE \"+name+\" OWNER tnbp_migrator\");\n        String url=\"jdbc:postgresql://localhost:\"+PostgresFixture.POSTGRES.getPort()+\"/\"+name;\n        var admin=new JdbcTemplate(new DriverManagerDataSource(url,\"postgres\",\"postgres\"));\n        try {\n            Flyway.configure().dataSource(url,\"tnbp_migrator\",\"migration-test-only\").schemas(\"access\").defaultSchema(\"access\").target(\"13\").load().migrate();\n            if(existing) for(int account=0;account<2;account++) {\n                UUID user=UUID.randomUUID();admin.update(\"INSERT INTO access.accounts VALUES (?,?,'$argon2id$synthetic',now())\",user,user+\"@example.org\");\n                admin.update(\"INSERT INTO monthly_surplus.activations VALUES (?,DATE '2026-10-01')\",user);\n                admin.update(\"INSERT INTO monthly_surplus.month_records VALUES (?,DATE '2026-10-01',20000),(?,DATE '2026-11-01',0),(?,DATE '2026-12-01',NULL)\",user,user,user);\n                admin.update(\"INSERT INTO savings_goals.goals VALUES (?,?,'Altziel',10000,-3000,NULL)\",UUID.randomUUID(),user);\n            }\n            var before=admin.queryForList(\"SELECT user_id,origin_month,surplus_cents FROM monthly_surplus.month_records ORDER BY user_id,origin_month\");\n            var goals=admin.queryForList(\"SELECT * FROM savings_goals.goals ORDER BY id\");\n            Flyway.configure().dataSource(url,\"tnbp_migrator\",\"migration-test-only\").schemas(\"access\").defaultSchema(\"access\").load().migrate();\n            assertThat(admin.queryForList(\"SELECT user_id,origin_month,surplus_cents FROM monthly_surplus.month_records ORDER BY user_id,origin_month\")).isEqualTo(before);\n            assertThat(admin.queryForList(\"SELECT * FROM savings_goals.goals ORDER BY id\")).isEqualTo(goals);\n            assertThat(admin.queryForObject(\"SELECT count(*) FROM monthly_surplus.month_records WHERE goal_id IS NOT NULL OR consumed\",Integer.class)).isZero();\n            assertThat(admin.queryForObject(\"SELECT count(*) FROM monthly_surplus.selections\",Integer.class)).isZero();\n            assertThat(admin.queryForObject(\"SELECT relrowsecurity AND relforcerowsecurity FROM pg_class WHERE oid='monthly_surplus.selections'::regclass\",Boolean.class)).isTrue();\n            provision(admin);provision(admin);\n        } finally {server.execute(\"DROP DATABASE \"+name+\" WITH (FORCE)\");}\n    }",
@@ -8814,7 +8814,7 @@
       "class": "FinanceMigrationIT",
       "variant": "false",
       "provider": "ValueSource",
-      "current_type": "process/PostgreSQL",
+      "current_type": "PostgreSQL",
       "execution_paths": [
         "maven:verify/failsafe"
       ],
@@ -8832,8 +8832,8 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1",
       "source_body_sha256": "01a1bae355daafdfdbdb38cc04538e1d1fc4e4367b0b2e623cd882a341df5eb4",
       "source_body": "{\n        String name=\"month_migration_\"+UUID.randomUUID().toString().replace(\"-\",\"\");\n        var server=new JdbcTemplate(PostgresFixture.POSTGRES.getPostgresDatabase());\n        server.execute(\"CREATE DATABASE \"+name+\" OWNER tnbp_migrator\");\n        String url=\"jdbc:postgresql://localhost:\"+PostgresFixture.POSTGRES.getPort()+\"/\"+name;\n        var admin=new JdbcTemplate(new DriverManagerDataSource(url,\"postgres\",\"postgres\"));\n        try {\n            Flyway.configure().dataSource(url,\"tnbp_migrator\",\"migration-test-only\").schemas(\"access\").defaultSchema(\"access\").target(\"12\").load().migrate();\n            if(existing) {\n                UUID user=UUID.randomUUID(); admin.update(\"INSERT INTO access.accounts VALUES (?,?,'$argon2id$synthetic',now())\",user,user+\"@example.org\");\n                admin.update(\"INSERT INTO monthly_surplus.activations VALUES (?,DATE '2026-10-01')\",user);\n                admin.update(\"INSERT INTO budget.budgets VALUES (?,DATE '2026-09-01',100000)\",user);\n                admin.update(\"INSERT INTO expenses.expenses VALUES (?,?,'Altbestand',80000,DATE '2026-10-01')\",UUID.randomUUID(),user);\n                admin.update(\"INSERT INTO savings_goals.goals VALUES (?,?,'Altziel',100000,5000,NULL)\",UUID.randomUUID(),user);\n            }\n            var before=new LinkedHashMap<String,List<Map<String,Object>>>();\n            for(String table:List.of(\"access.accounts\",\"monthly_surplus.activations\",\"budget.budgets\",\"expenses.expenses\",\"savings_goals.goals\",\"api_version.state\"))before.put(table,admin.queryForList(\"SELECT * FROM \"+table));\n            Flyway.configure().dataSource(url,\"tnbp_migrator\",\"migration-test-only\").schemas(\"access\").defaultSchema(\"access\").load().migrate();\n            before.forEach((table,rows)->assertThat(admin.queryForList(\"SELECT * FROM \"+table)).isEqualTo(rows));\n            assertThat(admin.queryForObject(\"SELECT count(*) FROM monthly_surplus.month_records\",Integer.class)).isZero();\n            assertThat(admin.queryForObject(\"SELECT relrowsecurity AND relforcerowsecurity FROM pg_class WHERE oid='monthly_surplus.month_records'::regclass\",Boolean.class)).isTrue();\n        } finally {server.execute(\"DROP DATABASE \"+name+\" WITH (FORCE)\");}\n    }",
@@ -8870,7 +8870,7 @@
       "class": "FinanceMigrationIT",
       "variant": "true",
       "provider": "ValueSource",
-      "current_type": "process/PostgreSQL",
+      "current_type": "PostgreSQL",
       "execution_paths": [
         "maven:verify/failsafe"
       ],
@@ -8888,8 +8888,8 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1",
       "source_body_sha256": "01a1bae355daafdfdbdb38cc04538e1d1fc4e4367b0b2e623cd882a341df5eb4",
       "source_body": "{\n        String name=\"month_migration_\"+UUID.randomUUID().toString().replace(\"-\",\"\");\n        var server=new JdbcTemplate(PostgresFixture.POSTGRES.getPostgresDatabase());\n        server.execute(\"CREATE DATABASE \"+name+\" OWNER tnbp_migrator\");\n        String url=\"jdbc:postgresql://localhost:\"+PostgresFixture.POSTGRES.getPort()+\"/\"+name;\n        var admin=new JdbcTemplate(new DriverManagerDataSource(url,\"postgres\",\"postgres\"));\n        try {\n            Flyway.configure().dataSource(url,\"tnbp_migrator\",\"migration-test-only\").schemas(\"access\").defaultSchema(\"access\").target(\"12\").load().migrate();\n            if(existing) {\n                UUID user=UUID.randomUUID(); admin.update(\"INSERT INTO access.accounts VALUES (?,?,'$argon2id$synthetic',now())\",user,user+\"@example.org\");\n                admin.update(\"INSERT INTO monthly_surplus.activations VALUES (?,DATE '2026-10-01')\",user);\n                admin.update(\"INSERT INTO budget.budgets VALUES (?,DATE '2026-09-01',100000)\",user);\n                admin.update(\"INSERT INTO expenses.expenses VALUES (?,?,'Altbestand',80000,DATE '2026-10-01')\",UUID.randomUUID(),user);\n                admin.update(\"INSERT INTO savings_goals.goals VALUES (?,?,'Altziel',100000,5000,NULL)\",UUID.randomUUID(),user);\n            }\n            var before=new LinkedHashMap<String,List<Map<String,Object>>>();\n            for(String table:List.of(\"access.accounts\",\"monthly_surplus.activations\",\"budget.budgets\",\"expenses.expenses\",\"savings_goals.goals\",\"api_version.state\"))before.put(table,admin.queryForList(\"SELECT * FROM \"+table));\n            Flyway.configure().dataSource(url,\"tnbp_migrator\",\"migration-test-only\").schemas(\"access\").defaultSchema(\"access\").load().migrate();\n            before.forEach((table,rows)->assertThat(admin.queryForList(\"SELECT * FROM \"+table)).isEqualTo(rows));\n            assertThat(admin.queryForObject(\"SELECT count(*) FROM monthly_surplus.month_records\",Integer.class)).isZero();\n            assertThat(admin.queryForObject(\"SELECT relrowsecurity AND relforcerowsecurity FROM pg_class WHERE oid='monthly_surplus.month_records'::regclass\",Boolean.class)).isTrue();\n        } finally {server.execute(\"DROP DATABASE \"+name+\" WITH (FORCE)\");}\n    }",
@@ -8926,7 +8926,7 @@
       "class": "FinanceMigrationIT",
       "variant": "false",
       "provider": "ValueSource",
-      "current_type": "process/PostgreSQL",
+      "current_type": "PostgreSQL",
       "execution_paths": [
         "maven:verify/failsafe"
       ],
@@ -8945,8 +8945,8 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1",
       "source_body_sha256": "e2b51f80ab345ffb8d08092e0706eb22c353c15353ff2cbf758c7e676a96210c",
       "source_body": "{\n        String name=\"activation_migration_\"+UUID.randomUUID().toString().replace(\"-\",\"\");\n        var server=new JdbcTemplate(PostgresFixture.POSTGRES.getPostgresDatabase());\n        server.execute(\"CREATE DATABASE \"+name+\" OWNER tnbp_migrator\");\n        String url=\"jdbc:postgresql://localhost:\"+PostgresFixture.POSTGRES.getPort()+\"/\"+name;\n        var admin=new JdbcTemplate(new DriverManagerDataSource(url,\"postgres\",\"postgres\"));\n        try {\n            Flyway.configure().dataSource(url,\"tnbp_migrator\",\"migration-test-only\").schemas(\"access\").defaultSchema(\"access\").target(\"11\").load().migrate();\n            if(existing) {\n                UUID user=UUID.randomUUID();admin.update(\"INSERT INTO access.accounts VALUES (?,?,'$argon2id$synthetic',now())\",user,user+\"@example.org\");\n                admin.update(\"INSERT INTO savings_goals.goals VALUES (?,?,'Signierter Bestand',10000,-3000,NULL)\",UUID.randomUUID(),user);\n                admin.update(\"INSERT INTO budget.budgets VALUES (?,DATE '2026-09-01',12000)\",user);\n                admin.update(\"INSERT INTO expenses.expenses VALUES (?,?,'September',3000,DATE '2026-09-30')\",UUID.randomUUID(),user);\n            }\n            var before=new LinkedHashMap<String,List<Map<String,Object>>>();\n            for(String table:List.of(\"access.accounts\",\"expenses.expenses\",\"budget.budgets\",\"savings_goals.goals\"))before.put(table,admin.queryForList(\"SELECT * FROM \"+table));\n            Flyway.configure().dataSource(url,\"tnbp_migrator\",\"migration-test-only\").schemas(\"access\").defaultSchema(\"access\").load().migrate();\n            before.forEach((table,rows)->assertThat(admin.queryForList(\"SELECT * FROM \"+table)).isEqualTo(rows));\n            assertThat(admin.queryForObject(\"SELECT count(*) FROM monthly_surplus.activations\",Integer.class)).isZero();\n            assertThat(admin.queryForList(\"SELECT tablename FROM pg_tables WHERE schemaname='monthly_surplus'\",String.class)).containsExactlyInAnyOrder(\"activations\", \"month_records\", \"selections\", \"deleted_goals\");\n            assertThat(admin.queryForObject(\"SELECT relrowsecurity AND relforcerowsecurity FROM pg_class WHERE oid='monthly_surplus.activations'::regclass\",Boolean.class)).isTrue();\n        } finally {server.execute(\"DROP DATABASE \"+name+\" WITH (FORCE)\");}\n    }",
@@ -8981,7 +8981,7 @@
       "class": "FinanceMigrationIT",
       "variant": "true",
       "provider": "ValueSource",
-      "current_type": "process/PostgreSQL",
+      "current_type": "PostgreSQL",
       "execution_paths": [
         "maven:verify/failsafe"
       ],
@@ -9000,8 +9000,8 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1",
       "source_body_sha256": "e2b51f80ab345ffb8d08092e0706eb22c353c15353ff2cbf758c7e676a96210c",
       "source_body": "{\n        String name=\"activation_migration_\"+UUID.randomUUID().toString().replace(\"-\",\"\");\n        var server=new JdbcTemplate(PostgresFixture.POSTGRES.getPostgresDatabase());\n        server.execute(\"CREATE DATABASE \"+name+\" OWNER tnbp_migrator\");\n        String url=\"jdbc:postgresql://localhost:\"+PostgresFixture.POSTGRES.getPort()+\"/\"+name;\n        var admin=new JdbcTemplate(new DriverManagerDataSource(url,\"postgres\",\"postgres\"));\n        try {\n            Flyway.configure().dataSource(url,\"tnbp_migrator\",\"migration-test-only\").schemas(\"access\").defaultSchema(\"access\").target(\"11\").load().migrate();\n            if(existing) {\n                UUID user=UUID.randomUUID();admin.update(\"INSERT INTO access.accounts VALUES (?,?,'$argon2id$synthetic',now())\",user,user+\"@example.org\");\n                admin.update(\"INSERT INTO savings_goals.goals VALUES (?,?,'Signierter Bestand',10000,-3000,NULL)\",UUID.randomUUID(),user);\n                admin.update(\"INSERT INTO budget.budgets VALUES (?,DATE '2026-09-01',12000)\",user);\n                admin.update(\"INSERT INTO expenses.expenses VALUES (?,?,'September',3000,DATE '2026-09-30')\",UUID.randomUUID(),user);\n            }\n            var before=new LinkedHashMap<String,List<Map<String,Object>>>();\n            for(String table:List.of(\"access.accounts\",\"expenses.expenses\",\"budget.budgets\",\"savings_goals.goals\"))before.put(table,admin.queryForList(\"SELECT * FROM \"+table));\n            Flyway.configure().dataSource(url,\"tnbp_migrator\",\"migration-test-only\").schemas(\"access\").defaultSchema(\"access\").load().migrate();\n            before.forEach((table,rows)->assertThat(admin.queryForList(\"SELECT * FROM \"+table)).isEqualTo(rows));\n            assertThat(admin.queryForObject(\"SELECT count(*) FROM monthly_surplus.activations\",Integer.class)).isZero();\n            assertThat(admin.queryForList(\"SELECT tablename FROM pg_tables WHERE schemaname='monthly_surplus'\",String.class)).containsExactlyInAnyOrder(\"activations\", \"month_records\", \"selections\", \"deleted_goals\");\n            assertThat(admin.queryForObject(\"SELECT relrowsecurity AND relforcerowsecurity FROM pg_class WHERE oid='monthly_surplus.activations'::regclass\",Boolean.class)).isTrue();\n        } finally {server.execute(\"DROP DATABASE \"+name+\" WITH (FORCE)\");}\n    }",
@@ -9036,7 +9036,7 @@
       "class": "FinanceMigrationIT",
       "variant": "false",
       "provider": "ValueSource",
-      "current_type": "process/PostgreSQL",
+      "current_type": "PostgreSQL",
       "execution_paths": [
         "maven:verify/failsafe"
       ],
@@ -9075,8 +9075,8 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1",
       "source_body_sha256": "71307f56307e551ffc117e384d347f471f8dfa16493bd21dec94a04c8e06c7bc",
       "source_body": "{\n        String name = \"migration_\" + UUID.randomUUID().toString().replace(\"-\", \"\");\n        var server = new JdbcTemplate(PostgresFixture.POSTGRES.getPostgresDatabase());\n        server.execute(\"CREATE DATABASE \" + name + \" OWNER tnbp_migrator\");\n        String url = \"jdbc:postgresql://localhost:\" + PostgresFixture.POSTGRES.getPort() + \"/\" + name;\n        var admin = new JdbcTemplate(new DriverManagerDataSource(url, \"postgres\", \"postgres\"));\n        try {\n            Flyway.configure().dataSource(url, \"tnbp_migrator\", \"migration-test-only\")\n                .schemas(\"access\").defaultSchema(\"access\").target(\"8\").load().migrate();\n            if (existing) {\n                for (int index = 0; index < 2; index++) {\n                    UUID user = UUID.randomUUID();\n                    admin.update(\"INSERT INTO access.accounts VALUES (?, ?, '$argon2id$synthetic', TIMESTAMPTZ '2026-01-01Z')\", user, user + \"@example.org\");\n                    for (int month = 7; month <= 9; month++) {\n                        admin.update(\"INSERT INTO expense_budget.budgets VALUES (?, ?, ?)\", user, LocalDate.of(2026, month, 1), index * 1000L + month);\n                        admin.update(\"INSERT INTO expense_budget.expenses VALUES (?, ?, ?, ?, ?)\", UUID.randomUUID(), user, \"Bestand 🥖 \" + month,\n                            month * 10L, LocalDate.of(2026, month, 20));\n                    }\n                    admin.update(\"INSERT INTO savings_goals.goals VALUES (?, ?, 'Altziel', 12345, ?, ?)\", UUID.randomUUID(), user,\n                        index == 0 ? 0 : 20000, index == 0 ? null : LocalDate.of(2020, 2, 29));\n                }\n            }\n            var accounts = admin.queryForList(\"SELECT * FROM access.accounts ORDER BY id\");\n            var expenses = admin.queryForList(\"SELECT * FROM expense_budget.expenses ORDER BY id\");\n            var budgets = admin.queryForList(\"SELECT * FROM expense_budget.budgets ORDER BY user_id, valid_from\");\n            var goals = admin.queryForList(\"SELECT * FROM savings_goals.goals ORDER BY id\");\n            var expenseOid = admin.queryForObject(\"SELECT 'expense_budget.expenses'::regclass::oid\", Long.class);\n            var budgetOid = admin.queryForObject(\"SELECT 'expense_budget.budgets'::regclass::oid\", Long.class);\n            var migratorPassword = admin.queryForObject(\"SELECT rolpassword FROM pg_authid WHERE rolname = 'tnbp_migrator'\", String.class);\n            var runtimePassword = admin.queryForObject(\"SELECT rolpassword FROM pg_authid WHERE rolname = 'tnbp_runtime'\", String.class);\n            // Administrativer Rechteabgleich funktioniert bereits vor und nach V9.\n            provision(admin);\n            Flyway.configure().dataSource(url, \"tnbp_migrator\", \"migration-test-only\")\n                .schemas(\"access\").defaultSchema(\"access\").load().migrate();\n            // Wiederholte Provisionierung entfernt auch versehentlich erweiterte Rechte.\n            admin.execute(\"GRANT CREATE ON SCHEMA expenses TO tnbp_runtime\");\n            admin.execute(\"GRANT UPDATE (user_id, recorded_on) ON expenses.expenses TO tnbp_runtime\");\n            admin.execute(\"GRANT DELETE ON budget.budgets TO tnbp_runtime\");\n            admin.execute(\"GRANT UPDATE (user_id) ON budget.budgets TO PUBLIC\");\n            admin.execute(\"GRANT UPDATE, DELETE ON monthly_surplus.activations TO tnbp_runtime\");\n            admin.execute(\"GRANT UPDATE (activation_month) ON monthly_surplus.activations TO PUBLIC\");\n            admin.execute(\"GRANT UPDATE, DELETE ON monthly_surplus.month_records TO tnbp_runtime\");\n            admin.execute(\"GRANT UPDATE (origin_month) ON monthly_surplus.month_records TO PUBLIC\");\n            provision(admin); provision(admin);\n            assertThat(admin.queryForObject(\"SELECT count(*) FROM monthly_surplus.month_records\", Integer.class)).isZero();\n            var rights = new JdbcTemplate(new DriverManagerDataSource(url, \"tnbp_runtime\", \"runtime-test-only\"));\n            assertThat(rights.queryForObject(\"SELECT has_table_privilege(current_user, 'monthly_surplus.month_records', 'UPDATE,DELETE,TRUNCATE') OR has_column_privilege(current_user, 'monthly_surplus.month_records', 'origin_month', 'UPDATE')\", Boolean.class)).isFalse();\n            assertThat(admin.queryForObject(\"SELECT count(*) FROM monthly_surplus.activations\", Integer.class)).isZero();\n            assertThat(admin.queryForList(\"SELECT tablename FROM pg_tables WHERE schemaname='monthly_surplus'\", String.class)).containsExactlyInAnyOrder(\"activations\", \"month_records\", \"selections\", \"deleted_goals\");\n            assertThat(admin.queryForList(\"SELECT * FROM access.accounts ORDER BY id\")).isEqualTo(accounts);\n            assertThat(admin.queryForList(\"SELECT * FROM expenses.expenses ORDER BY id\")).isEqualTo(expenses);\n            assertThat(admin.queryForList(\"SELECT * FROM budget.budgets ORDER BY user_id, valid_from\")).isEqualTo(budgets);\n            assertThat(admin.queryForList(\"SELECT * FROM savings_goals.goals ORDER BY id\")).isEqualTo(goals);\n            assertThat(admin.queryForObject(\"SELECT 'expenses.expenses'::regclass::oid\", Long.class)).isEqualTo(expenseOid);\n            assertThat(admin.queryForObject(\"SELECT 'budget.budgets'::regclass::oid\", Long.class)).isEqualTo(budgetOid);\n            assertThat(admin.queryForObject(\"SELECT to_regnamespace('expense_budget') IS NULL AND to_regnamespace('monthly_surplus') IS NOT NULL\", Boolean.class)).isTrue();\n            assertThat(admin.queryForObject(\"SELECT rolpassword FROM pg_authid WHERE rolname = 'tnbp_migrator'\", String.class)).isEqualTo(migratorPassword);\n            assertThat(admin.queryForObject(\"SELECT rolpassword FROM pg_authid WHERE rolname = 'tnbp_runtime'\", String.class)).isEqualTo(runtimePassword);\n            var runtime = new JdbcTemplate(new DriverManagerDataSource(url, \"tnbp_runtime\", \"runtime-test-only\"));\n            for (String table : List.of(\"expenses.expenses\", \"budget.budgets\", \"savings_goals.goals\", \"monthly_surplus.activations\", \"monthly_surplus.month_records\", \"monthly_surplus.selections\")) {\n                assertThat(runtime.queryForObject(\"SELECT count(*) FROM \" + table, Integer.class)).isZero();\n                assertThat(admin.queryForObject(\"SELECT relrowsecurity AND relforcerowsecurity FROM pg_class WHERE oid = ?::regclass\", Boolean.class, table)).isTrue();\n                assertThat(runtime.queryForObject(\"SELECT has_column_privilege(current_user, ?, 'user_id', 'UPDATE')\", Boolean.class, table)).isFalse();\n            }\n            assertThat(runtime.queryForObject(\"SELECT has_table_privilege(current_user, 'budget.budgets', 'DELETE')\", Boolean.class)).isFalse();\n            assertThat(runtime.queryForObject(\"SELECT has_table_privilege(current_user, 'monthly_surplus.activations', 'UPDATE,DELETE,TRUNCATE') OR has_any_column_privilege(current_user, 'monthly_surplus.activations', 'UPDATE')\", Boolean.class)).isFalse();\n            assertThat(runtime.queryForObject(\"SELECT has_schema_privilege(current_user, 'expenses', 'CREATE')\", Boolean.class)).isFalse();\n            assertThat(runtime.queryForObject(\"SELECT has_column_privilege(current_user, 'expenses.expenses', 'recorded_on', 'UPDATE')\", Boolean.class)).isFalse();\n            assertThat(admin.queryForObject(\"SELECT rolcreaterole OR rolsuper OR rolbypassrls FROM pg_roles WHERE rolname = 'tnbp_migrator'\", Boolean.class)).isFalse();\n            assertThat(runtime.queryForObject(\"SELECT pg_has_role(current_user, 'tnbp_migrator', 'MEMBER')\", Boolean.class)).isFalse();\n            assertThat(admin.queryForObject(\"SELECT pg_get_constraintdef(oid) FROM pg_constraint WHERE conrelid='savings_goals.goals'::regclass AND conname='goals_progress_cents_check'\", String.class))\n                .contains(\"-9007199254740991\", \"9007199254740991\");\n            assertThat(new de.linus.tnbp.shared.ApiVersionState(runtime, \"compatible\", \"\", \"\", true).signedProgressAvailable()).isFalse();\n            assertThat(runtime.queryForObject(\"SELECT has_function_privilege(current_user,'api_version.signed_progress_available(boolean,uuid,text,text,text,timestamptz)','EXECUTE')\", Boolean.class)).isTrue();\n            restartPackagedRelease(url, admin, accounts, expenses, budgets, goals);\n        } finally { server.execute(\"DROP DATABASE \" + name + \" WITH (FORCE)\"); }\n    }",
@@ -9146,7 +9146,7 @@
       "class": "FinanceMigrationIT",
       "variant": "true",
       "provider": "ValueSource",
-      "current_type": "process/PostgreSQL",
+      "current_type": "PostgreSQL",
       "execution_paths": [
         "maven:verify/failsafe"
       ],
@@ -9185,8 +9185,8 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1",
       "source_body_sha256": "71307f56307e551ffc117e384d347f471f8dfa16493bd21dec94a04c8e06c7bc",
       "source_body": "{\n        String name = \"migration_\" + UUID.randomUUID().toString().replace(\"-\", \"\");\n        var server = new JdbcTemplate(PostgresFixture.POSTGRES.getPostgresDatabase());\n        server.execute(\"CREATE DATABASE \" + name + \" OWNER tnbp_migrator\");\n        String url = \"jdbc:postgresql://localhost:\" + PostgresFixture.POSTGRES.getPort() + \"/\" + name;\n        var admin = new JdbcTemplate(new DriverManagerDataSource(url, \"postgres\", \"postgres\"));\n        try {\n            Flyway.configure().dataSource(url, \"tnbp_migrator\", \"migration-test-only\")\n                .schemas(\"access\").defaultSchema(\"access\").target(\"8\").load().migrate();\n            if (existing) {\n                for (int index = 0; index < 2; index++) {\n                    UUID user = UUID.randomUUID();\n                    admin.update(\"INSERT INTO access.accounts VALUES (?, ?, '$argon2id$synthetic', TIMESTAMPTZ '2026-01-01Z')\", user, user + \"@example.org\");\n                    for (int month = 7; month <= 9; month++) {\n                        admin.update(\"INSERT INTO expense_budget.budgets VALUES (?, ?, ?)\", user, LocalDate.of(2026, month, 1), index * 1000L + month);\n                        admin.update(\"INSERT INTO expense_budget.expenses VALUES (?, ?, ?, ?, ?)\", UUID.randomUUID(), user, \"Bestand 🥖 \" + month,\n                            month * 10L, LocalDate.of(2026, month, 20));\n                    }\n                    admin.update(\"INSERT INTO savings_goals.goals VALUES (?, ?, 'Altziel', 12345, ?, ?)\", UUID.randomUUID(), user,\n                        index == 0 ? 0 : 20000, index == 0 ? null : LocalDate.of(2020, 2, 29));\n                }\n            }\n            var accounts = admin.queryForList(\"SELECT * FROM access.accounts ORDER BY id\");\n            var expenses = admin.queryForList(\"SELECT * FROM expense_budget.expenses ORDER BY id\");\n            var budgets = admin.queryForList(\"SELECT * FROM expense_budget.budgets ORDER BY user_id, valid_from\");\n            var goals = admin.queryForList(\"SELECT * FROM savings_goals.goals ORDER BY id\");\n            var expenseOid = admin.queryForObject(\"SELECT 'expense_budget.expenses'::regclass::oid\", Long.class);\n            var budgetOid = admin.queryForObject(\"SELECT 'expense_budget.budgets'::regclass::oid\", Long.class);\n            var migratorPassword = admin.queryForObject(\"SELECT rolpassword FROM pg_authid WHERE rolname = 'tnbp_migrator'\", String.class);\n            var runtimePassword = admin.queryForObject(\"SELECT rolpassword FROM pg_authid WHERE rolname = 'tnbp_runtime'\", String.class);\n            // Administrativer Rechteabgleich funktioniert bereits vor und nach V9.\n            provision(admin);\n            Flyway.configure().dataSource(url, \"tnbp_migrator\", \"migration-test-only\")\n                .schemas(\"access\").defaultSchema(\"access\").load().migrate();\n            // Wiederholte Provisionierung entfernt auch versehentlich erweiterte Rechte.\n            admin.execute(\"GRANT CREATE ON SCHEMA expenses TO tnbp_runtime\");\n            admin.execute(\"GRANT UPDATE (user_id, recorded_on) ON expenses.expenses TO tnbp_runtime\");\n            admin.execute(\"GRANT DELETE ON budget.budgets TO tnbp_runtime\");\n            admin.execute(\"GRANT UPDATE (user_id) ON budget.budgets TO PUBLIC\");\n            admin.execute(\"GRANT UPDATE, DELETE ON monthly_surplus.activations TO tnbp_runtime\");\n            admin.execute(\"GRANT UPDATE (activation_month) ON monthly_surplus.activations TO PUBLIC\");\n            admin.execute(\"GRANT UPDATE, DELETE ON monthly_surplus.month_records TO tnbp_runtime\");\n            admin.execute(\"GRANT UPDATE (origin_month) ON monthly_surplus.month_records TO PUBLIC\");\n            provision(admin); provision(admin);\n            assertThat(admin.queryForObject(\"SELECT count(*) FROM monthly_surplus.month_records\", Integer.class)).isZero();\n            var rights = new JdbcTemplate(new DriverManagerDataSource(url, \"tnbp_runtime\", \"runtime-test-only\"));\n            assertThat(rights.queryForObject(\"SELECT has_table_privilege(current_user, 'monthly_surplus.month_records', 'UPDATE,DELETE,TRUNCATE') OR has_column_privilege(current_user, 'monthly_surplus.month_records', 'origin_month', 'UPDATE')\", Boolean.class)).isFalse();\n            assertThat(admin.queryForObject(\"SELECT count(*) FROM monthly_surplus.activations\", Integer.class)).isZero();\n            assertThat(admin.queryForList(\"SELECT tablename FROM pg_tables WHERE schemaname='monthly_surplus'\", String.class)).containsExactlyInAnyOrder(\"activations\", \"month_records\", \"selections\", \"deleted_goals\");\n            assertThat(admin.queryForList(\"SELECT * FROM access.accounts ORDER BY id\")).isEqualTo(accounts);\n            assertThat(admin.queryForList(\"SELECT * FROM expenses.expenses ORDER BY id\")).isEqualTo(expenses);\n            assertThat(admin.queryForList(\"SELECT * FROM budget.budgets ORDER BY user_id, valid_from\")).isEqualTo(budgets);\n            assertThat(admin.queryForList(\"SELECT * FROM savings_goals.goals ORDER BY id\")).isEqualTo(goals);\n            assertThat(admin.queryForObject(\"SELECT 'expenses.expenses'::regclass::oid\", Long.class)).isEqualTo(expenseOid);\n            assertThat(admin.queryForObject(\"SELECT 'budget.budgets'::regclass::oid\", Long.class)).isEqualTo(budgetOid);\n            assertThat(admin.queryForObject(\"SELECT to_regnamespace('expense_budget') IS NULL AND to_regnamespace('monthly_surplus') IS NOT NULL\", Boolean.class)).isTrue();\n            assertThat(admin.queryForObject(\"SELECT rolpassword FROM pg_authid WHERE rolname = 'tnbp_migrator'\", String.class)).isEqualTo(migratorPassword);\n            assertThat(admin.queryForObject(\"SELECT rolpassword FROM pg_authid WHERE rolname = 'tnbp_runtime'\", String.class)).isEqualTo(runtimePassword);\n            var runtime = new JdbcTemplate(new DriverManagerDataSource(url, \"tnbp_runtime\", \"runtime-test-only\"));\n            for (String table : List.of(\"expenses.expenses\", \"budget.budgets\", \"savings_goals.goals\", \"monthly_surplus.activations\", \"monthly_surplus.month_records\", \"monthly_surplus.selections\")) {\n                assertThat(runtime.queryForObject(\"SELECT count(*) FROM \" + table, Integer.class)).isZero();\n                assertThat(admin.queryForObject(\"SELECT relrowsecurity AND relforcerowsecurity FROM pg_class WHERE oid = ?::regclass\", Boolean.class, table)).isTrue();\n                assertThat(runtime.queryForObject(\"SELECT has_column_privilege(current_user, ?, 'user_id', 'UPDATE')\", Boolean.class, table)).isFalse();\n            }\n            assertThat(runtime.queryForObject(\"SELECT has_table_privilege(current_user, 'budget.budgets', 'DELETE')\", Boolean.class)).isFalse();\n            assertThat(runtime.queryForObject(\"SELECT has_table_privilege(current_user, 'monthly_surplus.activations', 'UPDATE,DELETE,TRUNCATE') OR has_any_column_privilege(current_user, 'monthly_surplus.activations', 'UPDATE')\", Boolean.class)).isFalse();\n            assertThat(runtime.queryForObject(\"SELECT has_schema_privilege(current_user, 'expenses', 'CREATE')\", Boolean.class)).isFalse();\n            assertThat(runtime.queryForObject(\"SELECT has_column_privilege(current_user, 'expenses.expenses', 'recorded_on', 'UPDATE')\", Boolean.class)).isFalse();\n            assertThat(admin.queryForObject(\"SELECT rolcreaterole OR rolsuper OR rolbypassrls FROM pg_roles WHERE rolname = 'tnbp_migrator'\", Boolean.class)).isFalse();\n            assertThat(runtime.queryForObject(\"SELECT pg_has_role(current_user, 'tnbp_migrator', 'MEMBER')\", Boolean.class)).isFalse();\n            assertThat(admin.queryForObject(\"SELECT pg_get_constraintdef(oid) FROM pg_constraint WHERE conrelid='savings_goals.goals'::regclass AND conname='goals_progress_cents_check'\", String.class))\n                .contains(\"-9007199254740991\", \"9007199254740991\");\n            assertThat(new de.linus.tnbp.shared.ApiVersionState(runtime, \"compatible\", \"\", \"\", true).signedProgressAvailable()).isFalse();\n            assertThat(runtime.queryForObject(\"SELECT has_function_privilege(current_user,'api_version.signed_progress_available(boolean,uuid,text,text,text,timestamptz)','EXECUTE')\", Boolean.class)).isTrue();\n            restartPackagedRelease(url, admin, accounts, expenses, budgets, goals);\n        } finally { server.execute(\"DROP DATABASE \" + name + \" WITH (FORCE)\"); }\n    }",
@@ -9256,7 +9256,7 @@
       "class": "FinanceMigrationIT",
       "variant": "false",
       "provider": "ValueSource",
-      "current_type": "process/PostgreSQL",
+      "current_type": "PostgreSQL",
       "execution_paths": [
         "maven:verify/failsafe"
       ],
@@ -9276,8 +9276,8 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1",
       "source_body_sha256": "56428515f212dd438a2e157da6c15b10e7dda788752f4e55514047089fdd8666",
       "source_body": "{\n        String name=\"signed_migration_\"+UUID.randomUUID().toString().replace(\"-\", \"\");\n        var server=new JdbcTemplate(PostgresFixture.POSTGRES.getPostgresDatabase());\n        server.execute(\"CREATE DATABASE \"+name+\" OWNER tnbp_migrator\");\n        String url=\"jdbc:postgresql://localhost:\"+PostgresFixture.POSTGRES.getPort()+\"/\"+name;\n        var admin=new JdbcTemplate(new DriverManagerDataSource(url,\"postgres\",\"postgres\"));\n        try {\n            Flyway.configure().dataSource(url,\"tnbp_migrator\",\"migration-test-only\").schemas(\"access\").defaultSchema(\"access\").target(\"10\").load().migrate();\n            UUID user=UUID.randomUUID();\n            if(existing) {\n                admin.update(\"INSERT INTO access.accounts VALUES (?,?,'$argon2id$synthetic',now())\",user,user+\"@example.org\");\n                for(long progress:new long[]{0,7000,15000,9007199254740991L})\n                    admin.update(\"INSERT INTO savings_goals.goals VALUES (?,?,'Bestand',10000,?,DATE '2028-02-29')\",UUID.randomUUID(),user,progress);\n            }\n            var before=admin.queryForList(\"SELECT * FROM savings_goals.goals ORDER BY id\");\n            Flyway.configure().dataSource(url,\"tnbp_migrator\",\"migration-test-only\").schemas(\"access\").defaultSchema(\"access\").load().migrate();\n            assertThat(admin.queryForList(\"SELECT * FROM savings_goals.goals ORDER BY id\")).isEqualTo(before);\n            assertThat(admin.queryForObject(\"SELECT relrowsecurity AND relforcerowsecurity FROM pg_class WHERE oid='savings_goals.goals'::regclass\",Boolean.class)).isTrue();\n            if(!existing)admin.update(\"INSERT INTO access.accounts VALUES (?,?,'$argon2id$synthetic',now())\",user,user+\"@example.org\");\n            for(long progress:new long[]{-9007199254740991L,-3000,0,9007199254740991L})\n                admin.update(\"INSERT INTO savings_goals.goals VALUES (?,?,'Grenze',1,?,NULL)\",UUID.randomUUID(),user,progress);\n            for(long progress:new long[]{-9007199254740992L,9007199254740992L})\n                assertThatThrownBy(()->admin.update(\"INSERT INTO savings_goals.goals VALUES (?,?,'Grenze',1,?,NULL)\",UUID.randomUUID(),user,progress)).isInstanceOf(org.springframework.dao.DataAccessException.class);\n            var runtime=new JdbcTemplate(new DriverManagerDataSource(url,\"tnbp_runtime\",\"runtime-test-only\"));\n            assertThat(runtime.queryForObject(\"SELECT count(*) FROM savings_goals.goals\",Integer.class)).isZero();\n            assertThat(new de.linus.tnbp.shared.ApiVersionState(runtime,\"compatible\",\"\",\"\",true).signedProgressAvailable()).isFalse();\n        } finally {server.execute(\"DROP DATABASE \"+name+\" WITH (FORCE)\");}\n    }",
@@ -9338,7 +9338,7 @@
       "class": "FinanceMigrationIT",
       "variant": "true",
       "provider": "ValueSource",
-      "current_type": "process/PostgreSQL",
+      "current_type": "PostgreSQL",
       "execution_paths": [
         "maven:verify/failsafe"
       ],
@@ -9358,8 +9358,8 @@
         "durability/DB admission",
         "release/process/version lifecycle"
       ],
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; no replacement or removal in 5.1",
       "source_body_sha256": "56428515f212dd438a2e157da6c15b10e7dda788752f4e55514047089fdd8666",
       "source_body": "{\n        String name=\"signed_migration_\"+UUID.randomUUID().toString().replace(\"-\", \"\");\n        var server=new JdbcTemplate(PostgresFixture.POSTGRES.getPostgresDatabase());\n        server.execute(\"CREATE DATABASE \"+name+\" OWNER tnbp_migrator\");\n        String url=\"jdbc:postgresql://localhost:\"+PostgresFixture.POSTGRES.getPort()+\"/\"+name;\n        var admin=new JdbcTemplate(new DriverManagerDataSource(url,\"postgres\",\"postgres\"));\n        try {\n            Flyway.configure().dataSource(url,\"tnbp_migrator\",\"migration-test-only\").schemas(\"access\").defaultSchema(\"access\").target(\"10\").load().migrate();\n            UUID user=UUID.randomUUID();\n            if(existing) {\n                admin.update(\"INSERT INTO access.accounts VALUES (?,?,'$argon2id$synthetic',now())\",user,user+\"@example.org\");\n                for(long progress:new long[]{0,7000,15000,9007199254740991L})\n                    admin.update(\"INSERT INTO savings_goals.goals VALUES (?,?,'Bestand',10000,?,DATE '2028-02-29')\",UUID.randomUUID(),user,progress);\n            }\n            var before=admin.queryForList(\"SELECT * FROM savings_goals.goals ORDER BY id\");\n            Flyway.configure().dataSource(url,\"tnbp_migrator\",\"migration-test-only\").schemas(\"access\").defaultSchema(\"access\").load().migrate();\n            assertThat(admin.queryForList(\"SELECT * FROM savings_goals.goals ORDER BY id\")).isEqualTo(before);\n            assertThat(admin.queryForObject(\"SELECT relrowsecurity AND relforcerowsecurity FROM pg_class WHERE oid='savings_goals.goals'::regclass\",Boolean.class)).isTrue();\n            if(!existing)admin.update(\"INSERT INTO access.accounts VALUES (?,?,'$argon2id$synthetic',now())\",user,user+\"@example.org\");\n            for(long progress:new long[]{-9007199254740991L,-3000,0,9007199254740991L})\n                admin.update(\"INSERT INTO savings_goals.goals VALUES (?,?,'Grenze',1,?,NULL)\",UUID.randomUUID(),user,progress);\n            for(long progress:new long[]{-9007199254740992L,9007199254740992L})\n                assertThatThrownBy(()->admin.update(\"INSERT INTO savings_goals.goals VALUES (?,?,'Grenze',1,?,NULL)\",UUID.randomUUID(),user,progress)).isInstanceOf(org.springframework.dao.DataAccessException.class);\n            var runtime=new JdbcTemplate(new DriverManagerDataSource(url,\"tnbp_runtime\",\"runtime-test-only\"));\n            assertThat(runtime.queryForObject(\"SELECT count(*) FROM savings_goals.goals\",Integer.class)).isZero();\n            assertThat(new de.linus.tnbp.shared.ApiVersionState(runtime,\"compatible\",\"\",\"\",true).signedProgressAvailable()).isFalse();\n        } finally {server.execute(\"DROP DATABASE \"+name+\" WITH (FORCE)\");}\n    }",
@@ -33209,7 +33209,8 @@
       "line": 18,
       "variant": "default",
       "observation": [
-        "ValueError before creation when output lies inside a disposable build path"
+        "self.assertFalse(output.exists())",
+        "self.assertRaisesRegex(ValueError, 'disposable build outputs')"
       ],
       "current_type": "tool/infrastructure",
       "execution_paths": [
@@ -33241,7 +33242,9 @@
       "line": 25,
       "variant": "default",
       "observation": [
-        "Old Surefire/Failsafe directories removed; compiled class sentinel survives"
+        "self.assertFalse((target / 'surefire-reports').exists())",
+        "self.assertFalse((target / 'failsafe-reports').exists())",
+        "self.assertTrue((target / 'classes/previous').exists())"
       ],
       "current_type": "tool/infrastructure",
       "execution_paths": [
@@ -33276,8 +33279,11 @@
       "variant": "default",
       "observation": [
         "self.assertEqual(result['median_seconds'], 100)",
-        "self.assertEqual(result['target_seconds_70_percent'], 70)",
-        "self.assertTrue(result['local_evidence_complete'])"
+        "self.assertEqual(result['target_seconds'], 900)",
+        "self.assertTrue(result['target_met'])",
+        "self.assertTrue(result['local_evidence_complete'])",
+        "self.assertEqual(measured['target_seconds'], 900)",
+        "self.assertEqual(measured['target_met'], expected)"
       ],
       "current_type": "tool/infrastructure",
       "execution_paths": [
@@ -33292,7 +33298,10 @@
       "target_type": "tool/infrastructure",
       "remaining_integration": "Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution",
       "replacement_evidence": "OPEN; no replacement or removal",
-      "loops": [],
+      "loops": [
+        "[(900, True), (900.001, False)]",
+        "range(3)"
+      ],
       "semantic_scenario": [
         "SC:PY:test_test_baseline:BaselineTest#test_median_excludes_failed_warmup_and_clean"
       ],
@@ -33305,7 +33314,7 @@
     {
       "id": "PY:test_test_baseline:BaselineTest#test_missing_group_nonzero_or_reordered_groups_are_not_complete",
       "path": "scripts/tests/test_test_baseline.py",
-      "line": 44,
+      "line": 49,
       "variant": "default",
       "observation": [
         "self.assertIsNone(result['median_seconds'])",
@@ -33337,11 +33346,14 @@
     {
       "id": "PY:test_test_baseline:BaselineTest#test_clean_and_warmup_and_three_samples_required",
       "path": "scripts/tests/test_test_baseline.py",
-      "line": 55,
+      "line": 60,
       "variant": "default",
       "observation": [
         "self.assertFalse(baseline.summarize([run()] * 3)['local_evidence_complete'])",
-        "self.assertFalse(baseline.summarize([run(), run('clean'), run('warmup')])['local_evidence_complete'])"
+        "self.assertFalse(baseline.summarize([run(), run('clean'), run('warmup')])['local_evidence_complete'])",
+        "self.assertIsNone(baseline.summarize([run()])['median_seconds'])",
+        "self.assertIsNone(baseline.summarize([run(), run()])['target_met'])",
+        "self.assertEqual(baseline.summarize([run(), run()])['target_seconds'], 900)"
       ],
       "current_type": "tool/infrastructure",
       "execution_paths": [
@@ -33369,10 +33381,11 @@
     {
       "id": "PY:test_test_baseline:BaselineTest#test_duplicate_execution_is_not_a_new_case",
       "path": "scripts/tests/test_test_baseline.py",
-      "line": 61,
+      "line": 67,
       "variant": "default",
       "observation": [
-        "self.assertEqual(baseline.report_counts(tmp), {'executions': 3, 'distinct_execution_ids': 2, 'duplicate_executions': 1})"
+        "self.assertEqual([counts[key] for key in ('executions', 'distinct_execution_ids', 'duplicate_executions')], [3, 2, 1])",
+        "self.assertEqual(counts['errors'], [])"
       ],
       "current_type": "tool/infrastructure",
       "execution_paths": [
@@ -33387,7 +33400,9 @@
       "target_type": "tool/infrastructure",
       "remaining_integration": "Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution",
       "replacement_evidence": "OPEN; no replacement or removal",
-      "loops": [],
+      "loops": [
+        "('executions', 'distinct_execution_ids', 'duplicate_executions')"
+      ],
       "semantic_scenario": [
         "SC:PY:test_test_baseline:BaselineTest#test_duplicate_execution_is_not_a_new_case"
       ],
@@ -33400,7 +33415,7 @@
     {
       "id": "PY:test_test_baseline:BaselineTest#test_preflight_records_missing_tools",
       "path": "scripts/tests/test_test_baseline.py",
-      "line": 67,
+      "line": 75,
       "variant": "default",
       "observation": [
         "self.assertIn('missing tool: java', errors)",
@@ -33432,7 +33447,7 @@
     {
       "id": "PY:test_test_baseline:BaselineTest#test_preflight_failure_writes_evidence_without_running_groups",
       "path": "scripts/tests/test_test_baseline.py",
-      "line": 73,
+      "line": 81,
       "variant": "default",
       "observation": [
         "self.assertIn('port 8080 unavailable', (output / 'results.json').read_text())",
@@ -33464,7 +33479,7 @@
     {
       "id": "PY:test_test_baseline:BaselineTest#test_fewer_than_three_measurements_rejected",
       "path": "scripts/tests/test_test_baseline.py",
-      "line": 83,
+      "line": 91,
       "variant": "default",
       "observation": [
         "self.assertRaises(SystemExit)"
@@ -33495,7 +33510,7 @@
     {
       "id": "PY:test_test_baseline:BaselineTest#test_existing_output_is_never_overwritten",
       "path": "scripts/tests/test_test_baseline.py",
-      "line": 87,
+      "line": 95,
       "variant": "default",
       "observation": [
         "self.assertRaises(FileExistsError)"
@@ -33526,7 +33541,7 @@
     {
       "id": "PY:test_test_baseline:BaselineTest#test_incomplete_warmup_does_not_make_evidence_complete",
       "path": "scripts/tests/test_test_baseline.py",
-      "line": 92,
+      "line": 100,
       "variant": "default",
       "observation": [
         "self.assertFalse(baseline.summarize([run(), run(), run(), warmup, run('clean')])['local_evidence_complete'])"
@@ -33557,7 +33572,7 @@
     {
       "id": "PY:test_test_baseline:BaselineTest#test_group_failure_stops_and_preserves_failed_log",
       "path": "scripts/tests/test_test_baseline.py",
-      "line": 97,
+      "line": 105,
       "variant": "default",
       "observation": [
         "self.assertEqual(data['status'], 'failed')",
@@ -33593,14 +33608,15 @@
     {
       "id": "PY:test_test_baseline:BaselineTest#test_success_executes_all_six_groups_for_all_five_runs",
       "path": "scripts/tests/test_test_baseline.py",
-      "line": 114,
+      "line": 122,
       "variant": "default",
       "observation": [
         "self.assertEqual(execute.call_count, 30)",
         "self.assertEqual([r['kind'] for r in data['runs']], ['warmup', 'measurement', 'measurement', 'measurement', 'clean'])",
         "self.assertTrue(data['summary']['local_evidence_complete'])",
         "self.assertEqual(data['status'], 'passed')",
-        "self.assertEqual(baseline.main(['--output', str(output), '--cache-note', 'test']), 0)"
+        "self.assertEqual(baseline.main(['--output', str(output), '--cache-note', 'test']), 0)",
+        "self.assertEqual('TEST_BASELINE_PHASE_LOG' in call.args[2], group == 'contract')"
       ],
       "current_type": "tool/infrastructure",
       "execution_paths": [
@@ -33616,6 +33632,7 @@
       "remaining_integration": "Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution",
       "replacement_evidence": "OPEN; no replacement or removal",
       "loops": [
+        "enumerate(execute.call_args_list)",
         "data['runs']"
       ],
       "semantic_scenario": [
@@ -33630,7 +33647,7 @@
     {
       "id": "PY:test_test_baseline:BaselineTest#test_phase_records_exit_code_and_inclusive_time",
       "path": "scripts/tests/test_test_baseline.py",
-      "line": 131,
+      "line": 145,
       "variant": "default",
       "observation": [
         "self.assertEqual(event['name'], 'setup')",
@@ -33659,6 +33676,336 @@
       "domain": "tooling regression",
       "canonical_scenarios": [
         "INF-5e0ad876e38a783c"
+      ]
+    },
+    {
+      "id": "PY:test_test_baseline:BaselineTest#test_resources_capture_limits_affinity_and_only_hashed_host_identity",
+      "path": "scripts/tests/test_test_baseline.py",
+      "line": 159,
+      "variant": "default",
+      "observation": [
+        "self.assertEqual(first['host_fingerprint_sha256'], second['host_fingerprint_sha256'])",
+        "self.assertEqual(first['cpu_models'], ['Fixture CPU'])",
+        "self.assertEqual(first['affinity'], [2, 4])",
+        "self.assertEqual(first['memory_bytes']['MemAvailable'], 512 * 1024)",
+        "self.assertEqual(first['cgroup_limits']['effective']['cpu.max'], '200000 100000')",
+        "self.assertNotIn('private-machine-id', json.dumps(first))",
+        "self.assertNotIn('private-hostname', json.dumps(first))"
+      ],
+      "current_type": "tool/infrastructure",
+      "execution_paths": [
+        "python:unittest discover"
+      ],
+      "requirement": [
+        "5.1/AC-3"
+      ],
+      "risks": [
+        "tooling/infrastructure regression"
+      ],
+      "target_type": "tool/infrastructure",
+      "remaining_integration": "Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution",
+      "replacement_evidence": "OPEN; no replacement or removal",
+      "loops": [],
+      "semantic_scenario": [
+        "SC:PY:test_test_baseline:BaselineTest#test_resources_capture_limits_affinity_and_only_hashed_host_identity"
+      ],
+      "discovery_status": "Python AST + successful unittest discovery",
+      "domain": "tooling regression",
+      "canonical_scenarios": [
+        "INF-1f4e0e78dc801339"
+      ]
+    },
+    {
+      "id": "PY:test_test_baseline:BaselineTest#test_untracked_executable_is_preserved_and_drift_invalidates_run",
+      "path": "scripts/tests/test_test_baseline.py",
+      "line": 183,
+      "variant": "default",
+      "observation": [
+        "self.assertFalse(data['runs'][0]['input_identity_valid'])",
+        "self.assertEqual(data['runs'][0]['status'], 'failed')",
+        "self.assertEqual(data['runs'][0]['resources_before'], {'boundary': 1})",
+        "self.assertEqual(data['runs'][0]['resources_after'], {'boundary': 2})",
+        "self.assertEqual(saved.read_text(), 'initial runtime')",
+        "self.assertEqual(saved.stat().st_mode & 0o777, 0o755)",
+        "self.assertEqual(old_evidence.read_text(), 'unaltered raw evidence')",
+        "self.assertIsNone(data['summary']['median_seconds'])",
+        "self.assertEqual(baseline.main(['--output', str(output), '--cache-note', 'fixture']), 1)"
+      ],
+      "current_type": "tool/infrastructure",
+      "execution_paths": [
+        "python:unittest discover"
+      ],
+      "requirement": [
+        "5.1/AC-3",
+        "5.1/AC-8"
+      ],
+      "risks": [
+        "tooling/infrastructure regression"
+      ],
+      "target_type": "tool/infrastructure",
+      "remaining_integration": "Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution",
+      "replacement_evidence": "OPEN; no replacement or removal",
+      "loops": [],
+      "semantic_scenario": [
+        "SC:PY:test_test_baseline:BaselineTest#test_untracked_executable_is_preserved_and_drift_invalidates_run"
+      ],
+      "discovery_status": "Python AST + successful unittest discovery",
+      "domain": "tooling regression",
+      "canonical_scenarios": [
+        "INF-a366e136b6ff2417"
+      ]
+    },
+    {
+      "id": "PY:test_test_baseline:BaselineTest#test_invalid_report_or_input_guard_cannot_contribute_to_median",
+      "path": "scripts/tests/test_test_baseline.py",
+      "line": 216,
+      "variant": "default",
+      "observation": [
+        "self.assertEqual(summary['successful_measurements'], 1)",
+        "self.assertFalse(summary['local_evidence_complete'])",
+        "self.assertIsNone(summary['target_met'])"
+      ],
+      "current_type": "tool/infrastructure",
+      "execution_paths": [
+        "python:unittest discover"
+      ],
+      "requirement": [
+        "5.1/AC-1",
+        "5.1/AC-3"
+      ],
+      "risks": [
+        "tooling/infrastructure regression"
+      ],
+      "target_type": "tool/infrastructure",
+      "remaining_integration": "Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution",
+      "replacement_evidence": "OPEN; no replacement or removal",
+      "loops": [],
+      "semantic_scenario": [
+        "SC:PY:test_test_baseline:BaselineTest#test_invalid_report_or_input_guard_cannot_contribute_to_median"
+      ],
+      "discovery_status": "Python AST + successful unittest discovery",
+      "domain": "tooling regression",
+      "canonical_scenarios": [
+        "INF-f647a4293c48343a"
+      ]
+    },
+    {
+      "id": "PY:test_test_baseline:BaselineTest#test_backend_scope_includes_current_parameters_inheritance_and_new_tests",
+      "path": "scripts/tests/test_test_baseline.py",
+      "line": 250,
+      "variant": "default",
+      "observation": [
+        "self.assertEqual(expected['failsafe'][('example.NextIT', 'variants')], 2)",
+        "self.assertEqual(baseline.validate_backend_reports(reports), [])",
+        "self.assertTrue(any('missing=' in error and 'added' in error for error in baseline.validate_backend_reports(reports)))"
+      ],
+      "current_type": "tool/infrastructure",
+      "execution_paths": [
+        "python:unittest discover"
+      ],
+      "requirement": [
+        "5.1/AC-1"
+      ],
+      "risks": [
+        "tooling/infrastructure regression"
+      ],
+      "target_type": "tool/infrastructure",
+      "remaining_integration": "Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution",
+      "replacement_evidence": "OPEN; no replacement or removal",
+      "loops": [
+        "baseline.validate_backend_reports(reports)"
+      ],
+      "semantic_scenario": [
+        "SC:PY:test_test_baseline:BaselineTest#test_backend_scope_includes_current_parameters_inheritance_and_new_tests"
+      ],
+      "discovery_status": "Python AST + successful unittest discovery",
+      "domain": "tooling regression",
+      "canonical_scenarios": [
+        "INF-88849affb74c20ee"
+      ]
+    },
+    {
+      "id": "PY:test_test_baseline:BaselineTest#test_empty_reduced_skipped_and_malformed_backend_reports_are_rejected",
+      "path": "scripts/tests/test_test_baseline.py",
+      "line": 259,
+      "variant": "default",
+      "observation": [
+        "self.assertTrue(baseline.validate_backend_reports(reports))",
+        "self.assertEqual(reports['failsafe']['skipped'], 1)",
+        "self.assertTrue(baseline.validate_backend_reports(reports))",
+        "self.assertTrue(reports['failsafe']['errors'])",
+        "self.assertTrue(baseline.validate_backend_reports(reports))",
+        "self.assertTrue(any('empty test discovery' in error for error in baseline.validate_backend_reports(reports)))"
+      ],
+      "current_type": "tool/infrastructure",
+      "execution_paths": [
+        "python:unittest discover"
+      ],
+      "requirement": [
+        "5.1/AC-1",
+        "5.1/AC-8"
+      ],
+      "risks": [
+        "tooling/infrastructure regression"
+      ],
+      "target_type": "tool/infrastructure",
+      "remaining_integration": "Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution",
+      "replacement_evidence": "OPEN; no replacement or removal",
+      "loops": [
+        "baseline.validate_backend_reports(reports)"
+      ],
+      "semantic_scenario": [
+        "SC:PY:test_test_baseline:BaselineTest#test_empty_reduced_skipped_and_malformed_backend_reports_are_rejected"
+      ],
+      "discovery_status": "Python AST + successful unittest discovery",
+      "domain": "tooling regression",
+      "canonical_scenarios": [
+        "INF-bb0a2047ac67c24d"
+      ]
+    },
+    {
+      "id": "PY:test_test_baseline:BaselineTest#test_malformed_backend_xml_is_preserved_before_failure_is_saved",
+      "path": "scripts/tests/test_test_baseline.py",
+      "line": 282,
+      "variant": "default",
+      "observation": [
+        "self.assertEqual(data['status'], 'failed')",
+        "self.assertTrue(data['runs'][0]['groups'][0]['interrupted'])",
+        "self.assertTrue(data['runs'][0]['groups'][0]['failsafe']['errors'])",
+        "self.assertEqual((output / '00-warmup-failsafe-reports/TEST-broken.xml').read_text(), '<testsuite><testcase')",
+        "self.assertEqual(baseline.main(['--output', str(output), '--cache-note', 'fixture']), 1)"
+      ],
+      "current_type": "tool/infrastructure",
+      "execution_paths": [
+        "python:unittest discover"
+      ],
+      "requirement": [
+        "5.1/AC-3",
+        "5.1/AC-8"
+      ],
+      "risks": [
+        "tooling/infrastructure regression"
+      ],
+      "target_type": "tool/infrastructure",
+      "remaining_integration": "Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution",
+      "replacement_evidence": "OPEN; no replacement or removal",
+      "loops": [],
+      "semantic_scenario": [
+        "SC:PY:test_test_baseline:BaselineTest#test_malformed_backend_xml_is_preserved_before_failure_is_saved"
+      ],
+      "discovery_status": "Python AST + successful unittest discovery",
+      "domain": "tooling regression",
+      "canonical_scenarios": [
+        "INF-596c7fc03f3b6222"
+      ]
+    },
+    {
+      "id": "PY:test_test_baseline:BaselineTest#test_browser_actual_pass_identities_must_match_nonempty_current_discovery",
+      "path": "scripts/tests/test_test_baseline.py",
+      "line": 310,
+      "variant": "default",
+      "observation": [
+        "self.assertEqual(errors, [])",
+        "self.assertEqual(baseline.validate_browser_report(path, expected), [])",
+        "self.assertTrue(baseline.validate_browser_report(path, expected))",
+        "self.assertEqual(baseline.validate_browser_report(path, new_expected), [])",
+        "self.assertTrue(baseline.validate_browser_report(path, expected))"
+      ],
+      "current_type": "tool/infrastructure",
+      "execution_paths": [
+        "python:unittest discover"
+      ],
+      "requirement": [
+        "5.1/AC-1",
+        "5.1/AC-8"
+      ],
+      "risks": [
+        "tooling/infrastructure regression"
+      ],
+      "target_type": "tool/infrastructure",
+      "remaining_integration": "Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution",
+      "replacement_evidence": "OPEN; no replacement or removal",
+      "loops": [
+        "(self.browser_document(0), self.browser_document(1), self.browser_document(status='skipped'), self.browser_document(status='failed'), [])"
+      ],
+      "semantic_scenario": [
+        "SC:PY:test_test_baseline:BaselineTest#test_browser_actual_pass_identities_must_match_nonempty_current_discovery"
+      ],
+      "discovery_status": "Python AST + successful unittest discovery",
+      "domain": "tooling regression",
+      "canonical_scenarios": [
+        "INF-97e59222599c294b"
+      ]
+    },
+    {
+      "id": "PY:test_test_baseline:BaselineTest#test_timeout_kills_stubborn_descendant_after_leader_exits",
+      "path": "scripts/tests/test_test_baseline.py",
+      "line": 329,
+      "variant": "default",
+      "observation": [
+        "self.assertEqual(code, 124)",
+        "self.assertTrue(ready.exists(), 'descendant must install its TERM handler before timeout')",
+        "self.fail('stubborn descendant survived process-group cleanup')"
+      ],
+      "current_type": "tool/infrastructure",
+      "execution_paths": [
+        "python:unittest discover"
+      ],
+      "requirement": [
+        "5.1/AC-8",
+        "TR-10"
+      ],
+      "risks": [
+        "tooling/infrastructure regression"
+      ],
+      "target_type": "tool/infrastructure",
+      "remaining_integration": "Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution",
+      "replacement_evidence": "OPEN; no replacement or removal",
+      "loops": [],
+      "semantic_scenario": [
+        "SC:PY:test_test_baseline:BaselineTest#test_timeout_kills_stubborn_descendant_after_leader_exits"
+      ],
+      "discovery_status": "Python AST + successful unittest discovery",
+      "domain": "tooling regression",
+      "canonical_scenarios": [
+        "INF-246f1b699abba67e"
+      ]
+    },
+    {
+      "id": "PY:test_test_baseline:BaselineTest#test_sigterm_persists_interrupted_group_and_terminates_process",
+      "path": "scripts/tests/test_test_baseline.py",
+      "line": 359,
+      "variant": "default",
+      "observation": [
+        "self.assertEqual(data['status'], 'failed')",
+        "self.assertTrue(data['runs'][0]['groups'][0]['interrupted'])",
+        "self.assertEqual(data['runs'][0]['groups'][0]['exit_code'], 143)",
+        "self.assertIsNone(data['summary']['median_seconds'])",
+        "self.assertTrue(ready.exists())",
+        "self.assertEqual(process.wait(timeout=4), 1)"
+      ],
+      "current_type": "tool/infrastructure",
+      "execution_paths": [
+        "python:unittest discover"
+      ],
+      "requirement": [
+        "5.1/AC-8",
+        "TR-10"
+      ],
+      "risks": [
+        "tooling/infrastructure regression"
+      ],
+      "target_type": "tool/infrastructure",
+      "remaining_integration": "Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution",
+      "replacement_evidence": "OPEN; no replacement or removal",
+      "loops": [],
+      "semantic_scenario": [
+        "SC:PY:test_test_baseline:BaselineTest#test_sigterm_persists_interrupted_group_and_terminates_process"
+      ],
+      "discovery_status": "Python AST + successful unittest discovery",
+      "domain": "tooling regression",
+      "canonical_scenarios": [
+        "INF-1e5823e0014d92f6"
       ]
     }
   ]

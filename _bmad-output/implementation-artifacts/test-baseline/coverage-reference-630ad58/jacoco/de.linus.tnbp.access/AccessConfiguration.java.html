@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AccessConfiguration.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Try Not to Be Poor</a> &gt; <a href="index.source.html" class="el_package">de.linus.tnbp.access</a> &gt; <span class="el_source">AccessConfiguration.java</span></div><h1>AccessConfiguration.java</h1><pre class="source lang-java linenums">package de.linus.tnbp.access;
+
+import java.time.Clock;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.jackson.autoconfigure.JsonMapperBuilderCustomizer;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import tools.jackson.databind.cfg.CoercionAction;
+import tools.jackson.databind.cfg.CoercionInputShape;
+
+@Configuration
+@EnableConfigurationProperties({RegistrationLink.class, SessionSettings.class})
+<span class="fc" id="L19">class AccessConfiguration {</span>
+    @Bean
+    JsonMapperBuilderCustomizer strictJsonStrings() {
+<span class="fc" id="L22">        return builder -&gt; builder.withCoercionConfig(String.class, coercion -&gt; coercion</span>
+<span class="fc" id="L23">            .setCoercion(CoercionInputShape.Integer, CoercionAction.Fail)</span>
+<span class="fc" id="L24">            .setCoercion(CoercionInputShape.Float, CoercionAction.Fail)</span>
+<span class="fc" id="L25">            .setCoercion(CoercionInputShape.Boolean, CoercionAction.Fail))</span>
+<span class="fc" id="L26">            .withCoercionConfig(Long.class, coercion -&gt; coercion</span>
+<span class="fc" id="L27">                .setCoercion(CoercionInputShape.String, CoercionAction.Fail)</span>
+<span class="fc" id="L28">                .setCoercion(CoercionInputShape.Float, CoercionAction.Fail)</span>
+<span class="fc" id="L29">                .setCoercion(CoercionInputShape.Boolean, CoercionAction.Fail)</span>
+<span class="fc" id="L30">                .setCoercion(CoercionInputShape.EmptyString, CoercionAction.Fail));</span>
+    }
+
+    @Bean
+    Clock clock() {
+<span class="fc" id="L35">        return Clock.systemUTC();</span>
+    }
+
+    @Bean
+    PasswordEncoder passwordEncoder() {
+<span class="fc" id="L40">        return new Argon2PasswordEncoder(16, 32, 1, 19456, 2);</span>
+    }
+
+    @Bean
+    SecurityFilterChain securityFilterChain(HttpSecurity http, SessionSettings settings, SessionJwt jwt,
+            de.linus.tnbp.shared.ApiVersionState versions, DatabaseRoleVerifier roles) throws Exception {
+<span class="fc" id="L46">        roles.verify();</span>
+<span class="fc" id="L47">        var csrfRepository = new org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository();</span>
+<span class="fc" id="L48">        csrfRepository.setHeaderName(&quot;X-CSRF-TOKEN&quot;);</span>
+<span class="fc" id="L49">        var origin = new org.springframework.web.filter.OncePerRequestFilter() {</span>
+            @Override protected void doFilterInternal(jakarta.servlet.http.HttpServletRequest request,
+                    jakarta.servlet.http.HttpServletResponse response, jakarta.servlet.FilterChain chain)
+                    throws java.io.IOException, jakarta.servlet.ServletException {
+<span class="fc" id="L53">                String path = request.getServletPath();</span>
+<span class="pc bpc" id="L54" title="1 of 6 branches missed.">                if (versions.v1Retired() &amp;&amp; (path.equals(&quot;/api/v1&quot;) || path.startsWith(&quot;/api/v1/&quot;))) {</span>
+<span class="fc" id="L55">                    response.setStatus(401);</span>
+<span class="fc" id="L56">                    response.setContentType(&quot;application/json&quot;);</span>
+<span class="fc" id="L57">                    response.setCharacterEncoding(&quot;UTF-8&quot;);</span>
+<span class="fc" id="L58">                    response.setHeader(&quot;Cache-Control&quot;, &quot;no-store&quot;);</span>
+<span class="fc" id="L59">                    response.getWriter().write(&quot;{\&quot;code\&quot;:\&quot;CLIENT_UPDATE_REQUIRED\&quot;,\&quot;message\&quot;:\&quot;Bitte lade die Seite neu. Nicht gespeicherte Eingaben werden verworfen.\&quot;,\&quot;updateUrl\&quot;:\&quot;/aktualisieren\&quot;}&quot;);</span>
+<span class="fc" id="L60">                    return;</span>
+                }
+<span class="fc bfc" id="L62" title="All 2 branches covered.">                if (path.startsWith(&quot;/api/v2/&quot;)) response.setHeader(&quot;Cache-Control&quot;, &quot;no-store&quot;);</span>
+<span class="fc bfc" id="L63" title="All 4 branches covered.">                if (path.startsWith(&quot;/api/v1/expense-budget/&quot;) || path.equals(&quot;/api/v1/savings-goals&quot;)</span>
+<span class="fc bfc" id="L64" title="All 2 branches covered.">                    || path.matches(&quot;/api/v1/savings-goals/[^/]+(?:/progress)?&quot;)) response.setHeader(&quot;Cache-Control&quot;, &quot;no-store&quot;);</span>
+<span class="fc bfc" id="L65" title="All 4 branches covered.">                if ((path.startsWith(&quot;/api/v1/access/&quot;) &amp;&amp; !path.equals(&quot;/api/v1/access/registrations&quot;))</span>
+<span class="fc bfc" id="L66" title="All 4 branches covered.">                    || path.equals(&quot;/api/v2/access/login&quot;) || path.equals(&quot;/api/v2/access/refresh&quot;)</span>
+<span class="fc bfc" id="L67" title="All 2 branches covered.">                    || path.equals(&quot;/api/v2/access/logout&quot;)) {</span>
+<span class="fc" id="L68">                    response.setHeader(&quot;Cache-Control&quot;, &quot;no-store&quot;);</span>
+<span class="fc bfc" id="L69" title="All 2 branches covered.">                    if (request.getMethod().equals(&quot;POST&quot;)) {</span>
+<span class="fc bfc" id="L70" title="All 2 branches covered.">                        if (!jwt.available()) {</span>
+<span class="fc" id="L71">                            SessionHttp.error(response, 503);</span>
+<span class="fc" id="L72">                            return;</span>
+                        }
+<span class="fc bfc" id="L74" title="All 2 branches covered.">                        if (!settings.origin().equals(request.getHeader(&quot;Origin&quot;))) {</span>
+<span class="fc" id="L75">                            SessionHttp.error(response, 403);</span>
+<span class="fc" id="L76">                            return;</span>
+                        }
+                    }
+                }
+<span class="fc" id="L80">                chain.doFilter(request, response);</span>
+<span class="fc" id="L81">            }</span>
+        };
+        // Die HttpSession enthält ausschließlich CSRF-Zustand, keine Anmeldung.
+        // Bearer-GETs dürfen fremde CSRF-Handshakes weder durch Session-Fixation noch Tokenlöschung verändern.
+<span class="fc" id="L85">        var noSessionAuthentication = new org.springframework.security.web.authentication.session.NullAuthenticatedSessionStrategy();</span>
+<span class="fc" id="L86">        return http</span>
+<span class="fc" id="L87">            .sessionManagement(session -&gt; session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)</span>
+<span class="fc" id="L88">                .sessionAuthenticationStrategy(noSessionAuthentication))</span>
+<span class="fc" id="L89">            .csrf(csrf -&gt; csrf.csrfTokenRepository(csrfRepository)</span>
+<span class="fc" id="L90">                .sessionAuthenticationStrategy(noSessionAuthentication)</span>
+                // Resource Server ergänzt sonst eine pauschale Bearer-CSRF-Ausnahme.
+                // Den fertigen Filter auf die konkreten erlaubten Methoden/Pfade begrenzen;
+                // Login/Refresh/Logout benötigen auch mit Bearer weiterhin CSRF.
+<span class="fc" id="L94">                .withObjectPostProcessor(new org.springframework.security.config.ObjectPostProcessor&lt;org.springframework.security.web.csrf.CsrfFilter&gt;() {</span>
+                    @Override public &lt;O extends org.springframework.security.web.csrf.CsrfFilter&gt; O postProcess(O filter) {
+<span class="fc" id="L96">                        filter.setRequireCsrfProtectionMatcher(request -&gt;</span>
+<span class="fc bfc" id="L97" title="All 4 branches covered.">                            org.springframework.security.web.csrf.CsrfFilter.DEFAULT_CSRF_MATCHER.matches(request) &amp;&amp; !csrfExempt(request));</span>
+<span class="fc" id="L98">                        return filter;</span>
+                    }
+                }))
+<span class="fc" id="L101">            .addFilterBefore(origin, org.springframework.security.web.csrf.CsrfFilter.class)</span>
+<span class="fc" id="L102">            .authorizeHttpRequests(auth -&gt; auth</span>
+<span class="fc" id="L103">                .requestMatchers(HttpMethod.POST, &quot;/api/v1/access/registrations&quot;, &quot;/api/v1/access/login&quot;,</span>
+                    &quot;/api/v1/access/refresh&quot;, &quot;/api/v1/access/logout&quot;, &quot;/api/v2/access/registrations&quot;,
+<span class="fc" id="L105">                    &quot;/api/v2/access/login&quot;, &quot;/api/v2/access/refresh&quot;, &quot;/api/v2/access/logout&quot;).permitAll()</span>
+<span class="fc" id="L106">                .requestMatchers(HttpMethod.GET, &quot;/api/v1/access/csrf&quot;, &quot;/api/v2/access/csrf&quot;).permitAll()</span>
+<span class="fc" id="L107">                .requestMatchers(HttpMethod.GET, &quot;/api/v1/access/me&quot;, &quot;/api/v2/access/me&quot;, &quot;/api/v2/capabilities&quot;, &quot;/api/v1/expense-budget/budget&quot;, &quot;/api/v1/expense-budget/expenses&quot;, &quot;/api/v2/expenses&quot;, &quot;/api/v2/budget&quot;, &quot;/api/v2/month-summary&quot;, &quot;/api/v1/expense-budget/month-summary&quot;, &quot;/api/v1/savings-goals&quot;, &quot;/api/v2/savings-goals&quot;, &quot;/api/v2/monthly-surplus/activation&quot;, &quot;/api/v2/monthly-surplus/pending&quot;, &quot;/api/v2/monthly-surplus&quot;).authenticated()</span>
+<span class="fc" id="L108">                .requestMatchers(HttpMethod.PUT, &quot;/api/v2/monthly-surplus/selection&quot;, &quot;/api/v1/expense-budget/budget&quot;, &quot;/api/v2/budget&quot;, &quot;/api/v1/savings-goals/*/progress&quot;, &quot;/api/v2/savings-goals/*/progress&quot;).authenticated()</span>
+<span class="fc" id="L109">                .requestMatchers(HttpMethod.POST, &quot;/api/v1/expense-budget/expenses&quot;, &quot;/api/v2/expenses&quot;, &quot;/api/v1/savings-goals&quot;, &quot;/api/v2/savings-goals&quot;, &quot;/api/v2/monthly-surplus/activation&quot;).authenticated()</span>
+<span class="fc" id="L110">                .requestMatchers(HttpMethod.PUT, &quot;/api/v1/expense-budget/expenses/*&quot;, &quot;/api/v2/expenses/*&quot;, &quot;/api/v1/savings-goals/*&quot;, &quot;/api/v2/savings-goals/*&quot;).authenticated()</span>
+<span class="fc" id="L111">                .requestMatchers(HttpMethod.DELETE, &quot;/api/v1/expense-budget/expenses/*&quot;, &quot;/api/v2/expenses/*&quot;, &quot;/api/v1/savings-goals/*&quot;, &quot;/api/v2/savings-goals/*&quot;).authenticated()</span>
+<span class="fc" id="L112">                .anyRequest().denyAll())</span>
+<span class="fc" id="L113">            .oauth2ResourceServer(oauth -&gt; oauth.jwt(config -&gt; config.decoder(jwt))</span>
+<span class="fc" id="L114">                .authenticationEntryPoint((request, response, failure) -&gt; SessionHttp.error(response, 401)))</span>
+<span class="fc" id="L115">            .exceptionHandling(errors -&gt; errors</span>
+<span class="fc" id="L116">                .authenticationEntryPoint((request, response, failure) -&gt; SessionHttp.error(response,</span>
+<span class="fc bfc" id="L117" title="All 2 branches covered.">                    request.getServletPath().equals(&quot;/api/v1/access/me&quot;)</span>
+<span class="fc bfc" id="L118" title="All 2 branches covered.">                        || request.getServletPath().equals(&quot;/api/v2/access/me&quot;)</span>
+<span class="fc bfc" id="L119" title="All 2 branches covered.">                        || request.getServletPath().equals(&quot;/api/v2/capabilities&quot;)</span>
+<span class="fc bfc" id="L120" title="All 2 branches covered.">                        || request.getServletPath().equals(&quot;/api/v2/monthly-surplus/activation&quot;)</span>
+<span class="fc bfc" id="L121" title="All 2 branches covered.">                        || request.getServletPath().equals(&quot;/api/v2/monthly-surplus/pending&quot;)</span>
+<span class="fc bfc" id="L122" title="All 2 branches covered.">                        || request.getServletPath().equals(&quot;/api/v2/monthly-surplus&quot;)</span>
+<span class="fc bfc" id="L123" title="All 2 branches covered.">                        || request.getServletPath().equals(&quot;/api/v2/monthly-surplus/selection&quot;)</span>
+<span class="fc bfc" id="L124" title="All 2 branches covered.">                        || request.getServletPath().equals(&quot;/api/v1/expense-budget/budget&quot;)</span>
+<span class="fc bfc" id="L125" title="All 2 branches covered.">                        || request.getServletPath().equals(&quot;/api/v2/budget&quot;)</span>
+<span class="fc bfc" id="L126" title="All 2 branches covered.">                        || request.getServletPath().equals(&quot;/api/v2/month-summary&quot;)</span>
+<span class="fc bfc" id="L127" title="All 4 branches covered.">                        || (request.getServletPath().equals(&quot;/api/v1/expense-budget/expenses&quot;) || request.getServletPath().equals(&quot;/api/v2/expenses&quot;))</span>
+<span class="fc bfc" id="L128" title="All 4 branches covered.">                        || (request.getServletPath().matches(&quot;/api/v1/expense-budget/expenses/[^/]+&quot;) || request.getServletPath().matches(&quot;/api/v2/expenses/[^/]+&quot;))</span>
+<span class="fc bfc" id="L129" title="All 2 branches covered.">                        || request.getServletPath().equals(&quot;/api/v1/expense-budget/month-summary&quot;)</span>
+<span class="fc bfc" id="L130" title="All 2 branches covered.">                        || request.getServletPath().equals(&quot;/api/v2/savings-goals&quot;)</span>
+<span class="fc bfc" id="L131" title="All 2 branches covered.">                        || request.getServletPath().matches(&quot;/api/v2/savings-goals/[^/]+(?:/progress)?&quot;)</span>
+<span class="fc bfc" id="L132" title="All 2 branches covered.">                        || request.getServletPath().equals(&quot;/api/v1/savings-goals&quot;)</span>
+<span class="fc bfc" id="L133" title="All 2 branches covered.">                        || request.getServletPath().matches(&quot;/api/v1/savings-goals/[^/]+(?:/progress)?&quot;) ? 401 : 403))</span>
+<span class="fc" id="L134">                .accessDeniedHandler((request, response, failure) -&gt; SessionHttp.error(response, 403)))</span>
+<span class="fc" id="L135">            .requestCache(cache -&gt; cache.disable())</span>
+<span class="fc" id="L136">            .formLogin(form -&gt; form.disable())</span>
+<span class="fc" id="L137">            .httpBasic(basic -&gt; basic.disable())</span>
+<span class="fc" id="L138">            .logout(logout -&gt; logout.disable())</span>
+<span class="fc" id="L139">            .build();</span>
+    }
+    private static boolean csrfExempt(jakarta.servlet.http.HttpServletRequest request) {
+<span class="fc" id="L142">        String path = request.getServletPath(), method = request.getMethod();</span>
+<span class="fc bfc" id="L143" title="All 8 branches covered.">        if (method.equals(&quot;POST&quot;)) return path.equals(&quot;/api/v2/monthly-surplus/activation&quot;) || path.equals(&quot;/api/v1/access/registrations&quot;) || path.equals(&quot;/api/v2/access/registrations&quot;)</span>
+<span class="fc bfc" id="L144" title="All 8 branches covered.">            || path.equals(&quot;/api/v1/expense-budget/expenses&quot;) || path.equals(&quot;/api/v2/expenses&quot;) || path.equals(&quot;/api/v1/savings-goals&quot;) || path.equals(&quot;/api/v2/savings-goals&quot;);</span>
+<span class="fc bfc" id="L145" title="All 8 branches covered.">        if (method.equals(&quot;PUT&quot;) &amp;&amp; (path.equals(&quot;/api/v2/monthly-surplus/selection&quot;) || path.equals(&quot;/api/v1/expense-budget/budget&quot;) || path.equals(&quot;/api/v2/budget&quot;)</span>
+<span class="fc bfc" id="L146" title="All 4 branches covered.">            || path.matches(&quot;/api/v1/savings-goals/[^/]+/progress&quot;) || path.matches(&quot;/api/v2/savings-goals/[^/]+/progress&quot;))) return true;</span>
+<span class="fc bfc" id="L147" title="All 6 branches covered.">        return (method.equals(&quot;PUT&quot;) || method.equals(&quot;DELETE&quot;)) &amp;&amp; (path.matches(&quot;/api/v1/expense-budget/expenses/[^/]+&quot;)</span>
+<span class="fc bfc" id="L148" title="All 6 branches covered.">            || path.matches(&quot;/api/v2/expenses/[^/]+&quot;) || path.matches(&quot;/api/v1/savings-goals/[^/]+&quot;) || path.matches(&quot;/api/v2/savings-goals/[^/]+&quot;));</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

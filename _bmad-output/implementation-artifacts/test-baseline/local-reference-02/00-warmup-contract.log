@@ -1,0 +1,483 @@
+Validating spec (api-contract/openapi.yaml)
+No validation issues detected.
+Validating spec (api-contract/v2/openapi.yaml)
+No validation issues detected.
+oasdiff version 1.30.0
+No changes detected
+No changes detected
+[INFO] Scanning for projects...
+[INFO] Loaded 24477 auto-discovered prefixes for remote repository central (prefixes-central.txt)
+[INFO] 
+[INFO] ---------------------------< de.linus:tnbp >----------------------------
+[INFO] Building Try Not to Be Poor 0.1.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] Loaded 24477 auto-discovered prefixes for remote repository maven-central (prefixes-maven-central.txt)
+[WARNING] Could not transfer metadata /.meta/prefixes.txt from/to flyway-community-db-support (https://maven.pkg.github.com/flyway/flyway-community-db-support): HTTP Status: 401
+[WARNING] Could not transfer metadata /.meta/prefixes.txt from/to MavenFeed (https://red-gate.pkgs.visualstudio.com/MavenFeed/_packaging/MavenFeed/maven/v1/): HTTP Status: 401
+[INFO] 
+[INFO] --- openapi-generator:7.26.0:generate (contract-v1) @ tnbp ---
+[INFO] Loaded 64 auto-discovered prefixes for remote repository apache.snapshots (prefixes-apache.snapshots.txt)
+[INFO] Generating with dryRun=false
+[INFO] No .openapi-generator-ignore file found.
+[INFO] OpenAPI Generator: spring (server)
+[INFO] Generator 'spring' is considered stable.
+[INFO] ----------------------------------
+[INFO] Environment variable JAVA_POST_PROCESS_FILE not defined so the Java code may not be properly formatted. To define it, try 'export JAVA_POST_PROCESS_FILE="/usr/local/bin/clang-format -i"' (Linux/Mac)
+[INFO] NOTE: To enable file post-processing, 'enablePostProcessFile' must be set to `true` (--enable-post-process-file for CLI).
+[INFO] Invoker Package Name, originally not set, is now derived from api package name: de.linus.tnbp.contract
+[INFO] Defaulting includeHttpRequestContext to 'false' for blocking
+[WARNING] 'generateJsonIncludeAnnotations' is not set. Defaulting to false: no @JsonInclude annotations are generated and property inclusion is governed entirely by the global ObjectMapper (7.23.0-equivalent output). Set 'generateJsonIncludeAnnotations=false' to keep this behavior and silence this warning, or 'generateJsonIncludeAnnotations=true' to emit spec-honest @JsonInclude annotations (see 'optionalNonNullPropertyJsonInclude'). Note: before 7.24.0 released output had no field-level @JsonInclude, so leaving this unset preserves that behavior.
+[WARNING] 'generateJsonSetterNullsAnnotations' is not set. Defaulting to false: no @JsonSetter(nulls = ...) annotations are generated and deserialization null-handling is governed entirely by the global ObjectMapper (7.23.0-equivalent output). Set 'generateJsonSetterNullsAnnotations=false' to keep this behavior and silence this warning, or 'generateJsonSetterNullsAnnotations=true' to emit @JsonSetter(nulls = ...) on optional non-nullable fields.
+[INFO] Processing operation register
+[INFO] Processing operation sessionCsrf
+[INFO] Processing operation login
+[INFO] Processing operation refreshSession
+[INFO] Processing operation logoutSession
+[INFO] Processing operation sessionIdentity
+[INFO] Processing operation getBudget
+[INFO] Processing operation putBudget
+[INFO] Processing operation getMonthSummary
+[INFO] Processing operation getExpenses
+[INFO] Processing operation postExpense
+[INFO] Processing operation putExpense
+[INFO] Processing operation deleteExpense
+[INFO] Processing operation getSavingsGoals
+[INFO] Processing operation postSavingsGoal
+[INFO] Processing operation putSavingsGoal
+[INFO] Processing operation deleteSavingsGoal
+[INFO] Processing operation putSavingsGoalProgress
+[INFO]  ONCE 'host' (OAS 2.0) or 'servers' (OAS 3.0) not defined in the spec. Default to [http://localhost] for server URL [http://localhost/api/v1]
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/model/ApiError.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/model/BudgetError.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/model/BudgetRequest.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/model/BudgetResponse.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/model/CsrfResponse.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/model/ExpenseError.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/model/ExpenseNotFoundError.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/model/ExpenseRequest.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/model/ExpenseResponse.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/model/LoginRequest.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/model/MonthSummaryError.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/model/MonthSummaryResponse.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/model/RegistrationCreated.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/model/RegistrationRequest.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/model/SavingsGoalError.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/model/SavingsGoalNotFoundError.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/model/SavingsGoalProgressRequest.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/model/SavingsGoalRequest.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/model/SavingsGoalResponse.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/model/SessionError.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/model/SessionIdentity.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/model/SessionResponse.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/api/AccessApi.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/api/BudgetApi.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/api/ExpensesApi.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/api/MonthSummaryApi.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/api/SavingsGoalsApi.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/api/SessionsApi.java
+[INFO] Skipping generation of Webhooks.
+[INFO] Skipping generation of supporting files.
+############################################################################################
+# Thanks for using OpenAPI Generator.                                                      #
+# We appreciate your support! Please consider donating to help us maintain this project.   #
+# https://opencollective.com/openapi_generator/donate                                      #
+############################################################################################
+[INFO] 
+[INFO] --- openapi-generator:7.26.0:generate (contract-v2) @ tnbp ---
+[INFO] Generating with dryRun=false
+[INFO] No .openapi-generator-ignore file found.
+[INFO] OpenAPI Generator: spring (server)
+[INFO] Generator 'spring' is considered stable.
+[INFO] ----------------------------------
+[INFO] Environment variable JAVA_POST_PROCESS_FILE not defined so the Java code may not be properly formatted. To define it, try 'export JAVA_POST_PROCESS_FILE="/usr/local/bin/clang-format -i"' (Linux/Mac)
+[INFO] NOTE: To enable file post-processing, 'enablePostProcessFile' must be set to `true` (--enable-post-process-file for CLI).
+[INFO] Invoker Package Name, originally not set, is now derived from api package name: de.linus.tnbp.contract.v2
+[INFO] Defaulting includeHttpRequestContext to 'false' for blocking
+[WARNING] 'generateJsonIncludeAnnotations' is not set. Defaulting to false: no @JsonInclude annotations are generated and property inclusion is governed entirely by the global ObjectMapper (7.23.0-equivalent output). Set 'generateJsonIncludeAnnotations=false' to keep this behavior and silence this warning, or 'generateJsonIncludeAnnotations=true' to emit spec-honest @JsonInclude annotations (see 'optionalNonNullPropertyJsonInclude'). Note: before 7.24.0 released output had no field-level @JsonInclude, so leaving this unset preserves that behavior.
+[WARNING] 'generateJsonSetterNullsAnnotations' is not set. Defaulting to false: no @JsonSetter(nulls = ...) annotations are generated and deserialization null-handling is governed entirely by the global ObjectMapper (7.23.0-equivalent output). Set 'generateJsonSetterNullsAnnotations=false' to keep this behavior and silence this warning, or 'generateJsonSetterNullsAnnotations=true' to emit @JsonSetter(nulls = ...) on optional non-nullable fields.
+[INFO] Processing operation getMonthlySurplus
+[INFO] Processing operation putMonthlySurplusSelection
+[INFO] Processing operation getMonthlySurplusPending
+[INFO] Processing operation getMonthlySurplusActivation
+[INFO] Processing operation postMonthlySurplusActivation
+[INFO] Processing operation getCapabilities
+[INFO] Processing operation register
+[INFO] Processing operation sessionCsrf
+[INFO] Processing operation login
+[INFO] Processing operation refreshSession
+[INFO] Processing operation logoutSession
+[INFO] Processing operation sessionIdentity
+[INFO] Processing operation getExpenses
+[INFO] Processing operation postExpense
+[INFO] Processing operation putExpense
+[INFO] Processing operation deleteExpense
+[INFO] Processing operation getBudget
+[INFO] Processing operation putBudget
+[INFO] Processing operation getMonthSummary
+[INFO] Processing operation getSavingsGoals
+[INFO] Processing operation postSavingsGoal
+[INFO] Processing operation putSavingsGoal
+[INFO] Processing operation deleteSavingsGoal
+[INFO] Processing operation putSavingsGoalProgress
+[INFO]  ONCE 'host' (OAS 2.0) or 'servers' (OAS 3.0) not defined in the spec. Default to [http://localhost] for server URL [http://localhost/api/v2]
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/ApiError.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/BudgetError.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/BudgetRequest.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/BudgetResponse.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/CapabilitiesError.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/CapabilitiesResponse.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/CsrfResponse.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/ExpenseCorrectionError.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/ExpenseError.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/ExpenseNotFoundError.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/ExpenseRequest.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/ExpenseResponse.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/LoginRequest.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/MonthSummaryError.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/MonthSummaryResponse.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/MonthlySurplusActivationResponse.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/MonthlySurplusError.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/MonthlySurplusFeatureNotAvailableError.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/MonthlySurplusOverviewResponse.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/MonthlySurplusPendingResponse.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/MonthlySurplusSelectionError.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/MonthlySurplusSelectionRequest.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/RegistrationCreated.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/RegistrationRequest.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/SavingsGoalError.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/SavingsGoalFeatureNotAvailableError.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/SavingsGoalNotFoundError.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/SavingsGoalProgressRequest.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/SavingsGoalRequest.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/SavingsGoalResponse.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/SessionError.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/SessionIdentity.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/SessionResponse.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/api/AccessApi.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/api/BudgetApi.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/api/CapabilitiesApi.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/api/ExpensesApi.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/api/MonthSummaryApi.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/api/MonthlySurplusApi.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/api/SavingsGoalsApi.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/api/SessionsApi.java
+[INFO] Skipping generation of Webhooks.
+[INFO] Skipping generation of supporting files.
+############################################################################################
+# Thanks for using OpenAPI Generator.                                                      #
+# We appreciate your support! Please consider donating to help us maintain this project.   #
+# https://opencollective.com/openapi_generator/donate                                      #
+############################################################################################
+[INFO] 
+[INFO] --- resources:3.5.0:resources (default-resources) @ tnbp ---
+[INFO] Copying 1 resource from src/main/resources to target/classes
+[INFO] Copying 18 resources from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.15.0:compile (default-compile) @ tnbp ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 126 source files with javac [debug parameters release 25] to target/classes
+[INFO] /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/model/RegistrationRequest.java: Einige Eingabedateien verwenden oder überschreiben eine veraltete API.
+[INFO] /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/model/RegistrationRequest.java: Wiederholen Sie die Kompilierung mit -Xlint:deprecation, um Details zu erhalten.
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  4.771 s
+[INFO] Finished at: 2026-11-14T19:57:16+01:00
+[INFO] ------------------------------------------------------------------------
+
+added 235 packages, and audited 236 packages in 3s
+
+73 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+npm warn install-scripts 4 packages have install scripts not yet covered by allowScripts:
+npm warn install-scripts   @parcel/watcher@2.6.0 (install: node scripts/build-from-source.js)
+npm warn install-scripts   esbuild@0.28.2 (postinstall: node install.js)
+npm warn install-scripts   lmdb@3.5.6 (install: node-gyp-build-optional-packages)
+npm warn install-scripts   msgpackr-extract@3.0.4 (install: node-gyp-build-optional-packages)
+npm warn install-scripts
+npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.
+
+> try-not-to-be-poor@0.1.0 generate:api
+> ../scripts/generate-client.sh
+
+[main] INFO  o.o.codegen.DefaultGenerator - Generating with dryRun=false
+[main] INFO  o.o.codegen.DefaultGenerator - OpenAPI Generator: typescript-angular (client)
+[main] INFO  o.o.codegen.DefaultGenerator - Generator 'typescript-angular' is considered stable.
+[main] INFO  o.o.c.l.AbstractTypeScriptClientCodegen - Hint: Environment variable 'TS_POST_PROCESS_FILE' (optional) not defined. E.g. to format the source code, please try 'export TS_POST_PROCESS_FILE="/usr/local/bin/prettier --write"' (Linux/Mac)
+[main] INFO  o.o.c.l.AbstractTypeScriptClientCodegen - Note: To enable file post-processing, 'enablePostProcessFile' must be set to `true` (--enable-post-process-file for CLI).
+[main] INFO  o.o.codegen.utils.URLPathUtils - 'host' (OAS 2.0) or 'servers' (OAS 3.0) not defined in the spec. Default to [http://localhost] for server URL [http://localhost/api/v1]
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/model/./apiError.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/model/./budgetError.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/model/./budgetRequest.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/model/./budgetResponse.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/model/./csrfResponse.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/model/./expenseError.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/model/./expenseNotFoundError.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/model/./expenseRequest.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/model/./expenseResponse.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/model/./loginRequest.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/model/./monthSummaryError.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/model/./monthSummaryResponse.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/model/./registrationCreated.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/model/./registrationRequest.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/model/./savingsGoalError.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/model/./savingsGoalNotFoundError.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/model/./savingsGoalProgressRequest.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/model/./savingsGoalRequest.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/model/./savingsGoalResponse.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/model/./sessionError.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/model/./sessionIdentity.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/model/./sessionResponse.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/api/access.service.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/api/budget.service.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/api/expenses.service.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/api/monthSummary.service.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/api/savingsGoals.service.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/api/sessions.service.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/model/models.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/api/api.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/index.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/api.module.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/provide-api.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/configuration.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/api.base.service.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/variables.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/encoder.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/param.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/.gitignore
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/git_push.sh
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/query.params.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/README.md
+[main] INFO  o.o.codegen.TemplateManager - Skipped /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/.openapi-generator-ignore (Skipped by supportingFiles options supplied by user.)
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/.openapi-generator/VERSION
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/.openapi-generator/FILES
+############################################################################################
+# Thanks for using OpenAPI Generator.                                                      #
+# We appreciate your support! Please consider donating to help us maintain this project.   #
+# https://opencollective.com/openapi_generator/donate                                      #
+############################################################################################
+[main] INFO  o.o.codegen.DefaultGenerator - Generating with dryRun=false
+[main] INFO  o.o.codegen.DefaultGenerator - OpenAPI Generator: typescript-angular (client)
+[main] INFO  o.o.codegen.DefaultGenerator - Generator 'typescript-angular' is considered stable.
+[main] INFO  o.o.c.l.AbstractTypeScriptClientCodegen - Hint: Environment variable 'TS_POST_PROCESS_FILE' (optional) not defined. E.g. to format the source code, please try 'export TS_POST_PROCESS_FILE="/usr/local/bin/prettier --write"' (Linux/Mac)
+[main] INFO  o.o.c.l.AbstractTypeScriptClientCodegen - Note: To enable file post-processing, 'enablePostProcessFile' must be set to `true` (--enable-post-process-file for CLI).
+[main] INFO  o.o.codegen.utils.URLPathUtils - 'host' (OAS 2.0) or 'servers' (OAS 3.0) not defined in the spec. Default to [http://localhost] for server URL [http://localhost/api/v2]
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./apiError.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./budgetError.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./budgetRequest.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./budgetResponse.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./capabilitiesError.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./capabilitiesResponse.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./csrfResponse.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./expenseCorrectionError.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./expenseError.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./expenseNotFoundError.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./expenseRequest.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./expenseResponse.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./loginRequest.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./monthSummaryError.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./monthSummaryResponse.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./monthlySurplusActivationResponse.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./monthlySurplusError.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./monthlySurplusFeatureNotAvailableError.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./monthlySurplusOverviewResponse.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./monthlySurplusPendingResponse.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./monthlySurplusSelectionError.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./monthlySurplusSelectionRequest.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./registrationCreated.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./registrationRequest.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./savingsGoalError.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./savingsGoalFeatureNotAvailableError.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./savingsGoalNotFoundError.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./savingsGoalProgressRequest.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./savingsGoalRequest.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./savingsGoalResponse.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./sessionError.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./sessionIdentity.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./sessionResponse.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/api/access.service.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/api/budget.service.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/api/capabilities.service.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/api/expenses.service.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/api/monthSummary.service.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/api/monthlySurplus.service.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/api/savingsGoals.service.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/api/sessions.service.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/models.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/api/api.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/index.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/api.module.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/provide-api.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/configuration.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/api.base.service.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/variables.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/encoder.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/param.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/.gitignore
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/git_push.sh
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/query.params.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/README.md
+[main] INFO  o.o.codegen.TemplateManager - Skipped /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/.openapi-generator-ignore (Skipped by supportingFiles options supplied by user.)
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/.openapi-generator/VERSION
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/.openapi-generator/FILES
+############################################################################################
+# Thanks for using OpenAPI Generator.                                                      #
+# We appreciate your support! Please consider donating to help us maintain this project.   #
+# https://opencollective.com/openapi_generator/donate                                      #
+############################################################################################
+
+> try-not-to-be-poor@0.1.0 check:contracts
+> ngc -p tsconfig.contracts.json
+
+
+> try-not-to-be-poor@0.1.0 prebuild
+> npm run generate:api
+
+
+> try-not-to-be-poor@0.1.0 generate:api
+> ../scripts/generate-client.sh
+
+[main] INFO  o.o.codegen.DefaultGenerator - Generating with dryRun=false
+[main] INFO  o.o.codegen.DefaultGenerator - OpenAPI Generator: typescript-angular (client)
+[main] INFO  o.o.codegen.DefaultGenerator - Generator 'typescript-angular' is considered stable.
+[main] INFO  o.o.c.l.AbstractTypeScriptClientCodegen - Hint: Environment variable 'TS_POST_PROCESS_FILE' (optional) not defined. E.g. to format the source code, please try 'export TS_POST_PROCESS_FILE="/usr/local/bin/prettier --write"' (Linux/Mac)
+[main] INFO  o.o.c.l.AbstractTypeScriptClientCodegen - Note: To enable file post-processing, 'enablePostProcessFile' must be set to `true` (--enable-post-process-file for CLI).
+[main] INFO  o.o.codegen.utils.URLPathUtils - 'host' (OAS 2.0) or 'servers' (OAS 3.0) not defined in the spec. Default to [http://localhost] for server URL [http://localhost/api/v1]
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/model/./apiError.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/model/./budgetError.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/model/./budgetRequest.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/model/./budgetResponse.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/model/./csrfResponse.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/model/./expenseError.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/model/./expenseNotFoundError.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/model/./expenseRequest.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/model/./expenseResponse.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/model/./loginRequest.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/model/./monthSummaryError.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/model/./monthSummaryResponse.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/model/./registrationCreated.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/model/./registrationRequest.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/model/./savingsGoalError.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/model/./savingsGoalNotFoundError.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/model/./savingsGoalProgressRequest.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/model/./savingsGoalRequest.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/model/./savingsGoalResponse.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/model/./sessionError.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/model/./sessionIdentity.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/model/./sessionResponse.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/api/access.service.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/api/budget.service.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/api/expenses.service.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/api/monthSummary.service.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/api/savingsGoals.service.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/api/sessions.service.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/model/models.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/api/api.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/index.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/api.module.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/provide-api.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/configuration.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/api.base.service.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/variables.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/encoder.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/param.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/.gitignore
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/git_push.sh
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/query.params.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/README.md
+[main] INFO  o.o.codegen.TemplateManager - Skipped /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/.openapi-generator-ignore (Skipped by supportingFiles options supplied by user.)
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/.openapi-generator/VERSION
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/.openapi-generator/FILES
+############################################################################################
+# Thanks for using OpenAPI Generator.                                                      #
+# We appreciate your support! Please consider donating to help us maintain this project.   #
+# https://opencollective.com/openapi_generator/donate                                      #
+############################################################################################
+[main] INFO  o.o.codegen.DefaultGenerator - Generating with dryRun=false
+[main] INFO  o.o.codegen.DefaultGenerator - OpenAPI Generator: typescript-angular (client)
+[main] INFO  o.o.codegen.DefaultGenerator - Generator 'typescript-angular' is considered stable.
+[main] INFO  o.o.c.l.AbstractTypeScriptClientCodegen - Hint: Environment variable 'TS_POST_PROCESS_FILE' (optional) not defined. E.g. to format the source code, please try 'export TS_POST_PROCESS_FILE="/usr/local/bin/prettier --write"' (Linux/Mac)
+[main] INFO  o.o.c.l.AbstractTypeScriptClientCodegen - Note: To enable file post-processing, 'enablePostProcessFile' must be set to `true` (--enable-post-process-file for CLI).
+[main] INFO  o.o.codegen.utils.URLPathUtils - 'host' (OAS 2.0) or 'servers' (OAS 3.0) not defined in the spec. Default to [http://localhost] for server URL [http://localhost/api/v2]
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./apiError.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./budgetError.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./budgetRequest.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./budgetResponse.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./capabilitiesError.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./capabilitiesResponse.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./csrfResponse.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./expenseCorrectionError.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./expenseError.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./expenseNotFoundError.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./expenseRequest.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./expenseResponse.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./loginRequest.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./monthSummaryError.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./monthSummaryResponse.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./monthlySurplusActivationResponse.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./monthlySurplusError.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./monthlySurplusFeatureNotAvailableError.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./monthlySurplusOverviewResponse.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./monthlySurplusPendingResponse.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./monthlySurplusSelectionError.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./monthlySurplusSelectionRequest.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./registrationCreated.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./registrationRequest.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./savingsGoalError.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./savingsGoalFeatureNotAvailableError.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./savingsGoalNotFoundError.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./savingsGoalProgressRequest.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./savingsGoalRequest.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./savingsGoalResponse.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./sessionError.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./sessionIdentity.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/./sessionResponse.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/api/access.service.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/api/budget.service.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/api/capabilities.service.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/api/expenses.service.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/api/monthSummary.service.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/api/monthlySurplus.service.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/api/savingsGoals.service.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/api/sessions.service.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/model/models.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/api/api.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/index.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/api.module.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/provide-api.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/configuration.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/api.base.service.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/variables.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/encoder.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/param.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/.gitignore
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/git_push.sh
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/query.params.ts
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/README.md
+[main] INFO  o.o.codegen.TemplateManager - Skipped /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/.openapi-generator-ignore (Skipped by supportingFiles options supplied by user.)
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/.openapi-generator/VERSION
+[main] INFO  o.o.codegen.TemplateManager - writing file /home/linus/dev/try-not-to-be-poor/frontend/src/app/api/v2/.openapi-generator/FILES
+############################################################################################
+# Thanks for using OpenAPI Generator.                                                      #
+# We appreciate your support! Please consider donating to help us maintain this project.   #
+# https://opencollective.com/openapi_generator/donate                                      #
+############################################################################################
+
+> try-not-to-be-poor@0.1.0 build
+> ng build
+
+❯ Building...
+✔ Building...
+Initial chunk files | Names         |  Raw size | Estimated transfer size
+main-RKQQ5IWE.js    | main          | 458.12 kB |               104.86 kB
+styles-7AAGOGT3.css | styles        |   9.71 kB |                 1.90 kB
+
+                    | Initial total | 467.83 kB |               106.75 kB
+
+Application bundle generation complete. [2.246 seconds] - 2026-11-14T18:57:29.547Z
+
+Output location: /home/linus/dev/try-not-to-be-poor/frontend/dist/tnbp
+

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BudgetErrors.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Try Not to Be Poor</a> &gt; <a href="index.source.html" class="el_package">de.linus.tnbp.finance.http</a> &gt; <span class="el_source">BudgetErrors.java</span></div><h1>BudgetErrors.java</h1><pre class="source lang-java linenums">package de.linus.tnbp.finance.http;
+
+import de.linus.tnbp.budget.Budgets;
+import de.linus.tnbp.contract.model.BudgetError;
+import java.util.Map;
+import org.slf4j.LoggerFactory;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
+import org.springframework.http.ResponseEntity;
+import org.springframework.dao.DataAccessException;
+import org.springframework.transaction.TransactionException;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+@Order(Ordered.HIGHEST_PRECEDENCE)
+@RestControllerAdvice(assignableTypes = BudgetController.class)
+<span class="fc" id="L19">class BudgetErrors {</span>
+    @ExceptionHandler({Budgets.InvalidAmount.class, HttpMessageNotReadableException.class, MethodArgumentNotValidException.class})
+    ResponseEntity&lt;BudgetError&gt; invalid() {
+<span class="fc" id="L22">        return ResponseEntity.badRequest().header(&quot;Cache-Control&quot;, &quot;no-store&quot;).body(new BudgetError(</span>
+            BudgetError.CodeEnum.VALIDATION_FAILED, &quot;Prüfe den Budgetbetrag.&quot;,
+<span class="fc" id="L24">            Map.of(&quot;amountCents&quot;, &quot;Gib einen Betrag von 0 bis 90.071.992.547.409,91 Euro in ganzen Cent ein.&quot;)));</span>
+    }
+
+    @ExceptionHandler(Exception.class)
+    ResponseEntity&lt;BudgetError&gt; unavailable(Exception failure) {
+<span class="pc bpc" id="L29" title="1 of 4 branches missed.">        String category = failure instanceof DataAccessException || failure instanceof TransactionException ? &quot;DATENBANK&quot; : &quot;ANWENDUNG&quot;;</span>
+<span class="fc" id="L30">        LoggerFactory.getLogger(BudgetErrors.class).error(&quot;Budgetanfrage fehlgeschlagen; Fehlerkategorie={}&quot;, category);</span>
+<span class="fc" id="L31">        return ResponseEntity.internalServerError().header(&quot;Cache-Control&quot;, &quot;no-store&quot;).body(new BudgetError(</span>
+<span class="fc" id="L32">            BudgetError.CodeEnum.BUDGET_UNAVAILABLE, &quot;Die Budgetanfrage wurde nicht bestätigt. Versuche es erneut.&quot;, Map.of()));</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

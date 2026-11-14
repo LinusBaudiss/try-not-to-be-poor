@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DatabaseRoleVerifier.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Try Not to Be Poor</a> &gt; <a href="index.source.html" class="el_package">de.linus.tnbp.access</a> &gt; <span class="el_source">DatabaseRoleVerifier.java</span></div><h1>DatabaseRoleVerifier.java</h1><pre class="source lang-java linenums">package de.linus.tnbp.access;
+
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Component;
+
+@Component
+@DependsOnDatabaseInitialization
+class DatabaseRoleVerifier implements InitializingBean {
+    private final JdbcTemplate jdbc;
+
+<span class="fc" id="L13">    DatabaseRoleVerifier(JdbcTemplate jdbc) {</span>
+<span class="fc" id="L14">        this.jdbc = jdbc;</span>
+<span class="fc" id="L15">    }</span>
+
+    @Override
+    public void afterPropertiesSet() {
+<span class="fc" id="L19">        verify();</span>
+<span class="fc" id="L20">    }</span>
+
+    void verify() {
+<span class="fc" id="L23">        Boolean unsafe = jdbc.queryForObject(&quot;&quot;&quot;</span>
+            SELECT r.rolsuper OR r.rolbypassrls OR r.rolcreaterole OR r.rolcreatedb
+                OR EXISTS (SELECT 1 FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
+                           WHERE n.nspname IN ('access', 'expenses', 'budget', 'savings_goals', 'monthly_surplus', 'api_version') AND pg_has_role(current_user, c.relowner, 'MEMBER'))
+                OR EXISTS (SELECT 1 FROM pg_namespace n
+                           WHERE n.nspname IN ('access', 'expenses', 'budget', 'savings_goals', 'monthly_surplus', 'api_version')
+                             AND (pg_has_role(current_user, n.nspowner, 'MEMBER') OR has_schema_privilege(current_user, n.oid, 'CREATE')))
+            FROM pg_roles r WHERE r.rolname = current_user
+            &quot;&quot;&quot;, Boolean.class);
+<span class="fc bfc" id="L32" title="All 2 branches covered.">        if (!Boolean.FALSE.equals(unsafe)) {</span>
+<span class="fc" id="L33">            throw new IllegalStateException(&quot;Die Laufzeitrolle darf weder privilegiert noch Tabellenbesitzer sein.&quot;);</span>
+        }
+<span class="fc" id="L35">        Boolean protectedFinance = jdbc.queryForObject(&quot;&quot;&quot;</span>
+            SELECT count(*) = 7 AND bool_and(c.relrowsecurity AND c.relforcerowsecurity
+                AND has_schema_privilege(current_user, n.oid, 'USAGE'))
+            FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
+            WHERE (n.nspname, c.relname) IN (('expenses', 'expenses'), ('budget', 'budgets'), ('savings_goals', 'goals'), ('monthly_surplus', 'activations'), ('monthly_surplus', 'month_records'), ('monthly_surplus', 'selections'), ('monthly_surplus', 'deleted_goals'))
+            &quot;&quot;&quot;, Boolean.class);
+<span class="fc bfc" id="L41" title="All 2 branches covered.">        if (!Boolean.TRUE.equals(protectedFinance)) {</span>
+<span class="fc" id="L42">            throw new IllegalStateException(&quot;Die Finanzschemas benötigen minimale Laufzeitrechte und erzwungene RLS.&quot;);</span>
+        }
+<span class="fc" id="L44">        Boolean immutableActivation = jdbc.queryForObject(&quot;&quot;&quot;</span>
+            SELECT has_table_privilege(current_user, 'monthly_surplus.activations', 'SELECT')
+                AND has_table_privilege(current_user, 'monthly_surplus.activations', 'INSERT')
+                AND NOT has_table_privilege(current_user, 'monthly_surplus.activations', 'UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER')
+                AND NOT has_any_column_privilege(current_user, 'monthly_surplus.activations', 'UPDATE,REFERENCES')
+            &quot;&quot;&quot;, Boolean.class);
+<span class="fc bfc" id="L50" title="All 2 branches covered.">        if (!Boolean.TRUE.equals(immutableActivation))</span>
+<span class="fc" id="L51">            throw new IllegalStateException(&quot;Der Aktivierungsbeginn benötigt unveränderliche minimale Laufzeitrechte.&quot;);</span>
+<span class="fc" id="L52">        Boolean immutableDeletedGoals = jdbc.queryForObject(&quot;&quot;&quot;</span>
+            SELECT has_table_privilege(current_user, 'monthly_surplus.deleted_goals', 'SELECT')
+                AND has_table_privilege(current_user, 'monthly_surplus.deleted_goals', 'INSERT')
+                AND NOT has_table_privilege(current_user, 'monthly_surplus.deleted_goals', 'UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER')
+                AND NOT has_any_column_privilege(current_user, 'monthly_surplus.deleted_goals', 'UPDATE,REFERENCES')
+            &quot;&quot;&quot;, Boolean.class);
+<span class="fc bfc" id="L58" title="All 2 branches covered.">        if (!Boolean.TRUE.equals(immutableDeletedGoals))</span>
+<span class="fc" id="L59">            throw new IllegalStateException(&quot;Der dauerhafte Zielverbrauch benötigt unveränderliche minimale Laufzeitrechte.&quot;);</span>
+<span class="fc" id="L60">        Boolean immutableRecords = jdbc.queryForObject(&quot;&quot;&quot;</span>
+            SELECT has_table_privilege(current_user, 'monthly_surplus.month_records', 'SELECT')
+                AND has_table_privilege(current_user, 'monthly_surplus.month_records', 'INSERT')
+                AND NOT has_table_privilege(current_user, 'monthly_surplus.month_records', 'UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER')
+                AND has_column_privilege(current_user, 'monthly_surplus.month_records', 'goal_id', 'UPDATE')
+                AND has_column_privilege(current_user, 'monthly_surplus.month_records', 'consumed', 'UPDATE')
+                AND NOT has_column_privilege(current_user, 'monthly_surplus.month_records', 'user_id', 'UPDATE')
+                AND NOT has_column_privilege(current_user, 'monthly_surplus.month_records', 'origin_month', 'UPDATE')
+                AND has_column_privilege(current_user, 'monthly_surplus.month_records', 'surplus_cents', 'UPDATE')
+                AND NOT has_any_column_privilege(current_user, 'monthly_surplus.month_records', 'REFERENCES')
+            &quot;&quot;&quot;, Boolean.class);
+<span class="fc bfc" id="L71" title="All 2 branches covered.">        if (!Boolean.TRUE.equals(immutableRecords))</span>
+<span class="fc" id="L72">            throw new IllegalStateException(&quot;Monatsnachweise benötigen minimale Herkunfts-/Bindungsrechte.&quot;);</span>
+<span class="fc" id="L73">        Boolean selectionRights = jdbc.queryForObject(&quot;&quot;&quot;</span>
+            SELECT has_table_privilege(current_user, 'monthly_surplus.selections', 'SELECT')
+                AND has_table_privilege(current_user, 'monthly_surplus.selections', 'INSERT')
+                AND has_column_privilege(current_user, 'monthly_surplus.selections', 'goal_id', 'UPDATE')
+                AND NOT has_table_privilege(current_user, 'monthly_surplus.selections', 'UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER')
+                AND NOT has_column_privilege(current_user, 'monthly_surplus.selections', 'user_id', 'UPDATE')
+                AND NOT has_column_privilege(current_user, 'monthly_surplus.selections', 'effective_month', 'UPDATE')
+                AND NOT has_any_column_privilege(current_user, 'monthly_surplus.selections', 'REFERENCES')
+            &quot;&quot;&quot;, Boolean.class);
+<span class="fc bfc" id="L82" title="All 2 branches covered.">        if (!Boolean.TRUE.equals(selectionRights))</span>
+<span class="fc" id="L83">            throw new IllegalStateException(&quot;Auswahlhistorie benötigt minimale Auswahlrechte.&quot;);</span>
+<span class="fc" id="L84">        Boolean protectedVersion = jdbc.queryForObject(&quot;&quot;&quot;</span>
+            SELECT has_table_privilege(current_user, 'api_version.state', 'SELECT')
+              AND NOT has_table_privilege(current_user, 'api_version.state', 'INSERT,UPDATE,DELETE,TRUNCATE')
+              AND NOT has_any_column_privilege(current_user, 'api_version.state', 'INSERT,UPDATE')
+              AND NOT has_table_privilege(current_user, 'api_version.lifecycle', 'SELECT,INSERT,UPDATE,DELETE,TRUNCATE')
+              AND NOT has_any_column_privilege(current_user, 'api_version.lifecycle', 'INSERT,UPDATE')
+              AND NOT has_function_privilege(current_user, 'api_version.set_retirement(boolean,uuid,text,text,text)', 'EXECUTE')
+              AND has_function_privilege(current_user, 'api_version.mark_usage(text)', 'EXECUTE')
+              AND has_function_privilege(current_user, 'api_version.signed_progress_available(boolean,uuid,text,text,text,timestamptz)', 'EXECUTE')
+              AND has_function_privilege(current_user, 'api_version.monthly_automation_available(boolean,uuid,text,text,text,timestamptz)', 'EXECUTE')
+            &quot;&quot;&quot;, Boolean.class);
+<span class="fc bfc" id="L95" title="All 2 branches covered.">        if (!Boolean.TRUE.equals(protectedVersion))</span>
+<span class="fc" id="L96">            throw new IllegalStateException(&quot;Der Versionszustand benötigt minimale Laufzeitrechte.&quot;);</span>
+<span class="fc" id="L97">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

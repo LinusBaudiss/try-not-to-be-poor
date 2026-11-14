@@ -88,6 +88,7 @@ def loop_values(expression, preceding):
 
 
 MANIFEST = json.loads((HERE / 'reviewed-scenario-manifest.json').read_text())
+runpy.run_path(str(HERE / 'semantic-scenarios.py'))['validate_sources'](MANIFEST)
 # Requirements and semantic assignments are reviewed data, never inferred from
 # source words, names, suffixes or assertion count.
 
@@ -266,7 +267,7 @@ runpy.run_path(str(HERE / 'semantic-scenarios.py'))['validate'](MANIFEST)
 fields = ('id', 'path', 'line', 'variant', 'current_type', 'execution_paths', 'requirement', 'observation',
           'risks', 'target_type', 'remaining_integration', 'replacement_evidence', 'semantic_scenario', 'canonical_scenarios', 'discovery_status')
 with (HERE / 'source-matrix.csv').open('w') as output:
-    writer = csv.DictWriter(output, fieldnames=fields, extrasaction='ignore')
+    writer = csv.DictWriter(output, fieldnames=fields, extrasaction='ignore', lineterminator='\n')
     writer.writeheader()
     for entry in entries:
         writer.writerow({key: json.dumps(value, ensure_ascii=False) if isinstance(value, list) else value for key, value in entry.items()})

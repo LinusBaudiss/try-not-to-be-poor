@@ -70,7 +70,7 @@
     },
     "FinanceMigrationIT": {
       "domain": "financial migration",
-      "primary_test_type": "process/PostgreSQL"
+      "primary_test_type": "PostgreSQL"
     },
     "MonthlyCorrectionIT": {
       "domain": "monthly surplus",
@@ -4949,9 +4949,9 @@
         "4.5/AC-2"
       ],
       "domain": "financial migration",
-      "current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "observation": [
         "assertThat(admin.queryForList(\"SELECT * FROM \"+table+\" ORDER BY 1,2\")).isEqualTo(rows));\n            assertThat(admin.queryForList(\"SELECT column_name FROM information_schema.columns WHERE table_schema='monthly_surplus' AND table_name='deleted_goals' ORDER BY ordinal_position\",String.class)).containsExactly(\"user_id\",\"goal_id\");\n            assertThat(admin.queryForObject(\"SELECT relrowsecurity AND relforcerowsecurity FROM pg_class WHERE oid='monthly_surplus.deleted_goals'::regclass\",Boolean.class)).isTrue();\n            assertThat(admin.queryForObject(\"SELECT is_nullable FROM information_schema.columns WHERE table_schema='monthly_surplus' AND table_name='selections' AND column_name='goal_id'\",String.class)).isEqualTo(\"YES\");\n            var runtime=new JdbcTemplate(new DriverManagerDataSource(url,\"tnbp_runtime\",\"runtime-test-only\"));\n            assertThat(runtime.queryForObject(\"SELECT has_table_privilege(current_user,'monthly_surplus.deleted_goals','SELECT') AND has_table_privilege(current_user,'monthly_surplus.deleted_goals','INSERT') AND NOT has_table_privilege(current_user,'monthly_surplus.deleted_goals','UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER') AND NOT has_any_column_privilege(current_user,'monthly_surplus.deleted_goals','UPDATE,REFERENCES')\",Boolean.class)).isTrue();\n            assertThat(runtime.queryForObject(\"SELECT count(*) FROM monthly_surplus.deleted_goals\",Integer.class)).isZero();\n        } finally {server.execute(\"DROP DATABASE \"+name+\" WITH (FORCE)\");}\n    }",
         "assertThat(admin.queryForList(\"SELECT column_name FROM information_schema.columns WHERE table_schema='monthly_surplus' AND table_name='deleted_goals' ORDER BY ordinal_position\",String.class)).containsExactly(\"user_id\",\"goal_id\")",
@@ -4981,9 +4981,9 @@
         "4.5/AC-2"
       ],
       "domain": "financial migration",
-      "current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "observation": [
         "assertThat(admin.queryForList(\"SELECT * FROM \"+table+\" ORDER BY 1,2\")).isEqualTo(rows));\n            assertThat(admin.queryForList(\"SELECT column_name FROM information_schema.columns WHERE table_schema='monthly_surplus' AND table_name='deleted_goals' ORDER BY ordinal_position\",String.class)).containsExactly(\"user_id\",\"goal_id\");\n            assertThat(admin.queryForObject(\"SELECT relrowsecurity AND relforcerowsecurity FROM pg_class WHERE oid='monthly_surplus.deleted_goals'::regclass\",Boolean.class)).isTrue();\n            assertThat(admin.queryForObject(\"SELECT is_nullable FROM information_schema.columns WHERE table_schema='monthly_surplus' AND table_name='selections' AND column_name='goal_id'\",String.class)).isEqualTo(\"YES\");\n            var runtime=new JdbcTemplate(new DriverManagerDataSource(url,\"tnbp_runtime\",\"runtime-test-only\"));\n            assertThat(runtime.queryForObject(\"SELECT has_table_privilege(current_user,'monthly_surplus.deleted_goals','SELECT') AND has_table_privilege(current_user,'monthly_surplus.deleted_goals','INSERT') AND NOT has_table_privilege(current_user,'monthly_surplus.deleted_goals','UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER') AND NOT has_any_column_privilege(current_user,'monthly_surplus.deleted_goals','UPDATE,REFERENCES')\",Boolean.class)).isTrue();\n            assertThat(runtime.queryForObject(\"SELECT count(*) FROM monthly_surplus.deleted_goals\",Integer.class)).isZero();\n        } finally {server.execute(\"DROP DATABASE \"+name+\" WITH (FORCE)\");}\n    }",
         "assertThat(admin.queryForList(\"SELECT column_name FROM information_schema.columns WHERE table_schema='monthly_surplus' AND table_name='deleted_goals' ORDER BY ordinal_position\",String.class)).containsExactly(\"user_id\",\"goal_id\")",
@@ -5018,9 +5018,9 @@
         "4.4/AC-3"
       ],
       "domain": "financial migration",
-      "current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "observation": [
         "assertThat(admin.queryForList(\"SELECT * FROM \"+table+\" ORDER BY 1,2\")).isEqualTo(rows));\n            assertThat(admin.queryForObject(\"SELECT 'monthly_surplus.month_records'::regclass::oid\",Long.class)).isEqualTo(oid);\n            var runtime=new JdbcTemplate(new DriverManagerDataSource(url,\"tnbp_runtime\",\"runtime-test-only\"));\n            for(String column:List.of(\"goal_id\",\"surplus_cents\",\"consumed\"))assertThat(runtime.queryForObject(\"SELECT has_column_privilege(current_user,'monthly_surplus.month_records',?,'UPDATE')\",Boolean.class,column)).isTrue();\n            for(String column:List.of(\"user_id\",\"origin_month\"))assertThat(runtime.queryForObject(\"SELECT has_column_privilege(current_user,'monthly_surplus.month_records',?,'UPDATE')\",Boolean.class,column)).isFalse();\n            assertThat(runtime.queryForObject(\"SELECT has_table_privilege(current_user,'monthly_surplus.month_records','UPDATE,DELETE,TRUNCATE')\",Boolean.class)).isFalse();\n            assertThat(runtime.queryForObject(\"SELECT count(*) FROM monthly_surplus.month_records\",Integer.class)).isZero();\n        } finally {server.execute(\"DROP DATABASE \"+name+\" WITH (FORCE)\");}\n    }",
         "assertThat(admin.queryForObject(\"SELECT 'monthly_surplus.month_records'::regclass::oid\",Long.class)).isEqualTo(oid)",
@@ -5060,9 +5060,9 @@
         "4.4/AC-3"
       ],
       "domain": "financial migration",
-      "current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "observation": [
         "assertThat(admin.queryForList(\"SELECT * FROM \"+table+\" ORDER BY 1,2\")).isEqualTo(rows));\n            assertThat(admin.queryForObject(\"SELECT 'monthly_surplus.month_records'::regclass::oid\",Long.class)).isEqualTo(oid);\n            var runtime=new JdbcTemplate(new DriverManagerDataSource(url,\"tnbp_runtime\",\"runtime-test-only\"));\n            for(String column:List.of(\"goal_id\",\"surplus_cents\",\"consumed\"))assertThat(runtime.queryForObject(\"SELECT has_column_privilege(current_user,'monthly_surplus.month_records',?,'UPDATE')\",Boolean.class,column)).isTrue();\n            for(String column:List.of(\"user_id\",\"origin_month\"))assertThat(runtime.queryForObject(\"SELECT has_column_privilege(current_user,'monthly_surplus.month_records',?,'UPDATE')\",Boolean.class,column)).isFalse();\n            assertThat(runtime.queryForObject(\"SELECT has_table_privilege(current_user,'monthly_surplus.month_records','UPDATE,DELETE,TRUNCATE')\",Boolean.class)).isFalse();\n            assertThat(runtime.queryForObject(\"SELECT count(*) FROM monthly_surplus.month_records\",Integer.class)).isZero();\n        } finally {server.execute(\"DROP DATABASE \"+name+\" WITH (FORCE)\");}\n    }",
         "assertThat(admin.queryForObject(\"SELECT 'monthly_surplus.month_records'::regclass::oid\",Long.class)).isEqualTo(oid)",
@@ -5097,9 +5097,9 @@
         "4.3/AC-2"
       ],
       "domain": "financial migration",
-      "current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "observation": [
         "assertThat(admin.queryForList(\"SELECT user_id,origin_month,surplus_cents FROM monthly_surplus.month_records ORDER BY user_id,origin_month\")).isEqualTo(before)",
         "assertThat(admin.queryForList(\"SELECT * FROM savings_goals.goals ORDER BY id\")).isEqualTo(goals)",
@@ -5128,9 +5128,9 @@
         "4.3/AC-2"
       ],
       "domain": "financial migration",
-      "current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "observation": [
         "assertThat(admin.queryForList(\"SELECT user_id,origin_month,surplus_cents FROM monthly_surplus.month_records ORDER BY user_id,origin_month\")).isEqualTo(before)",
         "assertThat(admin.queryForList(\"SELECT * FROM savings_goals.goals ORDER BY id\")).isEqualTo(goals)",
@@ -5159,9 +5159,9 @@
         "4.2/AC-3"
       ],
       "domain": "financial migration",
-      "current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "observation": [
         "assertThat(admin.queryForList(\"SELECT * FROM \"+table)).isEqualTo(rows));\n            assertThat(admin.queryForObject(\"SELECT count(*) FROM monthly_surplus.month_records\",Integer.class)).isZero();\n            assertThat(admin.queryForObject(\"SELECT relrowsecurity AND relforcerowsecurity FROM pg_class WHERE oid='monthly_surplus.month_records'::regclass\",Boolean.class)).isTrue();\n        } finally {server.execute(\"DROP DATABASE \"+name+\" WITH (FORCE)\");}\n    }",
         "assertThat(admin.queryForObject(\"SELECT count(*) FROM monthly_surplus.month_records\",Integer.class)).isZero()",
@@ -5188,9 +5188,9 @@
         "4.2/AC-3"
       ],
       "domain": "financial migration",
-      "current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "observation": [
         "assertThat(admin.queryForList(\"SELECT * FROM \"+table)).isEqualTo(rows));\n            assertThat(admin.queryForObject(\"SELECT count(*) FROM monthly_surplus.month_records\",Integer.class)).isZero();\n            assertThat(admin.queryForObject(\"SELECT relrowsecurity AND relforcerowsecurity FROM pg_class WHERE oid='monthly_surplus.month_records'::regclass\",Boolean.class)).isTrue();\n        } finally {server.execute(\"DROP DATABASE \"+name+\" WITH (FORCE)\");}\n    }",
         "assertThat(admin.queryForObject(\"SELECT count(*) FROM monthly_surplus.month_records\",Integer.class)).isZero()",
@@ -5217,9 +5217,9 @@
         "4.1/AC-3"
       ],
       "domain": "financial migration",
-      "current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "observation": [
         "assertThat(admin.queryForList(\"SELECT * FROM \"+table)).isEqualTo(rows));\n            assertThat(admin.queryForObject(\"SELECT count(*) FROM monthly_surplus.activations\",Integer.class)).isZero();\n            assertThat(admin.queryForList(\"SELECT tablename FROM pg_tables WHERE schemaname='monthly_surplus'\",String.class)).containsExactlyInAnyOrder(\"activations\", \"month_records\", \"selections\", \"deleted_goals\");\n            assertThat(admin.queryForObject(\"SELECT relrowsecurity AND relforcerowsecurity FROM pg_class WHERE oid='monthly_surplus.activations'::regclass\",Boolean.class)).isTrue();\n        } finally {server.execute(\"DROP DATABASE \"+name+\" WITH (FORCE)\");}\n    }",
         "assertThat(admin.queryForObject(\"SELECT count(*) FROM monthly_surplus.activations\",Integer.class)).isZero()",
@@ -5247,9 +5247,9 @@
         "4.1/AC-3"
       ],
       "domain": "financial migration",
-      "current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "observation": [
         "assertThat(admin.queryForList(\"SELECT * FROM \"+table)).isEqualTo(rows));\n            assertThat(admin.queryForObject(\"SELECT count(*) FROM monthly_surplus.activations\",Integer.class)).isZero();\n            assertThat(admin.queryForList(\"SELECT tablename FROM pg_tables WHERE schemaname='monthly_surplus'\",String.class)).containsExactlyInAnyOrder(\"activations\", \"month_records\", \"selections\", \"deleted_goals\");\n            assertThat(admin.queryForObject(\"SELECT relrowsecurity AND relforcerowsecurity FROM pg_class WHERE oid='monthly_surplus.activations'::regclass\",Boolean.class)).isTrue();\n        } finally {server.execute(\"DROP DATABASE \"+name+\" WITH (FORCE)\");}\n    }",
         "assertThat(admin.queryForObject(\"SELECT count(*) FROM monthly_surplus.activations\",Integer.class)).isZero()",
@@ -5282,9 +5282,9 @@
         "3.3/AC-7"
       ],
       "domain": "financial migration",
-      "current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "observation": [
         "assertThat(admin.queryForObject(\"SELECT count(*) FROM monthly_surplus.month_records\", Integer.class)).isZero()",
         "assertThat(rights.queryForObject(\"SELECT has_table_privilege(current_user, 'monthly_surplus.month_records', 'UPDATE,DELETE,TRUNCATE') OR has_column_privilege(current_user, 'monthly_surplus.month_records', 'origin_month', 'UPDATE')\", Boolean.class)).isFalse()",
@@ -5344,9 +5344,9 @@
         "3.3/AC-7"
       ],
       "domain": "financial migration",
-      "current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "observation": [
         "assertThat(admin.queryForObject(\"SELECT count(*) FROM monthly_surplus.month_records\", Integer.class)).isZero()",
         "assertThat(rights.queryForObject(\"SELECT has_table_privilege(current_user, 'monthly_surplus.month_records', 'UPDATE,DELETE,TRUNCATE') OR has_column_privilege(current_user, 'monthly_surplus.month_records', 'origin_month', 'UPDATE')\", Boolean.class)).isFalse()",
@@ -5403,9 +5403,9 @@
         "3.8/AC-1"
       ],
       "domain": "financial migration",
-      "current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "observation": [
         "assertThat(admin.queryForList(\"SELECT * FROM savings_goals.goals ORDER BY id\")).isEqualTo(before)",
         "assertThat(admin.queryForObject(\"SELECT relrowsecurity AND relforcerowsecurity FROM pg_class WHERE oid='savings_goals.goals'::regclass\",Boolean.class)).isTrue()",
@@ -5438,9 +5438,9 @@
         "3.8/AC-1"
       ],
       "domain": "financial migration",
-      "current_type": "process/PostgreSQL",
-      "target_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "current_type": "PostgreSQL",
+      "target_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "observation": [
         "assertThat(admin.queryForList(\"SELECT * FROM savings_goals.goals ORDER BY id\")).isEqualTo(before)",
         "assertThat(admin.queryForObject(\"SELECT relrowsecurity AND relforcerowsecurity FROM pg_class WHERE oid='savings_goals.goals'::regclass\",Boolean.class)).isTrue()",
@@ -22411,8 +22411,11 @@
       "remaining_integration": "Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution",
       "observation": [
         "self.assertEqual(result['median_seconds'], 100)",
-        "self.assertEqual(result['target_seconds_70_percent'], 70)",
-        "self.assertTrue(result['local_evidence_complete'])"
+        "self.assertEqual(result['target_seconds'], 900)",
+        "self.assertTrue(result['target_met'])",
+        "self.assertTrue(result['local_evidence_complete'])",
+        "self.assertEqual(measured['target_seconds'], 900)",
+        "self.assertEqual(measured['target_met'], expected)"
       ],
       "expected_variant": "default",
       "discovery_status": "Python AST + successful unittest discovery",
@@ -22460,7 +22463,10 @@
       "remaining_integration": "Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution",
       "observation": [
         "self.assertFalse(baseline.summarize([run()] * 3)['local_evidence_complete'])",
-        "self.assertFalse(baseline.summarize([run(), run('clean'), run('warmup')])['local_evidence_complete'])"
+        "self.assertFalse(baseline.summarize([run(), run('clean'), run('warmup')])['local_evidence_complete'])",
+        "self.assertIsNone(baseline.summarize([run()])['median_seconds'])",
+        "self.assertIsNone(baseline.summarize([run(), run()])['target_met'])",
+        "self.assertEqual(baseline.summarize([run(), run()])['target_seconds'], 900)"
       ],
       "expected_variant": "default",
       "discovery_status": "Python AST + successful unittest discovery",
@@ -22483,7 +22489,8 @@
       "target_type": "tool/infrastructure",
       "remaining_integration": "Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution",
       "observation": [
-        "self.assertEqual(baseline.report_counts(tmp), {'executions': 3, 'distinct_execution_ids': 2, 'duplicate_executions': 1})"
+        "self.assertEqual([counts[key] for key in ('executions', 'distinct_execution_ids', 'duplicate_executions')], [3, 2, 1])",
+        "self.assertEqual(counts['errors'], [])"
       ],
       "expected_variant": "default",
       "discovery_status": "Python AST + successful unittest discovery",
@@ -22655,7 +22662,8 @@
         "self.assertEqual([r['kind'] for r in data['runs']], ['warmup', 'measurement', 'measurement', 'measurement', 'clean'])",
         "self.assertTrue(data['summary']['local_evidence_complete'])",
         "self.assertEqual(data['status'], 'passed')",
-        "self.assertEqual(baseline.main(['--output', str(output), '--cache-note', 'test']), 0)"
+        "self.assertEqual(baseline.main(['--output', str(output), '--cache-note', 'test']), 0)",
+        "self.assertEqual('TEST_BASELINE_PHASE_LOG' in call.args[2], group == 'contract')"
       ],
       "expected_variant": "default",
       "discovery_status": "Python AST + successful unittest discovery",
@@ -22705,7 +22713,8 @@
       "target_type": "tool/infrastructure",
       "remaining_integration": "Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution",
       "observation": [
-        "ValueError before creation when output lies inside a disposable build path"
+        "self.assertFalse(output.exists())",
+        "self.assertRaisesRegex(ValueError, 'disposable build outputs')"
       ],
       "expected_variant": "default",
       "discovery_status": "Python AST + successful unittest discovery",
@@ -22729,7 +22738,9 @@
       "target_type": "tool/infrastructure",
       "remaining_integration": "Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution",
       "observation": [
-        "Old Surefire/Failsafe directories removed; compiled class sentinel survives"
+        "self.assertFalse((target / 'surefire-reports').exists())",
+        "self.assertFalse((target / 'failsafe-reports').exists())",
+        "self.assertTrue((target / 'classes/previous').exists())"
       ],
       "expected_variant": "default",
       "discovery_status": "Python AST + successful unittest discovery",
@@ -22738,6 +22749,258 @@
       ],
       "canonical_scenarios": [
         "INF-ec7ca5abc597116e"
+      ]
+    },
+    "PY:test_test_baseline:BaselineTest#test_resources_capture_limits_affinity_and_only_hashed_host_identity": {
+      "scenarios": [
+        "SC:PY:test_test_baseline:BaselineTest#test_resources_capture_limits_affinity_and_only_hashed_host_identity"
+      ],
+      "requirements": [
+        "5.1/AC-3"
+      ],
+      "domain": "tooling regression",
+      "current_type": "tool/infrastructure",
+      "target_type": "tool/infrastructure",
+      "remaining_integration": "Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution",
+      "observation": [
+        "self.assertEqual(first['host_fingerprint_sha256'], second['host_fingerprint_sha256'])",
+        "self.assertEqual(first['cpu_models'], ['Fixture CPU'])",
+        "self.assertEqual(first['affinity'], [2, 4])",
+        "self.assertEqual(first['memory_bytes']['MemAvailable'], 512 * 1024)",
+        "self.assertEqual(first['cgroup_limits']['effective']['cpu.max'], '200000 100000')",
+        "self.assertNotIn('private-machine-id', json.dumps(first))",
+        "self.assertNotIn('private-hostname', json.dumps(first))"
+      ],
+      "expected_variant": "default",
+      "discovery_status": "Python AST + successful unittest discovery",
+      "risks": [
+        "tooling/infrastructure regression"
+      ],
+      "canonical_scenarios": [
+        "INF-1f4e0e78dc801339"
+      ]
+    },
+    "PY:test_test_baseline:BaselineTest#test_untracked_executable_is_preserved_and_drift_invalidates_run": {
+      "scenarios": [
+        "SC:PY:test_test_baseline:BaselineTest#test_untracked_executable_is_preserved_and_drift_invalidates_run"
+      ],
+      "requirements": [
+        "5.1/AC-3",
+        "5.1/AC-8"
+      ],
+      "domain": "tooling regression",
+      "current_type": "tool/infrastructure",
+      "target_type": "tool/infrastructure",
+      "remaining_integration": "Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution",
+      "observation": [
+        "self.assertFalse(data['runs'][0]['input_identity_valid'])",
+        "self.assertEqual(data['runs'][0]['status'], 'failed')",
+        "self.assertEqual(data['runs'][0]['resources_before'], {'boundary': 1})",
+        "self.assertEqual(data['runs'][0]['resources_after'], {'boundary': 2})",
+        "self.assertEqual(saved.read_text(), 'initial runtime')",
+        "self.assertEqual(saved.stat().st_mode & 0o777, 0o755)",
+        "self.assertEqual(old_evidence.read_text(), 'unaltered raw evidence')",
+        "self.assertIsNone(data['summary']['median_seconds'])",
+        "self.assertEqual(baseline.main(['--output', str(output), '--cache-note', 'fixture']), 1)"
+      ],
+      "expected_variant": "default",
+      "discovery_status": "Python AST + successful unittest discovery",
+      "risks": [
+        "tooling/infrastructure regression"
+      ],
+      "canonical_scenarios": [
+        "INF-a366e136b6ff2417"
+      ]
+    },
+    "PY:test_test_baseline:BaselineTest#test_invalid_report_or_input_guard_cannot_contribute_to_median": {
+      "scenarios": [
+        "SC:PY:test_test_baseline:BaselineTest#test_invalid_report_or_input_guard_cannot_contribute_to_median"
+      ],
+      "requirements": [
+        "5.1/AC-1",
+        "5.1/AC-3"
+      ],
+      "domain": "tooling regression",
+      "current_type": "tool/infrastructure",
+      "target_type": "tool/infrastructure",
+      "remaining_integration": "Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution",
+      "observation": [
+        "self.assertEqual(summary['successful_measurements'], 1)",
+        "self.assertFalse(summary['local_evidence_complete'])",
+        "self.assertIsNone(summary['target_met'])"
+      ],
+      "expected_variant": "default",
+      "discovery_status": "Python AST + successful unittest discovery",
+      "risks": [
+        "tooling/infrastructure regression"
+      ],
+      "canonical_scenarios": [
+        "INF-f647a4293c48343a"
+      ]
+    },
+    "PY:test_test_baseline:BaselineTest#test_backend_scope_includes_current_parameters_inheritance_and_new_tests": {
+      "scenarios": [
+        "SC:PY:test_test_baseline:BaselineTest#test_backend_scope_includes_current_parameters_inheritance_and_new_tests"
+      ],
+      "requirements": [
+        "5.1/AC-1"
+      ],
+      "domain": "tooling regression",
+      "current_type": "tool/infrastructure",
+      "target_type": "tool/infrastructure",
+      "remaining_integration": "Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution",
+      "observation": [
+        "self.assertEqual(expected['failsafe'][('example.NextIT', 'variants')], 2)",
+        "self.assertEqual(baseline.validate_backend_reports(reports), [])",
+        "self.assertTrue(any('missing=' in error and 'added' in error for error in baseline.validate_backend_reports(reports)))"
+      ],
+      "expected_variant": "default",
+      "discovery_status": "Python AST + successful unittest discovery",
+      "risks": [
+        "tooling/infrastructure regression"
+      ],
+      "canonical_scenarios": [
+        "INF-88849affb74c20ee"
+      ]
+    },
+    "PY:test_test_baseline:BaselineTest#test_empty_reduced_skipped_and_malformed_backend_reports_are_rejected": {
+      "scenarios": [
+        "SC:PY:test_test_baseline:BaselineTest#test_empty_reduced_skipped_and_malformed_backend_reports_are_rejected"
+      ],
+      "requirements": [
+        "5.1/AC-1",
+        "5.1/AC-8"
+      ],
+      "domain": "tooling regression",
+      "current_type": "tool/infrastructure",
+      "target_type": "tool/infrastructure",
+      "remaining_integration": "Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution",
+      "observation": [
+        "self.assertTrue(baseline.validate_backend_reports(reports))",
+        "self.assertEqual(reports['failsafe']['skipped'], 1)",
+        "self.assertTrue(baseline.validate_backend_reports(reports))",
+        "self.assertTrue(reports['failsafe']['errors'])",
+        "self.assertTrue(baseline.validate_backend_reports(reports))",
+        "self.assertTrue(any('empty test discovery' in error for error in baseline.validate_backend_reports(reports)))"
+      ],
+      "expected_variant": "default",
+      "discovery_status": "Python AST + successful unittest discovery",
+      "risks": [
+        "tooling/infrastructure regression"
+      ],
+      "canonical_scenarios": [
+        "INF-bb0a2047ac67c24d"
+      ]
+    },
+    "PY:test_test_baseline:BaselineTest#test_malformed_backend_xml_is_preserved_before_failure_is_saved": {
+      "scenarios": [
+        "SC:PY:test_test_baseline:BaselineTest#test_malformed_backend_xml_is_preserved_before_failure_is_saved"
+      ],
+      "requirements": [
+        "5.1/AC-3",
+        "5.1/AC-8"
+      ],
+      "domain": "tooling regression",
+      "current_type": "tool/infrastructure",
+      "target_type": "tool/infrastructure",
+      "remaining_integration": "Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution",
+      "observation": [
+        "self.assertEqual(data['status'], 'failed')",
+        "self.assertTrue(data['runs'][0]['groups'][0]['interrupted'])",
+        "self.assertTrue(data['runs'][0]['groups'][0]['failsafe']['errors'])",
+        "self.assertEqual((output / '00-warmup-failsafe-reports/TEST-broken.xml').read_text(), '<testsuite><testcase')",
+        "self.assertEqual(baseline.main(['--output', str(output), '--cache-note', 'fixture']), 1)"
+      ],
+      "expected_variant": "default",
+      "discovery_status": "Python AST + successful unittest discovery",
+      "risks": [
+        "tooling/infrastructure regression"
+      ],
+      "canonical_scenarios": [
+        "INF-596c7fc03f3b6222"
+      ]
+    },
+    "PY:test_test_baseline:BaselineTest#test_browser_actual_pass_identities_must_match_nonempty_current_discovery": {
+      "scenarios": [
+        "SC:PY:test_test_baseline:BaselineTest#test_browser_actual_pass_identities_must_match_nonempty_current_discovery"
+      ],
+      "requirements": [
+        "5.1/AC-1",
+        "5.1/AC-8"
+      ],
+      "domain": "tooling regression",
+      "current_type": "tool/infrastructure",
+      "target_type": "tool/infrastructure",
+      "remaining_integration": "Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution",
+      "observation": [
+        "self.assertEqual(errors, [])",
+        "self.assertEqual(baseline.validate_browser_report(path, expected), [])",
+        "self.assertTrue(baseline.validate_browser_report(path, expected))",
+        "self.assertEqual(baseline.validate_browser_report(path, new_expected), [])",
+        "self.assertTrue(baseline.validate_browser_report(path, expected))"
+      ],
+      "expected_variant": "default",
+      "discovery_status": "Python AST + successful unittest discovery",
+      "risks": [
+        "tooling/infrastructure regression"
+      ],
+      "canonical_scenarios": [
+        "INF-97e59222599c294b"
+      ]
+    },
+    "PY:test_test_baseline:BaselineTest#test_timeout_kills_stubborn_descendant_after_leader_exits": {
+      "scenarios": [
+        "SC:PY:test_test_baseline:BaselineTest#test_timeout_kills_stubborn_descendant_after_leader_exits"
+      ],
+      "requirements": [
+        "5.1/AC-8",
+        "TR-10"
+      ],
+      "domain": "tooling regression",
+      "current_type": "tool/infrastructure",
+      "target_type": "tool/infrastructure",
+      "remaining_integration": "Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution",
+      "observation": [
+        "self.assertEqual(code, 124)",
+        "self.assertTrue(ready.exists(), 'descendant must install its TERM handler before timeout')",
+        "self.fail('stubborn descendant survived process-group cleanup')"
+      ],
+      "expected_variant": "default",
+      "discovery_status": "Python AST + successful unittest discovery",
+      "risks": [
+        "tooling/infrastructure regression"
+      ],
+      "canonical_scenarios": [
+        "INF-246f1b699abba67e"
+      ]
+    },
+    "PY:test_test_baseline:BaselineTest#test_sigterm_persists_interrupted_group_and_terminates_process": {
+      "scenarios": [
+        "SC:PY:test_test_baseline:BaselineTest#test_sigterm_persists_interrupted_group_and_terminates_process"
+      ],
+      "requirements": [
+        "5.1/AC-8",
+        "TR-10"
+      ],
+      "domain": "tooling regression",
+      "current_type": "tool/infrastructure",
+      "target_type": "tool/infrastructure",
+      "remaining_integration": "Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution",
+      "observation": [
+        "self.assertEqual(data['status'], 'failed')",
+        "self.assertTrue(data['runs'][0]['groups'][0]['interrupted'])",
+        "self.assertEqual(data['runs'][0]['groups'][0]['exit_code'], 143)",
+        "self.assertIsNone(data['summary']['median_seconds'])",
+        "self.assertTrue(ready.exists())",
+        "self.assertEqual(process.wait(timeout=4), 1)"
+      ],
+      "expected_variant": "default",
+      "discovery_status": "Python AST + successful unittest discovery",
+      "risks": [
+        "tooling/infrastructure regression"
+      ],
+      "canonical_scenarios": [
+        "INF-1e5823e0014d92f6"
       ]
     }
   },
@@ -36873,12 +37136,12 @@
         "assertThat(runtime.queryForObject(\"SELECT has_table_privilege(current_user,'monthly_surplus.deleted_goals','SELECT') AND has_table_privilege(current_user,'monthly_surplus.deleted_goals','INSERT') AND NOT has_table_privilege(current_user,'monthly_surplus.deleted_goals','UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER') AND NOT has_any_column_privilege(current_user,'monthly_surplus.deleted_goals','UPDATE,REFERENCES')\",Boolean.class)).isTrue()",
         "assertThat(runtime.queryForObject(\"SELECT count(*) FROM monthly_surplus.deleted_goals\",Integer.class)).isZero()"
       ],
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "primary_source": "BE:FinanceMigrationIT#loeschV16ErhaeltV15BestandUndErzwingtMinimaleDauerhafteMarker:fcbcf165908d",
       "supplementary_sources": [],
       "supplementary_boundaries": [],
-      "target_test_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "target_test_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; unchanged source remains authoritative; no test removed in 5.1",
       "counting": "business",
       "risk_groups": [
@@ -36906,12 +37169,12 @@
         "assertThat(runtime.queryForObject(\"SELECT has_table_privilege(current_user,'monthly_surplus.deleted_goals','SELECT') AND has_table_privilege(current_user,'monthly_surplus.deleted_goals','INSERT') AND NOT has_table_privilege(current_user,'monthly_surplus.deleted_goals','UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER') AND NOT has_any_column_privilege(current_user,'monthly_surplus.deleted_goals','UPDATE,REFERENCES')\",Boolean.class)).isTrue()",
         "assertThat(runtime.queryForObject(\"SELECT count(*) FROM monthly_surplus.deleted_goals\",Integer.class)).isZero()"
       ],
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "primary_source": "BE:FinanceMigrationIT#loeschV16ErhaeltV15BestandUndErzwingtMinimaleDauerhafteMarker:b5bea41b6c62",
       "supplementary_sources": [],
       "supplementary_boundaries": [],
-      "target_test_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "target_test_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; unchanged source remains authoritative; no test removed in 5.1",
       "counting": "business",
       "risk_groups": [
@@ -36937,12 +37200,12 @@
         "assertThat(runtime.queryForObject(\"SELECT has_table_privilege(current_user,'monthly_surplus.month_records','UPDATE,DELETE,TRUNCATE')\",Boolean.class)).isFalse()",
         "assertThat(runtime.queryForObject(\"SELECT count(*) FROM monthly_surplus.month_records\",Integer.class)).isZero()"
       ],
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "primary_source": "BE:FinanceMigrationIT#korrekturV15ErhaeltFrischenUndBefuelltenV14StandUndMinimaleRechte:fcbcf165908d",
       "supplementary_sources": [],
       "supplementary_boundaries": [],
-      "target_test_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "target_test_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; unchanged source remains authoritative; no test removed in 5.1",
       "counting": "business",
       "risk_groups": [
@@ -36967,12 +37230,12 @@
       "expected_property": [
         "assertThat(runtime.queryForObject(\"SELECT has_column_privilege(current_user,'monthly_surplus.month_records',?,'UPDATE')\",Boolean.class,column)).isTrue()"
       ],
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "primary_source": "BE:FinanceMigrationIT#korrekturV15ErhaeltFrischenUndBefuelltenV14StandUndMinimaleRechte:fcbcf165908d",
       "supplementary_sources": [],
       "supplementary_boundaries": [],
-      "target_test_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "target_test_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; unchanged source remains authoritative; no test removed in 5.1",
       "counting": "business",
       "risk_groups": [
@@ -36997,12 +37260,12 @@
       "expected_property": [
         "assertThat(runtime.queryForObject(\"SELECT has_column_privilege(current_user,'monthly_surplus.month_records',?,'UPDATE')\",Boolean.class,column)).isTrue()"
       ],
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "primary_source": "BE:FinanceMigrationIT#korrekturV15ErhaeltFrischenUndBefuelltenV14StandUndMinimaleRechte:fcbcf165908d",
       "supplementary_sources": [],
       "supplementary_boundaries": [],
-      "target_test_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "target_test_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; unchanged source remains authoritative; no test removed in 5.1",
       "counting": "business",
       "risk_groups": [
@@ -37027,12 +37290,12 @@
       "expected_property": [
         "assertThat(runtime.queryForObject(\"SELECT has_column_privilege(current_user,'monthly_surplus.month_records',?,'UPDATE')\",Boolean.class,column)).isTrue()"
       ],
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "primary_source": "BE:FinanceMigrationIT#korrekturV15ErhaeltFrischenUndBefuelltenV14StandUndMinimaleRechte:fcbcf165908d",
       "supplementary_sources": [],
       "supplementary_boundaries": [],
-      "target_test_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "target_test_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; unchanged source remains authoritative; no test removed in 5.1",
       "counting": "business",
       "risk_groups": [
@@ -37057,12 +37320,12 @@
       "expected_property": [
         "assertThat(runtime.queryForObject(\"SELECT has_column_privilege(current_user,'monthly_surplus.month_records',?,'UPDATE')\",Boolean.class,column)).isFalse()"
       ],
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "primary_source": "BE:FinanceMigrationIT#korrekturV15ErhaeltFrischenUndBefuelltenV14StandUndMinimaleRechte:fcbcf165908d",
       "supplementary_sources": [],
       "supplementary_boundaries": [],
-      "target_test_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "target_test_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; unchanged source remains authoritative; no test removed in 5.1",
       "counting": "business",
       "risk_groups": [
@@ -37087,12 +37350,12 @@
       "expected_property": [
         "assertThat(runtime.queryForObject(\"SELECT has_column_privilege(current_user,'monthly_surplus.month_records',?,'UPDATE')\",Boolean.class,column)).isFalse()"
       ],
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "primary_source": "BE:FinanceMigrationIT#korrekturV15ErhaeltFrischenUndBefuelltenV14StandUndMinimaleRechte:fcbcf165908d",
       "supplementary_sources": [],
       "supplementary_boundaries": [],
-      "target_test_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "target_test_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; unchanged source remains authoritative; no test removed in 5.1",
       "counting": "business",
       "risk_groups": [
@@ -37118,12 +37381,12 @@
         "assertThat(runtime.queryForObject(\"SELECT has_table_privilege(current_user,'monthly_surplus.month_records','UPDATE,DELETE,TRUNCATE')\",Boolean.class)).isFalse()",
         "assertThat(runtime.queryForObject(\"SELECT count(*) FROM monthly_surplus.month_records\",Integer.class)).isZero()"
       ],
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "primary_source": "BE:FinanceMigrationIT#korrekturV15ErhaeltFrischenUndBefuelltenV14StandUndMinimaleRechte:b5bea41b6c62",
       "supplementary_sources": [],
       "supplementary_boundaries": [],
-      "target_test_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "target_test_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; unchanged source remains authoritative; no test removed in 5.1",
       "counting": "business",
       "risk_groups": [
@@ -37148,12 +37411,12 @@
       "expected_property": [
         "assertThat(runtime.queryForObject(\"SELECT has_column_privilege(current_user,'monthly_surplus.month_records',?,'UPDATE')\",Boolean.class,column)).isTrue()"
       ],
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "primary_source": "BE:FinanceMigrationIT#korrekturV15ErhaeltFrischenUndBefuelltenV14StandUndMinimaleRechte:b5bea41b6c62",
       "supplementary_sources": [],
       "supplementary_boundaries": [],
-      "target_test_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "target_test_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; unchanged source remains authoritative; no test removed in 5.1",
       "counting": "business",
       "risk_groups": [
@@ -37178,12 +37441,12 @@
       "expected_property": [
         "assertThat(runtime.queryForObject(\"SELECT has_column_privilege(current_user,'monthly_surplus.month_records',?,'UPDATE')\",Boolean.class,column)).isTrue()"
       ],
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "primary_source": "BE:FinanceMigrationIT#korrekturV15ErhaeltFrischenUndBefuelltenV14StandUndMinimaleRechte:b5bea41b6c62",
       "supplementary_sources": [],
       "supplementary_boundaries": [],
-      "target_test_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "target_test_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; unchanged source remains authoritative; no test removed in 5.1",
       "counting": "business",
       "risk_groups": [
@@ -37208,12 +37471,12 @@
       "expected_property": [
         "assertThat(runtime.queryForObject(\"SELECT has_column_privilege(current_user,'monthly_surplus.month_records',?,'UPDATE')\",Boolean.class,column)).isTrue()"
       ],
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "primary_source": "BE:FinanceMigrationIT#korrekturV15ErhaeltFrischenUndBefuelltenV14StandUndMinimaleRechte:b5bea41b6c62",
       "supplementary_sources": [],
       "supplementary_boundaries": [],
-      "target_test_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "target_test_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; unchanged source remains authoritative; no test removed in 5.1",
       "counting": "business",
       "risk_groups": [
@@ -37238,12 +37501,12 @@
       "expected_property": [
         "assertThat(runtime.queryForObject(\"SELECT has_column_privilege(current_user,'monthly_surplus.month_records',?,'UPDATE')\",Boolean.class,column)).isFalse()"
       ],
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "primary_source": "BE:FinanceMigrationIT#korrekturV15ErhaeltFrischenUndBefuelltenV14StandUndMinimaleRechte:b5bea41b6c62",
       "supplementary_sources": [],
       "supplementary_boundaries": [],
-      "target_test_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "target_test_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; unchanged source remains authoritative; no test removed in 5.1",
       "counting": "business",
       "risk_groups": [
@@ -37268,12 +37531,12 @@
       "expected_property": [
         "assertThat(runtime.queryForObject(\"SELECT has_column_privilege(current_user,'monthly_surplus.month_records',?,'UPDATE')\",Boolean.class,column)).isFalse()"
       ],
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "primary_source": "BE:FinanceMigrationIT#korrekturV15ErhaeltFrischenUndBefuelltenV14StandUndMinimaleRechte:b5bea41b6c62",
       "supplementary_sources": [],
       "supplementary_boundaries": [],
-      "target_test_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "target_test_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; unchanged source remains authoritative; no test removed in 5.1",
       "counting": "business",
       "risk_groups": [
@@ -37300,12 +37563,12 @@
         "assertThat(admin.queryForObject(\"SELECT count(*) FROM monthly_surplus.selections\",Integer.class)).isZero()",
         "assertThat(admin.queryForObject(\"SELECT relrowsecurity AND relforcerowsecurity FROM pg_class WHERE oid='monthly_surplus.selections'::regclass\",Boolean.class)).isTrue()"
       ],
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "primary_source": "BE:FinanceMigrationIT#auswahlV14ErhaeltOffeneV13BestaendeEinschliesslichNullUndOhneBudget:fcbcf165908d",
       "supplementary_sources": [],
       "supplementary_boundaries": [],
-      "target_test_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "target_test_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; unchanged source remains authoritative; no test removed in 5.1",
       "counting": "business",
       "risk_groups": [
@@ -37332,12 +37595,12 @@
         "assertThat(admin.queryForObject(\"SELECT count(*) FROM monthly_surplus.selections\",Integer.class)).isZero()",
         "assertThat(admin.queryForObject(\"SELECT relrowsecurity AND relforcerowsecurity FROM pg_class WHERE oid='monthly_surplus.selections'::regclass\",Boolean.class)).isTrue()"
       ],
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "primary_source": "BE:FinanceMigrationIT#auswahlV14ErhaeltOffeneV13BestaendeEinschliesslichNullUndOhneBudget:b5bea41b6c62",
       "supplementary_sources": [],
       "supplementary_boundaries": [],
-      "target_test_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "target_test_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; unchanged source remains authoritative; no test removed in 5.1",
       "counting": "business",
       "risk_groups": [
@@ -37362,12 +37625,12 @@
         "assertThat(admin.queryForObject(\"SELECT count(*) FROM monthly_surplus.month_records\",Integer.class)).isZero()",
         "assertThat(admin.queryForObject(\"SELECT relrowsecurity AND relforcerowsecurity FROM pg_class WHERE oid='monthly_surplus.month_records'::regclass\",Boolean.class)).isTrue()"
       ],
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "primary_source": "BE:FinanceMigrationIT#monatsnachweisV13ErhaeltAlleV12DatenOhneAutomatischeAbschluesse:fcbcf165908d",
       "supplementary_sources": [],
       "supplementary_boundaries": [],
-      "target_test_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "target_test_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; unchanged source remains authoritative; no test removed in 5.1",
       "counting": "business",
       "risk_groups": [
@@ -37392,12 +37655,12 @@
         "assertThat(admin.queryForObject(\"SELECT count(*) FROM monthly_surplus.month_records\",Integer.class)).isZero()",
         "assertThat(admin.queryForObject(\"SELECT relrowsecurity AND relforcerowsecurity FROM pg_class WHERE oid='monthly_surplus.month_records'::regclass\",Boolean.class)).isTrue()"
       ],
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "primary_source": "BE:FinanceMigrationIT#monatsnachweisV13ErhaeltAlleV12DatenOhneAutomatischeAbschluesse:b5bea41b6c62",
       "supplementary_sources": [],
       "supplementary_boundaries": [],
-      "target_test_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "target_test_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; unchanged source remains authoritative; no test removed in 5.1",
       "counting": "business",
       "risk_groups": [
@@ -37423,12 +37686,12 @@
         "assertThat(admin.queryForList(\"SELECT tablename FROM pg_tables WHERE schemaname='monthly_surplus'\",String.class)).containsExactlyInAnyOrder(\"activations\", \"month_records\", \"selections\", \"deleted_goals\")",
         "assertThat(admin.queryForObject(\"SELECT relrowsecurity AND relforcerowsecurity FROM pg_class WHERE oid='monthly_surplus.activations'::regclass\",Boolean.class)).isTrue()"
       ],
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "primary_source": "BE:FinanceMigrationIT#aktivierungsV12MigriertFrischenUndBefuelltenV11StandOhneAutomatischeKontostarts:fcbcf165908d",
       "supplementary_sources": [],
       "supplementary_boundaries": [],
-      "target_test_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "target_test_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; unchanged source remains authoritative; no test removed in 5.1",
       "counting": "business",
       "risk_groups": [
@@ -37454,12 +37717,12 @@
         "assertThat(admin.queryForList(\"SELECT tablename FROM pg_tables WHERE schemaname='monthly_surplus'\",String.class)).containsExactlyInAnyOrder(\"activations\", \"month_records\", \"selections\", \"deleted_goals\")",
         "assertThat(admin.queryForObject(\"SELECT relrowsecurity AND relforcerowsecurity FROM pg_class WHERE oid='monthly_surplus.activations'::regclass\",Boolean.class)).isTrue()"
       ],
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "primary_source": "BE:FinanceMigrationIT#aktivierungsV12MigriertFrischenUndBefuelltenV11StandOhneAutomatischeKontostarts:b5bea41b6c62",
       "supplementary_sources": [],
       "supplementary_boundaries": [],
-      "target_test_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "target_test_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; unchanged source remains authoritative; no test removed in 5.1",
       "counting": "business",
       "risk_groups": [
@@ -37502,12 +37765,12 @@
         "assertThat(new de.linus.tnbp.shared.ApiVersionState(runtime, \"compatible\", \"\", \"\", true).signedProgressAvailable()).isFalse()",
         "assertThat(runtime.queryForObject(\"SELECT has_function_privilege(current_user,'api_version.signed_progress_available(boolean,uuid,text,text,text,timestamptz)','EXECUTE')\", Boolean.class)).isTrue()"
       ],
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "primary_source": "BE:FinanceMigrationIT#frischerUndBefuellterV8StandVerwendenDieselbeVerlustfreieMigrationBisAktivierungsV12Stand:fcbcf165908d",
       "supplementary_sources": [],
       "supplementary_boundaries": [],
-      "target_test_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "target_test_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; unchanged source remains authoritative; no test removed in 5.1",
       "counting": "business",
       "risk_groups": [
@@ -37533,12 +37796,12 @@
         "assertThat(admin.queryForObject(\"SELECT relrowsecurity AND relforcerowsecurity FROM pg_class WHERE oid = ?::regclass\", Boolean.class, table)).isTrue()",
         "assertThat(runtime.queryForObject(\"SELECT has_column_privilege(current_user, ?, 'user_id', 'UPDATE')\", Boolean.class, table)).isFalse()"
       ],
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "primary_source": "BE:FinanceMigrationIT#frischerUndBefuellterV8StandVerwendenDieselbeVerlustfreieMigrationBisAktivierungsV12Stand:fcbcf165908d",
       "supplementary_sources": [],
       "supplementary_boundaries": [],
-      "target_test_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "target_test_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; unchanged source remains authoritative; no test removed in 5.1",
       "counting": "business",
       "risk_groups": [
@@ -37564,12 +37827,12 @@
         "assertThat(admin.queryForObject(\"SELECT relrowsecurity AND relforcerowsecurity FROM pg_class WHERE oid = ?::regclass\", Boolean.class, table)).isTrue()",
         "assertThat(runtime.queryForObject(\"SELECT has_column_privilege(current_user, ?, 'user_id', 'UPDATE')\", Boolean.class, table)).isFalse()"
       ],
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "primary_source": "BE:FinanceMigrationIT#frischerUndBefuellterV8StandVerwendenDieselbeVerlustfreieMigrationBisAktivierungsV12Stand:fcbcf165908d",
       "supplementary_sources": [],
       "supplementary_boundaries": [],
-      "target_test_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "target_test_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; unchanged source remains authoritative; no test removed in 5.1",
       "counting": "business",
       "risk_groups": [
@@ -37595,12 +37858,12 @@
         "assertThat(admin.queryForObject(\"SELECT relrowsecurity AND relforcerowsecurity FROM pg_class WHERE oid = ?::regclass\", Boolean.class, table)).isTrue()",
         "assertThat(runtime.queryForObject(\"SELECT has_column_privilege(current_user, ?, 'user_id', 'UPDATE')\", Boolean.class, table)).isFalse()"
       ],
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "primary_source": "BE:FinanceMigrationIT#frischerUndBefuellterV8StandVerwendenDieselbeVerlustfreieMigrationBisAktivierungsV12Stand:fcbcf165908d",
       "supplementary_sources": [],
       "supplementary_boundaries": [],
-      "target_test_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "target_test_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; unchanged source remains authoritative; no test removed in 5.1",
       "counting": "business",
       "risk_groups": [
@@ -37626,12 +37889,12 @@
         "assertThat(admin.queryForObject(\"SELECT relrowsecurity AND relforcerowsecurity FROM pg_class WHERE oid = ?::regclass\", Boolean.class, table)).isTrue()",
         "assertThat(runtime.queryForObject(\"SELECT has_column_privilege(current_user, ?, 'user_id', 'UPDATE')\", Boolean.class, table)).isFalse()"
       ],
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "primary_source": "BE:FinanceMigrationIT#frischerUndBefuellterV8StandVerwendenDieselbeVerlustfreieMigrationBisAktivierungsV12Stand:fcbcf165908d",
       "supplementary_sources": [],
       "supplementary_boundaries": [],
-      "target_test_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "target_test_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; unchanged source remains authoritative; no test removed in 5.1",
       "counting": "business",
       "risk_groups": [
@@ -37657,12 +37920,12 @@
         "assertThat(admin.queryForObject(\"SELECT relrowsecurity AND relforcerowsecurity FROM pg_class WHERE oid = ?::regclass\", Boolean.class, table)).isTrue()",
         "assertThat(runtime.queryForObject(\"SELECT has_column_privilege(current_user, ?, 'user_id', 'UPDATE')\", Boolean.class, table)).isFalse()"
       ],
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "primary_source": "BE:FinanceMigrationIT#frischerUndBefuellterV8StandVerwendenDieselbeVerlustfreieMigrationBisAktivierungsV12Stand:fcbcf165908d",
       "supplementary_sources": [],
       "supplementary_boundaries": [],
-      "target_test_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "target_test_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; unchanged source remains authoritative; no test removed in 5.1",
       "counting": "business",
       "risk_groups": [
@@ -37688,12 +37951,12 @@
         "assertThat(admin.queryForObject(\"SELECT relrowsecurity AND relforcerowsecurity FROM pg_class WHERE oid = ?::regclass\", Boolean.class, table)).isTrue()",
         "assertThat(runtime.queryForObject(\"SELECT has_column_privilege(current_user, ?, 'user_id', 'UPDATE')\", Boolean.class, table)).isFalse()"
       ],
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "primary_source": "BE:FinanceMigrationIT#frischerUndBefuellterV8StandVerwendenDieselbeVerlustfreieMigrationBisAktivierungsV12Stand:fcbcf165908d",
       "supplementary_sources": [],
       "supplementary_boundaries": [],
-      "target_test_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "target_test_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; unchanged source remains authoritative; no test removed in 5.1",
       "counting": "business",
       "risk_groups": [
@@ -37736,12 +37999,12 @@
         "assertThat(new de.linus.tnbp.shared.ApiVersionState(runtime, \"compatible\", \"\", \"\", true).signedProgressAvailable()).isFalse()",
         "assertThat(runtime.queryForObject(\"SELECT has_function_privilege(current_user,'api_version.signed_progress_available(boolean,uuid,text,text,text,timestamptz)','EXECUTE')\", Boolean.class)).isTrue()"
       ],
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "primary_source": "BE:FinanceMigrationIT#frischerUndBefuellterV8StandVerwendenDieselbeVerlustfreieMigrationBisAktivierungsV12Stand:b5bea41b6c62",
       "supplementary_sources": [],
       "supplementary_boundaries": [],
-      "target_test_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "target_test_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; unchanged source remains authoritative; no test removed in 5.1",
       "counting": "business",
       "risk_groups": [
@@ -37767,12 +38030,12 @@
         "assertThat(admin.queryForObject(\"SELECT relrowsecurity AND relforcerowsecurity FROM pg_class WHERE oid = ?::regclass\", Boolean.class, table)).isTrue()",
         "assertThat(runtime.queryForObject(\"SELECT has_column_privilege(current_user, ?, 'user_id', 'UPDATE')\", Boolean.class, table)).isFalse()"
       ],
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "primary_source": "BE:FinanceMigrationIT#frischerUndBefuellterV8StandVerwendenDieselbeVerlustfreieMigrationBisAktivierungsV12Stand:b5bea41b6c62",
       "supplementary_sources": [],
       "supplementary_boundaries": [],
-      "target_test_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "target_test_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; unchanged source remains authoritative; no test removed in 5.1",
       "counting": "business",
       "risk_groups": [
@@ -37798,12 +38061,12 @@
         "assertThat(admin.queryForObject(\"SELECT relrowsecurity AND relforcerowsecurity FROM pg_class WHERE oid = ?::regclass\", Boolean.class, table)).isTrue()",
         "assertThat(runtime.queryForObject(\"SELECT has_column_privilege(current_user, ?, 'user_id', 'UPDATE')\", Boolean.class, table)).isFalse()"
       ],
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "primary_source": "BE:FinanceMigrationIT#frischerUndBefuellterV8StandVerwendenDieselbeVerlustfreieMigrationBisAktivierungsV12Stand:b5bea41b6c62",
       "supplementary_sources": [],
       "supplementary_boundaries": [],
-      "target_test_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "target_test_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; unchanged source remains authoritative; no test removed in 5.1",
       "counting": "business",
       "risk_groups": [
@@ -37829,12 +38092,12 @@
         "assertThat(admin.queryForObject(\"SELECT relrowsecurity AND relforcerowsecurity FROM pg_class WHERE oid = ?::regclass\", Boolean.class, table)).isTrue()",
         "assertThat(runtime.queryForObject(\"SELECT has_column_privilege(current_user, ?, 'user_id', 'UPDATE')\", Boolean.class, table)).isFalse()"
       ],
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "primary_source": "BE:FinanceMigrationIT#frischerUndBefuellterV8StandVerwendenDieselbeVerlustfreieMigrationBisAktivierungsV12Stand:b5bea41b6c62",
       "supplementary_sources": [],
       "supplementary_boundaries": [],
-      "target_test_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "target_test_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; unchanged source remains authoritative; no test removed in 5.1",
       "counting": "business",
       "risk_groups": [
@@ -37860,12 +38123,12 @@
         "assertThat(admin.queryForObject(\"SELECT relrowsecurity AND relforcerowsecurity FROM pg_class WHERE oid = ?::regclass\", Boolean.class, table)).isTrue()",
         "assertThat(runtime.queryForObject(\"SELECT has_column_privilege(current_user, ?, 'user_id', 'UPDATE')\", Boolean.class, table)).isFalse()"
       ],
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "primary_source": "BE:FinanceMigrationIT#frischerUndBefuellterV8StandVerwendenDieselbeVerlustfreieMigrationBisAktivierungsV12Stand:b5bea41b6c62",
       "supplementary_sources": [],
       "supplementary_boundaries": [],
-      "target_test_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "target_test_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; unchanged source remains authoritative; no test removed in 5.1",
       "counting": "business",
       "risk_groups": [
@@ -37891,12 +38154,12 @@
         "assertThat(admin.queryForObject(\"SELECT relrowsecurity AND relforcerowsecurity FROM pg_class WHERE oid = ?::regclass\", Boolean.class, table)).isTrue()",
         "assertThat(runtime.queryForObject(\"SELECT has_column_privilege(current_user, ?, 'user_id', 'UPDATE')\", Boolean.class, table)).isFalse()"
       ],
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "primary_source": "BE:FinanceMigrationIT#frischerUndBefuellterV8StandVerwendenDieselbeVerlustfreieMigrationBisAktivierungsV12Stand:b5bea41b6c62",
       "supplementary_sources": [],
       "supplementary_boundaries": [],
-      "target_test_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "target_test_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; unchanged source remains authoritative; no test removed in 5.1",
       "counting": "business",
       "risk_groups": [
@@ -37922,12 +38185,12 @@
         "assertThat(admin.queryForObject(\"SELECT relrowsecurity AND relforcerowsecurity FROM pg_class WHERE oid = ?::regclass\", Boolean.class, table)).isTrue()",
         "assertThat(runtime.queryForObject(\"SELECT has_column_privilege(current_user, ?, 'user_id', 'UPDATE')\", Boolean.class, table)).isFalse()"
       ],
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "primary_source": "BE:FinanceMigrationIT#frischerUndBefuellterV8StandVerwendenDieselbeVerlustfreieMigrationBisAktivierungsV12Stand:b5bea41b6c62",
       "supplementary_sources": [],
       "supplementary_boundaries": [],
-      "target_test_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "target_test_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; unchanged source remains authoritative; no test removed in 5.1",
       "counting": "business",
       "risk_groups": [
@@ -37953,12 +38216,12 @@
         "assertThat(runtime.queryForObject(\"SELECT count(*) FROM savings_goals.goals\",Integer.class)).isZero()",
         "assertThat(new de.linus.tnbp.shared.ApiVersionState(runtime,\"compatible\",\"\",\"\",true).signedProgressAvailable()).isFalse()"
       ],
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "primary_source": "BE:FinanceMigrationIT#signierterV11ConstraintMigriertFrischenUndBefuelltenV10StandOhneDatenverlust:fcbcf165908d",
       "supplementary_sources": [],
       "supplementary_boundaries": [],
-      "target_test_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "target_test_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; unchanged source remains authoritative; no test removed in 5.1",
       "counting": "business",
       "risk_groups": [
@@ -37983,12 +38246,12 @@
       "expected_property": [
         "assertThatThrownBy(()->admin.update(\"INSERT INTO savings_goals.goals VALUES (?,?,'Grenze',1,?,NULL)\",UUID.randomUUID(),user,progress)).isInstanceOf(org.springframework.dao.DataAccessException.class)"
       ],
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "primary_source": "BE:FinanceMigrationIT#signierterV11ConstraintMigriertFrischenUndBefuelltenV10StandOhneDatenverlust:fcbcf165908d",
       "supplementary_sources": [],
       "supplementary_boundaries": [],
-      "target_test_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "target_test_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; unchanged source remains authoritative; no test removed in 5.1",
       "counting": "business",
       "risk_groups": [
@@ -38013,12 +38276,12 @@
       "expected_property": [
         "assertThatThrownBy(()->admin.update(\"INSERT INTO savings_goals.goals VALUES (?,?,'Grenze',1,?,NULL)\",UUID.randomUUID(),user,progress)).isInstanceOf(org.springframework.dao.DataAccessException.class)"
       ],
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "primary_source": "BE:FinanceMigrationIT#signierterV11ConstraintMigriertFrischenUndBefuelltenV10StandOhneDatenverlust:fcbcf165908d",
       "supplementary_sources": [],
       "supplementary_boundaries": [],
-      "target_test_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "target_test_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; unchanged source remains authoritative; no test removed in 5.1",
       "counting": "business",
       "risk_groups": [
@@ -38044,12 +38307,12 @@
         "assertThat(runtime.queryForObject(\"SELECT count(*) FROM savings_goals.goals\",Integer.class)).isZero()",
         "assertThat(new de.linus.tnbp.shared.ApiVersionState(runtime,\"compatible\",\"\",\"\",true).signedProgressAvailable()).isFalse()"
       ],
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "primary_source": "BE:FinanceMigrationIT#signierterV11ConstraintMigriertFrischenUndBefuelltenV10StandOhneDatenverlust:b5bea41b6c62",
       "supplementary_sources": [],
       "supplementary_boundaries": [],
-      "target_test_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "target_test_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; unchanged source remains authoritative; no test removed in 5.1",
       "counting": "business",
       "risk_groups": [
@@ -38074,12 +38337,12 @@
       "expected_property": [
         "assertThatThrownBy(()->admin.update(\"INSERT INTO savings_goals.goals VALUES (?,?,'Grenze',1,?,NULL)\",UUID.randomUUID(),user,progress)).isInstanceOf(org.springframework.dao.DataAccessException.class)"
       ],
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "primary_source": "BE:FinanceMigrationIT#signierterV11ConstraintMigriertFrischenUndBefuelltenV10StandOhneDatenverlust:b5bea41b6c62",
       "supplementary_sources": [],
       "supplementary_boundaries": [],
-      "target_test_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "target_test_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; unchanged source remains authoritative; no test removed in 5.1",
       "counting": "business",
       "risk_groups": [
@@ -38104,12 +38367,12 @@
       "expected_property": [
         "assertThatThrownBy(()->admin.update(\"INSERT INTO savings_goals.goals VALUES (?,?,'Grenze',1,?,NULL)\",UUID.randomUUID(),user,progress)).isInstanceOf(org.springframework.dao.DataAccessException.class)"
       ],
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "primary_source": "BE:FinanceMigrationIT#signierterV11ConstraintMigriertFrischenUndBefuelltenV10StandOhneDatenverlust:b5bea41b6c62",
       "supplementary_sources": [],
       "supplementary_boundaries": [],
-      "target_test_type": "process/PostgreSQL",
-      "remaining_integration": "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart",
+      "target_test_type": "PostgreSQL-Migrationsintegration für Fresh-/Bestandsfälle, RLS/Rechte und Constraints beibehalten",
+      "remaining_integration": "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse.",
       "replacement_evidence": "OPEN; unchanged source remains authoritative; no test removed in 5.1",
       "counting": "business",
       "risk_groups": [
@@ -68329,8 +68592,11 @@
       },
       "expected_property": [
         "self.assertEqual(result['median_seconds'], 100)",
-        "self.assertEqual(result['target_seconds_70_percent'], 70)",
-        "self.assertTrue(result['local_evidence_complete'])"
+        "self.assertEqual(result['target_seconds'], 900)",
+        "self.assertTrue(result['target_met'])",
+        "self.assertTrue(result['local_evidence_complete'])",
+        "self.assertEqual(measured['target_seconds'], 900)",
+        "self.assertEqual(measured['target_met'], expected)"
       ],
       "primary_test_type": "tool/infrastructure",
       "primary_source": "PY:test_test_baseline:BaselineTest#test_median_excludes_failed_warmup_and_clean",
@@ -68378,7 +68644,10 @@
       },
       "expected_property": [
         "self.assertFalse(baseline.summarize([run()] * 3)['local_evidence_complete'])",
-        "self.assertFalse(baseline.summarize([run(), run('clean'), run('warmup')])['local_evidence_complete'])"
+        "self.assertFalse(baseline.summarize([run(), run('clean'), run('warmup')])['local_evidence_complete'])",
+        "self.assertIsNone(baseline.summarize([run()])['median_seconds'])",
+        "self.assertIsNone(baseline.summarize([run(), run()])['target_met'])",
+        "self.assertEqual(baseline.summarize([run(), run()])['target_seconds'], 900)"
       ],
       "primary_test_type": "tool/infrastructure",
       "primary_source": "PY:test_test_baseline:BaselineTest#test_clean_and_warmup_and_three_samples_required",
@@ -68401,7 +68670,8 @@
         "fixture": "scripts/tests/test_test_baseline.py#test_duplicate_execution_is_not_a_new_case"
       },
       "expected_property": [
-        "self.assertEqual(baseline.report_counts(tmp), {'executions': 3, 'distinct_execution_ids': 2, 'duplicate_executions': 1})"
+        "self.assertEqual([counts[key] for key in ('executions', 'distinct_execution_ids', 'duplicate_executions')], [3, 2, 1])",
+        "self.assertEqual(counts['errors'], [])"
       ],
       "primary_test_type": "tool/infrastructure",
       "primary_source": "PY:test_test_baseline:BaselineTest#test_duplicate_execution_is_not_a_new_case",
@@ -68573,7 +68843,8 @@
         "self.assertEqual([r['kind'] for r in data['runs']], ['warmup', 'measurement', 'measurement', 'measurement', 'clean'])",
         "self.assertTrue(data['summary']['local_evidence_complete'])",
         "self.assertEqual(data['status'], 'passed')",
-        "self.assertEqual(baseline.main(['--output', str(output), '--cache-note', 'test']), 0)"
+        "self.assertEqual(baseline.main(['--output', str(output), '--cache-note', 'test']), 0)",
+        "self.assertEqual('TEST_BASELINE_PHASE_LOG' in call.args[2], group == 'contract')"
       ],
       "primary_test_type": "tool/infrastructure",
       "primary_source": "PY:test_test_baseline:BaselineTest#test_success_executes_all_six_groups_for_all_five_runs",
@@ -68847,7 +69118,8 @@
         "fixture": "scripts/tests/test_test_baseline.py#test_output_inside_cleaned_directory_is_rejected_before_writing"
       },
       "expected_property": [
-        "ValueError before creation when output lies inside a disposable build path"
+        "self.assertFalse(output.exists())",
+        "self.assertRaisesRegex(ValueError, 'disposable build outputs')"
       ],
       "primary_test_type": "tool/infrastructure",
       "primary_source": "PY:test_test_baseline:BaselineTest#test_output_inside_cleaned_directory_is_rejected_before_writing",
@@ -68871,10 +69143,282 @@
         "fixture": "scripts/tests/test_test_baseline.py#test_backend_reports_are_cleared_without_removing_compiled_classes"
       },
       "expected_property": [
-        "Old Surefire/Failsafe directories removed; compiled class sentinel survives"
+        "self.assertFalse((target / 'surefire-reports').exists())",
+        "self.assertFalse((target / 'failsafe-reports').exists())",
+        "self.assertTrue((target / 'classes/previous').exists())"
       ],
       "primary_test_type": "tool/infrastructure",
       "primary_source": "PY:test_test_baseline:BaselineTest#test_backend_reports_are_cleared_without_removing_compiled_classes",
+      "supplementary_sources": [],
+      "supplementary_boundaries": [],
+      "target_test_type": "tool/infrastructure",
+      "remaining_integration": "Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution",
+      "replacement_evidence": "OPEN; retained",
+      "counting": "excluded-infrastructure",
+      "risk_groups": [
+        "tooling/infrastructure regression"
+      ]
+    },
+    "SC:PY:test_test_baseline:BaselineTest#test_resources_capture_limits_affinity_and_only_hashed_host_identity": {
+      "domain": "tooling regression",
+      "requirements": [
+        "5.1/AC-3"
+      ],
+      "input_state": {
+        "parameter_variant": "default",
+        "loop_bindings": {},
+        "fixture": "scripts/tests/test_test_baseline.py#test_resources_capture_limits_affinity_and_only_hashed_host_identity"
+      },
+      "expected_property": [
+        "self.assertEqual(first['host_fingerprint_sha256'], second['host_fingerprint_sha256'])",
+        "self.assertEqual(first['cpu_models'], ['Fixture CPU'])",
+        "self.assertEqual(first['affinity'], [2, 4])",
+        "self.assertEqual(first['memory_bytes']['MemAvailable'], 512 * 1024)",
+        "self.assertEqual(first['cgroup_limits']['effective']['cpu.max'], '200000 100000')",
+        "self.assertNotIn('private-machine-id', json.dumps(first))",
+        "self.assertNotIn('private-hostname', json.dumps(first))"
+      ],
+      "primary_test_type": "tool/infrastructure",
+      "primary_source": "PY:test_test_baseline:BaselineTest#test_resources_capture_limits_affinity_and_only_hashed_host_identity",
+      "supplementary_sources": [],
+      "supplementary_boundaries": [],
+      "target_test_type": "tool/infrastructure",
+      "remaining_integration": "Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution",
+      "replacement_evidence": "OPEN; retained",
+      "counting": "excluded-infrastructure",
+      "risk_groups": [
+        "tooling/infrastructure regression"
+      ]
+    },
+    "SC:PY:test_test_baseline:BaselineTest#test_untracked_executable_is_preserved_and_drift_invalidates_run": {
+      "domain": "tooling regression",
+      "requirements": [
+        "5.1/AC-3",
+        "5.1/AC-8"
+      ],
+      "input_state": {
+        "parameter_variant": "default",
+        "loop_bindings": {},
+        "fixture": "scripts/tests/test_test_baseline.py#test_untracked_executable_is_preserved_and_drift_invalidates_run"
+      },
+      "expected_property": [
+        "self.assertFalse(data['runs'][0]['input_identity_valid'])",
+        "self.assertEqual(data['runs'][0]['status'], 'failed')",
+        "self.assertEqual(data['runs'][0]['resources_before'], {'boundary': 1})",
+        "self.assertEqual(data['runs'][0]['resources_after'], {'boundary': 2})",
+        "self.assertEqual(saved.read_text(), 'initial runtime')",
+        "self.assertEqual(saved.stat().st_mode & 0o777, 0o755)",
+        "self.assertEqual(old_evidence.read_text(), 'unaltered raw evidence')",
+        "self.assertIsNone(data['summary']['median_seconds'])",
+        "self.assertEqual(baseline.main(['--output', str(output), '--cache-note', 'fixture']), 1)"
+      ],
+      "primary_test_type": "tool/infrastructure",
+      "primary_source": "PY:test_test_baseline:BaselineTest#test_untracked_executable_is_preserved_and_drift_invalidates_run",
+      "supplementary_sources": [],
+      "supplementary_boundaries": [],
+      "target_test_type": "tool/infrastructure",
+      "remaining_integration": "Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution",
+      "replacement_evidence": "OPEN; retained",
+      "counting": "excluded-infrastructure",
+      "risk_groups": [
+        "tooling/infrastructure regression"
+      ]
+    },
+    "SC:PY:test_test_baseline:BaselineTest#test_invalid_report_or_input_guard_cannot_contribute_to_median": {
+      "domain": "tooling regression",
+      "requirements": [
+        "5.1/AC-1",
+        "5.1/AC-3"
+      ],
+      "input_state": {
+        "parameter_variant": "default",
+        "loop_bindings": {},
+        "fixture": "scripts/tests/test_test_baseline.py#test_invalid_report_or_input_guard_cannot_contribute_to_median"
+      },
+      "expected_property": [
+        "self.assertEqual(summary['successful_measurements'], 1)",
+        "self.assertFalse(summary['local_evidence_complete'])",
+        "self.assertIsNone(summary['target_met'])"
+      ],
+      "primary_test_type": "tool/infrastructure",
+      "primary_source": "PY:test_test_baseline:BaselineTest#test_invalid_report_or_input_guard_cannot_contribute_to_median",
+      "supplementary_sources": [],
+      "supplementary_boundaries": [],
+      "target_test_type": "tool/infrastructure",
+      "remaining_integration": "Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution",
+      "replacement_evidence": "OPEN; retained",
+      "counting": "excluded-infrastructure",
+      "risk_groups": [
+        "tooling/infrastructure regression"
+      ]
+    },
+    "SC:PY:test_test_baseline:BaselineTest#test_backend_scope_includes_current_parameters_inheritance_and_new_tests": {
+      "domain": "tooling regression",
+      "requirements": [
+        "5.1/AC-1"
+      ],
+      "input_state": {
+        "parameter_variant": "default",
+        "loop_bindings": {},
+        "fixture": "scripts/tests/test_test_baseline.py#test_backend_scope_includes_current_parameters_inheritance_and_new_tests"
+      },
+      "expected_property": [
+        "self.assertEqual(expected['failsafe'][('example.NextIT', 'variants')], 2)",
+        "self.assertEqual(baseline.validate_backend_reports(reports), [])",
+        "self.assertTrue(any('missing=' in error and 'added' in error for error in baseline.validate_backend_reports(reports)))"
+      ],
+      "primary_test_type": "tool/infrastructure",
+      "primary_source": "PY:test_test_baseline:BaselineTest#test_backend_scope_includes_current_parameters_inheritance_and_new_tests",
+      "supplementary_sources": [],
+      "supplementary_boundaries": [],
+      "target_test_type": "tool/infrastructure",
+      "remaining_integration": "Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution",
+      "replacement_evidence": "OPEN; retained",
+      "counting": "excluded-infrastructure",
+      "risk_groups": [
+        "tooling/infrastructure regression"
+      ]
+    },
+    "SC:PY:test_test_baseline:BaselineTest#test_empty_reduced_skipped_and_malformed_backend_reports_are_rejected": {
+      "domain": "tooling regression",
+      "requirements": [
+        "5.1/AC-1",
+        "5.1/AC-8"
+      ],
+      "input_state": {
+        "parameter_variant": "default",
+        "loop_bindings": {},
+        "fixture": "scripts/tests/test_test_baseline.py#test_empty_reduced_skipped_and_malformed_backend_reports_are_rejected"
+      },
+      "expected_property": [
+        "self.assertTrue(baseline.validate_backend_reports(reports))",
+        "self.assertEqual(reports['failsafe']['skipped'], 1)",
+        "self.assertTrue(baseline.validate_backend_reports(reports))",
+        "self.assertTrue(reports['failsafe']['errors'])",
+        "self.assertTrue(baseline.validate_backend_reports(reports))",
+        "self.assertTrue(any('empty test discovery' in error for error in baseline.validate_backend_reports(reports)))"
+      ],
+      "primary_test_type": "tool/infrastructure",
+      "primary_source": "PY:test_test_baseline:BaselineTest#test_empty_reduced_skipped_and_malformed_backend_reports_are_rejected",
+      "supplementary_sources": [],
+      "supplementary_boundaries": [],
+      "target_test_type": "tool/infrastructure",
+      "remaining_integration": "Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution",
+      "replacement_evidence": "OPEN; retained",
+      "counting": "excluded-infrastructure",
+      "risk_groups": [
+        "tooling/infrastructure regression"
+      ]
+    },
+    "SC:PY:test_test_baseline:BaselineTest#test_malformed_backend_xml_is_preserved_before_failure_is_saved": {
+      "domain": "tooling regression",
+      "requirements": [
+        "5.1/AC-3",
+        "5.1/AC-8"
+      ],
+      "input_state": {
+        "parameter_variant": "default",
+        "loop_bindings": {},
+        "fixture": "scripts/tests/test_test_baseline.py#test_malformed_backend_xml_is_preserved_before_failure_is_saved"
+      },
+      "expected_property": [
+        "self.assertEqual(data['status'], 'failed')",
+        "self.assertTrue(data['runs'][0]['groups'][0]['interrupted'])",
+        "self.assertTrue(data['runs'][0]['groups'][0]['failsafe']['errors'])",
+        "self.assertEqual((output / '00-warmup-failsafe-reports/TEST-broken.xml').read_text(), '<testsuite><testcase')",
+        "self.assertEqual(baseline.main(['--output', str(output), '--cache-note', 'fixture']), 1)"
+      ],
+      "primary_test_type": "tool/infrastructure",
+      "primary_source": "PY:test_test_baseline:BaselineTest#test_malformed_backend_xml_is_preserved_before_failure_is_saved",
+      "supplementary_sources": [],
+      "supplementary_boundaries": [],
+      "target_test_type": "tool/infrastructure",
+      "remaining_integration": "Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution",
+      "replacement_evidence": "OPEN; retained",
+      "counting": "excluded-infrastructure",
+      "risk_groups": [
+        "tooling/infrastructure regression"
+      ]
+    },
+    "SC:PY:test_test_baseline:BaselineTest#test_browser_actual_pass_identities_must_match_nonempty_current_discovery": {
+      "domain": "tooling regression",
+      "requirements": [
+        "5.1/AC-1",
+        "5.1/AC-8"
+      ],
+      "input_state": {
+        "parameter_variant": "default",
+        "loop_bindings": {},
+        "fixture": "scripts/tests/test_test_baseline.py#test_browser_actual_pass_identities_must_match_nonempty_current_discovery"
+      },
+      "expected_property": [
+        "self.assertEqual(errors, [])",
+        "self.assertEqual(baseline.validate_browser_report(path, expected), [])",
+        "self.assertTrue(baseline.validate_browser_report(path, expected))",
+        "self.assertEqual(baseline.validate_browser_report(path, new_expected), [])",
+        "self.assertTrue(baseline.validate_browser_report(path, expected))"
+      ],
+      "primary_test_type": "tool/infrastructure",
+      "primary_source": "PY:test_test_baseline:BaselineTest#test_browser_actual_pass_identities_must_match_nonempty_current_discovery",
+      "supplementary_sources": [],
+      "supplementary_boundaries": [],
+      "target_test_type": "tool/infrastructure",
+      "remaining_integration": "Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution",
+      "replacement_evidence": "OPEN; retained",
+      "counting": "excluded-infrastructure",
+      "risk_groups": [
+        "tooling/infrastructure regression"
+      ]
+    },
+    "SC:PY:test_test_baseline:BaselineTest#test_timeout_kills_stubborn_descendant_after_leader_exits": {
+      "domain": "tooling regression",
+      "requirements": [
+        "5.1/AC-8",
+        "TR-10"
+      ],
+      "input_state": {
+        "parameter_variant": "default",
+        "loop_bindings": {},
+        "fixture": "scripts/tests/test_test_baseline.py#test_timeout_kills_stubborn_descendant_after_leader_exits"
+      },
+      "expected_property": [
+        "self.assertEqual(code, 124)",
+        "self.assertTrue(ready.exists(), 'descendant must install its TERM handler before timeout')",
+        "self.fail('stubborn descendant survived process-group cleanup')"
+      ],
+      "primary_test_type": "tool/infrastructure",
+      "primary_source": "PY:test_test_baseline:BaselineTest#test_timeout_kills_stubborn_descendant_after_leader_exits",
+      "supplementary_sources": [],
+      "supplementary_boundaries": [],
+      "target_test_type": "tool/infrastructure",
+      "remaining_integration": "Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution",
+      "replacement_evidence": "OPEN; retained",
+      "counting": "excluded-infrastructure",
+      "risk_groups": [
+        "tooling/infrastructure regression"
+      ]
+    },
+    "SC:PY:test_test_baseline:BaselineTest#test_sigterm_persists_interrupted_group_and_terminates_process": {
+      "domain": "tooling regression",
+      "requirements": [
+        "5.1/AC-8",
+        "TR-10"
+      ],
+      "input_state": {
+        "parameter_variant": "default",
+        "loop_bindings": {},
+        "fixture": "scripts/tests/test_test_baseline.py#test_sigterm_persists_interrupted_group_and_terminates_process"
+      },
+      "expected_property": [
+        "self.assertEqual(data['status'], 'failed')",
+        "self.assertTrue(data['runs'][0]['groups'][0]['interrupted'])",
+        "self.assertEqual(data['runs'][0]['groups'][0]['exit_code'], 143)",
+        "self.assertIsNone(data['summary']['median_seconds'])",
+        "self.assertTrue(ready.exists())",
+        "self.assertEqual(process.wait(timeout=4), 1)"
+      ],
+      "primary_test_type": "tool/infrastructure",
+      "primary_source": "PY:test_test_baseline:BaselineTest#test_sigterm_persists_interrupted_group_and_terminates_process",
       "supplementary_sources": [],
       "supplementary_boundaries": [],
       "target_test_type": "tool/infrastructure",
@@ -69550,7 +70094,7 @@
     "scripts/tests/test_create_registration_link.py": "4a3e0dd30c19a56d9ff0b673f737aaa81efc46a59b11a2a2cd654415bc1a15e0",
     "scripts/tests/test_reference_release.py": "f3f330d12980719f7194f975fdb5d5b8e436f955cbc68b90361e94dbb34dc053",
     "scripts/tests/test_start_database.py": "eaca9901d02badef799969ee35380b5a80f2711e0e1b5a37f80f8a5a0f1547e6",
-    "scripts/tests/test_test_baseline.py": "f1326b5869d960b8f3288940ff7e9869404f7a6bdaefa81d79313c26e9abe3a1",
+    "scripts/tests/test_test_baseline.py": "07183794cae7ea455a8cd85bb37b188672d63e7abe99bed289c289ceaced30a1",
     "backend/src/test/java/de/linus/tnbp/versions/VersionDatabase.java": "c34bd5ff74010bc146d7fa550bbee921c4d4ad731b1967630d2fa29175e2fa3a",
     "backend/src/test/java/de/linus/tnbp/versions/TransitionHooks.java": "1666ca0d50ec428484f8d01436ee0a51cc2b0c5c373d0edbbda7ee93a128b014",
     "backend/src/test/java/de/linus/tnbp/access/PostgresFixture.java": "a581fd5dff63ab05a214aaaeb4b4f3423bdd63c4f14ab9666b9462e56ad6a9ff",
@@ -87138,14 +87682,15 @@
         "4.5/AC-2"
       ],
       "required_integration": [
-        "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart"
+        "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse."
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Abschlussreview: direkte Flyway-/PostgreSQL-Migrationsprüfung, kein externer Anwendungsprozess. Typ korrigiert, Fachnenner und reale Schutzfälle unverändert."
       ],
       "boundary_only": false,
       "primary_member": "SC:BE:FinanceMigrationIT#loeschV16ErhaeltV15BestandUndErzwingtMinimaleDauerhafteMarker:fcbcf165908d:44136fa355b3",
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "counting": "business",
       "supplementary_members": [],
       "risks": [
@@ -87178,14 +87723,15 @@
         "4.5/AC-2"
       ],
       "required_integration": [
-        "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart"
+        "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse."
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Abschlussreview: direkte Flyway-/PostgreSQL-Migrationsprüfung, kein externer Anwendungsprozess. Typ korrigiert, Fachnenner und reale Schutzfälle unverändert."
       ],
       "boundary_only": false,
       "primary_member": "SC:BE:FinanceMigrationIT#loeschV16ErhaeltV15BestandUndErzwingtMinimaleDauerhafteMarker:b5bea41b6c62:44136fa355b3",
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "counting": "business",
       "supplementary_members": [],
       "risks": [
@@ -87216,14 +87762,15 @@
         "4.4/AC-3"
       ],
       "required_integration": [
-        "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart"
+        "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse."
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Abschlussreview: direkte Flyway-/PostgreSQL-Migrationsprüfung, kein externer Anwendungsprozess. Typ korrigiert, Fachnenner und reale Schutzfälle unverändert."
       ],
       "boundary_only": false,
       "primary_member": "SC:BE:FinanceMigrationIT#korrekturV15ErhaeltFrischenUndBefuelltenV14StandUndMinimaleRechte:fcbcf165908d:44136fa355b3",
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "counting": "business",
       "supplementary_members": [],
       "risks": [
@@ -87253,14 +87800,15 @@
         "4.4/AC-3"
       ],
       "required_integration": [
-        "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart"
+        "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse."
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Abschlussreview: direkte Flyway-/PostgreSQL-Migrationsprüfung, kein externer Anwendungsprozess. Typ korrigiert, Fachnenner und reale Schutzfälle unverändert."
       ],
       "boundary_only": false,
       "primary_member": "SC:BE:FinanceMigrationIT#korrekturV15ErhaeltFrischenUndBefuelltenV14StandUndMinimaleRechte:fcbcf165908d:2bf6e98c10d5",
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "counting": "business",
       "supplementary_members": [],
       "risks": [
@@ -87290,14 +87838,15 @@
         "4.4/AC-3"
       ],
       "required_integration": [
-        "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart"
+        "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse."
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Abschlussreview: direkte Flyway-/PostgreSQL-Migrationsprüfung, kein externer Anwendungsprozess. Typ korrigiert, Fachnenner und reale Schutzfälle unverändert."
       ],
       "boundary_only": false,
       "primary_member": "SC:BE:FinanceMigrationIT#korrekturV15ErhaeltFrischenUndBefuelltenV14StandUndMinimaleRechte:fcbcf165908d:973734c4c56e",
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "counting": "business",
       "supplementary_members": [],
       "risks": [
@@ -87327,14 +87876,15 @@
         "4.4/AC-3"
       ],
       "required_integration": [
-        "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart"
+        "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse."
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Abschlussreview: direkte Flyway-/PostgreSQL-Migrationsprüfung, kein externer Anwendungsprozess. Typ korrigiert, Fachnenner und reale Schutzfälle unverändert."
       ],
       "boundary_only": false,
       "primary_member": "SC:BE:FinanceMigrationIT#korrekturV15ErhaeltFrischenUndBefuelltenV14StandUndMinimaleRechte:fcbcf165908d:4d56a6997d35",
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "counting": "business",
       "supplementary_members": [],
       "risks": [
@@ -87364,14 +87914,15 @@
         "4.4/AC-3"
       ],
       "required_integration": [
-        "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart"
+        "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse."
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Abschlussreview: direkte Flyway-/PostgreSQL-Migrationsprüfung, kein externer Anwendungsprozess. Typ korrigiert, Fachnenner und reale Schutzfälle unverändert."
       ],
       "boundary_only": false,
       "primary_member": "SC:BE:FinanceMigrationIT#korrekturV15ErhaeltFrischenUndBefuelltenV14StandUndMinimaleRechte:fcbcf165908d:3fb389fe1de4",
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "counting": "business",
       "supplementary_members": [],
       "risks": [
@@ -87401,14 +87952,15 @@
         "4.4/AC-3"
       ],
       "required_integration": [
-        "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart"
+        "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse."
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Abschlussreview: direkte Flyway-/PostgreSQL-Migrationsprüfung, kein externer Anwendungsprozess. Typ korrigiert, Fachnenner und reale Schutzfälle unverändert."
       ],
       "boundary_only": false,
       "primary_member": "SC:BE:FinanceMigrationIT#korrekturV15ErhaeltFrischenUndBefuelltenV14StandUndMinimaleRechte:fcbcf165908d:28d41b72a0d6",
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "counting": "business",
       "supplementary_members": [],
       "risks": [
@@ -87439,14 +87991,15 @@
         "4.4/AC-3"
       ],
       "required_integration": [
-        "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart"
+        "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse."
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Abschlussreview: direkte Flyway-/PostgreSQL-Migrationsprüfung, kein externer Anwendungsprozess. Typ korrigiert, Fachnenner und reale Schutzfälle unverändert."
       ],
       "boundary_only": false,
       "primary_member": "SC:BE:FinanceMigrationIT#korrekturV15ErhaeltFrischenUndBefuelltenV14StandUndMinimaleRechte:b5bea41b6c62:44136fa355b3",
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "counting": "business",
       "supplementary_members": [],
       "risks": [
@@ -87476,14 +88029,15 @@
         "4.4/AC-3"
       ],
       "required_integration": [
-        "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart"
+        "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse."
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Abschlussreview: direkte Flyway-/PostgreSQL-Migrationsprüfung, kein externer Anwendungsprozess. Typ korrigiert, Fachnenner und reale Schutzfälle unverändert."
       ],
       "boundary_only": false,
       "primary_member": "SC:BE:FinanceMigrationIT#korrekturV15ErhaeltFrischenUndBefuelltenV14StandUndMinimaleRechte:b5bea41b6c62:2bf6e98c10d5",
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "counting": "business",
       "supplementary_members": [],
       "risks": [
@@ -87513,14 +88067,15 @@
         "4.4/AC-3"
       ],
       "required_integration": [
-        "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart"
+        "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse."
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Abschlussreview: direkte Flyway-/PostgreSQL-Migrationsprüfung, kein externer Anwendungsprozess. Typ korrigiert, Fachnenner und reale Schutzfälle unverändert."
       ],
       "boundary_only": false,
       "primary_member": "SC:BE:FinanceMigrationIT#korrekturV15ErhaeltFrischenUndBefuelltenV14StandUndMinimaleRechte:b5bea41b6c62:973734c4c56e",
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "counting": "business",
       "supplementary_members": [],
       "risks": [
@@ -87550,14 +88105,15 @@
         "4.4/AC-3"
       ],
       "required_integration": [
-        "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart"
+        "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse."
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Abschlussreview: direkte Flyway-/PostgreSQL-Migrationsprüfung, kein externer Anwendungsprozess. Typ korrigiert, Fachnenner und reale Schutzfälle unverändert."
       ],
       "boundary_only": false,
       "primary_member": "SC:BE:FinanceMigrationIT#korrekturV15ErhaeltFrischenUndBefuelltenV14StandUndMinimaleRechte:b5bea41b6c62:4d56a6997d35",
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "counting": "business",
       "supplementary_members": [],
       "risks": [
@@ -87587,14 +88143,15 @@
         "4.4/AC-3"
       ],
       "required_integration": [
-        "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart"
+        "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse."
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Abschlussreview: direkte Flyway-/PostgreSQL-Migrationsprüfung, kein externer Anwendungsprozess. Typ korrigiert, Fachnenner und reale Schutzfälle unverändert."
       ],
       "boundary_only": false,
       "primary_member": "SC:BE:FinanceMigrationIT#korrekturV15ErhaeltFrischenUndBefuelltenV14StandUndMinimaleRechte:b5bea41b6c62:3fb389fe1de4",
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "counting": "business",
       "supplementary_members": [],
       "risks": [
@@ -87624,14 +88181,15 @@
         "4.4/AC-3"
       ],
       "required_integration": [
-        "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart"
+        "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse."
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Abschlussreview: direkte Flyway-/PostgreSQL-Migrationsprüfung, kein externer Anwendungsprozess. Typ korrigiert, Fachnenner und reale Schutzfälle unverändert."
       ],
       "boundary_only": false,
       "primary_member": "SC:BE:FinanceMigrationIT#korrekturV15ErhaeltFrischenUndBefuelltenV14StandUndMinimaleRechte:b5bea41b6c62:28d41b72a0d6",
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "counting": "business",
       "supplementary_members": [],
       "risks": [
@@ -87663,14 +88221,15 @@
         "4.3/AC-2"
       ],
       "required_integration": [
-        "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart"
+        "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse."
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Abschlussreview: direkte Flyway-/PostgreSQL-Migrationsprüfung, kein externer Anwendungsprozess. Typ korrigiert, Fachnenner und reale Schutzfälle unverändert."
       ],
       "boundary_only": false,
       "primary_member": "SC:BE:FinanceMigrationIT#auswahlV14ErhaeltOffeneV13BestaendeEinschliesslichNullUndOhneBudget:fcbcf165908d:44136fa355b3",
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "counting": "business",
       "supplementary_members": [],
       "risks": [
@@ -87702,14 +88261,15 @@
         "4.3/AC-2"
       ],
       "required_integration": [
-        "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart"
+        "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse."
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Abschlussreview: direkte Flyway-/PostgreSQL-Migrationsprüfung, kein externer Anwendungsprozess. Typ korrigiert, Fachnenner und reale Schutzfälle unverändert."
       ],
       "boundary_only": false,
       "primary_member": "SC:BE:FinanceMigrationIT#auswahlV14ErhaeltOffeneV13BestaendeEinschliesslichNullUndOhneBudget:b5bea41b6c62:44136fa355b3",
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "counting": "business",
       "supplementary_members": [],
       "risks": [
@@ -87739,14 +88299,15 @@
         "4.2/AC-3"
       ],
       "required_integration": [
-        "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart"
+        "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse."
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Abschlussreview: direkte Flyway-/PostgreSQL-Migrationsprüfung, kein externer Anwendungsprozess. Typ korrigiert, Fachnenner und reale Schutzfälle unverändert."
       ],
       "boundary_only": false,
       "primary_member": "SC:BE:FinanceMigrationIT#monatsnachweisV13ErhaeltAlleV12DatenOhneAutomatischeAbschluesse:fcbcf165908d:44136fa355b3",
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "counting": "business",
       "supplementary_members": [],
       "risks": [
@@ -87776,14 +88337,15 @@
         "4.2/AC-3"
       ],
       "required_integration": [
-        "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart"
+        "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse."
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Abschlussreview: direkte Flyway-/PostgreSQL-Migrationsprüfung, kein externer Anwendungsprozess. Typ korrigiert, Fachnenner und reale Schutzfälle unverändert."
       ],
       "boundary_only": false,
       "primary_member": "SC:BE:FinanceMigrationIT#monatsnachweisV13ErhaeltAlleV12DatenOhneAutomatischeAbschluesse:b5bea41b6c62:44136fa355b3",
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "counting": "business",
       "supplementary_members": [],
       "risks": [
@@ -87814,14 +88376,15 @@
         "4.1/AC-3"
       ],
       "required_integration": [
-        "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart"
+        "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse."
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Abschlussreview: direkte Flyway-/PostgreSQL-Migrationsprüfung, kein externer Anwendungsprozess. Typ korrigiert, Fachnenner und reale Schutzfälle unverändert."
       ],
       "boundary_only": false,
       "primary_member": "SC:BE:FinanceMigrationIT#aktivierungsV12MigriertFrischenUndBefuelltenV11StandOhneAutomatischeKontostarts:fcbcf165908d:44136fa355b3",
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "counting": "business",
       "supplementary_members": [],
       "risks": [
@@ -87852,14 +88415,15 @@
         "4.1/AC-3"
       ],
       "required_integration": [
-        "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart"
+        "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse."
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Abschlussreview: direkte Flyway-/PostgreSQL-Migrationsprüfung, kein externer Anwendungsprozess. Typ korrigiert, Fachnenner und reale Schutzfälle unverändert."
       ],
       "boundary_only": false,
       "primary_member": "SC:BE:FinanceMigrationIT#aktivierungsV12MigriertFrischenUndBefuelltenV11StandOhneAutomatischeKontostarts:b5bea41b6c62:44136fa355b3",
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "counting": "business",
       "supplementary_members": [],
       "risks": [
@@ -87907,14 +88471,15 @@
         "3.3/AC-7"
       ],
       "required_integration": [
-        "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart"
+        "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse."
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Abschlussreview: direkte Flyway-/PostgreSQL-Migrationsprüfung, kein externer Anwendungsprozess. Typ korrigiert, Fachnenner und reale Schutzfälle unverändert."
       ],
       "boundary_only": false,
       "primary_member": "SC:BE:FinanceMigrationIT#frischerUndBefuellterV8StandVerwendenDieselbeVerlustfreieMigrationBisAktivierungsV12Stand:fcbcf165908d:44136fa355b3",
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "counting": "business",
       "supplementary_members": [],
       "risks": [
@@ -87945,14 +88510,15 @@
         "3.3/AC-7"
       ],
       "required_integration": [
-        "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart"
+        "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse."
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Abschlussreview: direkte Flyway-/PostgreSQL-Migrationsprüfung, kein externer Anwendungsprozess. Typ korrigiert, Fachnenner und reale Schutzfälle unverändert."
       ],
       "boundary_only": false,
       "primary_member": "SC:BE:FinanceMigrationIT#frischerUndBefuellterV8StandVerwendenDieselbeVerlustfreieMigrationBisAktivierungsV12Stand:fcbcf165908d:dcdac521041f",
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "counting": "business",
       "supplementary_members": [],
       "risks": [
@@ -87983,14 +88549,15 @@
         "3.3/AC-7"
       ],
       "required_integration": [
-        "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart"
+        "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse."
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Abschlussreview: direkte Flyway-/PostgreSQL-Migrationsprüfung, kein externer Anwendungsprozess. Typ korrigiert, Fachnenner und reale Schutzfälle unverändert."
       ],
       "boundary_only": false,
       "primary_member": "SC:BE:FinanceMigrationIT#frischerUndBefuellterV8StandVerwendenDieselbeVerlustfreieMigrationBisAktivierungsV12Stand:fcbcf165908d:341a757851e9",
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "counting": "business",
       "supplementary_members": [],
       "risks": [
@@ -88021,14 +88588,15 @@
         "3.3/AC-7"
       ],
       "required_integration": [
-        "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart"
+        "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse."
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Abschlussreview: direkte Flyway-/PostgreSQL-Migrationsprüfung, kein externer Anwendungsprozess. Typ korrigiert, Fachnenner und reale Schutzfälle unverändert."
       ],
       "boundary_only": false,
       "primary_member": "SC:BE:FinanceMigrationIT#frischerUndBefuellterV8StandVerwendenDieselbeVerlustfreieMigrationBisAktivierungsV12Stand:fcbcf165908d:611e3c2aa3cf",
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "counting": "business",
       "supplementary_members": [],
       "risks": [
@@ -88059,14 +88627,15 @@
         "3.3/AC-7"
       ],
       "required_integration": [
-        "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart"
+        "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse."
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Abschlussreview: direkte Flyway-/PostgreSQL-Migrationsprüfung, kein externer Anwendungsprozess. Typ korrigiert, Fachnenner und reale Schutzfälle unverändert."
       ],
       "boundary_only": false,
       "primary_member": "SC:BE:FinanceMigrationIT#frischerUndBefuellterV8StandVerwendenDieselbeVerlustfreieMigrationBisAktivierungsV12Stand:fcbcf165908d:6fb2bf9bbedb",
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "counting": "business",
       "supplementary_members": [],
       "risks": [
@@ -88097,14 +88666,15 @@
         "3.3/AC-7"
       ],
       "required_integration": [
-        "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart"
+        "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse."
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Abschlussreview: direkte Flyway-/PostgreSQL-Migrationsprüfung, kein externer Anwendungsprozess. Typ korrigiert, Fachnenner und reale Schutzfälle unverändert."
       ],
       "boundary_only": false,
       "primary_member": "SC:BE:FinanceMigrationIT#frischerUndBefuellterV8StandVerwendenDieselbeVerlustfreieMigrationBisAktivierungsV12Stand:fcbcf165908d:62ddb58827b9",
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "counting": "business",
       "supplementary_members": [],
       "risks": [
@@ -88135,14 +88705,15 @@
         "3.3/AC-7"
       ],
       "required_integration": [
-        "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart"
+        "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse."
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Abschlussreview: direkte Flyway-/PostgreSQL-Migrationsprüfung, kein externer Anwendungsprozess. Typ korrigiert, Fachnenner und reale Schutzfälle unverändert."
       ],
       "boundary_only": false,
       "primary_member": "SC:BE:FinanceMigrationIT#frischerUndBefuellterV8StandVerwendenDieselbeVerlustfreieMigrationBisAktivierungsV12Stand:fcbcf165908d:b1f77773d031",
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "counting": "business",
       "supplementary_members": [],
       "risks": [
@@ -88190,14 +88761,15 @@
         "3.3/AC-7"
       ],
       "required_integration": [
-        "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart"
+        "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse."
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Abschlussreview: direkte Flyway-/PostgreSQL-Migrationsprüfung, kein externer Anwendungsprozess. Typ korrigiert, Fachnenner und reale Schutzfälle unverändert."
       ],
       "boundary_only": false,
       "primary_member": "SC:BE:FinanceMigrationIT#frischerUndBefuellterV8StandVerwendenDieselbeVerlustfreieMigrationBisAktivierungsV12Stand:b5bea41b6c62:44136fa355b3",
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "counting": "business",
       "supplementary_members": [],
       "risks": [
@@ -88228,14 +88800,15 @@
         "3.3/AC-7"
       ],
       "required_integration": [
-        "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart"
+        "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse."
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Abschlussreview: direkte Flyway-/PostgreSQL-Migrationsprüfung, kein externer Anwendungsprozess. Typ korrigiert, Fachnenner und reale Schutzfälle unverändert."
       ],
       "boundary_only": false,
       "primary_member": "SC:BE:FinanceMigrationIT#frischerUndBefuellterV8StandVerwendenDieselbeVerlustfreieMigrationBisAktivierungsV12Stand:b5bea41b6c62:dcdac521041f",
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "counting": "business",
       "supplementary_members": [],
       "risks": [
@@ -88266,14 +88839,15 @@
         "3.3/AC-7"
       ],
       "required_integration": [
-        "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart"
+        "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse."
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Abschlussreview: direkte Flyway-/PostgreSQL-Migrationsprüfung, kein externer Anwendungsprozess. Typ korrigiert, Fachnenner und reale Schutzfälle unverändert."
       ],
       "boundary_only": false,
       "primary_member": "SC:BE:FinanceMigrationIT#frischerUndBefuellterV8StandVerwendenDieselbeVerlustfreieMigrationBisAktivierungsV12Stand:b5bea41b6c62:341a757851e9",
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "counting": "business",
       "supplementary_members": [],
       "risks": [
@@ -88304,14 +88878,15 @@
         "3.3/AC-7"
       ],
       "required_integration": [
-        "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart"
+        "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse."
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Abschlussreview: direkte Flyway-/PostgreSQL-Migrationsprüfung, kein externer Anwendungsprozess. Typ korrigiert, Fachnenner und reale Schutzfälle unverändert."
       ],
       "boundary_only": false,
       "primary_member": "SC:BE:FinanceMigrationIT#frischerUndBefuellterV8StandVerwendenDieselbeVerlustfreieMigrationBisAktivierungsV12Stand:b5bea41b6c62:611e3c2aa3cf",
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "counting": "business",
       "supplementary_members": [],
       "risks": [
@@ -88342,14 +88917,15 @@
         "3.3/AC-7"
       ],
       "required_integration": [
-        "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart"
+        "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse."
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Abschlussreview: direkte Flyway-/PostgreSQL-Migrationsprüfung, kein externer Anwendungsprozess. Typ korrigiert, Fachnenner und reale Schutzfälle unverändert."
       ],
       "boundary_only": false,
       "primary_member": "SC:BE:FinanceMigrationIT#frischerUndBefuellterV8StandVerwendenDieselbeVerlustfreieMigrationBisAktivierungsV12Stand:b5bea41b6c62:6fb2bf9bbedb",
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "counting": "business",
       "supplementary_members": [],
       "risks": [
@@ -88380,14 +88956,15 @@
         "3.3/AC-7"
       ],
       "required_integration": [
-        "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart"
+        "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse."
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Abschlussreview: direkte Flyway-/PostgreSQL-Migrationsprüfung, kein externer Anwendungsprozess. Typ korrigiert, Fachnenner und reale Schutzfälle unverändert."
       ],
       "boundary_only": false,
       "primary_member": "SC:BE:FinanceMigrationIT#frischerUndBefuellterV8StandVerwendenDieselbeVerlustfreieMigrationBisAktivierungsV12Stand:b5bea41b6c62:62ddb58827b9",
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "counting": "business",
       "supplementary_members": [],
       "risks": [
@@ -88418,14 +88995,15 @@
         "3.3/AC-7"
       ],
       "required_integration": [
-        "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart"
+        "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse."
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Abschlussreview: direkte Flyway-/PostgreSQL-Migrationsprüfung, kein externer Anwendungsprozess. Typ korrigiert, Fachnenner und reale Schutzfälle unverändert."
       ],
       "boundary_only": false,
       "primary_member": "SC:BE:FinanceMigrationIT#frischerUndBefuellterV8StandVerwendenDieselbeVerlustfreieMigrationBisAktivierungsV12Stand:b5bea41b6c62:b1f77773d031",
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "counting": "business",
       "supplementary_members": [],
       "risks": [
@@ -88456,14 +89034,15 @@
         "3.8/AC-1"
       ],
       "required_integration": [
-        "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart"
+        "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse."
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Abschlussreview: direkte Flyway-/PostgreSQL-Migrationsprüfung, kein externer Anwendungsprozess. Typ korrigiert, Fachnenner und reale Schutzfälle unverändert."
       ],
       "boundary_only": false,
       "primary_member": "SC:BE:FinanceMigrationIT#signierterV11ConstraintMigriertFrischenUndBefuelltenV10StandOhneDatenverlust:fcbcf165908d:44136fa355b3",
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "counting": "business",
       "supplementary_members": [],
       "risks": [
@@ -88493,14 +89072,15 @@
         "3.8/AC-1"
       ],
       "required_integration": [
-        "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart"
+        "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse."
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Abschlussreview: direkte Flyway-/PostgreSQL-Migrationsprüfung, kein externer Anwendungsprozess. Typ korrigiert, Fachnenner und reale Schutzfälle unverändert."
       ],
       "boundary_only": false,
       "primary_member": "SC:BE:FinanceMigrationIT#signierterV11ConstraintMigriertFrischenUndBefuelltenV10StandOhneDatenverlust:fcbcf165908d:6c7bb9230d88",
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "counting": "business",
       "supplementary_members": [],
       "risks": [
@@ -88530,14 +89110,15 @@
         "3.8/AC-1"
       ],
       "required_integration": [
-        "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart"
+        "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse."
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Abschlussreview: direkte Flyway-/PostgreSQL-Migrationsprüfung, kein externer Anwendungsprozess. Typ korrigiert, Fachnenner und reale Schutzfälle unverändert."
       ],
       "boundary_only": false,
       "primary_member": "SC:BE:FinanceMigrationIT#signierterV11ConstraintMigriertFrischenUndBefuelltenV10StandOhneDatenverlust:fcbcf165908d:fd84f2aebb81",
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "counting": "business",
       "supplementary_members": [],
       "risks": [
@@ -88568,14 +89149,15 @@
         "3.8/AC-1"
       ],
       "required_integration": [
-        "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart"
+        "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse."
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Abschlussreview: direkte Flyway-/PostgreSQL-Migrationsprüfung, kein externer Anwendungsprozess. Typ korrigiert, Fachnenner und reale Schutzfälle unverändert."
       ],
       "boundary_only": false,
       "primary_member": "SC:BE:FinanceMigrationIT#signierterV11ConstraintMigriertFrischenUndBefuelltenV10StandOhneDatenverlust:b5bea41b6c62:44136fa355b3",
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "counting": "business",
       "supplementary_members": [],
       "risks": [
@@ -88605,14 +89187,15 @@
         "3.8/AC-1"
       ],
       "required_integration": [
-        "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart"
+        "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse."
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Abschlussreview: direkte Flyway-/PostgreSQL-Migrationsprüfung, kein externer Anwendungsprozess. Typ korrigiert, Fachnenner und reale Schutzfälle unverändert."
       ],
       "boundary_only": false,
       "primary_member": "SC:BE:FinanceMigrationIT#signierterV11ConstraintMigriertFrischenUndBefuelltenV10StandOhneDatenverlust:b5bea41b6c62:6c7bb9230d88",
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "counting": "business",
       "supplementary_members": [],
       "risks": [
@@ -88642,14 +89225,15 @@
         "3.8/AC-1"
       ],
       "required_integration": [
-        "actual legacy/current schema and unprivileged role provisioning; preserved IDs/owners/dates/budgets/progress; packaged release restart"
+        "Echtes PostgreSQL mit frischem/befülltem Quellstand, Flyway-Migration, Bestandserhalt und minimalen RLS-/Schema-/Spaltenrechten; keine externe Anwendungsprozessgrenze in dieser Klasse."
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Abschlussreview: direkte Flyway-/PostgreSQL-Migrationsprüfung, kein externer Anwendungsprozess. Typ korrigiert, Fachnenner und reale Schutzfälle unverändert."
       ],
       "boundary_only": false,
       "primary_member": "SC:BE:FinanceMigrationIT#signierterV11ConstraintMigriertFrischenUndBefuelltenV10StandOhneDatenverlust:b5bea41b6c62:fd84f2aebb81",
-      "primary_test_type": "process/PostgreSQL",
+      "primary_test_type": "PostgreSQL",
       "counting": "business",
       "supplementary_members": [],
       "risks": [
@@ -122819,8 +123403,11 @@
       },
       "expected_property": [
         "self.assertEqual(result['median_seconds'], 100)",
-        "self.assertEqual(result['target_seconds_70_percent'], 70)",
-        "self.assertTrue(result['local_evidence_complete'])"
+        "self.assertEqual(result['target_seconds'], 900)",
+        "self.assertTrue(result['target_met'])",
+        "self.assertTrue(result['local_evidence_complete'])",
+        "self.assertEqual(measured['target_seconds'], 900)",
+        "self.assertEqual(measured['target_met'], expected)"
       ],
       "members": [
         "SC:PY:test_test_baseline:BaselineTest#test_median_excludes_failed_warmup_and_clean"
@@ -122886,7 +123473,10 @@
       },
       "expected_property": [
         "self.assertFalse(baseline.summarize([run()] * 3)['local_evidence_complete'])",
-        "self.assertFalse(baseline.summarize([run(), run('clean'), run('warmup')])['local_evidence_complete'])"
+        "self.assertFalse(baseline.summarize([run(), run('clean'), run('warmup')])['local_evidence_complete'])",
+        "self.assertIsNone(baseline.summarize([run()])['median_seconds'])",
+        "self.assertIsNone(baseline.summarize([run(), run()])['target_met'])",
+        "self.assertEqual(baseline.summarize([run(), run()])['target_seconds'], 900)"
       ],
       "members": [
         "SC:PY:test_test_baseline:BaselineTest#test_clean_and_warmup_and_three_samples_required"
@@ -122918,7 +123508,8 @@
         "bindings": {}
       },
       "expected_property": [
-        "self.assertEqual(baseline.report_counts(tmp), {'executions': 3, 'distinct_execution_ids': 2, 'duplicate_executions': 1})"
+        "self.assertEqual([counts[key] for key in ('executions', 'distinct_execution_ids', 'duplicate_executions')], [3, 2, 1])",
+        "self.assertEqual(counts['errors'], [])"
       ],
       "members": [
         "SC:PY:test_test_baseline:BaselineTest#test_duplicate_execution_is_not_a_new_case"
@@ -123153,7 +123744,8 @@
         "self.assertEqual([r['kind'] for r in data['runs']], ['warmup', 'measurement', 'measurement', 'measurement', 'clean'])",
         "self.assertTrue(data['summary']['local_evidence_complete'])",
         "self.assertEqual(data['status'], 'passed')",
-        "self.assertEqual(baseline.main(['--output', str(output), '--cache-note', 'test']), 0)"
+        "self.assertEqual(baseline.main(['--output', str(output), '--cache-note', 'test']), 0)",
+        "self.assertEqual('TEST_BASELINE_PHASE_LOG' in call.args[2], group == 'contract')"
       ],
       "members": [
         "SC:PY:test_test_baseline:BaselineTest#test_success_executes_all_six_groups_for_all_five_runs"
@@ -123275,7 +123867,8 @@
         "bindings": {}
       },
       "expected_property": [
-        "ValueError before creation when output lies inside a disposable build path"
+        "self.assertFalse(output.exists())",
+        "self.assertRaisesRegex(ValueError, 'disposable build outputs')"
       ],
       "members": [
         "SC:PY:test_test_baseline:BaselineTest#test_output_inside_cleaned_directory_is_rejected_before_writing"
@@ -123308,7 +123901,9 @@
         "bindings": {}
       },
       "expected_property": [
-        "Old Surefire/Failsafe directories removed; compiled class sentinel survives"
+        "self.assertFalse((target / 'surefire-reports').exists())",
+        "self.assertFalse((target / 'failsafe-reports').exists())",
+        "self.assertTrue((target / 'classes/previous').exists())"
       ],
       "members": [
         "SC:PY:test_test_baseline:BaselineTest#test_backend_reports_are_cleared_without_removing_compiled_classes"
@@ -128770,6 +129365,330 @@
       "risks": [
         "actual browser accessibility or journey boundary",
         "session/UI/input/response-order"
+      ]
+    },
+    "INF-1f4e0e78dc801339": {
+      "rule": "PY:test_test_baseline:BaselineTest#test_resources_capture_limits_affinity_and_only_hashed_host_identity",
+      "label": "test_resources_capture_limits_affinity_and_only_hashed_host_identity",
+      "scope": "infrastructure",
+      "input_state": {
+        "fixture": "scripts/tests/test_test_baseline.py#test_resources_capture_limits_affinity_and_only_hashed_host_identity"
+      },
+      "expected_property": [
+        "self.assertEqual(first['host_fingerprint_sha256'], second['host_fingerprint_sha256'])",
+        "self.assertEqual(first['cpu_models'], ['Fixture CPU'])",
+        "self.assertEqual(first['affinity'], [2, 4])",
+        "self.assertEqual(first['memory_bytes']['MemAvailable'], 512 * 1024)",
+        "self.assertEqual(first['cgroup_limits']['effective']['cpu.max'], '200000 100000')",
+        "self.assertNotIn('private-machine-id', json.dumps(first))",
+        "self.assertNotIn('private-hostname', json.dumps(first))"
+      ],
+      "members": [
+        "SC:PY:test_test_baseline:BaselineTest#test_resources_capture_limits_affinity_and_only_hashed_host_identity"
+      ],
+      "primary_member": "SC:PY:test_test_baseline:BaselineTest#test_resources_capture_limits_affinity_and_only_hashed_host_identity",
+      "primary_test_type": "tool/infrastructure",
+      "counting": "infrastructure",
+      "boundary_only": false,
+      "supplementary_members": [],
+      "requirements": [
+        "5.1/AC-3"
+      ],
+      "risks": [
+        "measurement/tooling regression"
+      ],
+      "required_integration": [
+        "Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution"
+      ],
+      "decision_reasons": [
+        "Abschlussreview: gezielt geprüfte technische Regression; kein zusätzlicher fachlicher Szenarionenner."
+      ]
+    },
+    "INF-a366e136b6ff2417": {
+      "rule": "PY:test_test_baseline:BaselineTest#test_untracked_executable_is_preserved_and_drift_invalidates_run",
+      "label": "test_untracked_executable_is_preserved_and_drift_invalidates_run",
+      "scope": "infrastructure",
+      "input_state": {
+        "fixture": "scripts/tests/test_test_baseline.py#test_untracked_executable_is_preserved_and_drift_invalidates_run"
+      },
+      "expected_property": [
+        "self.assertFalse(data['runs'][0]['input_identity_valid'])",
+        "self.assertEqual(data['runs'][0]['status'], 'failed')",
+        "self.assertEqual(data['runs'][0]['resources_before'], {'boundary': 1})",
+        "self.assertEqual(data['runs'][0]['resources_after'], {'boundary': 2})",
+        "self.assertEqual(saved.read_text(), 'initial runtime')",
+        "self.assertEqual(saved.stat().st_mode & 0o777, 0o755)",
+        "self.assertEqual(old_evidence.read_text(), 'unaltered raw evidence')",
+        "self.assertIsNone(data['summary']['median_seconds'])",
+        "self.assertEqual(baseline.main(['--output', str(output), '--cache-note', 'fixture']), 1)"
+      ],
+      "members": [
+        "SC:PY:test_test_baseline:BaselineTest#test_untracked_executable_is_preserved_and_drift_invalidates_run"
+      ],
+      "primary_member": "SC:PY:test_test_baseline:BaselineTest#test_untracked_executable_is_preserved_and_drift_invalidates_run",
+      "primary_test_type": "tool/infrastructure",
+      "counting": "infrastructure",
+      "boundary_only": false,
+      "supplementary_members": [],
+      "requirements": [
+        "5.1/AC-3",
+        "5.1/AC-8"
+      ],
+      "risks": [
+        "measurement/tooling regression"
+      ],
+      "required_integration": [
+        "Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution"
+      ],
+      "decision_reasons": [
+        "Abschlussreview: gezielt geprüfte technische Regression; kein zusätzlicher fachlicher Szenarionenner."
+      ]
+    },
+    "INF-f647a4293c48343a": {
+      "rule": "PY:test_test_baseline:BaselineTest#test_invalid_report_or_input_guard_cannot_contribute_to_median",
+      "label": "test_invalid_report_or_input_guard_cannot_contribute_to_median",
+      "scope": "infrastructure",
+      "input_state": {
+        "fixture": "scripts/tests/test_test_baseline.py#test_invalid_report_or_input_guard_cannot_contribute_to_median"
+      },
+      "expected_property": [
+        "self.assertEqual(summary['successful_measurements'], 1)",
+        "self.assertFalse(summary['local_evidence_complete'])",
+        "self.assertIsNone(summary['target_met'])"
+      ],
+      "members": [
+        "SC:PY:test_test_baseline:BaselineTest#test_invalid_report_or_input_guard_cannot_contribute_to_median"
+      ],
+      "primary_member": "SC:PY:test_test_baseline:BaselineTest#test_invalid_report_or_input_guard_cannot_contribute_to_median",
+      "primary_test_type": "tool/infrastructure",
+      "counting": "infrastructure",
+      "boundary_only": false,
+      "supplementary_members": [],
+      "requirements": [
+        "5.1/AC-1",
+        "5.1/AC-3"
+      ],
+      "risks": [
+        "measurement/tooling regression"
+      ],
+      "required_integration": [
+        "Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution"
+      ],
+      "decision_reasons": [
+        "Abschlussreview: gezielt geprüfte technische Regression; kein zusätzlicher fachlicher Szenarionenner."
+      ]
+    },
+    "INF-88849affb74c20ee": {
+      "rule": "PY:test_test_baseline:BaselineTest#test_backend_scope_includes_current_parameters_inheritance_and_new_tests",
+      "label": "test_backend_scope_includes_current_parameters_inheritance_and_new_tests",
+      "scope": "infrastructure",
+      "input_state": {
+        "fixture": "scripts/tests/test_test_baseline.py#test_backend_scope_includes_current_parameters_inheritance_and_new_tests"
+      },
+      "expected_property": [
+        "self.assertEqual(expected['failsafe'][('example.NextIT', 'variants')], 2)",
+        "self.assertEqual(baseline.validate_backend_reports(reports), [])",
+        "self.assertTrue(any('missing=' in error and 'added' in error for error in baseline.validate_backend_reports(reports)))"
+      ],
+      "members": [
+        "SC:PY:test_test_baseline:BaselineTest#test_backend_scope_includes_current_parameters_inheritance_and_new_tests"
+      ],
+      "primary_member": "SC:PY:test_test_baseline:BaselineTest#test_backend_scope_includes_current_parameters_inheritance_and_new_tests",
+      "primary_test_type": "tool/infrastructure",
+      "counting": "infrastructure",
+      "boundary_only": false,
+      "supplementary_members": [],
+      "requirements": [
+        "5.1/AC-1"
+      ],
+      "risks": [
+        "measurement/tooling regression"
+      ],
+      "required_integration": [
+        "Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution"
+      ],
+      "decision_reasons": [
+        "Abschlussreview: gezielt geprüfte technische Regression; kein zusätzlicher fachlicher Szenarionenner."
+      ]
+    },
+    "INF-bb0a2047ac67c24d": {
+      "rule": "PY:test_test_baseline:BaselineTest#test_empty_reduced_skipped_and_malformed_backend_reports_are_rejected",
+      "label": "test_empty_reduced_skipped_and_malformed_backend_reports_are_rejected",
+      "scope": "infrastructure",
+      "input_state": {
+        "fixture": "scripts/tests/test_test_baseline.py#test_empty_reduced_skipped_and_malformed_backend_reports_are_rejected"
+      },
+      "expected_property": [
+        "self.assertTrue(baseline.validate_backend_reports(reports))",
+        "self.assertEqual(reports['failsafe']['skipped'], 1)",
+        "self.assertTrue(baseline.validate_backend_reports(reports))",
+        "self.assertTrue(reports['failsafe']['errors'])",
+        "self.assertTrue(baseline.validate_backend_reports(reports))",
+        "self.assertTrue(any('empty test discovery' in error for error in baseline.validate_backend_reports(reports)))"
+      ],
+      "members": [
+        "SC:PY:test_test_baseline:BaselineTest#test_empty_reduced_skipped_and_malformed_backend_reports_are_rejected"
+      ],
+      "primary_member": "SC:PY:test_test_baseline:BaselineTest#test_empty_reduced_skipped_and_malformed_backend_reports_are_rejected",
+      "primary_test_type": "tool/infrastructure",
+      "counting": "infrastructure",
+      "boundary_only": false,
+      "supplementary_members": [],
+      "requirements": [
+        "5.1/AC-1",
+        "5.1/AC-8"
+      ],
+      "risks": [
+        "measurement/tooling regression"
+      ],
+      "required_integration": [
+        "Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution"
+      ],
+      "decision_reasons": [
+        "Abschlussreview: gezielt geprüfte technische Regression; kein zusätzlicher fachlicher Szenarionenner."
+      ]
+    },
+    "INF-596c7fc03f3b6222": {
+      "rule": "PY:test_test_baseline:BaselineTest#test_malformed_backend_xml_is_preserved_before_failure_is_saved",
+      "label": "test_malformed_backend_xml_is_preserved_before_failure_is_saved",
+      "scope": "infrastructure",
+      "input_state": {
+        "fixture": "scripts/tests/test_test_baseline.py#test_malformed_backend_xml_is_preserved_before_failure_is_saved"
+      },
+      "expected_property": [
+        "self.assertEqual(data['status'], 'failed')",
+        "self.assertTrue(data['runs'][0]['groups'][0]['interrupted'])",
+        "self.assertTrue(data['runs'][0]['groups'][0]['failsafe']['errors'])",
+        "self.assertEqual((output / '00-warmup-failsafe-reports/TEST-broken.xml').read_text(), '<testsuite><testcase')",
+        "self.assertEqual(baseline.main(['--output', str(output), '--cache-note', 'fixture']), 1)"
+      ],
+      "members": [
+        "SC:PY:test_test_baseline:BaselineTest#test_malformed_backend_xml_is_preserved_before_failure_is_saved"
+      ],
+      "primary_member": "SC:PY:test_test_baseline:BaselineTest#test_malformed_backend_xml_is_preserved_before_failure_is_saved",
+      "primary_test_type": "tool/infrastructure",
+      "counting": "infrastructure",
+      "boundary_only": false,
+      "supplementary_members": [],
+      "requirements": [
+        "5.1/AC-3",
+        "5.1/AC-8"
+      ],
+      "risks": [
+        "measurement/tooling regression"
+      ],
+      "required_integration": [
+        "Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution"
+      ],
+      "decision_reasons": [
+        "Abschlussreview: gezielt geprüfte technische Regression; kein zusätzlicher fachlicher Szenarionenner."
+      ]
+    },
+    "INF-97e59222599c294b": {
+      "rule": "PY:test_test_baseline:BaselineTest#test_browser_actual_pass_identities_must_match_nonempty_current_discovery",
+      "label": "test_browser_actual_pass_identities_must_match_nonempty_current_discovery",
+      "scope": "infrastructure",
+      "input_state": {
+        "fixture": "scripts/tests/test_test_baseline.py#test_browser_actual_pass_identities_must_match_nonempty_current_discovery"
+      },
+      "expected_property": [
+        "self.assertEqual(errors, [])",
+        "self.assertEqual(baseline.validate_browser_report(path, expected), [])",
+        "self.assertTrue(baseline.validate_browser_report(path, expected))",
+        "self.assertEqual(baseline.validate_browser_report(path, new_expected), [])",
+        "self.assertTrue(baseline.validate_browser_report(path, expected))"
+      ],
+      "members": [
+        "SC:PY:test_test_baseline:BaselineTest#test_browser_actual_pass_identities_must_match_nonempty_current_discovery"
+      ],
+      "primary_member": "SC:PY:test_test_baseline:BaselineTest#test_browser_actual_pass_identities_must_match_nonempty_current_discovery",
+      "primary_test_type": "tool/infrastructure",
+      "counting": "infrastructure",
+      "boundary_only": false,
+      "supplementary_members": [],
+      "requirements": [
+        "5.1/AC-1",
+        "5.1/AC-8"
+      ],
+      "risks": [
+        "measurement/tooling regression"
+      ],
+      "required_integration": [
+        "Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution"
+      ],
+      "decision_reasons": [
+        "Abschlussreview: gezielt geprüfte technische Regression; kein zusätzlicher fachlicher Szenarionenner."
+      ]
+    },
+    "INF-246f1b699abba67e": {
+      "rule": "PY:test_test_baseline:BaselineTest#test_timeout_kills_stubborn_descendant_after_leader_exits",
+      "label": "test_timeout_kills_stubborn_descendant_after_leader_exits",
+      "scope": "infrastructure",
+      "input_state": {
+        "fixture": "scripts/tests/test_test_baseline.py#test_timeout_kills_stubborn_descendant_after_leader_exits"
+      },
+      "expected_property": [
+        "self.assertEqual(code, 124)",
+        "self.assertTrue(ready.exists(), 'descendant must install its TERM handler before timeout')",
+        "self.fail('stubborn descendant survived process-group cleanup')"
+      ],
+      "members": [
+        "SC:PY:test_test_baseline:BaselineTest#test_timeout_kills_stubborn_descendant_after_leader_exits"
+      ],
+      "primary_member": "SC:PY:test_test_baseline:BaselineTest#test_timeout_kills_stubborn_descendant_after_leader_exits",
+      "primary_test_type": "tool/infrastructure",
+      "counting": "infrastructure",
+      "boundary_only": false,
+      "supplementary_members": [],
+      "requirements": [
+        "5.1/AC-8",
+        "TR-10"
+      ],
+      "risks": [
+        "measurement/tooling regression"
+      ],
+      "required_integration": [
+        "Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution"
+      ],
+      "decision_reasons": [
+        "Abschlussreview: gezielt geprüfte technische Regression; kein zusätzlicher fachlicher Szenarionenner."
+      ]
+    },
+    "INF-1e5823e0014d92f6": {
+      "rule": "PY:test_test_baseline:BaselineTest#test_sigterm_persists_interrupted_group_and_terminates_process",
+      "label": "test_sigterm_persists_interrupted_group_and_terminates_process",
+      "scope": "infrastructure",
+      "input_state": {
+        "fixture": "scripts/tests/test_test_baseline.py#test_sigterm_persists_interrupted_group_and_terminates_process"
+      },
+      "expected_property": [
+        "self.assertEqual(data['status'], 'failed')",
+        "self.assertTrue(data['runs'][0]['groups'][0]['interrupted'])",
+        "self.assertEqual(data['runs'][0]['groups'][0]['exit_code'], 143)",
+        "self.assertIsNone(data['summary']['median_seconds'])",
+        "self.assertTrue(ready.exists())",
+        "self.assertEqual(process.wait(timeout=4), 1)"
+      ],
+      "members": [
+        "SC:PY:test_test_baseline:BaselineTest#test_sigterm_persists_interrupted_group_and_terminates_process"
+      ],
+      "primary_member": "SC:PY:test_test_baseline:BaselineTest#test_sigterm_persists_interrupted_group_and_terminates_process",
+      "primary_test_type": "tool/infrastructure",
+      "counting": "infrastructure",
+      "boundary_only": false,
+      "supplementary_members": [],
+      "requirements": [
+        "5.1/AC-8",
+        "TR-10"
+      ],
+      "risks": [
+        "measurement/tooling regression"
+      ],
+      "required_integration": [
+        "Python stubbed command/tool regression is supplementary to actual release/database lifecycle and full-build execution"
+      ],
+      "decision_reasons": [
+        "Abschlussreview: gezielt geprüfte technische Regression; kein zusätzlicher fachlicher Szenarionenner."
       ]
     }
   },
@@ -138482,6 +139401,60 @@
         "INF-ec7ca5abc597116e"
       ],
       "reason": "Explizite Zuordnung zu geprüfter Regel/Eingabe/Beobachtung; Quellgruppe bleibt vollständig erhalten."
+    },
+    "SC:PY:test_test_baseline:BaselineTest#test_resources_capture_limits_affinity_and_only_hashed_host_identity": {
+      "canonical_scenarios": [
+        "INF-1f4e0e78dc801339"
+      ],
+      "reason": "Explizite Reviewzuordnung der ausgeführten Messwerkzeugregression; Infrastruktur außerhalb des Fachnenners."
+    },
+    "SC:PY:test_test_baseline:BaselineTest#test_untracked_executable_is_preserved_and_drift_invalidates_run": {
+      "canonical_scenarios": [
+        "INF-a366e136b6ff2417"
+      ],
+      "reason": "Explizite Reviewzuordnung der ausgeführten Messwerkzeugregression; Infrastruktur außerhalb des Fachnenners."
+    },
+    "SC:PY:test_test_baseline:BaselineTest#test_invalid_report_or_input_guard_cannot_contribute_to_median": {
+      "canonical_scenarios": [
+        "INF-f647a4293c48343a"
+      ],
+      "reason": "Explizite Reviewzuordnung der ausgeführten Messwerkzeugregression; Infrastruktur außerhalb des Fachnenners."
+    },
+    "SC:PY:test_test_baseline:BaselineTest#test_backend_scope_includes_current_parameters_inheritance_and_new_tests": {
+      "canonical_scenarios": [
+        "INF-88849affb74c20ee"
+      ],
+      "reason": "Explizite Reviewzuordnung der ausgeführten Messwerkzeugregression; Infrastruktur außerhalb des Fachnenners."
+    },
+    "SC:PY:test_test_baseline:BaselineTest#test_empty_reduced_skipped_and_malformed_backend_reports_are_rejected": {
+      "canonical_scenarios": [
+        "INF-bb0a2047ac67c24d"
+      ],
+      "reason": "Explizite Reviewzuordnung der ausgeführten Messwerkzeugregression; Infrastruktur außerhalb des Fachnenners."
+    },
+    "SC:PY:test_test_baseline:BaselineTest#test_malformed_backend_xml_is_preserved_before_failure_is_saved": {
+      "canonical_scenarios": [
+        "INF-596c7fc03f3b6222"
+      ],
+      "reason": "Explizite Reviewzuordnung der ausgeführten Messwerkzeugregression; Infrastruktur außerhalb des Fachnenners."
+    },
+    "SC:PY:test_test_baseline:BaselineTest#test_browser_actual_pass_identities_must_match_nonempty_current_discovery": {
+      "canonical_scenarios": [
+        "INF-97e59222599c294b"
+      ],
+      "reason": "Explizite Reviewzuordnung der ausgeführten Messwerkzeugregression; Infrastruktur außerhalb des Fachnenners."
+    },
+    "SC:PY:test_test_baseline:BaselineTest#test_timeout_kills_stubborn_descendant_after_leader_exits": {
+      "canonical_scenarios": [
+        "INF-246f1b699abba67e"
+      ],
+      "reason": "Explizite Reviewzuordnung der ausgeführten Messwerkzeugregression; Infrastruktur außerhalb des Fachnenners."
+    },
+    "SC:PY:test_test_baseline:BaselineTest#test_sigterm_persists_interrupted_group_and_terminates_process": {
+      "canonical_scenarios": [
+        "INF-1e5823e0014d92f6"
+      ],
+      "reason": "Explizite Reviewzuordnung der ausgeführten Messwerkzeugregression; Infrastruktur außerhalb des Fachnenners."
     }
   },
   "browser_inner_loops": [
@@ -140627,8 +141600,8 @@
   "semantic_review": {
     "reviewed_on": "2026-11-14",
     "scope": "vollständiger statischer Szenarioabgleich; kein Integrations- oder Coverage-Erfolgsnachweis",
-    "source_groups": 1534,
-    "source_cases": 746,
+    "source_groups": 1543,
+    "source_cases": 755,
     "loop_rows": 99,
     "merge_families": [
       "Ausgaben-Anlage/Bearbeitung/Fachvalidator",
@@ -140648,6 +141621,8 @@
       "4.7",
       "4.8"
     ],
-    "fixture_scope": "Alle Backend-Testquellen einschließlich Hilfen, Browser-Testquellen einschließlich Support, Playwright-Konfigurationen und die bereits inventarisierten Python-Testquellen."
+    "fixture_scope": "Alle Backend-Testquellen einschließlich Hilfen, Browser-Testquellen einschließlich Support, Playwright-Konfigurationen und die bereits inventarisierten Python-Testquellen.",
+    "tooling_target_update": "2026-11-14: Nutzerziel fest 900 Sekunden; Zielstatus nur bei vollständiger Serie, exakte Grenze 900 inklusive geprüft. Fachszenarionenner unverändert.",
+    "final_review": "Alle drei Reviewebenen ausgewertet; Messwerkzeugregressionen und Klassifikation FinanceMigrationIT korrigiert. Fachszenarionenner unverändert; technische neue Fälle separat."
   }
 }

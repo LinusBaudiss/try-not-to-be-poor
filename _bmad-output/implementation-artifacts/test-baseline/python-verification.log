@@ -18,8 +18,11 @@ test_fehlgeschlagener_datenbankstart_fuehrt_keinen_rechteabgleich_aus (test_star
 test_fehlgeschlagener_rechteabgleich_verhindert_den_erfolgreichen_start (test_start_database.StartDatabaseTest.test_fehlgeschlagener_rechteabgleich_verhindert_den_erfolgreichen_start) ... ok
 test_jeder_start_gleicht_nach_bereitschaft_die_rechte_administrativ_ab (test_start_database.StartDatabaseTest.test_jeder_start_gleicht_nach_bereitschaft_die_rechte_administrativ_ab) ... ok
 test_backend_reports_are_cleared_without_removing_compiled_classes (test_test_baseline.BaselineTest.test_backend_reports_are_cleared_without_removing_compiled_classes) ... ok
+test_backend_scope_includes_current_parameters_inheritance_and_new_tests (test_test_baseline.BaselineTest.test_backend_scope_includes_current_parameters_inheritance_and_new_tests) ... ok
+test_browser_actual_pass_identities_must_match_nonempty_current_discovery (test_test_baseline.BaselineTest.test_browser_actual_pass_identities_must_match_nonempty_current_discovery) ... ok
 test_clean_and_warmup_and_three_samples_required (test_test_baseline.BaselineTest.test_clean_and_warmup_and_three_samples_required) ... ok
 test_duplicate_execution_is_not_a_new_case (test_test_baseline.BaselineTest.test_duplicate_execution_is_not_a_new_case) ... ok
+test_empty_reduced_skipped_and_malformed_backend_reports_are_rejected (test_test_baseline.BaselineTest.test_empty_reduced_skipped_and_malformed_backend_reports_are_rejected) ... ok
 test_existing_output_is_never_overwritten (test_test_baseline.BaselineTest.test_existing_output_is_never_overwritten) ... ok
 test_fewer_than_three_measurements_rejected (test_test_baseline.BaselineTest.test_fewer_than_three_measurements_rejected) ... usage: python3 -m unittest [-h] --output OUTPUT [--measurements MEASUREMENTS]
                            --cache-note CACHE_NOTE [--preflight-only]
@@ -28,6 +31,9 @@ ok
 test_group_failure_stops_and_preserves_failed_log (test_test_baseline.BaselineTest.test_group_failure_stops_and_preserves_failed_log) ... warmup 0: python
 ok
 test_incomplete_warmup_does_not_make_evidence_complete (test_test_baseline.BaselineTest.test_incomplete_warmup_does_not_make_evidence_complete) ... ok
+test_invalid_report_or_input_guard_cannot_contribute_to_median (test_test_baseline.BaselineTest.test_invalid_report_or_input_guard_cannot_contribute_to_median) ... ok
+test_malformed_backend_xml_is_preserved_before_failure_is_saved (test_test_baseline.BaselineTest.test_malformed_backend_xml_is_preserved_before_failure_is_saved) ... warmup 0: backend
+ok
 test_median_excludes_failed_warmup_and_clean (test_test_baseline.BaselineTest.test_median_excludes_failed_warmup_and_clean) ... ok
 test_missing_group_nonzero_or_reordered_groups_are_not_complete (test_test_baseline.BaselineTest.test_missing_group_nonzero_or_reordered_groups_are_not_complete) ... ok
 test_output_inside_cleaned_directory_is_rejected_before_writing (test_test_baseline.BaselineTest.test_output_inside_cleaned_directory_is_rejected_before_writing) ... ok
@@ -35,6 +41,8 @@ test_phase_records_exit_code_and_inclusive_time (test_test_baseline.BaselineTest
 test_preflight_failure_writes_evidence_without_running_groups (test_test_baseline.BaselineTest.test_preflight_failure_writes_evidence_without_running_groups) ... port 8080 unavailable
 ok
 test_preflight_records_missing_tools (test_test_baseline.BaselineTest.test_preflight_records_missing_tools) ... ok
+test_resources_capture_limits_affinity_and_only_hashed_host_identity (test_test_baseline.BaselineTest.test_resources_capture_limits_affinity_and_only_hashed_host_identity) ... ok
+test_sigterm_persists_interrupted_group_and_terminates_process (test_test_baseline.BaselineTest.test_sigterm_persists_interrupted_group_and_terminates_process) ... ok
 test_success_executes_all_six_groups_for_all_five_runs (test_test_baseline.BaselineTest.test_success_executes_all_six_groups_for_all_five_runs) ... warmup 0: python
 warmup 0: contract
 warmup 0: backend
@@ -66,8 +74,11 @@ clean 4: browser
 clean 4: transition
 clean 4: automation
 ok
+test_timeout_kills_stubborn_descendant_after_leader_exits (test_test_baseline.BaselineTest.test_timeout_kills_stubborn_descendant_after_leader_exits) ... ok
+test_untracked_executable_is_preserved_and_drift_invalidates_run (test_test_baseline.BaselineTest.test_untracked_executable_is_preserved_and_drift_invalidates_run) ... warmup 0: python
+ok
 
 ----------------------------------------------------------------------
-Ran 33 tests in 1.183s
+Ran 42 tests in 1.992s
 
 OK

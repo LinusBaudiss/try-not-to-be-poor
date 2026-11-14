@@ -116,4 +116,9 @@ Alle drei Reviewebenen vollständig eingegangen; keine Ebene übersprungen. Die 
 - Reviewkorrekturen: Host-/Ressourcendaten und Laufgrenzen, Quellidentitätsprüfung und konservierte unversionierte Eingaben, SIGTERM-/Prozessbaum-Cleanup, fehlerhafte XML-Evidenz, dynamische Discovery, Klassifikations-Enums, neue Testdateien trotz Cache und konsolidierte Dokumentation. FinanceMigrationIT als direkte PostgreSQL-Migrationsprüfung eingestuft. Neue Werkzeugregressionen bleiben Infrastruktur; Fachnenner/Unitquote unverändert. Schema 3 ersetzt die früheren neuen Schema-2-Angaben; historische Berichte nicht umgeschrieben.
 - Technische Spec done; Projektstory review. Keine Produktionsfreigabe und keine Abnahme des 15-Minuten-Ziels; kein Push/GitHub-Spiegel. Commit-/PR-Unterlagen vorbereitet.
 
-- Commit-Versuch nach Abschluss: `git add` scheitert an schreibgeschütztem `.git/index.lock`. Kein Staging/Commit/Push ausgeführt. Konkrete Commitnachricht [commit-story-5-1.txt](commit-story-5-1.txt) und [PR-Entwurf](pr-story-5-1.md) sind verfügbar; die technischen Prüfungen und der Storystatus bleiben davon unberührt.
+- Commit-Versuch nach Abschluss: `git add` scheitert an schreibgeschütztem `.git/index.lock`. Kein Staging/Commit/Push ausgeführt. Konkrete Commitnachricht commit-story-5-1.txt (`commit-story-5-1.txt`, historischer Entwurf entfernt; siehe Fortsetzungsvermerk) und PR-Entwurf (`pr-story-5-1.md`, historischer Entwurf entfernt; siehe Fortsetzungsvermerk) sind verfügbar; die technischen Prüfungen und der Storystatus bleiben davon unberührt.
+
+
+## Fortsetzung: Nachweisarchiv und PR-Bereinigung (14.11.2026)
+
+Die historischen Rohbelege bleiben unverändert im [geprüften Nachweisarchiv](test-baseline/ARCHIVE.md) zugänglich. Die lokale Bereinigung und Werkzeugkorrektur wird in [spec-pr-64-nachweise-bereinigen.md](spec-pr-64-nachweise-bereinigen.md) fortgeführt. Historische Pfade in dieser Spec beziehen sich auf den wiederhergestellten alten Archivbaum; damalige Prüfergebnisse, Fachzuordnungen, Ziele und Abnahmestände bleiben unverändert. Die früheren Commit-/PR-Entwürfe wurden nach Veröffentlichung von PR #64 entfernt.

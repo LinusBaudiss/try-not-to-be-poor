@@ -1,5 +1,7 @@
 # Abgeschlossener statischer Szenario-Abgleich — Story 5.1
 
+Historische Rohbelege (Logs, Patches, XML-/Coverage-Berichte und Versuche) sind unverändert im [geprüften Nachweisarchiv](ARCHIVE.md) erhalten. Pfade zu diesen Belegen beziehen sich auf den dort wiederhergestellten alten Verzeichnisbaum.
+
 Referenz: `8f66421be3b7090c5cd384c9679657d9a17a6b3f`, geprüft am 2026-11-14. Dies schließt den **statischen fachlichen Abgleich** ab. Die vollständige lokale Messserie und separate Coverage liegen inzwischen vor; aktueller Abnahmestand und Grenzen stehen in [REPORT.md](REPORT.md).
 
 ## Verbindliche Zählung

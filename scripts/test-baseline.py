@@ -423,8 +423,9 @@ def _main(argv=None):
     validate_output(args.output)
     args.output.mkdir(parents=True, exist_ok=False)
     errors, versions = preflight()
+    git_available = 'missing tool: git' not in errors
     evidence = {'schema_version': 3, 'started_utc': dt.datetime.now(dt.timezone.utc).isoformat(),
-                'revision': revision(), 'environment': {'platform': platform.platform(), 'machine': platform.machine(),
+                'revision': revision() if git_available else {'unavailable': 'missing tool: git'}, 'environment': {'platform': platform.platform(), 'machine': platform.machine(),
                 'cpu_count': os.cpu_count(), 'python': sys.version, 'tools': versions,
                 'load_average': os.getloadavg(), 'resources': resources(), 'cache_note': args.cache_note,
                 'browser_executable': os.environ.get('PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH'),
@@ -434,9 +435,10 @@ def _main(argv=None):
                 'clean_paths': CLEAN_PATHS, 'preflight_errors': errors, 'runs': [], 'status': 'blocked' if errors else 'ready',
                 'summary': summarize([])}
     # Preserve exact dirty tracked inputs, including the runner itself when untracked.
-    (args.output / 'tracked-input.patch').write_bytes(subprocess.check_output(['git', 'diff', '--binary', 'HEAD'], cwd=ROOT))
-    initial_inputs = input_identity(args.output, preserve=True)
-    save(args.output / 'input-sha256.json', initial_inputs)
+    if git_available:
+        (args.output / 'tracked-input.patch').write_bytes(subprocess.check_output(['git', 'diff', '--binary', 'HEAD'], cwd=ROOT))
+        initial_inputs = input_identity(args.output, preserve=True)
+        save(args.output / 'input-sha256.json', initial_inputs)
     save(args.output / 'results.json', evidence)
     def persist_termination(signum, frame):
         signal.signal(signal.SIGTERM, signal.SIG_IGN)

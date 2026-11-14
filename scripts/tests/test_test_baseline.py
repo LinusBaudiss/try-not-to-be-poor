@@ -79,14 +79,29 @@ class BaselineTest(unittest.TestCase):
         self.assertIn('missing tool: unzip', errors)
 
     def test_preflight_failure_writes_evidence_without_running_groups(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            output = Path(tmp, 'evidence')
-            with patch.object(baseline, 'preflight', return_value=(['port 8080 unavailable'], {})), \
-                 patch.object(baseline, 'revision', return_value={}), \
-                 patch.object(baseline, 'capture', return_value=''), \
-                 patch.object(baseline.subprocess, 'check_output', return_value=b''):
-                self.assertEqual(baseline.main(['--output', str(output), '--cache-note', 'test']), 2)
-            self.assertIn('port 8080 unavailable', (output / 'results.json').read_text())
+        import json
+        for error in ('port 8080 unavailable', 'missing tool: git'):
+            with self.subTest(error=error), tempfile.TemporaryDirectory() as tmp:
+                output = Path(tmp, 'evidence')
+                with patch.object(baseline, 'preflight', return_value=([error], {})), \
+                     patch.object(baseline, 'revision', return_value={}) as revision, \
+                     patch.object(baseline, 'capture', return_value=''), \
+                     patch.object(baseline.subprocess, 'check_output', return_value=b'') as git, \
+                     patch.object(baseline, 'input_identity', return_value={}) as identity, \
+                     patch.object(baseline, 'execute_group') as execute:
+                    self.assertEqual(baseline.main(['--output', str(output), '--cache-note', 'test']), 2)
+                data = json.loads((output / 'results.json').read_text())
+                self.assertIn(error, data['preflight_errors'])
+                self.assertEqual(data['status'], 'blocked')
+                self.assertEqual(data['runs'], [])
+                execute.assert_not_called()
+                if error == 'missing tool: git':
+                    revision.assert_not_called()
+                    git.assert_not_called()
+                    identity.assert_not_called()
+                    self.assertEqual(data['revision'], {'unavailable': error})
+                    self.assertFalse((output / 'tracked-input.patch').exists())
+                    self.assertFalse((output / 'input-sha256.json').exists())
 
     def test_fewer_than_three_measurements_rejected(self):
         with self.assertRaises(SystemExit):

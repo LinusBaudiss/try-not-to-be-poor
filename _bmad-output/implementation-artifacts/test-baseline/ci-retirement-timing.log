@@ -1,8 +1,0 @@
-Source: workflow 43611663659, job 132497827747; successful PR run at 657e05d92fc07acc206e37db315cea003c9ba60e; retrieved read-only 2026-11-14.
-2026-11-14T15:43:12.7987515Z Cache hit for: setup-java-Linux-x64-maven-df279d444980aad3437bc0833300706d9a9dbd0052ed17fc268222638fff46fa
-2026-11-14T15:43:13.3424372Z Cache restored successfully
-2026-11-14T15:43:13.3448532Z Cache restored from key: setup-java-Linux-x64-maven-df279d444980aad3437bc0833300706d9a9dbd0052ed17fc268222638fff46fa
-2026-11-14T15:57:22.8118377Z [INFO] Tests run: 59, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 820.1 s -- in de.linus.tnbp.versions.ReleaseTransitionIT
-2026-11-14T16:00:53.2350144Z [INFO] Tests run: 20, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 210.4 s -- in de.linus.tnbp.versions.AdministrativeSerializationIT
-2026-11-14T16:00:53.5384534Z [INFO] Total time:  17:36 min
-2026-11-14T16:00:53.7049355Z Cache hit occurred on the primary key setup-java-Linux-x64-maven-df279d444980aad3437bc0833300706d9a9dbd0052ed17fc268222638fff46fa, not saving cache.

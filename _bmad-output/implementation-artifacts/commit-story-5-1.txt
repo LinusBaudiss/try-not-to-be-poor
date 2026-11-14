@@ -1,9 +1,0 @@
-chore: schließe Testbaseline und Messnachweise für Story 5.1 ab
-
-Ergänzt vollständige Laufzeit- und Coverage-Nachweise, Szenarioinventar und
-geprüfte Kostenprioritäten. Härtet Messwerkzeug gegen Abbruch, Quelländerung
-und reduzierte Testdiscovery. Fixiert das Nutzerziel auf 900 Sekunden.
-
-Baselinemedian 1755,133 Sekunden; das Laufzeitziel ist noch nicht erreicht.
-42 Python- und 14 Inventarprüfungen erfolgreich. Produktcode unverändert.
-Technische Spec abgeschlossen, Story zur Projektabnahme in review.

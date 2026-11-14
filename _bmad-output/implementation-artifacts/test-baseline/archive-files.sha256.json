@@ -1,0 +1,2910 @@
+{
+  "schema_version": 1,
+  "source_commit": "cc9e34acb513c7a06eb9c677f6fda9e9c74277c6",
+  "files": [
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/ACCEPTANCE.md",
+      "size": 6037,
+      "mode": "0o664",
+      "sha256": "8caa9df4babef89748649fba638112bbc1367e9d055927c7be90a1c8a177f75f"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/COSTS.md",
+      "size": 4204,
+      "mode": "0o664",
+      "sha256": "3078eda6fbf84dd7d1949e71c774a2da7cd42d71d36aba6196177e13ae79f42e"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/DiscoverTests.java",
+      "size": 1636,
+      "mode": "0o664",
+      "sha256": "3ffb0cee4c55d392ca9370d519873a5ca2d77ce46f263e34fe28c898a712666f"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/LOCAL-BASELINE.md",
+      "size": 10292,
+      "mode": "0o664",
+      "sha256": "365d3868c3570b6f28c645d8f57803b1e9e3939cfc2c27c1b9ee784c7cf6313d"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/REPORT.md",
+      "size": 6299,
+      "mode": "0o664",
+      "sha256": "828fcfb5e986489fb0c5af80a7df38104763aa52fd96361504dcfd9fc35baa6f"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/REVIEW.md",
+      "size": 3417,
+      "mode": "0o664",
+      "sha256": "8ecd9378ca4ed1c402b8eebbb084af65c3d1242bfab860bee9f50b6b77dc2622"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/SCENARIO-REVIEW.md",
+      "size": 8404,
+      "mode": "0o664",
+      "sha256": "2e361bb24a189e1acc02c762cc48b0c8c15a06814e8006c3d088573399f9760e"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/attempt-2026-11-14-01/input-sha256.json",
+      "size": 96544,
+      "mode": "0o664",
+      "sha256": "6aeb75eeaa82db88d62e0469252eaa85ff1d23336af05c1cce3c640e9ae105d5"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/attempt-2026-11-14-01/results.json",
+      "size": 2993,
+      "mode": "0o664",
+      "sha256": "86df1498534a8d16389fb7394ac8b792f5d6d5edd96c941e10311b9a54cdeff4"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/attempt-2026-11-14-01/tracked-input.patch",
+      "size": 2138,
+      "mode": "0o664",
+      "sha256": "04e58d090fce9d1794100aba59727cb06e381c4e72239e7a146d7b88d2a775ef"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/attempt-2026-11-14-final/input-sha256.json",
+      "size": 100350,
+      "mode": "0o664",
+      "sha256": "5e08a285010ab3711aaa5cb26a4217e8001d76803d2f4757480df5231ce71ea8"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/attempt-2026-11-14-final/results.json",
+      "size": 5349,
+      "mode": "0o664",
+      "sha256": "c1a48777c026c9f2aa8c8db2f8f5687cdf5be0a205a6597d904cb9fbe3fe31a3"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/attempt-2026-11-14-final/tracked-input.patch",
+      "size": 8500,
+      "mode": "0o664",
+      "sha256": "db4afaf3a9fc27426cb8b29b3af90b94ae89b8632d8b8edf6138f7d2924369ef"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/attempt-2026-11-14-review/input-sha256.json",
+      "size": 101319,
+      "mode": "0o664",
+      "sha256": "9106705e882bbbaf54b6b713c325ebf4de4744484abb880ba9f6ead9d01ac803"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/attempt-2026-11-14-review/results.json",
+      "size": 5836,
+      "mode": "0o664",
+      "sha256": "57feefdbb9cfe1023cdb648fcdffcda39c657bf50b2c29596b712b72b7f7972d"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/attempt-2026-11-14-review/tracked-input.patch",
+      "size": 8696,
+      "mode": "0o664",
+      "sha256": "eb2a18d666e2dcfbb73bd706607e358c58113acddd9cf87538b49db393ea1f22"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/backend-test-compile.log",
+      "size": 21161,
+      "mode": "0o664",
+      "sha256": "eb5e4c7e23c3645ed0f1f251a0465201556feec86755210f09a8b14976af71d1"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/backend-unit-architecture-explicit-agent.log",
+      "size": 23102,
+      "mode": "0o664",
+      "sha256": "6a720da5fed84dcf915e4b8da35d8712570babbc5dc8a4cd54d7b1aa03dcc9b8"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/backend-unit-architecture-verification.log",
+      "size": 41707,
+      "mode": "0o664",
+      "sha256": "1a244c92358990a11cfa58b167ec717068f432c2ee4e0b326c66b9483bd339d5"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/browser-loop-evidence.json",
+      "size": 127965,
+      "mode": "0o664",
+      "sha256": "8433f5a73f9069e68a82d551faf64f47cf67b83210d2a432ea1d77e8ca9fb160"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/canonical-scenarios.csv",
+      "size": 1776467,
+      "mode": "0o664",
+      "sha256": "712369a7594c3dfff7c5675a698fa5a6e7aea58d8ddc0884979f46367cb6d19f"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/ci-evidence.json",
+      "size": 73690,
+      "mode": "0o664",
+      "sha256": "690d43d887f117930d213e3138bca7324079bc64081a20b750f8adbcd1b04bea"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/ci-retirement-timing.log",
+      "size": 1045,
+      "mode": "0o664",
+      "sha256": "a7d28e04bb42c48adb8d36f05018fbd019f8a0c0eb1925a22f44679ffbcc2b49"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/ci-retirement-timings.json",
+      "size": 3296,
+      "mode": "0o664",
+      "sha256": "e541823568d814b492483d54e36b118f241ad2e58dc2697844710fc28dbc0fd1"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/ci-step-costs.json",
+      "size": 36022,
+      "mode": "0o664",
+      "sha256": "7497505ae2aa613beefcafc58e56a411a8dab2970c20da897136669bca31abc4"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/cost-breakdown.json",
+      "size": 4159,
+      "mode": "0o664",
+      "sha256": "d566c70275e2f224d49692f4079e0f64ff84124479a176e4429135672f62bc7a"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-attempt.log",
+      "size": 6164,
+      "mode": "0o664",
+      "sha256": "2778b0e47a665d09a5baa10524d9ced1c102fec48a86339a02b731b277e5346a"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-offline-attempt.log",
+      "size": 1497,
+      "mode": "0o664",
+      "sha256": "015518724b090980f1cc87f705e78a2619182566f108c4b1fdc1ba6ad066c434"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/README.md",
+      "size": 1922,
+      "mode": "0o664",
+      "sha256": "ef936eba71c2b27d0fdd1dbd78b8886528f2617b9d91c966caf64cc20949fef1"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/discovery-and-instrumented-costs.json",
+      "size": 3661,
+      "mode": "0o664",
+      "sha256": "b2eda8e89de39efbfd975fc832938d91fbf0da5f76f2ea7a9a8066c70b9481ba"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/evidence.json",
+      "size": 72580,
+      "mode": "0o664",
+      "sha256": "768f1b5d2b02f44ebd7dadab78919fd02b8fc6985f378e162fd64a9052002910"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/failsafe-reports/TEST-de.linus.tnbp.access.AccessVersionsIT.xml",
+      "size": 32670,
+      "mode": "0o664",
+      "sha256": "04724245f87669a81c5d0646a91cf61b9f5b25702dfb86d1d0754453461e15ab"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/failsafe-reports/TEST-de.linus.tnbp.access.RegistrationIT.xml",
+      "size": 554354,
+      "mode": "0o664",
+      "sha256": "71f419f8323b3f0d2d6da1cfd81c2cd13148739ed0c790e511e8fe3909470a70"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/failsafe-reports/TEST-de.linus.tnbp.access.RegistrationV2IT.xml",
+      "size": 557736,
+      "mode": "0o664",
+      "sha256": "6669b309fed9b312e144cdf9124283227448b593e9952109493c8fb1ca87e73d"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/failsafe-reports/TEST-de.linus.tnbp.access.SessionIT.xml",
+      "size": 42271,
+      "mode": "0o664",
+      "sha256": "cc8ad9bbfe9d79aefd7f7a508f6843b00b11181e402c88c67b53a69d3296c478"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/failsafe-reports/TEST-de.linus.tnbp.access.SessionV2IT.xml",
+      "size": 39031,
+      "mode": "0o664",
+      "sha256": "d47467c939860319ee31ebb67f1a68122091734adc9f5afa1eed591b07fc277d"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/failsafe-reports/TEST-de.linus.tnbp.expensebudget.BudgetIT.xml",
+      "size": 33896,
+      "mode": "0o664",
+      "sha256": "0afaa22be3bd10f7f8ae04ca1c64efb827b242408ef32fcc3fdf750c00a87471"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/failsafe-reports/TEST-de.linus.tnbp.expensebudget.BudgetV2IT.xml",
+      "size": 35328,
+      "mode": "0o664",
+      "sha256": "7b27cc5504b7e3044f4fea023b5e3dd7370120848bb05892450d85e82ad4bc57"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/failsafe-reports/TEST-de.linus.tnbp.expensebudget.ExpenseIT.xml",
+      "size": 35710,
+      "mode": "0o664",
+      "sha256": "02b8938af42cff8d5e9ad65c09180de903966829bc1d08d71da5dc540d57697e"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/failsafe-reports/TEST-de.linus.tnbp.expensebudget.ExpenseV2IT.xml",
+      "size": 37190,
+      "mode": "0o664",
+      "sha256": "e1f7ba5d0c8185d1b4787de958c6a894a68739bb8988f5f8279fceb6d5cc4a51"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/failsafe-reports/TEST-de.linus.tnbp.expensebudget.MonthSummaryIT.xml",
+      "size": 33163,
+      "mode": "0o664",
+      "sha256": "0d9b0fa9bb344ec7db68223e6ed1a78e9d1f51bd02914bd4993ef345645e944c"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/failsafe-reports/TEST-de.linus.tnbp.expensebudget.MonthSummaryV2IT.xml",
+      "size": 34787,
+      "mode": "0o664",
+      "sha256": "1f51ec8e8955ba44d11bcb7f8c16b07e7c210f2e5f3e5a6b6c0d339a9c7eccc7"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/failsafe-reports/TEST-de.linus.tnbp.finance.FinanceCoordinationIT.xml",
+      "size": 33512,
+      "mode": "0o664",
+      "sha256": "28fc8b10c63c683f003ffb143a32cfe0f8a0213d593c98e0d643aa9ea1ea12f6"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/failsafe-reports/TEST-de.linus.tnbp.finance.FinanceMigrationIT.xml",
+      "size": 99758,
+      "mode": "0o664",
+      "sha256": "09c2cf37f9879a560520b05e7b3a28735d0c932669af88b528b77f6b5d86f680"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlyCorrectionIT.xml",
+      "size": 45375,
+      "mode": "0o664",
+      "sha256": "3a9b1731bf211b75858632b223bdf9d12c67c7b3163bbdec627e1aa79c206101"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlyDeletionIT.xml",
+      "size": 44970,
+      "mode": "0o664",
+      "sha256": "8cef8bb36ac6c084683ee067eb8a86ed1f3d776ddbd1f6c84fe433311f48cd3b"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlyPendingIT.xml",
+      "size": 38751,
+      "mode": "0o664",
+      "sha256": "53ef81c48816382d471538252df5754cfefc61815fad55204276507e09185164"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlySelectionIT.xml",
+      "size": 38359,
+      "mode": "0o664",
+      "sha256": "1d404cf23c339e89d5dd6e1f4c3753166851a36be38bac78b44fb510c7e1fb1e"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlySurplusIT.xml",
+      "size": 38577,
+      "mode": "0o664",
+      "sha256": "b2cf4f79505b85fbd32e35535d245c6510a2b2040a12e914ad6b3abee00c8ade"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/failsafe-reports/TEST-de.linus.tnbp.savingsgoals.SavingsGoalIT.xml",
+      "size": 35405,
+      "mode": "0o664",
+      "sha256": "547db0a7befb4b9511beb78b009aed8001f275bbe1158260cd41d27c1bfa53c1"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/failsafe-reports/TEST-de.linus.tnbp.savingsgoals.SavingsGoalV2IT.xml",
+      "size": 40765,
+      "mode": "0o664",
+      "sha256": "0ceec7566aa2c52e7dec8cc7e99b2491e2965b1b75589e0ccd08a642087fd934"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/failsafe-reports/TEST-de.linus.tnbp.savingsgoals.SignedProgressIT.xml",
+      "size": 38826,
+      "mode": "0o664",
+      "sha256": "ff8ce884af3cf328a9c406038a5d8f81488e5a53fc2e9c5f002ddb7c9e16c5a0"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/failsafe-reports/TEST-de.linus.tnbp.versions.AdministrativeSerializationIT.xml",
+      "size": 93030,
+      "mode": "0o664",
+      "sha256": "f104bfc2481436a15ff50b5176f0a6ad66e864eecee7bb6fb83e15a07ed34d26"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/failsafe-reports/TEST-de.linus.tnbp.versions.ApiRetirementIT.xml",
+      "size": 36576,
+      "mode": "0o664",
+      "sha256": "05a7b8cb2c176717578d2f975e8a466c3f02a2d82133401d972151618c83d0e1"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/failsafe-reports/TEST-de.linus.tnbp.versions.ApiVersionStateIT.xml",
+      "size": 44844,
+      "mode": "0o664",
+      "sha256": "663241478158fdecc2447571dcd2fcdbf0550198a4a2d4d28348c2019e811d99"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/failsafe-reports/TEST-de.linus.tnbp.versions.ReleaseTransitionIT.xml",
+      "size": 230821,
+      "mode": "0o664",
+      "sha256": "d840e47b61d11d90a746463881c7958bf2a89e023aa62b9eb8855bce628ca49f"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/failsafe-reports/failsafe-summary.xml",
+      "size": 494,
+      "mode": "0o664",
+      "sha256": "5aefcefedcb2b2237227bfe042688472c34c136bff23af9a7ea670fc7e3fbb29"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco.exec",
+      "size": 672831,
+      "mode": "0o664",
+      "sha256": "024a3cf4c161fba3f009d2696c28cc28ba7eba3bf935336bf745161d100d5b62"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.access/AccessConfiguration$1.html",
+      "size": 3621,
+      "mode": "0o664",
+      "sha256": "a7e1d8b745033b7ea6bf4920ba4b73fccd865ad360d20855d3c653445b6f8335"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.access/AccessConfiguration$2.html",
+      "size": 4005,
+      "mode": "0o664",
+      "sha256": "73a133cf997ecfb8c602873631ca0c60f056dbbb7079dcd6f880e0dfef4808a6"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.access/AccessConfiguration.html",
+      "size": 14683,
+      "mode": "0o664",
+      "sha256": "eae0b49fff42081678375bf9dcaf4fd2d62935fd4697ce1232c9089f85bfdea4"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.access/AccessConfiguration.java.html",
+      "size": 18270,
+      "mode": "0o664",
+      "sha256": "5bc932ba42d8a52197c8df6d7b8bcf100c816f47529b54deb9ebad884f8aa6a9"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.access/AccountRepository$Credentials.html",
+      "size": 2838,
+      "mode": "0o664",
+      "sha256": "b8e23e3f6ce068981a5c242e70b17aee21b174ffe81c2abd183efdee84079596"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.access/AccountRepository.html",
+      "size": 4352,
+      "mode": "0o664",
+      "sha256": "faeb7ef665c2ee2b6a34286c27fda1426d640804b0b28b4164d9511840aac636"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.access/AccountRepository.java.html",
+      "size": 2746,
+      "mode": "0o664",
+      "sha256": "c89c2188094d15d8d53ce18ed07d674ed73efa1ea1961de4f7c5db302810bf8b"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.access/DatabaseRoleVerifier.html",
+      "size": 3916,
+      "mode": "0o664",
+      "sha256": "90690bd8831c3019db4163190501a388105e18b3e08bd57b5f68077535ec719a"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.access/DatabaseRoleVerifier.java.html",
+      "size": 10057,
+      "mode": "0o664",
+      "sha256": "b155d6e89f04a14b758256e7d99dbfe18901a9f3a3ccca8bb984b02f3d4c482b"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.access/PasswordPolicy.html",
+      "size": 5388,
+      "mode": "0o664",
+      "sha256": "8ad8c8b6ecdee852c94889550c23c8366c3e2fb682987b3138fb5885bcf82655"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.access/PasswordPolicy.java.html",
+      "size": 4492,
+      "mode": "0o664",
+      "sha256": "9b9e4f966bc0602acb07ab88b2526248c86f874f682742d0ef8a460a1ff8452a"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.access/RegistrationController.html",
+      "size": 3344,
+      "mode": "0o664",
+      "sha256": "9e8ac472f3f29e1aceb3b8f6bd11aace8b350f628e58137c9422e4b1549f8b6a"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.access/RegistrationController.java.html",
+      "size": 2473,
+      "mode": "0o664",
+      "sha256": "58d4e15b97b9c60de4a9ec9a20cf205f928b7a95a2bce5624f2c47f13bcc080c"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.access/RegistrationErrors.html",
+      "size": 6401,
+      "mode": "0o664",
+      "sha256": "cf324b569280986d25575811a306d38ddc39e5c11e2a87a0c6a3be43358c69e6"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.access/RegistrationErrors.java.html",
+      "size": 5962,
+      "mode": "0o664",
+      "sha256": "44b8d946690dcee313ab5b2a0bc285d5d981db4076cf3798aaa969883afbb2fe"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.access/RegistrationFailure.html",
+      "size": 3291,
+      "mode": "0o664",
+      "sha256": "ef67716bd74642a0d9eaf7addf7c2e1195b876e1ce845d2b0c7d98665f0f637f"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.access/RegistrationFailure.java.html",
+      "size": 1817,
+      "mode": "0o664",
+      "sha256": "8e77d2db563f33870792376c58d6ff93535279f113d34e7de22a46452caa4e72"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.access/RegistrationLink.html",
+      "size": 4570,
+      "mode": "0o664",
+      "sha256": "fa76fbd5900053cbb03a725dac6bf758eb82d475755150f6c47374e164b1afe0"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.access/RegistrationLink.java.html",
+      "size": 3430,
+      "mode": "0o664",
+      "sha256": "3781b5605085d19e24b0aab3d3bcf352dd9681c1097487e36be877e529c85b53"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.access/RegistrationService$EmailAddress.html",
+      "size": 2846,
+      "mode": "0o664",
+      "sha256": "af67adc991036636276d2bd54f4b3228c5d56f0baed1c6ee7cc3ef1bf1f94001"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.access/RegistrationService.html",
+      "size": 4234,
+      "mode": "0o664",
+      "sha256": "5259daa7aac72c987887c1d95a6084f3b2779f6a4d2cfd31bb255bbe9d776540"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.access/RegistrationService.java.html",
+      "size": 5399,
+      "mode": "0o664",
+      "sha256": "e15f0561f559a00002dce1a5f788737bd4cfed578de8523c25ff3349fe24045e"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.access/RegistrationV2Controller.html",
+      "size": 3356,
+      "mode": "0o664",
+      "sha256": "3fdd1490dad18e42e9e024b072dec918eabc3fbf51757073668bc4b395559420"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.access/RegistrationV2Controller.java.html",
+      "size": 2492,
+      "mode": "0o664",
+      "sha256": "1de251fe632fd03ef22af63204771765803bbb566bfe077d059089af5485055d"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.access/SessionController.html",
+      "size": 7165,
+      "mode": "0o664",
+      "sha256": "37272c7ef421ee566dc198d01987679a7c199a916d3eee2e8535a2ecf11fd937"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.access/SessionController.java.html",
+      "size": 4345,
+      "mode": "0o664",
+      "sha256": "7482554fddcb556bd70f6f69d228a5979ee0f33b5084fe8abbf42e2eac700327"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.access/SessionErrors.html",
+      "size": 3543,
+      "mode": "0o664",
+      "sha256": "6d9acf07a3ef428f510001fbd02e250b81eff077978b9593c86ed95c926d1c6d"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.access/SessionErrors.java.html",
+      "size": 3598,
+      "mode": "0o664",
+      "sha256": "8473a3e2a39728653d7aadc38f0e82db8e981ed8e9922298b0350d84db2de43d"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.access/SessionFailure.html",
+      "size": 2765,
+      "mode": "0o664",
+      "sha256": "b90b2f4bc090ed50f386b5d94ac9045c3b8e13de66bfa04afcb435be9e37e218"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.access/SessionFailure.java.html",
+      "size": 1486,
+      "mode": "0o664",
+      "sha256": "1829d703c805ce6e3233beca6b2f2eb5657d6ca0a5cff09f588856ce19722b72"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.access/SessionHttp.html",
+      "size": 3368,
+      "mode": "0o664",
+      "sha256": "fb57b307dd58746ee2a1ed312e64fde9df1dded590c31fb98a720b114acf6dee"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.access/SessionHttp.java.html",
+      "size": 3092,
+      "mode": "0o664",
+      "sha256": "23c812fe2fa91174f52e522ddfcd351c8483844759bcaa18c71219182b5abdd4"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.access/SessionJwt.html",
+      "size": 5621,
+      "mode": "0o664",
+      "sha256": "26e58efc85c7842a845c4e378818b033674d8dd6a6160b7a891e2dcfc4e896c2"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.access/SessionJwt.java.html",
+      "size": 6556,
+      "mode": "0o664",
+      "sha256": "3f5a7bc1d4702065fc407f7a9b3d8231376d3cde05e6d80f7dd80efbf7fce2ca"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.access/SessionRepository$Family.html",
+      "size": 2846,
+      "mode": "0o664",
+      "sha256": "e57956605792255992a00a58bd8d3806012cd3b20beeb9447b716526d7dc4573"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.access/SessionRepository$Token.html",
+      "size": 2815,
+      "mode": "0o664",
+      "sha256": "89acbd16275ddda43b12c051267d38c779a6c046bd8805901c8ed2656987b73c"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.access/SessionRepository.html",
+      "size": 7864,
+      "mode": "0o664",
+      "sha256": "3736c92b34702f24b65ee7e74073549427c7da61fae25398b9cf72c1fc34f79b"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.access/SessionRepository.java.html",
+      "size": 4096,
+      "mode": "0o664",
+      "sha256": "c5c15fc49bd148764174371a79270b21ce9b55651219bd8bec060c9f056e7a77"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.access/SessionService$Issued.html",
+      "size": 3316,
+      "mode": "0o664",
+      "sha256": "b8cadb2644e323999fff884c3bcfc30503d67b3d52876a8c1fee9f10d5950239"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.access/SessionService.html",
+      "size": 8982,
+      "mode": "0o664",
+      "sha256": "309ae9753eed100dedfe74ce5541d1b611c31bbd62ab26f020328b075efabb96"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.access/SessionService.java.html",
+      "size": 8108,
+      "mode": "0o664",
+      "sha256": "60d56e5c64d54c9c6b3b6ce24b74da00dd41aafa66b18ec147bace01d136957b"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.access/SessionSettings.html",
+      "size": 3287,
+      "mode": "0o664",
+      "sha256": "f0e12cbdfeaa5d0e95c9961b0e5767590bccb8e8e3570a9c9adafd5805dfd5c4"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.access/SessionSettings.java.html",
+      "size": 1661,
+      "mode": "0o664",
+      "sha256": "badbc4b32d9da19b8b217263ded4d9b9e29a13d3556619b129f95127a85d1cee"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.access/SessionV2Controller.html",
+      "size": 7191,
+      "mode": "0o664",
+      "sha256": "8890eaa01b2d0c1bd4d962deb452caeb6e031114f1706c8611a7e47b549114f1"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.access/SessionV2Controller.java.html",
+      "size": 4361,
+      "mode": "0o664",
+      "sha256": "be9db25ba6919e34fe5eb017db843ec4a50b2264e63ca892ec3136e7df8caf1e"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.access/index.html",
+      "size": 19820,
+      "mode": "0o664",
+      "sha256": "402b81167e62863866ccc0b5924a3130047cbe717fd22699b6131e69de797ead"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.access/index.source.html",
+      "size": 15690,
+      "mode": "0o664",
+      "sha256": "e11c726a125cc872194c88259d5d2f9fcbfa55ca12017e4d0500af9d7a30f519"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.budget/BudgetRepository.html",
+      "size": 4326,
+      "mode": "0o664",
+      "sha256": "19f0878a26ac2c5e44c2f2acf199cd9cb17ad57e9f119600041f1d5c1b72459a"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.budget/BudgetRepository.java.html",
+      "size": 2560,
+      "mode": "0o664",
+      "sha256": "5f65acc943a4b2640477c00c3909d7a8a8bc618bf92c8521cde9a341cefbbd0c"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.budget/Budgets$InvalidAmount.html",
+      "size": 2784,
+      "mode": "0o664",
+      "sha256": "4f8d68cebae1ab06d70c54f026cb5f3169948a8265b1637b550b8d03dae141ec"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.budget/Budgets.html",
+      "size": 4439,
+      "mode": "0o664",
+      "sha256": "b8551bf6b6577ee30b37836a76dea855e47765ff47ff3db0029894d3c97e9124"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.budget/Budgets.java.html",
+      "size": 2866,
+      "mode": "0o664",
+      "sha256": "905aad5d66160795f5d0c207a7eaa3c82d3e03437c94777cc62c421cda06777c"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.budget/index.html",
+      "size": 4237,
+      "mode": "0o664",
+      "sha256": "d9d571ed0cfd7de107d2f022954827b63123bad47b0ab5547dcef02b80e45f34"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.budget/index.source.html",
+      "size": 3685,
+      "mode": "0o664",
+      "sha256": "d27bc5abe8cbf368dbd61b50d41956190b80f5c5ec99a025dbdd8d96787a9c8b"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.expenses/ExpenseRepository.html",
+      "size": 7399,
+      "mode": "0o664",
+      "sha256": "0e64e91a1e15c42413f1e02d3393f42401898f0962bd51bb7f83ddcba37b6bf4"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.expenses/ExpenseRepository.java.html",
+      "size": 4578,
+      "mode": "0o664",
+      "sha256": "defa31cefc0dfb29bd9baf85af55ed55c1c708af191db5f0a4d913258ccbb68a"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.expenses/Expenses$Expense.html",
+      "size": 2799,
+      "mode": "0o664",
+      "sha256": "9c85c89f6a5e5f26bb893539be22d7d1eb45696ec129625d5430b639ed98a656"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.expenses/Expenses$InvalidExpense.html",
+      "size": 2798,
+      "mode": "0o664",
+      "sha256": "3d47840b5f6bc6a5a9e69b986730a176cecf990bf0c7ea14377be5e1dd5d7258"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.expenses/Expenses$MonthLimit.html",
+      "size": 2779,
+      "mode": "0o664",
+      "sha256": "b3129bde9992dd9697ed80ce4118a3a203809f9de91af09ee767beb64381e9ca"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.expenses/Expenses$NotFound.html",
+      "size": 2771,
+      "mode": "0o664",
+      "sha256": "ee3bb1d844ee54514e44a36b45cd6eb1c3075a59f9aa5ef742e3fa2d4e7361d2"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.expenses/Expenses.html",
+      "size": 8168,
+      "mode": "0o664",
+      "sha256": "0d298dada785e0f12aab0909d589eaff48389450bd2a48de3796c69bf7a6a32a"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.expenses/Expenses.java.html",
+      "size": 7063,
+      "mode": "0o664",
+      "sha256": "54927a4b59ca30cf86ad6c6bdf5b41133f2896242a29cabf8e816984844ec441"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.expenses/index.html",
+      "size": 6261,
+      "mode": "0o664",
+      "sha256": "0f494688d90808e3101bf4bdad3867ec1a2b538c640d9591125f4b62649b7eeb"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.expenses/index.source.html",
+      "size": 4042,
+      "mode": "0o664",
+      "sha256": "51418a26567e9ddde77c2803e516c7cf6e043eccbdca76ddfdc67593bfea757b"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.finance.http/BudgetController.html",
+      "size": 4795,
+      "mode": "0o664",
+      "sha256": "0ac66cf3ff4d05b648823dfe49fbfa1ab619a430bef11a7739d56b70173b9128"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.finance.http/BudgetController.java.html",
+      "size": 2822,
+      "mode": "0o664",
+      "sha256": "a0a7043b199119c30b2d11346af2127d0799f37674f5589f35f2a6b8a0e2ba1d"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.finance.http/BudgetErrors.html",
+      "size": 3933,
+      "mode": "0o664",
+      "sha256": "41960053781aa33320d06f3f66ed38ae7eebcf6c05fb121e9296f56dbef7e5a1"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.finance.http/BudgetErrors.java.html",
+      "size": 3546,
+      "mode": "0o664",
+      "sha256": "456c8960294d6c98cdc08554ff8edaba8521b0e922615cb2be86e323be73ab46"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.finance.http/BudgetV2Controller.html",
+      "size": 4813,
+      "mode": "0o664",
+      "sha256": "9aed9b338ddaaaf156d047235ac2551c15f20bb32751894544e452fce5fed321"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.finance.http/BudgetV2Controller.java.html",
+      "size": 2841,
+      "mode": "0o664",
+      "sha256": "4a9dfc62ad970ebd43b91cba1173ccd88fd3aa375b8c5075e7fc9ac2f921ad1c"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.finance.http/BudgetV2Errors.html",
+      "size": 4033,
+      "mode": "0o664",
+      "sha256": "3bdefe7f94e94284ff304edb0cba4fff02cc879bd5b0759ff2408c82688a770c"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.finance.http/BudgetV2Errors.java.html",
+      "size": 4662,
+      "mode": "0o664",
+      "sha256": "a480961175629cea30ad844cfca4517201fadb6890843f8e358def954542f32c"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.finance.http/CapabilitiesV2Controller.html",
+      "size": 3857,
+      "mode": "0o664",
+      "sha256": "21ffc8711d63369734cc380ff1cf0f5096a64e1f0e5bd960f62ad9b91fb7e32f"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.finance.http/CapabilitiesV2Controller.java.html",
+      "size": 3156,
+      "mode": "0o664",
+      "sha256": "b29b8197e9fc770f5c5293daf31593fb83b97211453efd60ab34756d159673ba"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.finance.http/ExpenseController.html",
+      "size": 5852,
+      "mode": "0o664",
+      "sha256": "e9d80020d6fea71ec301b8f3be40fcf1f6dfcf3afaeafaaea2c22d58685eee23"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.finance.http/ExpenseController.java.html",
+      "size": 3835,
+      "mode": "0o664",
+      "sha256": "29d2052c7768093919cef0a7ed8e83e533f0482ea0addc366dec93f7dc88ed99"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.finance.http/ExpenseErrors.html",
+      "size": 7883,
+      "mode": "0o664",
+      "sha256": "7c0c7c2264c89a09b79beb6a2b90768d1b47e9cb55bf893765977ec93847564b"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.finance.http/ExpenseErrors.java.html",
+      "size": 7775,
+      "mode": "0o664",
+      "sha256": "1bb2d81a929bd16fa1a9c44409556d71d214464778a3e9d6346a6d7546084933"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.finance.http/ExpenseV2Controller.html",
+      "size": 5874,
+      "mode": "0o664",
+      "sha256": "3c8d835bdfbb4f81b301d3b5aee54a269698e4dde297e480e69550f58c3df763"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.finance.http/ExpenseV2Controller.java.html",
+      "size": 3854,
+      "mode": "0o664",
+      "sha256": "48376c3cd7fa77133fd452389e47b79fa260bef443b5d4874a3515b9815c8b0a"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.finance.http/ExpenseV2Errors.html",
+      "size": 9477,
+      "mode": "0o664",
+      "sha256": "8b2438e022ed711b926dc3b3031f08be615d1c359b585b2023ef4ecd6d685c17"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.finance.http/ExpenseV2Errors.java.html",
+      "size": 9020,
+      "mode": "0o664",
+      "sha256": "6cb108caeb24c2b72b4dd439b2f3e79395decfbb7a95d0546dba7661aa278bd8"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.finance.http/MonthSummaryController.html",
+      "size": 3337,
+      "mode": "0o664",
+      "sha256": "4e457493d9452a4da1b319e0ac0d57820546e17582e1dc86efb391ede1f9474d"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.finance.http/MonthSummaryController.java.html",
+      "size": 2688,
+      "mode": "0o664",
+      "sha256": "dae7af8809b95c14bbc86deba4b36aeae3b0ac9f172cfd4b57eeb08b45f5ca64"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.finance.http/MonthSummaryErrors.html",
+      "size": 3291,
+      "mode": "0o664",
+      "sha256": "6d1ef3d88379fec9c95fa02be2127ab53b0d73c33544694077e185324a938966"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.finance.http/MonthSummaryErrors.java.html",
+      "size": 2444,
+      "mode": "0o664",
+      "sha256": "1c05b3537da435f2ba95d352ab97481db3795344ee7713c626895eab5ff50a62"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.finance.http/MonthSummaryV2Controller.html",
+      "size": 3349,
+      "mode": "0o664",
+      "sha256": "4fa7f2622797a58c9613ede7e8b8ea8c72f4bc2821af1afc544caf12fb67c29a"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.finance.http/MonthSummaryV2Controller.java.html",
+      "size": 2704,
+      "mode": "0o664",
+      "sha256": "d39d1646fec75b6b7d43424ea6f5e328296074c1032382164e1c9a6dd9c0888f"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.finance.http/MonthSummaryV2Errors.html",
+      "size": 3303,
+      "mode": "0o664",
+      "sha256": "544739142f203854c94ee6dc3666f889c0548ef1a23cb1c295027c4c570a249d"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.finance.http/MonthSummaryV2Errors.java.html",
+      "size": 2422,
+      "mode": "0o664",
+      "sha256": "c045e2154307ee3ace21d078c2b8564149546558c304d859ac5d4413a2c8291e"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.finance.http/MonthlySurplusV2Controller.html",
+      "size": 7593,
+      "mode": "0o664",
+      "sha256": "6d0959db16d2e28e211836fdc398bf79fac6cfac1ab55afe4a189d8fd01f0907"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.finance.http/MonthlySurplusV2Controller.java.html",
+      "size": 4941,
+      "mode": "0o664",
+      "sha256": "37f50da3997bc3e989ac2d10c3596de1de0380b91e3b1d200e0a162916217e3d"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.finance.http/MonthlySurplusV2Errors.html",
+      "size": 6763,
+      "mode": "0o664",
+      "sha256": "c3ad5613900ab9a46a83017e3c7e8a765578aabc0e12c0b5a7e12a9974bd2189"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.finance.http/MonthlySurplusV2Errors.java.html",
+      "size": 6311,
+      "mode": "0o664",
+      "sha256": "39e79c3d9c023d166dbb4cd76721185f66475c83fd26bdedc29d7561f7f8afb0"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.finance.http/SavingsGoalController.html",
+      "size": 6469,
+      "mode": "0o664",
+      "sha256": "b0f5bc274f58fb5164f2ebaece230ac9eb81b143b7c41c025ad55b391263cff6"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.finance.http/SavingsGoalController.java.html",
+      "size": 4389,
+      "mode": "0o664",
+      "sha256": "8cc271cd750d41c75597002ebddf179372db72812d34930cd062607eca03942b"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.finance.http/SavingsGoalErrors.html",
+      "size": 7451,
+      "mode": "0o664",
+      "sha256": "4f94e75e40f593194946b5672ca4459fee16d246d6084cae86b8fbcb01f5b5f5"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.finance.http/SavingsGoalErrors.java.html",
+      "size": 7964,
+      "mode": "0o664",
+      "sha256": "da2ccd7511136c2dbd79e9cd1bb3baeffab3a17ba3ddebff61542971a2a4ecfc"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.finance.http/SavingsGoalJson$CalendarDateDeserializer.html",
+      "size": 3588,
+      "mode": "0o664",
+      "sha256": "3744c2f1d79b4f67284fa74906f7f23fd2ca935650a42f41229d5859d9be36a5"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.finance.http/SavingsGoalJson$CalendarDateInput.html",
+      "size": 2840,
+      "mode": "0o664",
+      "sha256": "18b115796c80583ba8fc43904ffe9f047c1d962030b77d5f8b1210d0cb3aa2ec"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.finance.http/SavingsGoalJson.html",
+      "size": 3820,
+      "mode": "0o664",
+      "sha256": "3f60f6b708c221e978ee539234c2ed1bf3202b25a4b05dd9f4f54f1d161068cc"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.finance.http/SavingsGoalJson.java.html",
+      "size": 3892,
+      "mode": "0o664",
+      "sha256": "059acb684c3ffac29dd38dc67dd48098ae7ae5a3c9564aff2803f3e5eb1b27a0"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.finance.http/SavingsGoalV2Controller.html",
+      "size": 7199,
+      "mode": "0o664",
+      "sha256": "47f470af97a2c277abba81ebcadaa49622a38b9796697c104521d562f2696a76"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.finance.http/SavingsGoalV2Controller.java.html",
+      "size": 5528,
+      "mode": "0o664",
+      "sha256": "3869551777a3b5b2c13feae59d369c5c2f37ddbe323c5c3d8172ba984d4c8ddf"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.finance.http/SavingsGoalV2Errors.html",
+      "size": 8493,
+      "mode": "0o664",
+      "sha256": "e76a669483a5b0329b4de4b80bc6704da21def1d2552cb5a093cce62573fd217"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.finance.http/SavingsGoalV2Errors.java.html",
+      "size": 8975,
+      "mode": "0o664",
+      "sha256": "26f797f916b8d0d63f13b2bc884d57451859e1e8550b90857f03ff110c8cda8a"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.finance.http/index.html",
+      "size": 17021,
+      "mode": "0o664",
+      "sha256": "5eb467082e011c9b85c663e9732e4892fc7117df07880adf3ecbc03b5fce33f1"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.finance.http/index.source.html",
+      "size": 16022,
+      "mode": "0o664",
+      "sha256": "6a164685d6eaa6e963a8a081099f398b272b49a3018953172cdb073cdbb8877e"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.finance/FinanceApplication$AutomationNotActive.html",
+      "size": 2864,
+      "mode": "0o664",
+      "sha256": "fb135948d1d0d19aa53c863ad103fd942e98ae230d0411c6761ca4f80026cea4"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.finance/FinanceApplication$FeatureNotAvailable.html",
+      "size": 2865,
+      "mode": "0o664",
+      "sha256": "b8e692c95c9a350e0da785227253493db2c35fceca01aac41bbe20701c3aff03"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.finance/FinanceApplication$InvalidSelection.html",
+      "size": 2846,
+      "mode": "0o664",
+      "sha256": "a54717eafd50b0ff0615d0a37c5aa50329d122fa8d5486b699d372598bfd568a"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.finance/FinanceApplication$MonthlyOverview.html",
+      "size": 2898,
+      "mode": "0o664",
+      "sha256": "222abc48c4116f0ea3c6ad1a8f86700c2171513935a37070c9b9aa2d8a9d8d32"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.finance/FinanceApplication$Summary.html",
+      "size": 2846,
+      "mode": "0o664",
+      "sha256": "ff1fd886436f1352d7ed4c2c2d265e50be87931327a3f8add46bd87c75ecd9e8"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.finance/FinanceApplication.html",
+      "size": 25039,
+      "mode": "0o664",
+      "sha256": "93c9713819d3b34749ad5771e82fb13e1b335b589589ff46e5b4aa0b3014d19c"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.finance/FinanceApplication.java.html",
+      "size": 17357,
+      "mode": "0o664",
+      "sha256": "7b48c1b844f474ac13af143e8a0db12775e6afec28bd90e345f74a1c122344a8"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.finance/MonthlyAutomationReadiness.html",
+      "size": 3327,
+      "mode": "0o664",
+      "sha256": "79644db80811bf881b4b668fd11d223a658a007b9ed6d52de58e40b6dcd65cc8"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.finance/MonthlyAutomationReadiness.java.html",
+      "size": 1631,
+      "mode": "0o664",
+      "sha256": "78a3cd379751d289aac4ca53f18343d600695d02daae52e6605654a8bca927b5"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.finance/index.html",
+      "size": 6481,
+      "mode": "0o664",
+      "sha256": "335061841c554956716de48db682c5364cbc0ac712ed2480ae5a27e2d2b73ca0"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.finance/index.source.html",
+      "size": 3818,
+      "mode": "0o664",
+      "sha256": "1eca8fea90932266bdc5a643762e425ee3d7fac6f9ab5ff7dc797e31d1f9e120"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.monthlysurplus/ActivationRepository.html",
+      "size": 4347,
+      "mode": "0o664",
+      "sha256": "94deb9d87b49df02033f99d45a061dc3717760885b3c4e91dd30062f41d67a65"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.monthlysurplus/ActivationRepository.java.html",
+      "size": 2264,
+      "mode": "0o664",
+      "sha256": "3d3964eb34e4f6adf011686559fa976d431b592e5681c0e3d5a4d14270500d1f"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.monthlysurplus/DeletedGoalRepository.html",
+      "size": 3838,
+      "mode": "0o664",
+      "sha256": "72c91b126650d7dc5a0cbf6ceb7b841b40118e3d179dd76494268bb6abb200fd"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.monthlysurplus/DeletedGoalRepository.java.html",
+      "size": 2172,
+      "mode": "0o664",
+      "sha256": "de635c12c10914bfaee97c3735c2b8d177ed327d31bd80ada65b09698a45c87c"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.monthlysurplus/MonthRecordRepository.html",
+      "size": 8094,
+      "mode": "0o664",
+      "sha256": "53580cbc110bf42999d5032afd607b689a256697721a25a93a38521411223ffb"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.monthlysurplus/MonthRecordRepository.java.html",
+      "size": 5124,
+      "mode": "0o664",
+      "sha256": "7f05b5aeb94105e9c402288675e12d38e2e770558d09f7796f70f44a9f237438"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.monthlysurplus/MonthlySurplus$Activation.html",
+      "size": 2833,
+      "mode": "0o664",
+      "sha256": "6024c96aeb94dde9831a0cf186fb4ff34a7197b4b01758668878893dd42ffb98"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.monthlysurplus/MonthlySurplus$MonthRecord.html",
+      "size": 2841,
+      "mode": "0o664",
+      "sha256": "a0c6c0fbc412089ad276183bc0120ad8b319d98568bd9fdb2783437fe16f49dc"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.monthlysurplus/MonthlySurplus.html",
+      "size": 13141,
+      "mode": "0o664",
+      "sha256": "64f2460dbb6f68695d8dcd540b0b16ec6d419e4a1014cd3482e5c0407ce68c6c"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.monthlysurplus/MonthlySurplus.java.html",
+      "size": 10562,
+      "mode": "0o664",
+      "sha256": "17bed971c7aa015d6c838b15c6201f6b4c0cc608e3b418e8d73fb2e28f1626cc"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.monthlysurplus/SelectionRepository.html",
+      "size": 4969,
+      "mode": "0o664",
+      "sha256": "9260b6d1af4c80839756aec96a96b9302d131993be8152abfb6894cef93f05d0"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.monthlysurplus/SelectionRepository.java.html",
+      "size": 2899,
+      "mode": "0o664",
+      "sha256": "ca69ffcadd3fdfbc3437737e93c5796547a81e0fdc7f1f0bf6c763cefbb8759c"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.monthlysurplus/index.html",
+      "size": 6996,
+      "mode": "0o664",
+      "sha256": "a917bd8eb6b27629b86f6820a7d34fe8716b643feba722e41f117b1b050a3d16"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.monthlysurplus/index.source.html",
+      "size": 5896,
+      "mode": "0o664",
+      "sha256": "91799f0dbe387e708ee98b47a4fd810192c9e5bb875ab7016375de946264a19e"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.savingsgoals/SavingsGoalRepository.html",
+      "size": 9596,
+      "mode": "0o664",
+      "sha256": "2adeb3f049515c96037051451ada2eb8d1e76ffd027602df2f192c84de6ed188"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.savingsgoals/SavingsGoalRepository.java.html",
+      "size": 5694,
+      "mode": "0o664",
+      "sha256": "3242e4977a9cb2c5c76381a9138035a22775f80b7b1a4f34e5095188f8261bd0"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.savingsgoals/SavingsGoals$Goal.html",
+      "size": 2817,
+      "mode": "0o664",
+      "sha256": "93ccd40e8440fa624b100de77a5a8c51311a3a8df6f1428c60b5afc2b704ef30"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.savingsgoals/SavingsGoals$InvalidGoal.html",
+      "size": 2810,
+      "mode": "0o664",
+      "sha256": "b5a24213678c157d88a70679eabf9b04aa4830a3ec4380601bbfe876d005d28c"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.savingsgoals/SavingsGoals$NotFound.html",
+      "size": 2795,
+      "mode": "0o664",
+      "sha256": "2a48b8d7ee27d666842ed9aee5377bf9aa4b36a109540a24b0cbd7f83f809d46"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.savingsgoals/SavingsGoals.html",
+      "size": 11090,
+      "mode": "0o664",
+      "sha256": "d388b58fe024afc749eecb25797a19601fef9ac09ced63b3d61cfc1c62bcc49e"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.savingsgoals/SavingsGoals.java.html",
+      "size": 8929,
+      "mode": "0o664",
+      "sha256": "92e9d3230f0d9ea95a894ce145e5f4c3f2d147d4147e625c572fae98e374dde1"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.savingsgoals/index.html",
+      "size": 5832,
+      "mode": "0o664",
+      "sha256": "b9ebc725107713fef460da65f3eea37725a93e5209435f234b61a60b09fbfb45"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.savingsgoals/index.source.html",
+      "size": 4157,
+      "mode": "0o664",
+      "sha256": "fc466a5b1bbf531fb220155c386ca6c4187ee826eab77c01c51cb51e978749cd"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.shared/ApiVersionState.html",
+      "size": 10067,
+      "mode": "0o664",
+      "sha256": "d14374feea73076104731e2434e61cf32aeda130eab48d0840afc635c0283129"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.shared/ApiVersionState.java.html",
+      "size": 9040,
+      "mode": "0o664",
+      "sha256": "25c4052ec5510b92dd3be5fa6fe8bc94a3f477ed88fcfeec2aaa6710f3ee9088"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.shared/FinanceContext.html",
+      "size": 9316,
+      "mode": "0o664",
+      "sha256": "2661a003c6878a268a6cecb4e30098cf8a45e9877872fb8eaae34838bde31744"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.shared/FinanceContext.java.html",
+      "size": 4981,
+      "mode": "0o664",
+      "sha256": "6bf58df1d1540b460c4ec4b5931ba7523f394e2ca121501bd687b12705c18dbe"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.shared/FinanceTransactions.html",
+      "size": 5877,
+      "mode": "0o664",
+      "sha256": "a30671d11d963eba4eaf0797a10204dc7eeac3164b086ab56f837d67645f2552"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.shared/FinanceTransactions.java.html",
+      "size": 5977,
+      "mode": "0o664",
+      "sha256": "dee0031e589385c0fbc58b24217bb1c9e56093c5fe3e501f7ca834b89501b96c"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.shared/Money.html",
+      "size": 5571,
+      "mode": "0o664",
+      "sha256": "cb96613e4262f6102b77e084d1aa828119a946a695d13b922e9537f8c3cd6c23"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.shared/Money.java.html",
+      "size": 2756,
+      "mode": "0o664",
+      "sha256": "338a27ea2c8d4733d35945abd55884854efb519f33fcac283be6fe4b90d0249b"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.shared/index.html",
+      "size": 5497,
+      "mode": "0o664",
+      "sha256": "c6f50c364c4b09eecbc5cb8349f4a9194b429d0f6018615d7abe40a487aa5b95"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp.shared/index.source.html",
+      "size": 5528,
+      "mode": "0o664",
+      "sha256": "b9daae05b8f2cf63b6aa8f01582ef8f6da552454412aa7096cf5fdeca89b41dc"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp/TnbpApplication.html",
+      "size": 3349,
+      "mode": "0o664",
+      "sha256": "d3bfc6fec29ae21d203ec7341903d13e3c1da616390b4fe27ba2359bf7e37e8c"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp/TnbpApplication.java.html",
+      "size": 3139,
+      "mode": "0o664",
+      "sha256": "f54fa680d050149d58769c3190fa8e8b6db46319cdff268f00e3cbfae410f258"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp/index.html",
+      "size": 3190,
+      "mode": "0o664",
+      "sha256": "faf4fff6e9aba1ffccf71f8e7fb4bafde31f9fc0c0c8a15eb689e4381297cf8a"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/de.linus.tnbp/index.source.html",
+      "size": 3188,
+      "mode": "0o664",
+      "sha256": "f7e31c1d67eb9e6a0697e3ac294bdc748a16620b5437f9e6715655e4a1e0bbf6"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/index.html",
+      "size": 9089,
+      "mode": "0o664",
+      "sha256": "5b2840ca9fdcf6fa6916dfc543b1887e495650ff6130760f1081c675933dd6a0"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/jacoco-resources/branchfc.gif",
+      "size": 91,
+      "mode": "0o664",
+      "sha256": "a90e2acee1486fcc06a9dc77dc3a2c7d1103f9f65a9c833834c22079ca446d76"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/jacoco-resources/branchnc.gif",
+      "size": 91,
+      "mode": "0o664",
+      "sha256": "cfd1d5ad1e939c895fc6c3a4b621f5b4bec61a4b71f8386d3520f0920930ba1f"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/jacoco-resources/branchpc.gif",
+      "size": 91,
+      "mode": "0o664",
+      "sha256": "a419dc4732e7c225b409bfd5457263de4f20b6aa9737f4636f6dfad36b194b1d"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/jacoco-resources/bundle.gif",
+      "size": 709,
+      "mode": "0o664",
+      "sha256": "22656fa2e683f8e5f7adae31f091ce045fc91f042a8fed82ee7a05fc4029e0c2"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/jacoco-resources/class.gif",
+      "size": 586,
+      "mode": "0o664",
+      "sha256": "7ad9ac2c3f87d220f46d077e1b03d743ba45084cbbbccc2577e18c167f0fb2b1"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/jacoco-resources/down.gif",
+      "size": 67,
+      "mode": "0o664",
+      "sha256": "69233accdde9fbbeef01a6bb5c117a4af85f24f7312054bccbeb0f64b7bb437c"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/jacoco-resources/greenbar.gif",
+      "size": 91,
+      "mode": "0o664",
+      "sha256": "a29475aae8c0a107bc41459eb2ca079bc34fc5092f107a78a287c4864b325791"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/jacoco-resources/group.gif",
+      "size": 351,
+      "mode": "0o664",
+      "sha256": "eb39f2e57cabfd740ab8d0c5fb4b26fc5ca71b334e2cfc8d6481c34842b4c360"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/jacoco-resources/method.gif",
+      "size": 193,
+      "mode": "0o664",
+      "sha256": "6308ea5fba7f5e989f67e3e9bb3366f0cb4c90ab72e838af7ff813aca5aac487"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/jacoco-resources/package.gif",
+      "size": 227,
+      "mode": "0o664",
+      "sha256": "82577b6b416bbf65cc99bc1c249e6462ae4ac708687fe2e1428b610c049300c2"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/jacoco-resources/prettify.css",
+      "size": 323,
+      "mode": "0o664",
+      "sha256": "2247d0cf27cb7fd9cd850eb33444c059f261eb63a718c26b8f357a938401c5f9"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/jacoco-resources/prettify.js",
+      "size": 59057,
+      "mode": "0o664",
+      "sha256": "743c6c4cab9499cd0bfe18a5a62281eccce843f47ec75eedb32eeb29c755aa68"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/jacoco-resources/redbar.gif",
+      "size": 91,
+      "mode": "0o664",
+      "sha256": "906ce7fcec0fbac1a26c16521e375f020a513f0cf87888766b69c4bf63f4d9bd"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/jacoco-resources/report.css",
+      "size": 4046,
+      "mode": "0o664",
+      "sha256": "0c464ff9ce9154fdf1a041b0efed7bc31da4a4c9744249d8ffa6b80f1c36ed9e"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/jacoco-resources/report.gif",
+      "size": 363,
+      "mode": "0o664",
+      "sha256": "c765cafa65ec9a3c221b46062c6ef691f2dd5ff25628ee2c65cc9fe0b74aeea6"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/jacoco-resources/session.gif",
+      "size": 213,
+      "mode": "0o664",
+      "sha256": "1ec062e347bc7db837b9471b6c6128e1d0a5ae8d4c6a2eaa8fee4d5cb6441dab"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/jacoco-resources/sort.gif",
+      "size": 58,
+      "mode": "0o664",
+      "sha256": "1875d39ff1be841991aa768486f1bcfc0ca02969323e2d2ec52ec156bb5cf240"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/jacoco-resources/sort.js",
+      "size": 3955,
+      "mode": "0o664",
+      "sha256": "64407e72c5097000e41f9da4ac9a04131b8ec9479ca8987a5f5d5f2ad6383043"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/jacoco-resources/source.gif",
+      "size": 354,
+      "mode": "0o664",
+      "sha256": "50257f70adf3ebe4d18bb2432a61370dac06dad7a45f235c8e5f376081251ac3"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/jacoco-resources/up.gif",
+      "size": 67,
+      "mode": "0o664",
+      "sha256": "e1ce2c1d5128b701f2dc5bb5f63c5c402d5d8125ad9c3ffc31c6abc7767899a0"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/jacoco-sessions.html",
+      "size": 995430,
+      "mode": "0o664",
+      "sha256": "b490e7bebff3156c71d6e836b9e2a4ba8664396051b5315620336ac8e58ab5be"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/jacoco.csv",
+      "size": 7228,
+      "mode": "0o664",
+      "sha256": "d4fd1c6612b21b55ebf246be1cbcb45ef8bc59cf172055f3f51b23520afbd5f3"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/jacoco/jacoco.xml",
+      "size": 243128,
+      "mode": "0o664",
+      "sha256": "ad99f6845fa0f06224999755e1dbbfe844a53f8f965d1ac59d024b8e981f29d6"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/surefire-reports/TEST-de.linus.tnbp.access.MonthlyAutomationE2eServerTest.xml",
+      "size": 27341,
+      "mode": "0o664",
+      "sha256": "74a2158d20dd67eb7e8d373125f8d70b1af592f1ed9b8efbb5e42dd8dd56c060"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/surefire-reports/TEST-de.linus.tnbp.access.RegistrationTest.xml",
+      "size": 31185,
+      "mode": "0o664",
+      "sha256": "01aed318ff428099c03af3fbf2bb5a2fcf4521a1710e78b3755b7adba6fa45c5"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/surefire-reports/TEST-de.linus.tnbp.access.SessionTest.xml",
+      "size": 27703,
+      "mode": "0o664",
+      "sha256": "778191e84c6849c09ccd301f96236abb0ddcfdf64e4254ec29c473e969e1c5bc"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/surefire-reports/TEST-de.linus.tnbp.budget.BudgetTest.xml",
+      "size": 27271,
+      "mode": "0o664",
+      "sha256": "aea1ed0c68b56b9a049b7a0dc39238824ba4d374335a6bbca70a738262854f3c"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/surefire-reports/TEST-de.linus.tnbp.expenses.ExpenseTest.xml",
+      "size": 28494,
+      "mode": "0o664",
+      "sha256": "e33d9aef54edd70d2f94d69849a91476359cba6784aa348c529dcd0bb5e2c06c"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/surefire-reports/TEST-de.linus.tnbp.finance.ArchitectureTest.xml",
+      "size": 27941,
+      "mode": "0o664",
+      "sha256": "0e9d1c0cc2171876a6d2b133aaf593628669b0d35f22bcd85ffa7b6913d8b5b5"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/surefire-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlySurplusTest.xml",
+      "size": 27564,
+      "mode": "0o664",
+      "sha256": "ac1ad176f1a3c2a0f30845aadb396e2c8f7d8019095d4f5065bb41b9dd890906"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/surefire-reports/TEST-de.linus.tnbp.savingsgoals.SavingsGoalTest.xml",
+      "size": 27612,
+      "mode": "0o664",
+      "sha256": "0808d9b9e758584bd37469cc4fbe270bc572d8ca5054d04b2a40d7c55011813d"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-reference-630ad58/surefire-reports/TEST-de.linus.tnbp.shared.MoneyTest.xml",
+      "size": 27422,
+      "mode": "0o664",
+      "sha256": "e3b5a56e9a98afa04bdde0cae10a817dcbe1c2c024e82effd6e542e691e91df1"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/coverage-writable-cache-attempt.log",
+      "size": 1622,
+      "mode": "0o664",
+      "sha256": "677ec0a8b559ed2f9330f64b7757a49e38f3b500b58a01aafa5c804ddc4af143"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/discovery/automation.json",
+      "size": 59813,
+      "mode": "0o664",
+      "sha256": "872f2cfb50149f4b77ba7d1f9a9db3da4501408979d2ddca3442d72c2f72f383"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/discovery/backend.log",
+      "size": 0,
+      "mode": "0o664",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/discovery/backend.tsv",
+      "size": 95925,
+      "mode": "0o664",
+      "sha256": "7c483f9bf21858a598ca6fef14f0f036f630ac5d7d61337b8bb11ee19c2da551"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/discovery/browser.json",
+      "size": 143513,
+      "mode": "0o664",
+      "sha256": "9ec220bcf3a54dd562a7ed88074f703b4fe754da86d3256818102db5584cd5be"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/discovery/review-automation.json",
+      "size": 59814,
+      "mode": "0o664",
+      "sha256": "ade6239bb1a7d1c282d323efd4412e44c00df87a8875554874df7bcfd78f0269"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/discovery/review-browser.json",
+      "size": 143477,
+      "mode": "0o664",
+      "sha256": "5ab04e151b68e8ef5712f2bd27f0f3dcde155ff3671971a1226a95ded9e4bfc8"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/discovery/review-transition.json",
+      "size": 6044,
+      "mode": "0o664",
+      "sha256": "7d5d9050a0fc2de29724d96fde7c8739f8cc72e70db143c0ebe2be997db44f04"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/discovery/transition.json",
+      "size": 6043,
+      "mode": "0o664",
+      "sha256": "2e211f412556318adce2ad73c640a40a65c3698ccbe22dc787d7c72f80c20571"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/extract-browser-loops.cjs",
+      "size": 1793,
+      "mode": "0o664",
+      "sha256": "e30db6619310086cfc7c452d5d6ca8f1d25e42eeefcd064818e7c09e5b7421a2"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-01/00-warmup-python.log",
+      "size": 11206,
+      "mode": "0o664",
+      "sha256": "f56ff0c48eb2872ea87c070e43494145025ebb4a9612016a1cd4baec89f72c5b"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-01/input-sha256.json",
+      "size": 102844,
+      "mode": "0o664",
+      "sha256": "72940d0c6e520ba8b993a404a00ebb144b09a6867b7b887591235fc0759145cb"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-01/results.json",
+      "size": 2882,
+      "mode": "0o664",
+      "sha256": "dd371bf5fab0e8734379db9e957364599a2f82f1d6154f51d6f5d9cbfd435a4d"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-01/tracked-input.patch",
+      "size": 0,
+      "mode": "0o664",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/00-warmup-automation.log",
+      "size": 13692,
+      "mode": "0o664",
+      "sha256": "9ec9a6fdf6eb969d4d3fd1ee2585ac007422fa1544b6c509a1b5622ee331bfde"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/00-warmup-backend.log",
+      "size": 1551250,
+      "mode": "0o664",
+      "sha256": "6379176892c85ef2f21fd828ee32458d6ee05cfd297c90345b8a7633b2f79e45"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/00-warmup-browser.log",
+      "size": 32496,
+      "mode": "0o664",
+      "sha256": "e2c8d56655a12e7c319c8efa8a0ee5e212453d057981fa1954ab150cf6b02a6b"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/00-warmup-contract-phases.jsonl",
+      "size": 1623,
+      "mode": "0o664",
+      "sha256": "9f48ea9d1de34bb3328135585f032cbbb3dbf7c2843f69400d61504b3ad250b7"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/00-warmup-contract.log",
+      "size": 56287,
+      "mode": "0o664",
+      "sha256": "503e2401135244128f59a95aa27a4d7b704b922fc40f867d478950ef8613f0fe"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/00-warmup-failsafe-reports/TEST-de.linus.tnbp.access.AccessVersionsIT.xml",
+      "size": 32666,
+      "mode": "0o664",
+      "sha256": "6dd5c4b34db38e88f7050c66777ffa731f62b84ca2d70afb1d0b048dea014f5e"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/00-warmup-failsafe-reports/TEST-de.linus.tnbp.access.RegistrationIT.xml",
+      "size": 554353,
+      "mode": "0o664",
+      "sha256": "f37c926d4e6c2157abd1e61a2ddf2a75ad2195044f8da0340d82448e1fc9359d"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/00-warmup-failsafe-reports/TEST-de.linus.tnbp.access.RegistrationV2IT.xml",
+      "size": 557728,
+      "mode": "0o664",
+      "sha256": "312b091609042bca14123b39e6a50e3db33e0d4d33cdb62cf4f9bcc622c66ae9"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/00-warmup-failsafe-reports/TEST-de.linus.tnbp.access.SessionIT.xml",
+      "size": 42268,
+      "mode": "0o664",
+      "sha256": "cb8fc7d6a379101ab3994c76ea488fec6275ca44a58cadedc6c0c899bc3e4365"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/00-warmup-failsafe-reports/TEST-de.linus.tnbp.access.SessionV2IT.xml",
+      "size": 39030,
+      "mode": "0o664",
+      "sha256": "dead194b89949c23558309d6aadb69e059551a54436c524f7941a0246b3ba318"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/00-warmup-failsafe-reports/TEST-de.linus.tnbp.expensebudget.BudgetIT.xml",
+      "size": 33895,
+      "mode": "0o664",
+      "sha256": "3df855408cecb1e8b29ed4fc4801e02a32ca5cb3c8911759cfe9bd1a03253820"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/00-warmup-failsafe-reports/TEST-de.linus.tnbp.expensebudget.BudgetV2IT.xml",
+      "size": 35328,
+      "mode": "0o664",
+      "sha256": "45eb2424b5ce71365ebd6889e0d40605744fc8998d373cdc82acb2cd8e66a795"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/00-warmup-failsafe-reports/TEST-de.linus.tnbp.expensebudget.ExpenseIT.xml",
+      "size": 35711,
+      "mode": "0o664",
+      "sha256": "5f61f28af964bcaab1389ef547232c67d3eb04fad0bacce1ac4f35e8366442db"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/00-warmup-failsafe-reports/TEST-de.linus.tnbp.expensebudget.ExpenseV2IT.xml",
+      "size": 37187,
+      "mode": "0o664",
+      "sha256": "e2ef66169ff1563ca5fa13591d860d500e8dd723aba93637052471e70e11248f"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/00-warmup-failsafe-reports/TEST-de.linus.tnbp.expensebudget.MonthSummaryIT.xml",
+      "size": 33162,
+      "mode": "0o664",
+      "sha256": "57e9957f6af3a1de033a2f421d767bf9ee6fb5dc253bab0ee36fbc873cfeba3e"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/00-warmup-failsafe-reports/TEST-de.linus.tnbp.expensebudget.MonthSummaryV2IT.xml",
+      "size": 34788,
+      "mode": "0o664",
+      "sha256": "b0365df5a7db5228aa101f6ede6b77b330eccb1ea3a1ce5ab12e633fcf6e431e"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/00-warmup-failsafe-reports/TEST-de.linus.tnbp.finance.FinanceCoordinationIT.xml",
+      "size": 33511,
+      "mode": "0o664",
+      "sha256": "b9bebd8efe39eab6a7de3e0678ce59013d3bf3f395940de2024ff95d338c8952"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/00-warmup-failsafe-reports/TEST-de.linus.tnbp.finance.FinanceMigrationIT.xml",
+      "size": 99759,
+      "mode": "0o664",
+      "sha256": "d8af2c4986001d1d7a1c7f6acec4840d54de4e61bd4ec396eece895dc57d2e0a"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/00-warmup-failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlyCorrectionIT.xml",
+      "size": 45373,
+      "mode": "0o664",
+      "sha256": "f05e50290d806f478824b267ce70f436b33af07b363e072b9a3211db8228bc94"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/00-warmup-failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlyDeletionIT.xml",
+      "size": 44967,
+      "mode": "0o664",
+      "sha256": "1e5e9bb3e9b4e3491a81413ec3148acf78f8419c6254ab1d6e194a14857c3b53"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/00-warmup-failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlyPendingIT.xml",
+      "size": 38749,
+      "mode": "0o664",
+      "sha256": "69c1a0eb82252398c85b486e7406489cf0b7cc4828c8dab41631c3f5028d1985"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/00-warmup-failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlySelectionIT.xml",
+      "size": 38357,
+      "mode": "0o664",
+      "sha256": "8a45d89da1ea32611747833a2e12e0a35cda176546146bc8df1103e114de3ac9"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/00-warmup-failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlySurplusIT.xml",
+      "size": 38576,
+      "mode": "0o664",
+      "sha256": "5b2f116f1b98f228fe680111ce5413fbb28a874c08fab0b93ec8f578a91c6fed"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/00-warmup-failsafe-reports/TEST-de.linus.tnbp.savingsgoals.SavingsGoalIT.xml",
+      "size": 35401,
+      "mode": "0o664",
+      "sha256": "35cbeca1b2a05c89bf69d68b7220efabeb563a1dda9c53c5450735d018fcb8fd"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/00-warmup-failsafe-reports/TEST-de.linus.tnbp.savingsgoals.SavingsGoalV2IT.xml",
+      "size": 40760,
+      "mode": "0o664",
+      "sha256": "39a3841c2559c05241b297f7aacad52f9b270f5c17283d0a7dd1b84baa295351"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/00-warmup-failsafe-reports/TEST-de.linus.tnbp.savingsgoals.SignedProgressIT.xml",
+      "size": 38823,
+      "mode": "0o664",
+      "sha256": "37e44432354b15a05be034b7197d813850a12919f5ff6a56b2d0380083343512"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/00-warmup-failsafe-reports/TEST-de.linus.tnbp.versions.AdministrativeSerializationIT.xml",
+      "size": 93026,
+      "mode": "0o664",
+      "sha256": "40c3781f3b3fb267b61fbb4f0855088f100dab87e1ffa0cfca143dff696f8387"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/00-warmup-failsafe-reports/TEST-de.linus.tnbp.versions.ApiRetirementIT.xml",
+      "size": 36573,
+      "mode": "0o664",
+      "sha256": "ec67fcfde3206744213daf6c620e35ccf7dbc192c2136949dcdd0facae412389"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/00-warmup-failsafe-reports/TEST-de.linus.tnbp.versions.ApiVersionStateIT.xml",
+      "size": 44841,
+      "mode": "0o664",
+      "sha256": "34ef65c40f575bcce56134c62aa064736dbf81e6a74f9550a182f18b8674bd75"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/00-warmup-failsafe-reports/TEST-de.linus.tnbp.versions.ReleaseTransitionIT.xml",
+      "size": 230819,
+      "mode": "0o664",
+      "sha256": "7d8be7f37949c87ab37292b380498351e5f8d87ad4343bac15892f8a10feaf60"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/00-warmup-python.log",
+      "size": 6239,
+      "mode": "0o664",
+      "sha256": "b3f08600e8941a5f0e741059c961d4727a0a2ae1f353c14f0ced1a79105a05d1"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/00-warmup-surefire-reports/TEST-de.linus.tnbp.access.MonthlyAutomationE2eServerTest.xml",
+      "size": 27342,
+      "mode": "0o664",
+      "sha256": "39a05d6356514d95c8b4deb91c64f70a8ca140513cba7f9e15615fb19f48a0b2"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/00-warmup-surefire-reports/TEST-de.linus.tnbp.access.RegistrationTest.xml",
+      "size": 31181,
+      "mode": "0o664",
+      "sha256": "54f16f074e651540e403e7f433803991b95c5812c483e5001ce7fcdb317bf695"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/00-warmup-surefire-reports/TEST-de.linus.tnbp.access.SessionTest.xml",
+      "size": 27703,
+      "mode": "0o664",
+      "sha256": "22f1a664e9df335a21a98451ce2b77007ccbcc9079e6d459b51e080628117d41"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/00-warmup-surefire-reports/TEST-de.linus.tnbp.budget.BudgetTest.xml",
+      "size": 27271,
+      "mode": "0o664",
+      "sha256": "bd147bd046791f015683596856c3d021d6eff9bfaac882b45b2082a000d004fa"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/00-warmup-surefire-reports/TEST-de.linus.tnbp.expenses.ExpenseTest.xml",
+      "size": 28494,
+      "mode": "0o664",
+      "sha256": "f3095de76d382605dcb68dcbc8b8d8ad640d0f3adb8f04f766c9349902c123a5"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/00-warmup-surefire-reports/TEST-de.linus.tnbp.finance.ArchitectureTest.xml",
+      "size": 27941,
+      "mode": "0o664",
+      "sha256": "aad6f22646af5e1d12b6f703731ad5986b07ac9f215cae95d3472c4321d63cc7"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/00-warmup-surefire-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlySurplusTest.xml",
+      "size": 27564,
+      "mode": "0o664",
+      "sha256": "f56311817ee7375276b197fdbe6ee1c10409f1afc11a2af7bdf2bea484199a3d"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/00-warmup-surefire-reports/TEST-de.linus.tnbp.savingsgoals.SavingsGoalTest.xml",
+      "size": 27612,
+      "mode": "0o664",
+      "sha256": "15c5ba4da850e87049078396087fbdd54339b0b7076f5d1fd695692f6dd6d611"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/00-warmup-surefire-reports/TEST-de.linus.tnbp.shared.MoneyTest.xml",
+      "size": 27422,
+      "mode": "0o664",
+      "sha256": "dfb692455d66fc853868b03a76832bc5c2828fcee6068c62d73678cd6c0a284d"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/00-warmup-transition.log",
+      "size": 6131,
+      "mode": "0o664",
+      "sha256": "b738ffa4b97ac53958d3a21b9711cfe78f9d69207193952196d095ea32b0a91b"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/01-measurement-automation.log",
+      "size": 13690,
+      "mode": "0o664",
+      "sha256": "f44103d11457f96ef1323e805ec9f7db8343308b96db0c521129912c539dd56e"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/01-measurement-backend.log",
+      "size": 1551253,
+      "mode": "0o664",
+      "sha256": "a77fbeb8ab07deee2833fc637b33d5f79b37687e191405c8a6e24c306f436459"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/01-measurement-browser.log",
+      "size": 32496,
+      "mode": "0o664",
+      "sha256": "b4ee6045a1814a193c8d5258fc140e12d990cd856c8ebe494bde32f48b9d3d95"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/01-measurement-contract-phases.jsonl",
+      "size": 1624,
+      "mode": "0o664",
+      "sha256": "b11a74bb06ac8d987ab623479e497bbe8d4c5881ac0e4d71d1913765f92a9108"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/01-measurement-contract.log",
+      "size": 56287,
+      "mode": "0o664",
+      "sha256": "e42c6a0ab362a70527829c702bb6a6fa528a6ec03e977b33d40c5572f9492eec"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/01-measurement-failsafe-reports/TEST-de.linus.tnbp.access.AccessVersionsIT.xml",
+      "size": 32672,
+      "mode": "0o664",
+      "sha256": "6ed5648cd5d98a0883011431b5a959992ed79ae69e9a421f522f5334d1c975cd"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/01-measurement-failsafe-reports/TEST-de.linus.tnbp.access.RegistrationIT.xml",
+      "size": 554354,
+      "mode": "0o664",
+      "sha256": "bec7a36a3d26cc9c054f9486481f659c883215deb214dae42edf086286340a10"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/01-measurement-failsafe-reports/TEST-de.linus.tnbp.access.RegistrationV2IT.xml",
+      "size": 557735,
+      "mode": "0o664",
+      "sha256": "9faa12275243344772821d8f48442e77c35880a83fc4c764d25ebdfc427b3610"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/01-measurement-failsafe-reports/TEST-de.linus.tnbp.access.SessionIT.xml",
+      "size": 42269,
+      "mode": "0o664",
+      "sha256": "1911777aeb325e822098324252679cef38cd702cf99bbb489d4b09e9768248aa"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/01-measurement-failsafe-reports/TEST-de.linus.tnbp.access.SessionV2IT.xml",
+      "size": 39032,
+      "mode": "0o664",
+      "sha256": "1dead84501e0869aeff3f3bf2bbfaa3ec231b6b865796f17eb68860bb20d02cc"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/01-measurement-failsafe-reports/TEST-de.linus.tnbp.expensebudget.BudgetIT.xml",
+      "size": 33897,
+      "mode": "0o664",
+      "sha256": "cbb11557f99f3a8653a5c187bdaa5701f88da064b4555fafd8e15581d43a7780"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/01-measurement-failsafe-reports/TEST-de.linus.tnbp.expensebudget.BudgetV2IT.xml",
+      "size": 35328,
+      "mode": "0o664",
+      "sha256": "cd8480c70cecb252c2ad83e49bdaf9a2fbb30e0cdfa5f1b22698a7940c8b066d"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/01-measurement-failsafe-reports/TEST-de.linus.tnbp.expensebudget.ExpenseIT.xml",
+      "size": 35711,
+      "mode": "0o664",
+      "sha256": "6cc6dc2a85a9c25ee3a891269d0c68d5f7aa3b079e2eee7981fe45910bc3ab94"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/01-measurement-failsafe-reports/TEST-de.linus.tnbp.expensebudget.ExpenseV2IT.xml",
+      "size": 37186,
+      "mode": "0o664",
+      "sha256": "b350bc54a0e3b2adfab80cfeed5a638ad7e12c34c49eefc7d40f8945defa2037"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/01-measurement-failsafe-reports/TEST-de.linus.tnbp.expensebudget.MonthSummaryIT.xml",
+      "size": 33162,
+      "mode": "0o664",
+      "sha256": "3d181a60356b7af5a3af48628ff9a859308904e989d03815a4bc9d96868fe85f"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/01-measurement-failsafe-reports/TEST-de.linus.tnbp.expensebudget.MonthSummaryV2IT.xml",
+      "size": 34788,
+      "mode": "0o664",
+      "sha256": "0d056efa878bf8eef3932f96a5ab3bbf8f6063ff945493ce168a3c6f2c54c629"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/01-measurement-failsafe-reports/TEST-de.linus.tnbp.finance.FinanceCoordinationIT.xml",
+      "size": 33511,
+      "mode": "0o664",
+      "sha256": "9e00ac01c28830d4f838fc91026a016a92ae54214a0b1f6cdc8f76ffe78b3d09"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/01-measurement-failsafe-reports/TEST-de.linus.tnbp.finance.FinanceMigrationIT.xml",
+      "size": 99760,
+      "mode": "0o664",
+      "sha256": "b2ff7dc506b3d6d3c13492a5efaeaa2260d0c0d4c6f6ad8f50fb946098055668"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/01-measurement-failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlyCorrectionIT.xml",
+      "size": 45378,
+      "mode": "0o664",
+      "sha256": "075cdf80727c4610842ce87b27b67e03ad30c18bd3409fbdb22e5c261a355705"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/01-measurement-failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlyDeletionIT.xml",
+      "size": 44966,
+      "mode": "0o664",
+      "sha256": "3ef9237902713a6913b497fa02045d51da5f40f30d15e8a05fe55833971e9943"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/01-measurement-failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlyPendingIT.xml",
+      "size": 38751,
+      "mode": "0o664",
+      "sha256": "4354ed3fefa266b6c5f204382ff5d62df46eddf742faeac5353eec385a38fc0c"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/01-measurement-failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlySelectionIT.xml",
+      "size": 38359,
+      "mode": "0o664",
+      "sha256": "706a4c10473f2904f1971c4113c5c61016c67c2cb88c7dfdf72eb4766ac191c2"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/01-measurement-failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlySurplusIT.xml",
+      "size": 38579,
+      "mode": "0o664",
+      "sha256": "16ecd97da8c31885362a1c9a128c83dad51996e4efc5b17da519742b029581ad"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/01-measurement-failsafe-reports/TEST-de.linus.tnbp.savingsgoals.SavingsGoalIT.xml",
+      "size": 35407,
+      "mode": "0o664",
+      "sha256": "577d42a8ce11d623bad95aaa5aca5ada15fadc6252c2b47b7b69a49a721ee994"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/01-measurement-failsafe-reports/TEST-de.linus.tnbp.savingsgoals.SavingsGoalV2IT.xml",
+      "size": 40759,
+      "mode": "0o664",
+      "sha256": "c6818297df0ecfbd56b73f49fa23fd1d2cd422b398b703bb5e566a50d564f12b"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/01-measurement-failsafe-reports/TEST-de.linus.tnbp.savingsgoals.SignedProgressIT.xml",
+      "size": 38828,
+      "mode": "0o664",
+      "sha256": "811c64cdd69c38ce88b401ecb4fea5cc3e1f5dacb7001f3d11199261076daeb0"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/01-measurement-failsafe-reports/TEST-de.linus.tnbp.versions.AdministrativeSerializationIT.xml",
+      "size": 93025,
+      "mode": "0o664",
+      "sha256": "bc88203c816ca2fd1b4d65ad8403464d9e46cec2efb38db1aaf2d3bec0099987"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/01-measurement-failsafe-reports/TEST-de.linus.tnbp.versions.ApiRetirementIT.xml",
+      "size": 36574,
+      "mode": "0o664",
+      "sha256": "4e97a6a4d183ba7219b2dd736f05a8e91df3131f00ed574652a405dc137a0b82"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/01-measurement-failsafe-reports/TEST-de.linus.tnbp.versions.ApiVersionStateIT.xml",
+      "size": 44845,
+      "mode": "0o664",
+      "sha256": "be6b783fdca64ade5a17647a8b9e81a28a4d9366c7e1331faee9455dabe2bbf6"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/01-measurement-failsafe-reports/TEST-de.linus.tnbp.versions.ReleaseTransitionIT.xml",
+      "size": 230823,
+      "mode": "0o664",
+      "sha256": "08ed0806e38bc64bdf051b73b4d06e7e64744cdd878d1cbfb60331fa2695c983"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/01-measurement-python.log",
+      "size": 6239,
+      "mode": "0o664",
+      "sha256": "71d9bf10cb2fc35f5f7c193b6640afeeccd5790959b09fb81982e8f558e841c8"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/01-measurement-surefire-reports/TEST-de.linus.tnbp.access.MonthlyAutomationE2eServerTest.xml",
+      "size": 27341,
+      "mode": "0o664",
+      "sha256": "7e5a98d0dcdc42bde5a8c54e16cbdf8116e549b985764cb6b856a49ef89fd4ee"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/01-measurement-surefire-reports/TEST-de.linus.tnbp.access.RegistrationTest.xml",
+      "size": 31172,
+      "mode": "0o664",
+      "sha256": "bfaffc56e45e5c56590a68fdac396d9d3173ac25cbc74246af2d9a0cb2419db5"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/01-measurement-surefire-reports/TEST-de.linus.tnbp.access.SessionTest.xml",
+      "size": 27703,
+      "mode": "0o664",
+      "sha256": "36bfb610752e1948820455c99c885fc11b611aa7a2a3e41b0e20768495aee0be"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/01-measurement-surefire-reports/TEST-de.linus.tnbp.budget.BudgetTest.xml",
+      "size": 27271,
+      "mode": "0o664",
+      "sha256": "3ec14ea8109c8d4935ba2a27abed449ef8b7aa5b7ab8ec352237a4f24d53d7dc"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/01-measurement-surefire-reports/TEST-de.linus.tnbp.expenses.ExpenseTest.xml",
+      "size": 28494,
+      "mode": "0o664",
+      "sha256": "3276983013fc2db8a0f5daf8c8f09cbdc3c30fcf98bd12d997840c5000cb1c26"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/01-measurement-surefire-reports/TEST-de.linus.tnbp.finance.ArchitectureTest.xml",
+      "size": 27941,
+      "mode": "0o664",
+      "sha256": "5043fc4c40a6c0949028f17b7abdfa790a328713c0d2bfda45c5b7d722abccc0"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/01-measurement-surefire-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlySurplusTest.xml",
+      "size": 27564,
+      "mode": "0o664",
+      "sha256": "28496f1b4536fda7b72799da75206ebca519696fe1123b19c672fb48d565f526"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/01-measurement-surefire-reports/TEST-de.linus.tnbp.savingsgoals.SavingsGoalTest.xml",
+      "size": 27611,
+      "mode": "0o664",
+      "sha256": "10eeac1a44ac91a0058fbb3ec46f167e14194676d990be75631361b77ed65e7b"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/01-measurement-surefire-reports/TEST-de.linus.tnbp.shared.MoneyTest.xml",
+      "size": 27422,
+      "mode": "0o664",
+      "sha256": "d191ab12bf68c6d913028aa21f47db016fbeaf73b548a52509cb53f84b4917a5"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/01-measurement-transition.log",
+      "size": 4838,
+      "mode": "0o664",
+      "sha256": "30791c829e29b64acbd585876474773c755bb667d0de59ece6c7847077c04549"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/02-measurement-automation.log",
+      "size": 13688,
+      "mode": "0o664",
+      "sha256": "ee1055dfb7d8d57e66a4ffbdce23a8693ffd02dad4fddd08f3fdcaf0c0b1cee9"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/02-measurement-backend.log",
+      "size": 1551251,
+      "mode": "0o664",
+      "sha256": "a78c8dc0cfc1d9fe26bc339d196b257a7eb616ced299e46afa470384a455287d"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/02-measurement-browser.log",
+      "size": 32496,
+      "mode": "0o664",
+      "sha256": "b8aea50a09faf6572023269b92111a68a6f41e71b1ce41130cfa708a1c9f1a98"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/02-measurement-contract-phases.jsonl",
+      "size": 1621,
+      "mode": "0o664",
+      "sha256": "297c60db912cdeae68479462a34aacacb8b843527c51eedfd885b696165f9e50"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/02-measurement-contract.log",
+      "size": 56287,
+      "mode": "0o664",
+      "sha256": "1e25948e7d33cc268db9ec9a67a7f857e252ecbebf9b029a8db5aa79b3bd34e1"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/02-measurement-failsafe-reports/TEST-de.linus.tnbp.access.AccessVersionsIT.xml",
+      "size": 32669,
+      "mode": "0o664",
+      "sha256": "f56b5c0aa1e37a3562100afe4148d95fdcf3e7c7782409bc804d0a9952b38a12"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/02-measurement-failsafe-reports/TEST-de.linus.tnbp.access.RegistrationIT.xml",
+      "size": 554357,
+      "mode": "0o664",
+      "sha256": "98c74111ac691b40a5e7779fecf305e887aa22e3fe49c0129f641435558a06ee"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/02-measurement-failsafe-reports/TEST-de.linus.tnbp.access.RegistrationV2IT.xml",
+      "size": 557734,
+      "mode": "0o664",
+      "sha256": "8f9a5fbadb7b96fed772a2436b681e847faf0818e089321ae805da3aafe78d61"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/02-measurement-failsafe-reports/TEST-de.linus.tnbp.access.SessionIT.xml",
+      "size": 42271,
+      "mode": "0o664",
+      "sha256": "f4da30d259f8294cb9abbdeba0c58e3fae58c6d743028a163f411e8d1674ed9b"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/02-measurement-failsafe-reports/TEST-de.linus.tnbp.access.SessionV2IT.xml",
+      "size": 39031,
+      "mode": "0o664",
+      "sha256": "ffef45832d0c5c8a297c00582d3d6e17319097373fab6440f98f014d7febfd1b"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/02-measurement-failsafe-reports/TEST-de.linus.tnbp.expensebudget.BudgetIT.xml",
+      "size": 33896,
+      "mode": "0o664",
+      "sha256": "c5c301ca31714a6c10775409396ccf26804fd49f20398f1d41f02ac06fa05cd8"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/02-measurement-failsafe-reports/TEST-de.linus.tnbp.expensebudget.BudgetV2IT.xml",
+      "size": 35328,
+      "mode": "0o664",
+      "sha256": "1ce4512d7e0e56ea4e85f3cc218e179415861e3d3c3b2e9450c2d114660ee998"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/02-measurement-failsafe-reports/TEST-de.linus.tnbp.expensebudget.ExpenseIT.xml",
+      "size": 35706,
+      "mode": "0o664",
+      "sha256": "fab10cec72781f824f24fc24ef44b989b800b90cb188b4b91b5d1f7c61de08bd"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/02-measurement-failsafe-reports/TEST-de.linus.tnbp.expensebudget.ExpenseV2IT.xml",
+      "size": 37187,
+      "mode": "0o664",
+      "sha256": "83935728868b90358cb97bf922fde0ef96b155208fc3b7e11bf2ebe29dda9365"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/02-measurement-failsafe-reports/TEST-de.linus.tnbp.expensebudget.MonthSummaryIT.xml",
+      "size": 33157,
+      "mode": "0o664",
+      "sha256": "950fe5aa15f5195777d7a9046492206cd9ef7beb5c9aa478f632a9f76d5bef9c"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/02-measurement-failsafe-reports/TEST-de.linus.tnbp.expensebudget.MonthSummaryV2IT.xml",
+      "size": 34787,
+      "mode": "0o664",
+      "sha256": "7643a27b09117acf3884cfa2a407194ab3a5be4a15a8d6e68a150817f8a0a852"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/02-measurement-failsafe-reports/TEST-de.linus.tnbp.finance.FinanceCoordinationIT.xml",
+      "size": 33509,
+      "mode": "0o664",
+      "sha256": "dd1f26782cf0a4ff0e509ad1870efbbb133cc5874233c80a3f854741f447b1d6"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/02-measurement-failsafe-reports/TEST-de.linus.tnbp.finance.FinanceMigrationIT.xml",
+      "size": 99756,
+      "mode": "0o664",
+      "sha256": "6df9e28d76d283b2beadaaee68c030443c875998a8426d14ea30e02f958c77fd"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/02-measurement-failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlyCorrectionIT.xml",
+      "size": 45373,
+      "mode": "0o664",
+      "sha256": "1ccc80bf3b0d014e3ea7799463da5a6eb515f8b656e715a375caacff23cfd462"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/02-measurement-failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlyDeletionIT.xml",
+      "size": 44965,
+      "mode": "0o664",
+      "sha256": "c6708349c3c00e51ac32aeb872548926b7c65cca1491e84e6649d1fd720971c8"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/02-measurement-failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlyPendingIT.xml",
+      "size": 38749,
+      "mode": "0o664",
+      "sha256": "2ea709cc8b096d655b46fdab1e9edfff2375ba75121227e6d021becf9f91e49a"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/02-measurement-failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlySelectionIT.xml",
+      "size": 38354,
+      "mode": "0o664",
+      "sha256": "e8627594b295ff8537b10033fefb36d5c3cb1b60ea881b9ebad78f183592b084"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/02-measurement-failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlySurplusIT.xml",
+      "size": 38575,
+      "mode": "0o664",
+      "sha256": "0b541d06e318be247ae1f354469dfe33f7025da90474b69909f7aa7b9a17be26"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/02-measurement-failsafe-reports/TEST-de.linus.tnbp.savingsgoals.SavingsGoalIT.xml",
+      "size": 35403,
+      "mode": "0o664",
+      "sha256": "492d51eba5f55e83bf2ec442ed1e9c08cd65f4f8ece704914bb11ab126f0eeda"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/02-measurement-failsafe-reports/TEST-de.linus.tnbp.savingsgoals.SavingsGoalV2IT.xml",
+      "size": 40761,
+      "mode": "0o664",
+      "sha256": "ddcc0a29708e106c243ab06fee572c1dbdf2991d02c9116f887bcde7cab79eb2"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/02-measurement-failsafe-reports/TEST-de.linus.tnbp.savingsgoals.SignedProgressIT.xml",
+      "size": 38823,
+      "mode": "0o664",
+      "sha256": "4f883c4af3069472c50efe22988a33b95561de12bbc8fc95d786a9a64030f9b6"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/02-measurement-failsafe-reports/TEST-de.linus.tnbp.versions.AdministrativeSerializationIT.xml",
+      "size": 93026,
+      "mode": "0o664",
+      "sha256": "c42b587ec83330108923732007f452404095016950d05bea54717c8913868f53"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/02-measurement-failsafe-reports/TEST-de.linus.tnbp.versions.ApiRetirementIT.xml",
+      "size": 36574,
+      "mode": "0o664",
+      "sha256": "45952cd2a567a06897b9e2c49173614bb4bccd8f0faecc05b17bb099e4cb124b"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/02-measurement-failsafe-reports/TEST-de.linus.tnbp.versions.ApiVersionStateIT.xml",
+      "size": 44841,
+      "mode": "0o664",
+      "sha256": "dafa08095120519d4b1f3472a53a7a8daee5af5e80df5021562c48ed9ed27ccd"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/02-measurement-failsafe-reports/TEST-de.linus.tnbp.versions.ReleaseTransitionIT.xml",
+      "size": 230816,
+      "mode": "0o664",
+      "sha256": "71c43d4e8d93ded00fea9fa34b7a57b855853f05bcd0298ae1437b70d3306a36"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/02-measurement-python.log",
+      "size": 6239,
+      "mode": "0o664",
+      "sha256": "dd5572c2444900c9a4ae560c72d2a318ced0a1731adbca44f2d84c47c3ba5718"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/02-measurement-surefire-reports/TEST-de.linus.tnbp.access.MonthlyAutomationE2eServerTest.xml",
+      "size": 27342,
+      "mode": "0o664",
+      "sha256": "b46d2eea399c13af9daeac534da4a4f846aaf6899ab02a8d5341896b5b8082d6"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/02-measurement-surefire-reports/TEST-de.linus.tnbp.access.RegistrationTest.xml",
+      "size": 31182,
+      "mode": "0o664",
+      "sha256": "6226a0849e5836735df95ad7376f7115c5fbba132d658c8c50a97a8a37ed0a78"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/02-measurement-surefire-reports/TEST-de.linus.tnbp.access.SessionTest.xml",
+      "size": 27702,
+      "mode": "0o664",
+      "sha256": "3d2b85b1f25d80bc4fbfd8310557e553e19972c677d91d7ac600f52017314452"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/02-measurement-surefire-reports/TEST-de.linus.tnbp.budget.BudgetTest.xml",
+      "size": 27271,
+      "mode": "0o664",
+      "sha256": "86a6a1a5daf8b1db081785a2093082b75cd72652c1adff182d3a40df32831fda"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/02-measurement-surefire-reports/TEST-de.linus.tnbp.expenses.ExpenseTest.xml",
+      "size": 28494,
+      "mode": "0o664",
+      "sha256": "b961e4319b30676de5f2f8ade5a39d60b8f62b6de54d7eb4d990a064937fb3a4"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/02-measurement-surefire-reports/TEST-de.linus.tnbp.finance.ArchitectureTest.xml",
+      "size": 27941,
+      "mode": "0o664",
+      "sha256": "2206e6ba8768cb33b9bd223614bdcf8f84ca95647f4d11247abc7362e8a367d7"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/02-measurement-surefire-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlySurplusTest.xml",
+      "size": 27563,
+      "mode": "0o664",
+      "sha256": "7dd5c67e02715a4ff736b36f7b23a3f8c9ac82b5b8374e525cd8e1261c1eb81d"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/02-measurement-surefire-reports/TEST-de.linus.tnbp.savingsgoals.SavingsGoalTest.xml",
+      "size": 27612,
+      "mode": "0o664",
+      "sha256": "464c61fb31d5680ca7e7d7a931c680d0196c0e1def7e4399fa1a880b04a34e4a"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/02-measurement-surefire-reports/TEST-de.linus.tnbp.shared.MoneyTest.xml",
+      "size": 27422,
+      "mode": "0o664",
+      "sha256": "ff60d822ad0586b9487ba7c5d6789cb8071233a42e1076595b3090f1f7c53a9d"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/02-measurement-transition.log",
+      "size": 4837,
+      "mode": "0o664",
+      "sha256": "a97292c8416dc28a166e161502a6d79f90fa1a5ba5f6715811149102368f302e"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/03-measurement-automation.log",
+      "size": 13689,
+      "mode": "0o664",
+      "sha256": "0d10514b5138e8735cda87e7b566545c63cbb36c27856095e9d22d59db024b17"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/03-measurement-backend.log",
+      "size": 1551653,
+      "mode": "0o664",
+      "sha256": "67518bcf54f917bf8c79232486aa8ad0ca8caecdd8a15cc50c0008cb4aa5c545"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/03-measurement-browser.log",
+      "size": 32498,
+      "mode": "0o664",
+      "sha256": "c345254a849a91e2044e86971ce01d380ec1a1fddc70ef8416279237f70fdd0b"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/03-measurement-contract-phases.jsonl",
+      "size": 1624,
+      "mode": "0o664",
+      "sha256": "13af051cc39b1f3ebd93d4f55a304b22cdfed45adf2dd680b83d4aa8d96e211b"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/03-measurement-contract.log",
+      "size": 56287,
+      "mode": "0o664",
+      "sha256": "60a56cf60134c2416e1c860a343f2d926ab16038ee9a76365b6d6caa6185535a"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/03-measurement-failsafe-reports/TEST-de.linus.tnbp.access.AccessVersionsIT.xml",
+      "size": 32671,
+      "mode": "0o664",
+      "sha256": "1b2ebe64207d5f9aae41ade5abd4b015af801a83a45d4d23f17e07f365a20cd3"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/03-measurement-failsafe-reports/TEST-de.linus.tnbp.access.RegistrationIT.xml",
+      "size": 554357,
+      "mode": "0o664",
+      "sha256": "1340e8c9c6fc1ea738d5da8bd729cac77b735205c824412d5a2394dff135ba54"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/03-measurement-failsafe-reports/TEST-de.linus.tnbp.access.RegistrationV2IT.xml",
+      "size": 557734,
+      "mode": "0o664",
+      "sha256": "6dd200281db7f45e8955fa35a78eb75a46454d93c521efff8497d343f87ae756"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/03-measurement-failsafe-reports/TEST-de.linus.tnbp.access.SessionIT.xml",
+      "size": 42271,
+      "mode": "0o664",
+      "sha256": "30b43b3f4fb256fa6bff2699dd343697e210a4f4792b3be7d86c1defbfe3b10d"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/03-measurement-failsafe-reports/TEST-de.linus.tnbp.access.SessionV2IT.xml",
+      "size": 39029,
+      "mode": "0o664",
+      "sha256": "024ff7680e690bda90c54e3802fb182e6fda369a2439e10f27639897e193a1d1"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/03-measurement-failsafe-reports/TEST-de.linus.tnbp.expensebudget.BudgetIT.xml",
+      "size": 33896,
+      "mode": "0o664",
+      "sha256": "721f55ef173d0a4a1f24b25342e88702d297acc7fa8b7f1363aeff3dd6af6663"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/03-measurement-failsafe-reports/TEST-de.linus.tnbp.expensebudget.BudgetV2IT.xml",
+      "size": 35326,
+      "mode": "0o664",
+      "sha256": "fcbfea03eb1d7e30d4d9183936823840b6028e91336ea5c16163da5948f93241"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/03-measurement-failsafe-reports/TEST-de.linus.tnbp.expensebudget.ExpenseIT.xml",
+      "size": 35713,
+      "mode": "0o664",
+      "sha256": "d05c4f3dce655ac9ae1147cb88cdc6a5df55b993df387df15286da6404449c3d"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/03-measurement-failsafe-reports/TEST-de.linus.tnbp.expensebudget.ExpenseV2IT.xml",
+      "size": 37186,
+      "mode": "0o664",
+      "sha256": "30ae6614a162a73d2e649c80adcb7937fa5f928d94d0a74e6db0fd5ad5766e10"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/03-measurement-failsafe-reports/TEST-de.linus.tnbp.expensebudget.MonthSummaryIT.xml",
+      "size": 33161,
+      "mode": "0o664",
+      "sha256": "999e83fe478577cc1cabb1de0a2400c84d4152ece0bf3f05ce66b573dd408481"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/03-measurement-failsafe-reports/TEST-de.linus.tnbp.expensebudget.MonthSummaryV2IT.xml",
+      "size": 34786,
+      "mode": "0o664",
+      "sha256": "284c17cc9590cb7d434519f083d2640200f819d61960e2123732d1fb3c68c287"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/03-measurement-failsafe-reports/TEST-de.linus.tnbp.finance.FinanceCoordinationIT.xml",
+      "size": 33514,
+      "mode": "0o664",
+      "sha256": "a0fa92b019ef4bc49940cccde4bb8c8069964505627605a6cadc27b9adfeb03d"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/03-measurement-failsafe-reports/TEST-de.linus.tnbp.finance.FinanceMigrationIT.xml",
+      "size": 99761,
+      "mode": "0o664",
+      "sha256": "24e53139fef4d99adb43dbc386c47e56c02e7ac1558937c5bda93b037c0f72b6"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/03-measurement-failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlyCorrectionIT.xml",
+      "size": 45376,
+      "mode": "0o664",
+      "sha256": "f047deb2961ea66cfa82d2df674733ed21e62c5093a73ef293401f95658f3f0b"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/03-measurement-failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlyDeletionIT.xml",
+      "size": 45582,
+      "mode": "0o664",
+      "sha256": "c17fe867b2581033d022f828494e978efee948e83d22ac877bfe51f58ad73dfe"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/03-measurement-failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlyPendingIT.xml",
+      "size": 38750,
+      "mode": "0o664",
+      "sha256": "f31b9cc3bff4e8cdf2f54ab89b6add2c023bc98099f282ae5f62e0b62f0e9c39"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/03-measurement-failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlySelectionIT.xml",
+      "size": 38360,
+      "mode": "0o664",
+      "sha256": "fe145d04346dd1323433d98f0d8181eae57b02905e0e81ee41f9afd2abef1a9a"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/03-measurement-failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlySurplusIT.xml",
+      "size": 38578,
+      "mode": "0o664",
+      "sha256": "d6e47895c891ae784bceb6f9a823fb7588669bee7a6f332ee612cfcefdf2c7d7"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/03-measurement-failsafe-reports/TEST-de.linus.tnbp.savingsgoals.SavingsGoalIT.xml",
+      "size": 35408,
+      "mode": "0o664",
+      "sha256": "90e91b4d2b848ac667f2ceba89696f344f1967e264fe9495213d2396bd078a63"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/03-measurement-failsafe-reports/TEST-de.linus.tnbp.savingsgoals.SavingsGoalV2IT.xml",
+      "size": 40758,
+      "mode": "0o664",
+      "sha256": "e425caa362d8e80750fb9201c658e884bc5e54af59a5cb92f5ceb33f12b9b25b"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/03-measurement-failsafe-reports/TEST-de.linus.tnbp.savingsgoals.SignedProgressIT.xml",
+      "size": 38827,
+      "mode": "0o664",
+      "sha256": "40380fbdea3b474690fd16e2806c43aad1f77fc1a41e056d7c8a37a78248c6fe"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/03-measurement-failsafe-reports/TEST-de.linus.tnbp.versions.AdministrativeSerializationIT.xml",
+      "size": 93027,
+      "mode": "0o664",
+      "sha256": "b3492639b9cfaab78f5562c793a8bae7208ff0e5b5661e9d947613dd392889a7"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/03-measurement-failsafe-reports/TEST-de.linus.tnbp.versions.ApiRetirementIT.xml",
+      "size": 36574,
+      "mode": "0o664",
+      "sha256": "10a71b0303ba1d4e329fd4f87074385e253e37fd5ad8489df26437a8cfa7c552"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/03-measurement-failsafe-reports/TEST-de.linus.tnbp.versions.ApiVersionStateIT.xml",
+      "size": 44844,
+      "mode": "0o664",
+      "sha256": "8abe90e5f34a4ba6efc0a227ddbc4d82a3ae6a5d71da5b2aadc8ca33cb0800d4"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/03-measurement-failsafe-reports/TEST-de.linus.tnbp.versions.ReleaseTransitionIT.xml",
+      "size": 230607,
+      "mode": "0o664",
+      "sha256": "55655ad463c4b37c52d7451a9bee1126432000a99f8dd74cf1bfba519ff461f8"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/03-measurement-python.log",
+      "size": 6239,
+      "mode": "0o664",
+      "sha256": "c09b9716817b4bbfeae4366eba04fd766f23b8a8e34e903911294a52f2bfac33"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/03-measurement-surefire-reports/TEST-de.linus.tnbp.access.MonthlyAutomationE2eServerTest.xml",
+      "size": 27342,
+      "mode": "0o664",
+      "sha256": "9d7efb2bd759f55a6a0ef6fce8277d85e147b1d5b562dc2593bb0370795a324f"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/03-measurement-surefire-reports/TEST-de.linus.tnbp.access.RegistrationTest.xml",
+      "size": 31178,
+      "mode": "0o664",
+      "sha256": "d9c9d895761e95885e798a72e8f2ad11d5c2cbe30a20351bb562ba83395570b8"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/03-measurement-surefire-reports/TEST-de.linus.tnbp.access.SessionTest.xml",
+      "size": 27703,
+      "mode": "0o664",
+      "sha256": "756a209b90de94f82ea60705472aee760751bd3962be0ed419534c905d83edea"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/03-measurement-surefire-reports/TEST-de.linus.tnbp.budget.BudgetTest.xml",
+      "size": 27271,
+      "mode": "0o664",
+      "sha256": "c8132a2c6d4d91a4860e68af88679d61d532105b7bc7e9ea78ccec909abaeb4d"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/03-measurement-surefire-reports/TEST-de.linus.tnbp.expenses.ExpenseTest.xml",
+      "size": 28494,
+      "mode": "0o664",
+      "sha256": "c11156ba901e080f77208c91d52026b610e647322dc5f49500e45667f8964f4a"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/03-measurement-surefire-reports/TEST-de.linus.tnbp.finance.ArchitectureTest.xml",
+      "size": 27941,
+      "mode": "0o664",
+      "sha256": "585189150445ea06ef3869f33a4bb26976c2f392bdabc18ca47e4dc1883bf295"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/03-measurement-surefire-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlySurplusTest.xml",
+      "size": 27564,
+      "mode": "0o664",
+      "sha256": "36d7070a1f0ff522adba265e7b2e03b1f4edabf6f2d077e95ba61486d4a140b5"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/03-measurement-surefire-reports/TEST-de.linus.tnbp.savingsgoals.SavingsGoalTest.xml",
+      "size": 27612,
+      "mode": "0o664",
+      "sha256": "3543deaaf73425269083cf77e3af13bdbf1e8902b2288ca4b4e6faad2f3f6b46"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/03-measurement-surefire-reports/TEST-de.linus.tnbp.shared.MoneyTest.xml",
+      "size": 27422,
+      "mode": "0o664",
+      "sha256": "05b5baed2fceb8548f993b95b7569bff730d257ba1a52a39999bbfee1a27b9bd"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/03-measurement-transition.log",
+      "size": 4839,
+      "mode": "0o664",
+      "sha256": "71f7c36c6ebe3429838915b502913820273769a1e3f2512cb7839aca1507adda"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/04-clean-automation.log",
+      "size": 13691,
+      "mode": "0o664",
+      "sha256": "e7edbff0a1504e7360bacd166d3e51c993a21c0e82e54290b7060152a2eec735"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/04-clean-backend.log",
+      "size": 1551866,
+      "mode": "0o664",
+      "sha256": "b7d689898bc67a8798f0367ad0edc4f388019ad833aa4d660f772d46cbad4c26"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/04-clean-browser.log",
+      "size": 32498,
+      "mode": "0o664",
+      "sha256": "148ce927b8017206b409f462e475dd3ae18a375c2dd471c541df50d9973ebb66"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/04-clean-contract-phases.jsonl",
+      "size": 1622,
+      "mode": "0o664",
+      "sha256": "ddfba451f4f8f416c0554a459a717d8a496a2666abe0b989887a5eab6b99a742"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/04-clean-contract.log",
+      "size": 56583,
+      "mode": "0o664",
+      "sha256": "b43086bcdc7228fe0e5e0e8b16236d989e01e55d3e3b6075c8e6b3355ad51e9a"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/04-clean-failsafe-reports/TEST-de.linus.tnbp.access.AccessVersionsIT.xml",
+      "size": 32671,
+      "mode": "0o664",
+      "sha256": "d754d6789414cbda5cbd3b98bed0a0370390b70044ac99fca1efc6f50395bdb3"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/04-clean-failsafe-reports/TEST-de.linus.tnbp.access.RegistrationIT.xml",
+      "size": 554355,
+      "mode": "0o664",
+      "sha256": "3b5f8c197787bdf2b9740f3bd51467b10cc4dadc9f66636ecd8c72ed9f11ddfc"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/04-clean-failsafe-reports/TEST-de.linus.tnbp.access.RegistrationV2IT.xml",
+      "size": 557736,
+      "mode": "0o664",
+      "sha256": "8a37e0f86389f68a69ac970ec03319ac9d325dc0043af617f9ad6d244a74d20e"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/04-clean-failsafe-reports/TEST-de.linus.tnbp.access.SessionIT.xml",
+      "size": 42270,
+      "mode": "0o664",
+      "sha256": "364748dd509d2df164daad1f179a5a3de23fb71982f24e2222c0785d2d093b82"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/04-clean-failsafe-reports/TEST-de.linus.tnbp.access.SessionV2IT.xml",
+      "size": 39031,
+      "mode": "0o664",
+      "sha256": "c0980d1767438e44637d88dabab75d197e2b6f619186e189b09769e38062b7d9"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/04-clean-failsafe-reports/TEST-de.linus.tnbp.expensebudget.BudgetIT.xml",
+      "size": 33898,
+      "mode": "0o664",
+      "sha256": "af48fe2a644e7a423ef938dd27b78d7dd1d7eeb70e2ae20aadb521f4c254cd4f"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/04-clean-failsafe-reports/TEST-de.linus.tnbp.expensebudget.BudgetV2IT.xml",
+      "size": 35329,
+      "mode": "0o664",
+      "sha256": "30b381e79958d9a036eac406f4b0734bf57eb8263c0d35d885dc2ea097cfc8fb"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/04-clean-failsafe-reports/TEST-de.linus.tnbp.expensebudget.ExpenseIT.xml",
+      "size": 35711,
+      "mode": "0o664",
+      "sha256": "999c991c3d2f31f361f7fd54be0e0b4b277e82b0f086ec2679ee52aca6aac31c"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/04-clean-failsafe-reports/TEST-de.linus.tnbp.expensebudget.ExpenseV2IT.xml",
+      "size": 37187,
+      "mode": "0o664",
+      "sha256": "729911e78f35ee73e94f06834db2db9da14e5a22037829d727b27d3eeaf33726"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/04-clean-failsafe-reports/TEST-de.linus.tnbp.expensebudget.MonthSummaryIT.xml",
+      "size": 33159,
+      "mode": "0o664",
+      "sha256": "690737f6dc797342c48dc3b2277d9d3859b3db0cf1318eb641f3e85cfde33012"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/04-clean-failsafe-reports/TEST-de.linus.tnbp.expensebudget.MonthSummaryV2IT.xml",
+      "size": 34787,
+      "mode": "0o664",
+      "sha256": "1f2f2aecb0b7f36308627ff21f38a97a185c3cf0d7ab4aed0a535898384e7a17"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/04-clean-failsafe-reports/TEST-de.linus.tnbp.finance.FinanceCoordinationIT.xml",
+      "size": 33515,
+      "mode": "0o664",
+      "sha256": "f8193207761ceeb027f11ff5ed99df835bac38d6fde5dde2f4f223627f924c67"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/04-clean-failsafe-reports/TEST-de.linus.tnbp.finance.FinanceMigrationIT.xml",
+      "size": 99758,
+      "mode": "0o664",
+      "sha256": "e934fd5ab8c82e3d1d437c380eaeb3593b04bfb67396c869e7f9e72e7651aae0"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/04-clean-failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlyCorrectionIT.xml",
+      "size": 45374,
+      "mode": "0o664",
+      "sha256": "703c2f9025699603158f4cc5ffe9f89dca934ab59bc2979df492290276e3084b"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/04-clean-failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlyDeletionIT.xml",
+      "size": 45580,
+      "mode": "0o664",
+      "sha256": "f9a0a18ab8c1fff6151e131d7e5fa9325836a61593a4736b00ac65ece77978de"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/04-clean-failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlyPendingIT.xml",
+      "size": 38747,
+      "mode": "0o664",
+      "sha256": "3f7d6e0d0b511561ad3e18abb558d5ed9aeb31d781ce21e447e142a99a4a38bd"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/04-clean-failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlySelectionIT.xml",
+      "size": 38359,
+      "mode": "0o664",
+      "sha256": "c5db5f4d7566636bc0e2603970f5d64ae38561421ba3a6ed18118394981703d5"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/04-clean-failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlySurplusIT.xml",
+      "size": 38578,
+      "mode": "0o664",
+      "sha256": "378b1d2a384bdcf885caf89a9e61be45d274d1f47df8ebf224ace3177d9a9457"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/04-clean-failsafe-reports/TEST-de.linus.tnbp.savingsgoals.SavingsGoalIT.xml",
+      "size": 35405,
+      "mode": "0o664",
+      "sha256": "598650c18ba7a34c55ccac174e82f29d76e6c417ea7378f7077628eb39f387e6"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/04-clean-failsafe-reports/TEST-de.linus.tnbp.savingsgoals.SavingsGoalV2IT.xml",
+      "size": 40764,
+      "mode": "0o664",
+      "sha256": "d24b4504aa44b752d9b204afeb4682d3d400398b72ab4a5d2cf25874615aa2ce"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/04-clean-failsafe-reports/TEST-de.linus.tnbp.savingsgoals.SignedProgressIT.xml",
+      "size": 38826,
+      "mode": "0o664",
+      "sha256": "2fef41059427e762ec53f67e49615274e074db3aa1c64e40a20a4094917dac14"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/04-clean-failsafe-reports/TEST-de.linus.tnbp.versions.AdministrativeSerializationIT.xml",
+      "size": 93027,
+      "mode": "0o664",
+      "sha256": "a2df8a113cedc0f0373ba5d97ad48aaa55fac5cbb18cec4db7deb0e5bab460ed"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/04-clean-failsafe-reports/TEST-de.linus.tnbp.versions.ApiRetirementIT.xml",
+      "size": 36575,
+      "mode": "0o664",
+      "sha256": "b9dc76597d66527a163164ee264cf2c3407a2ff2c49949830d62779b979006dd"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/04-clean-failsafe-reports/TEST-de.linus.tnbp.versions.ApiVersionStateIT.xml",
+      "size": 44845,
+      "mode": "0o664",
+      "sha256": "69ce653b70c3fb690b95e75ef2db2cb3b12f2959664b3e82285298dbb9b797db"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/04-clean-failsafe-reports/TEST-de.linus.tnbp.versions.ReleaseTransitionIT.xml",
+      "size": 230821,
+      "mode": "0o664",
+      "sha256": "9647f18567133055618b1dad81adfdbc1924ae4714afffd71b378f7e3228cec8"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/04-clean-python.log",
+      "size": 6239,
+      "mode": "0o664",
+      "sha256": "b8d32e1ae6e0436b70c4532152cea28a37efe299fde286534b15efe65fee6a9d"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/04-clean-surefire-reports/TEST-de.linus.tnbp.access.MonthlyAutomationE2eServerTest.xml",
+      "size": 27342,
+      "mode": "0o664",
+      "sha256": "887351013ae38af6b11de9af3ca910dc114ec74c47d8f30370f28ddca6841a16"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/04-clean-surefire-reports/TEST-de.linus.tnbp.access.RegistrationTest.xml",
+      "size": 31180,
+      "mode": "0o664",
+      "sha256": "2e372cfd5c6eeff6c80ac8927391ddec555fb989c26f82add1d861d64276d919"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/04-clean-surefire-reports/TEST-de.linus.tnbp.access.SessionTest.xml",
+      "size": 27702,
+      "mode": "0o664",
+      "sha256": "48bfd3b647c4177b74ee2d2cd5b7ae2fb13d2f61d0bf9fccfc682e8b908d87fb"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/04-clean-surefire-reports/TEST-de.linus.tnbp.budget.BudgetTest.xml",
+      "size": 27271,
+      "mode": "0o664",
+      "sha256": "eb92dbd568dc4f2d5383ff62cb0311e804d62ab91b8bfd47c4e3e8deb7f44eb2"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/04-clean-surefire-reports/TEST-de.linus.tnbp.expenses.ExpenseTest.xml",
+      "size": 28494,
+      "mode": "0o664",
+      "sha256": "88b143b63a542b286455a9a8ac62ea35c4467bb1bcd5c098fde71cf562060c48"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/04-clean-surefire-reports/TEST-de.linus.tnbp.finance.ArchitectureTest.xml",
+      "size": 27941,
+      "mode": "0o664",
+      "sha256": "ab5c5f8b168a37df689a47fa782d070c48be5801ed3113675b88dc7c26c08b04"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/04-clean-surefire-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlySurplusTest.xml",
+      "size": 27564,
+      "mode": "0o664",
+      "sha256": "66735476279540ffe04bb201eb6ea3e67769f4d2322551ab9a0121d423e677da"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/04-clean-surefire-reports/TEST-de.linus.tnbp.savingsgoals.SavingsGoalTest.xml",
+      "size": 27612,
+      "mode": "0o664",
+      "sha256": "64de077cc8662f5b12c5d871018ebdc3c1e5bbc45eb5ccac4cc76dc4fdf0266d"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/04-clean-surefire-reports/TEST-de.linus.tnbp.shared.MoneyTest.xml",
+      "size": 27422,
+      "mode": "0o664",
+      "sha256": "16ec6dc7fb36f9d017c795ec5e3bc91a571b7ec9b5d7aa16267a4bd325661045"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/04-clean-transition.log",
+      "size": 4837,
+      "mode": "0o664",
+      "sha256": "ce44f2cc0b03f81ef2e0b7899b2a3c8c7839271c84f4a013593d270b0af4bd11"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/analysis.json",
+      "size": 68156,
+      "mode": "0o664",
+      "sha256": "780d31a9107a013370cfbd3ad609a2044b6624eb08ca095f5329f06539b83687"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/input-sha256.json",
+      "size": 149238,
+      "mode": "0o664",
+      "sha256": "e986fc42a6a0f4419516ffcb1a6c1419617d0d915c06c1958effe473ec362d16"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/results.json",
+      "size": 41901,
+      "mode": "0o664",
+      "sha256": "19b27265af1248f026ccde4540f6016b57c6adff4c66109295bf22f17e769946"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/local-reference-02/tracked-input.patch",
+      "size": 5496565,
+      "mode": "0o664",
+      "sha256": "c373419f35c47a71c8f1f32f429c3f07d0875f72f87982d056739e7df6393f00"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/manifest-refresh-verification.log",
+      "size": 113,
+      "mode": "0o664",
+      "sha256": "7aa3a80575cfc5889a7ccd35d74b44a1ae2256ec07c338c8c51c97aa0284d51b"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/monthly-and-protected-matrix.md",
+      "size": 15430,
+      "mode": "0o664",
+      "sha256": "c4cc21e70a949d7568360f2e0ccabad343ba3b6e23418e9f5978b56372c69f8a"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/observation-ledger.json",
+      "size": 4696244,
+      "mode": "0o664",
+      "sha256": "5eae84f596fcae928943c51865ad5805476ff437366956b73a88792232db8eb7"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/python-verification.log",
+      "size": 7841,
+      "mode": "0o664",
+      "sha256": "385bdeea3a28ea07dab4da0b178573353b284e2e3f375ca7e042c19defa0c260"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/recheck-after-local-reference-01/input-sha256.json",
+      "size": 148523,
+      "mode": "0o664",
+      "sha256": "29b052bcbcfaec09191a87a6955cd321c98fd088920f22142d4cbb3cb95513db"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/recheck-after-local-reference-01/results.json",
+      "size": 33691,
+      "mode": "0o664",
+      "sha256": "1b72c49ae587502b7f66ab272843d245218f6fbc4203e32ff259749283318a5c"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/recheck-after-local-reference-01/tracked-input.patch",
+      "size": 23141,
+      "mode": "0o664",
+      "sha256": "3c7c8f0edda9c4c6a608c88fd8b7fb65eb034f6ddcf358b35fc0e3087d58268e"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/refresh-source-inventory.py",
+      "size": 19349,
+      "mode": "0o664",
+      "sha256": "9a3aacc59dc6ad4eb118a56ef0f28fd57527586e655df5b8d9b093775e0c87e1"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/reviewed-scenario-manifest.json",
+      "size": 6996452,
+      "mode": "0o664",
+      "sha256": "0edb003516074e74230fb6a5ba9a3370ce033f79f8e67fca33b867f5e13ec0d1"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/semantic-scenarios.py",
+      "size": 7802,
+      "mode": "0o664",
+      "sha256": "c6edf4703f62f0c9af3e01022db6f05fd7d8c83e846148fd3f14279b014db193"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/semantic-summary.json",
+      "size": 984,
+      "mode": "0o664",
+      "sha256": "c04c78df612f85073ec5550fb86efab24ac24c62e0f7cab8099f977211160bf2"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/source-inventory.json",
+      "size": 2271781,
+      "mode": "0o664",
+      "sha256": "a05a00bde2b204d2ad4aac43967299eee7f9215dbec7d9902e14c6169b00a904"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/source-matrix.csv",
+      "size": 985153,
+      "mode": "0o664",
+      "sha256": "ac1db89dc6d8412a103b7e1c8953db4cc645d6f76be6ac4b6321711e3e939eb4"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/test-baseline/verify-manifest-refresh.py",
+      "size": 6289,
+      "mode": "0o664",
+      "sha256": "f48e551492065f5aa4cc84b86e7fe2a546b4b9b83e9bdc4caf7d8ff83958d745"
+    }
+  ]
+}

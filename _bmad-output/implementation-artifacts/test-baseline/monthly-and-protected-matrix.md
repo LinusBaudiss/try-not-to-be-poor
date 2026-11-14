@@ -1,5 +1,7 @@
 # Monatsfälle und geschützte Grenzen
 
+Historische Rohbelege (Logs, Patches, XML-/Coverage-Berichte und Versuche) sind unverändert im [geprüften Nachweisarchiv](ARCHIVE.md) erhalten. Pfade zu diesen Belegen beziehen sich auf den dort wiederhergestellten alten Verzeichnisbaum.
+
 Stand: Quellrevision `8f66421be3b7090c5cd384c9679657d9a17a6b3f` zuzüglich der in diesem Verzeichnis dokumentierten Messwerkzeuge. Diese Tabelle ordnet vorhandene ausführbare Quellen zu; sie behauptet keinen lokalen erfolgreichen Integrationslauf. `BE:Klasse#Methode` ist die stabile Stammreferenz in `source-inventory.json`; Parameterwerte und Loop-Bindungen stehen dort und im `observation-ledger.json`. FE-Referenzen verwenden Datei und ausgeschriebenen Discovery-Titel. Alle Ersatznachweise bleiben **offen**: In 5.1 wird kein Altfall entfernt.
 
 Die Reihenfolge M-01 bis M-17 entspricht der verbindlichen Abnahmetabelle in `monatsueberschuesse.md`. Reine Rechen-/Zustandsentscheidungen können in 5.2 Unit-Hauptnachweise bekommen. Die jeweilige reale Grenze bleibt zusätzlich erhalten; ein Unit-Ersatz ersetzt keine unten genannte Integration.

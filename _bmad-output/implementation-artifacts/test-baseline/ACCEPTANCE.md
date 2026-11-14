@@ -1,5 +1,7 @@
 # Story 5.1 — Abnahmeprüfung
 
+Historische Rohbelege (Logs, Patches, XML-/Coverage-Berichte und Versuche) sind unverändert im [geprüften Nachweisarchiv](ARCHIVE.md) erhalten. Pfade zu diesen Belegen beziehen sich auf den dort wiederhergestellten alten Verzeichnisbaum.
+
 Stand: 2026-11-14. Alle acht Abnahmekriterien sind für die Inventar-/Baseline-Story technisch erfüllt. Das ist keine Erfüllung des 15-Minuten-Refactoringziels, keine Produktionsfreigabe und keine Abnahme der offenen Produktstories 4.6–4.8. Formales Projekttracking: Umsetzung abgeschlossen, Story zur Abnahme in `review`.
 
 | AC | Ergebnis | Konkreter Nachweis | Geltungsgrenze |
@@ -24,4 +26,4 @@ Stand: 2026-11-14. Alle acht Abnahmekriterien sind für die Inventar-/Baseline-S
 
 ## Review und Restumfang
 
-Alle drei Reviewebenen sind abgeschlossen. 15 einzeln protokollierte Befunde einschließlich eigener Klassifikationskorrektur sind geprüft und behoben; keine bestätigte Storylücke ist zurückgestellt. Die absichtlich noch nicht vorhandenen Ersatztests, Mutationsnachweise und Zielzeit gehören zu 5.2–5.5, keine versteckte Restarbeit von 5.1. Vorlagen für lokalen Commit und PR liegen unter den Implementierungsartefakten; Remote-Push und GitHub-BMAD-Abgleich wurden nicht ausgeführt.
+Alle drei Reviewebenen sind abgeschlossen. 15 einzeln protokollierte Befunde einschließlich eigener Klassifikationskorrektur sind geprüft und behoben; keine bestätigte Storylücke ist zurückgestellt. Die absichtlich noch nicht vorhandenen Ersatztests, Mutationsnachweise und Zielzeit gehören zu 5.2–5.5, keine versteckte Restarbeit von 5.1. Die damaligen Commit-/PR-Entwürfe wurden nach Veröffentlichung von PR #64 entfernt; der GitHub-BMAD-Abgleich bleibt ein gesonderter manueller Auftrag.

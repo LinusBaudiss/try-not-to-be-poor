@@ -70094,7 +70094,7 @@
     "scripts/tests/test_create_registration_link.py": "4a3e0dd30c19a56d9ff0b673f737aaa81efc46a59b11a2a2cd654415bc1a15e0",
     "scripts/tests/test_reference_release.py": "f3f330d12980719f7194f975fdb5d5b8e436f955cbc68b90361e94dbb34dc053",
     "scripts/tests/test_start_database.py": "eaca9901d02badef799969ee35380b5a80f2711e0e1b5a37f80f8a5a0f1547e6",
-    "scripts/tests/test_test_baseline.py": "07183794cae7ea455a8cd85bb37b188672d63e7abe99bed289c289ceaced30a1",
+    "scripts/tests/test_test_baseline.py": "ce503061be7bdf07b2fce9fe744b88f1521f1cf72b7155eddd079ea9abe7c1e9",
     "backend/src/test/java/de/linus/tnbp/versions/VersionDatabase.java": "c34bd5ff74010bc146d7fa550bbee921c4d4ad731b1967630d2fa29175e2fa3a",
     "backend/src/test/java/de/linus/tnbp/versions/TransitionHooks.java": "1666ca0d50ec428484f8d01436ee0a51cc2b0c5c373d0edbbda7ee93a128b014",
     "backend/src/test/java/de/linus/tnbp/access/PostgresFixture.java": "a581fd5dff63ab05a214aaaeb4b4f3423bdd63c4f14ab9666b9462e56ad6a9ff",

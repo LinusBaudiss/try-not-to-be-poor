@@ -1,9 +1,0 @@
-{"name": "generation-validation", "argv": ["./scripts/generator.sh", "validate", "--input-spec", "api-contract/openapi.yaml"], "seconds": 0.5944012239997392, "exit_code": 0}
-{"name": "generation-validation", "argv": ["./scripts/generator.sh", "validate", "--input-spec", "api-contract/v2/openapi.yaml"], "seconds": 0.5885863350049476, "exit_code": 0}
-{"name": "compatibility", "argv": ["/home/linus/dev/try-not-to-be-poor/.cache/tools/oasdiff-1.30.0", "breaking", "/tmp/tmp.0gCghaa0G8", "api-contract/openapi.yaml", "--fail-on", "ERR", "--allow-external-refs=false"], "seconds": 0.027367662005417515, "exit_code": 0}
-{"name": "compatibility", "argv": ["/home/linus/dev/try-not-to-be-poor/.cache/tools/oasdiff-1.30.0", "breaking", "/tmp/tmp.0gCghaa0G8", "api-contract/v2/openapi.yaml", "--fail-on", "ERR", "--allow-external-refs=false"], "seconds": 0.0443296579978778, "exit_code": 0}
-{"name": "java-generation-compilation", "argv": ["./backend/mvnw", "-B", "-f", "backend/pom.xml", "-DskipTests", "compile"], "seconds": 5.667360001003544, "exit_code": 0}
-{"name": "dependency-setup", "argv": ["npm", "--prefix", "frontend", "ci"], "seconds": 3.0313075879967073, "exit_code": 0}
-{"name": "typescript-generation", "argv": ["npm", "--prefix", "frontend", "run", "generate:api"], "seconds": 2.547795392005355, "exit_code": 0}
-{"name": "typescript-contract-compilation", "argv": ["npm", "--prefix", "frontend", "run", "check:contracts"], "seconds": 1.3771100559970364, "exit_code": 0}
-{"name": "spa-generation-compilation", "argv": ["npm", "--prefix", "frontend", "run", "build"], "seconds": 5.687672568994458, "exit_code": 0}

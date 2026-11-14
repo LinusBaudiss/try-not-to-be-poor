@@ -1,5 +1,7 @@
 # Story 5.1 — Testinventar, Baseline und Abschlussprüfung
 
+Historische Rohbelege (Logs, Patches, XML-/Coverage-Berichte und Versuche) sind unverändert im [geprüften Nachweisarchiv](ARCHIVE.md) erhalten. Pfade zu diesen Belegen beziehen sich auf den dort wiederhergestellten alten Verzeichnisbaum.
+
 Stand: 2026-11-14. Die technische Umsetzung und das Abschlussreview sind abgeschlossen; die Story wird zur Projektabnahme vorgelegt. Keine Produktionsfreigabe und keine vorweggenommene Abnahme von Epic 5 oder Produktstories 4.6–4.8.
 
 ## Ergebnis

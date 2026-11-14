@@ -1,5 +1,7 @@
 # Auswertung der vollständigen lokalen Baseline
 
+Historische Rohbelege (Logs, Patches, XML-/Coverage-Berichte und Versuche) sind unverändert im [geprüften Nachweisarchiv](ARCHIVE.md) erhalten. Pfade zu diesen Belegen beziehen sich auf den dort wiederhergestellten alten Verzeichnisbaum.
+
 **Ergebnis: Warm-up, drei vollständige Messungen und bereinigter Kontrolllauf sind erfolgreich.** Die zuvor fehlende lokale Laufzeitserie liegt damit vor. Der statische Szenarioabgleich und die separat gesicherte Coverage bleiben ergänzende Qualitätsnachweise; ein formaler Story-/Epic-Abschluss wird durch diese Auswertung allein nicht behauptet.
 
 ## Gesamtlaufzeit und Ziel

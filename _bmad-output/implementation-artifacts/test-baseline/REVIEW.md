@@ -1,5 +1,7 @@
 # Abschlussreview Story 5.1
 
+Historische Rohbelege (Logs, Patches, XML-/Coverage-Berichte und Versuche) sind unverändert im [geprüften Nachweisarchiv](ARCHIVE.md) erhalten. Pfade zu diesen Belegen beziehen sich auf den dort wiederhergestellten alten Verzeichnisbaum.
+
 Drei unabhängige Reviewebenen wurden auf dem Gesamtdiff seit dem dokumentierten Ausgangscommit ausgeführt: Blind Review, Randfallanalyse und Verifikationslückenprüfung. Kein Layer wurde übersprungen. Die Größe des Rohdiffs beträgt rund 50 MB, überwiegend unveränderte Mess-/Coverage-/Inventarnachweise. Jeder einzelne Befund ist mit Urteil, Route und geprüfter Begründung im `Review Triage Log` der Story-Spec erhalten; gleiche Ursachen wurden erst danach gemeinsam behoben.
 
 | Befunde | Bestätigte Ursache | Korrektur / konkrete Verifikation |

@@ -1,5 +1,7 @@
 # Kosten nach gemessenem Bereich
 
+Historische Rohbelege (Logs, Patches, XML-/Coverage-Berichte und Versuche) sind unverändert im [geprüften Nachweisarchiv](ARCHIVE.md) erhalten. Pfade zu diesen Belegen beziehen sich auf den dort wiederhergestellten alten Verzeichnisbaum.
+
 Die Bereiche trennen tatsächlich gemessene Aufwände. Inklusive Klassen-/Jobzeiten werden nicht zu exklusiven inneren Prozess- oder SQL-Phasen umgedeutet. Eine feinere Ursachenprofilierung innerhalb eines Prozessfalls ist eine spätere Optimierungsdiagnose in 5.4; die vorliegenden Grenzen bleiben überprüfbar.
 
 ## Lokaler Backend-Medianlauf 2

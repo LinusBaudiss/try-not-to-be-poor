@@ -1,6 +1,17 @@
 ---
 status: final
-updated: 2026-10-26
+updated: 2026-11-14
+planningExtensions:
+  - epic: 5
+    date: 2026-11-14
+    status: ausgearbeitet
+    source: Nutzerauftrag zur Ausarbeitung des vorgeschlagenen Testrefaktorierungs-Epics
+    storyCount: 5
+    acceptanceCriteriaCount: 40
+    implementationStatus: backlog
+    runtimeBaseline: ausstehend
+    formalWorkflowValidation: nicht-durchgefuehrt
+    historicalFinalValidationScope: Epics 3 und 4 vom 2026-10-26
 stepsCompleted: [1, 2, 3, 4]
 currentStep: 4
 currentPhase: complete
@@ -84,6 +95,8 @@ historicalInputDocuments:
 ---
 
 # Try Not to Be Poor – Epic-Aufschlüsselung
+
+> **Ergänzung vom 14.11.2026:** [Epic 5 — Schnellere Builds bei gleichwertiger Testabsicherung](#epic-5-schnellere-builds-bei-gleichwertiger-testabsicherung) ergänzt die bestehende Planung um fünf technische Verbesserungsstories. Die nachfolgenden Workflow-Abschluss- und Bestätigungsangaben vom Oktober beziehen sich auf den damaligen Umfang. Für Epic 5 liegen eine ausgearbeitete Planung und Backlog-Einträge vor; Laufzeitmessung, Implementierung und deren Qualitätsnachweise stehen aus.
 
 > **Planungsfortsetzung vom 25.10.2026:** Der [aktuelle Zielumfang mit extrahierten Anforderungen](#zielumfang-vom-25102026--anforderungsinventar) steht nach den bisherigen Stories. Die folgenden bisherigen Inventare, Epic-Listen und Abnahmen bis einschließlich Story 2.3 bleiben historische Nachweise. Unveränderte Regeln gelten fort; ausdrücklich abgelöste Regeln sind im aktuellen Zielumfang benannt. Der neue Umfang ist abschließend geplant; seine Implementierung ist noch nicht abgenommen oder umgesetzt.
 
@@ -2497,3 +2510,423 @@ Die Vereinigungsmenge der konkreten Abdeckungstabellen beider Epics umfasst alle
 Die neun historischen Stories und ihre Fertigmeldungen aus Epics 1–2 bleiben erhalten. Es wurden ausschließlich Planungsdokumente geändert; Anwendungscode, Sprintstatus und tatsächlicher Implementierungsstand werden durch diese Einzelbestätigungen nicht auf `done` gesetzt. Die vorgesehene Prüfevidenz wird bei Umsetzung erzeugt und nicht als heute ausgeführt ausgegeben.
 
 Alle vier Workflow-Schritte sind abgeschlossen. Die Abschlussvalidierung hat vollständige Anforderungsabdeckung, Architektur/Datenobjekte bei Bedarf, Story-Qualität, Epic-Struktur einschließlich gemeinsamer Dateien, Abhängigkeiten sowie Formatierung/Historienerhalt ohne offene Prüfpunkte bestätigt. Linus hat den Abschluss mit **C** bestätigt. Das Epic-Dokument ist als `final` gespeichert und für die weitere Umsetzungsplanung bereit.
+
+## Ergänzung vom 14.11.2026 — Anforderungen an die Testrefaktorierung
+
+### Auftrag, Quellen und Ausgangslage
+
+Linus möchte die bestehende Testverteilung zugunsten von Unit Tests umkehren und die Build-Laufzeit merklich reduzieren. Die Qualität der Absicherung darf sich dabei nicht verschlechtern. Der daraufhin vorgeschlagene Zuschnitt mit fünf Stories ist zur Ausarbeitung beauftragt. Diese Ergänzung führt dafür die eigenen Anforderungs-IDs `TR-1` bis `TR-10` ein; bestehende FR-, NFR-, AR-, UX- und Monatsfall-IDs behalten ihre Bedeutung.
+
+Maßgeblich bleiben die [Produktspezifikation](../specs/spec-try-not-to-be-poor/SPEC.md) mit [Geltungsregeln](../specs/spec-try-not-to-be-poor/brownfield.md), das [PRD](./prds/prd-try-not-to-be-poor-2026-10-19/prd.md), [AD-1 bis AD-10](./architecture/architecture-try-not-to-be-poor-2026-10-19/ARCHITECTURE-SPINE.md), [DESIGN](./ux-designs/ux-try-not-to-be-poor-2026-10-19/DESIGN.md), [EXPERIENCE](./ux-designs/ux-try-not-to-be-poor-2026-10-19/EXPERIENCE.md), die [17 Monatsfälle](../specs/spec-oberflaeche-und-monatsueberschuss/monatsueberschuesse.md) und die bisherigen konkreten Story-Abnahmen. Technische Grundlage sind die vorhandenen Tests, Maven-/Frontend-Konfigurationen, Teststartskripte und `.github/workflows/ci.yml` im Arbeitsstand vom 14.11.2026.
+
+Die Quellsichtung findet 25 Backend-Dateien `*IT.java` und neun Dateien `*Test.java`; Letztere umfassen auch Architektur- und Testhilfsprüfungen. Im Frontend liegen zwölf Playwright-Spec-Dateien, aber keine `src/**/*.spec.ts` und kein Unit-Test-Skript vor. Diese Dateizahlen sind keine Zählung tatsächlich ausgeführter Szenarien: Vererbung, Parametrisierung und Schleifen vervielfachen teilweise die Ausführung. Vorhandene lokale Reports weisen besonders auf `ReleaseTransitionIT` und `AdministrativeSerializationIT` als Laufzeitkandidaten hin. Unterschiedliche Reportstände und fehlende Setup-Zeiten erlauben daraus weder eine aktuelle Gesamtlaufzeit noch eine zugesicherte Einsparung abzuleiten.
+
+### Verbindliche Anforderungen und Planungsannahme
+
+| ID | Anforderung |
+| --- | --- |
+| TR-1 | Vergleichbare Vorher-/Nachher-Messungen erfassen den vollständigen lokalen Prüflauf, Backend-`verify`, Testgruppen, Setup/Generierung und CI-Jobs einschließlich kritischem Pfad. **Planungsannahme für „merklich“: mindestens 30 % weniger mediane Gesamtlaufzeit des vollständigen lokalen Prüflaufs.** Story 5.1 prüft die Erreichbarkeit an der Baseline; der Wert gilt bis zu einer ausdrücklich dokumentierten Nutzerentscheidung fort. Eine Zielverfehlung wird ausgewiesen und nicht durch stilles Absenken aufgelöst. |
+| TR-2 | Im Backend bilden echte Unit Tests und im Frontend Unit Tests beziehungsweise isolierte Komponententests jeweils mehr als 50 % der unterschiedlichen fachlichen Prüfszenarien. Integrations-, HTTP-Slice-, System- und E2E-Tests werden gesondert ausgewiesen. Doppelte Fälle, mehrfache Vererbungsausführung, triviale Zusatztests und künstliches Aufsplitten erhöhen diesen Anteil nicht. Die Qualitätsanforderungen haben Vorrang vor einer Quote; eine verbleibende Zielabweichung verhindert den unbegründeten Epic-Abschluss. |
+| TR-3 | Alle bisherigen Anforderungen, Fehlerklassen, Grenzwerte und Regressionsfälle behalten nachvollziehbare ausführbare Abdeckung. Vor dem Entfernen einer alten Prüfung bestehen Ersatzprüfungen und die weiterhin nötigen Integrationsnachweise. Gleichartige Szenarien dürfen zusammengeführt werden; unterschiedliche Beobachtungen und Risiken bleiben erhalten. |
+| TR-4 | PostgreSQL-spezifische Eigenschaften, Rollen/RLS, fehlender oder fremder Kontokontext, Verbindungspool-Kontextwechsel, Migration/Bestandserhalt, äußere Commits/Rollbacks, Sperren, unabhängige Verbindungen und konkurrierende Änderungen bleiben gegen echtes PostgreSQL unter den vorgesehenen unprivilegierten Rollen geprüft. |
+| TR-5 | Versionsbarriere, alte und neue Release-Artefakte, laufende Lese-/Schreib-/Datenbankarbeit, Prozessende, Neustart, Zertifizierung und Rücknahmegrenze behalten ihre erforderlichen echten Prozess- und Datenbanknachweise. Ein Stub des alten Releases oder ein vorgetäuschter Stilllegungsnachweis ersetzt diese nicht. |
+| TR-6 | Schnelle Frontend-Prüfungen decken Eingaben, Zustände und Antwortreihenfolgen ab. Reale Browsernachweise erhalten zentrale vollständige Nutzerabläufe, tatsächlichen HTTP-/Cookie-/Interceptor-Zusammenhang sowie Fokus, Tastatur, Reflow, Kontrast und die festgelegten responsiven Prüfpunkte. |
+| TR-7 | Alle bisher verpflichtenden Prüfgruppen und die neuen schnellen Tests laufen weiterhin bei Push und Pull Request mit fehlschlagenden Pflichtprüfungen bei Fehlern. Auslassen, nur nächtliche Ausführung, pauschale Retries, abgeschwächte Assertions oder fehlertolerante Jobs zählen nicht als Beschleunigung. |
+| TR-8 | Das Refactoring erhält das produktive Verhalten einschließlich Verträgen, Sicherheits-, Geld-, Kalender-, Monats- und Sitzungsregeln. Notwendige kleine Produktionscode-Extraktionen erhalten öffentliche Modulgrenzen und Verhalten; Testkonfigurationen schaffen keine produktiv erreichbaren Umgehungen. |
+| TR-9 | Fehlererkennung wird mit gezielten Mutationen oder kontrollierten Fehlereinbauten belegt. Für ersetzte Risikogruppen erkennt der neue Prüfverbund mindestens die zuvor erkannten, weiterhin relevanten Fehler. Code-/Zweigabdeckung ergänzt diesen Nachweis; ein aggregierter Prozentwert ersetzt ihn nicht. |
+| TR-10 | Tests bleiben deterministisch, isoliert, verständlich und einzeln ausführbar. Kontrollierbare fachliche Zeit, explizite Synchronisation, unabhängige Testdaten, begrenzte Wartezeiten und vollständiges Ressourcen-Cleanup verhindern eine Beschleunigung auf Kosten von Flakiness oder verdeckten Abhängigkeiten. |
+
+**Messvereinbarung:** Als lokaler vollständiger Prüflauf gelten Python-Prüfungen, `check-contract.sh` einschließlich beider Vertrags-/Generator-/Kompilierprüfungen und SPA-Build, Backend-`verify`, die neuen Frontend-Unit-/Komponententests sowie alle drei Playwright-Läufe (`e2e`, `e2e:transition`, `e2e:automation`). Der neue Frontend-Befehl kommt nach seiner Einführung hinzu; vorher wird sein Fehlen ausdrücklich dokumentiert. Für die Referenz und den Zielstand werden dieselben fachlichen Anforderungen, derselbe Host mit vergleichbarer Last, dieselben Ressourcenlimits, Werkzeugpins, Reihenfolge und definierte Cachebedingungen verwendet. Nach einem dokumentierten Warm-up erfolgen mindestens drei vollständige erfolgreiche Messläufe je Stand; Median und Einzelwerte bleiben erhalten. Warme Abhängigkeitscaches sind zulässig, vorhandene Testergebnisse ersetzen keine erneute Ausführung. Ein zusätzlicher Lauf aus bereinigten Build-/Testausgaben prüft die Ausführbarkeit ohne solche Artefakte; notwendige Downloads und erstmaliger Werkzeugaufbau werden separat berichtet. Die Messung umfasst die jeweils erforderlichen Builds und Setups und verschiebt deren Kosten nicht außerhalb der Uhr.
+
+Der Baseline- und Zielstand werden durch reproduzierbare Revisionen sowie Konfigurations-/Scope-Angaben identifiziert. Ändert sich während des Epics der fachliche Umfang, werden beide Varianten auf vergleichbarem Funktionsumfang erneut gemessen. Für CI werden bei gleicher Jobstruktur mindestens drei erfolgreiche Läufe pro Stand verglichen, Runner-/Cacheabweichungen benannt und Laufzeit ab Jobbeginn bis Ende des letzten Pflichtjobs sowie summierte Jobzeit getrennt ausgewiesen; Queue-Zeit bleibt separat. Die mediane CI-Dauer bis zum letzten Pflichtjob darf sich unter vergleichbaren Bedingungen nicht erhöhen. Eine andere Parallelisierung wird separat gemessen und ersetzt den Nachweis der Testrefaktorierung nicht.
+
+### Zuordnung der Testarten und Grenzen der Verlagerung
+
+| Gegenstand | Schnelle Hauptabsicherung | Dauerhaft nötige Integration |
+| --- | --- | --- |
+| Cent-Arithmetik, Geld-/Namensvalidierung, Monatsgrenzen, Überschuss-/Differenzregeln | Direkte Backend-Unit-Tests mit kontrollierter Zeit und expliziten Grenzwerten | Repräsentative echte Schreib-/Lesewege prüfen Verdrahtung, Persistenzgrenzen und unveränderte HTTP-Fehler. |
+| JSON-Typen, unbekannte Felder, DTO-Validierung und Fehlerabbildung | Adapter-/Serialisierungsprüfungen ohne volle Datenbank; getrennt von Unit Tests zählen | Pro unterstützter Version tatsächliche Routing-/Security-/Serialisierungskette, Status, Fehlerform und `no-store`. |
+| Datenbesitz, Rollen, RLS und Migrationen | Architekturprüfungen sowie Unit Tests für reine Hilfslogik | Reales PostgreSQL mit fehlendem/fremdem Kontext, unprivilegierten Rollen, Pool-Wiederverwendung und alten Datenständen. |
+| Gemeinsame Finanzkoordination, Wiederholung und Konkurrenz | Isolierte fachliche Entscheidungen und Fehlerpfade | Echte gemeinsame Transaktion und getrennte konkurrierende Verbindungen mit Commit-/Rollback-Beobachtung. |
+| Versionseinführung, Zertifikate und Rücknahme | Reine Entscheidungs-, Parsing- und Fingerabdrucklogik ohne Prozesse testen | Reale Releases, Sicherheitsprüfungen, Prozess-/DB-Barriere und dauerhafte Nutzungssperre. |
+| Frontend-Eingaben, Formatierung, Fortschritt, Session-/Ansichtsgeneration und Entwürfe | Unit-/isolierte Komponententests mit kontrollierten HTTP-Antworten und Antwortreihenfolgen | Durchgängige Browserwege prüfen tatsächliche Anmeldung, Cookie/CSRF/Origin, Navigation, Speichern, Löschbestätigung und Sitzungsende. |
+| Tastatur, Fokus, responsive Darstellung und Barrierefreiheit | DOM- und Zustandsprüfungen ergänzen die schnelle Absicherung | Reale Browserprüfungen erhalten 320 × 568, 390 × 844, 768 × 1024, 1280 × 800, 200-%-Text und Reflow-Prüfungen sowie weitere bestehende Nachweise. |
+
+Die Tabelle ist eine Zielzuordnung. Jede konkrete Entfernung wird zusätzlich an ihrem bisherigen Schutzzweck und den Abnahmen geprüft. Ein isolierter Komponententest lädt eine begrenzte Komponente mit Testabhängigkeiten, ohne laufende Gesamt-SPA, echte API, PostgreSQL oder vollständigen E2E-Browseraufbau. Ein Test mit gestartetem Spring-Anwendungskontext, HTTP-Server, externem Prozess oder Datenbank zählt im Backend nicht als Unit Test. Kryptografische Kernprüfungen verwenden weiterhin echte Implementierungen; Produktionsparameter werden zur Laufzeitverbesserung nicht abgesenkt.
+
+Für die Verteilungszählung erhält jede unterschiedliche Kombination aus Fachregel, relevanter Eingabe-/Zustandsvariante und erwartetem beobachtbarem Verhalten genau einen Szenarioeintrag mit primärer Testart. Weitere Nachweise derselben Kombination auf anderen Ebenen bleiben als ergänzende Prüfreferenzen verknüpft und erhöhen weder Zähler noch Nenner. Ein eigenständiges Risiko wie Datenbank-Rollback oder HTTP-Typprüfung ist ein gesondertes Integrations-/Adapterszenario; ein zusätzlicher Assert oder identischer Parameterwert erzeugt kein neues Szenario. Infrastruktur- und Architekturhilfsprüfungen werden separat berichtet. Diese Regel gilt identisch für Referenz und Zielstand.
+
+## Epic 5: Schnellere Builds bei gleichwertiger Testabsicherung
+
+Als Entwickler und Betreiber des privaten Projekts möchte ich belastbares Feedback deutlich früher erhalten, damit Änderungen zügiger geprüft werden und Finanz-, Sicherheits- und Bedienregeln weiterhin zuverlässig abgesichert sind. Fachliche Fallvielfalt wird überwiegend in schnellen Tests geprüft; teure Tests konzentrieren sich auf die Eigenschaften, die echte Integration benötigen.
+
+**Anforderungsbezug:** TR-1 bis TR-10. Die bestehenden FR-1 bis FR-17, NFR-1 bis NFR-12, AR-1 bis AR-23, UX-DR1 bis UX-DR30 und M-01 bis M-17 werden als Schutzumfang übernommen; dieses Epic implementiert keine noch offene Produktfunktion und nimmt sie nicht vorzeitig ab. Insbesondere AR-22 und explizite Story-Anforderungen an echte Integration bleiben verbindlich. Bei einer fachlichen Extraktion dürfen Fallmatrizen auf mehrere Testarten verteilt werden; der geforderte reale Nachweis einer Grenze bleibt bestehen.
+
+**Abhängigkeiten und Umfang:** Baut auf dem jeweils vorhandenen Test- und Implementierungsstand auf. Story 5.1 kann vor Abschluss der laufenden Epics 3/4 beginnen; deren laufende Änderungen werden durch eine festgehaltene Referenz und abgestimmte Dateibearbeitung berücksichtigt. Stories 5.2 und 5.3 benötigen 5.1 und lassen sich unabhängig abschließen. Story 5.4 baut auf beiden auf, Story 5.5 auf 5.4. Offene Stories 4.6 bis 4.8 sind keine versteckten Voraussetzungen: Ihre fehlende Umsetzung wird in der Abdeckungsmatrix als offen geführt; vorhandene Prüfungen dürfen deswegen nicht entfallen. Kommen sie während der Umsetzung hinzu, werden Scope und Vergleich entsprechend der Messvereinbarung aktualisiert. Die fachliche Freigabe der Monatsautomatik bleibt bei Epic 4.
+
+**Betroffene Bereiche:** `backend/src/test`, bei begründetem Extraktionsbedarf die zugehörigen Backend-Module, `frontend/src/app` und neue zugehörige Tests, `frontend/e2e`, Maven-/Frontend-Testkonfiguration, `scripts/tests`, Teststart-/Messskripte, CI sowie Testdokumentation. Gemeinsame Dateien und Testfixtures werden je Story abgestimmt. Neue Produktdatenbankobjekte, Vertragsänderungen, Framework-Upgrades, Produktionsfreigaben und ein GitHub-Abgleich gehören nicht zu diesem Auftrag.
+
+### Story 5.1: Testbestand und vollständige Build-Laufzeit reproduzierbar vermessen
+
+Als Entwickler\
+möchte ich den Schutzzweck und die Kosten der bestehenden Tests nachvollziehen können,\
+damit ich die teuersten geeigneten Prüfungen zuerst refactore und Qualität sowie Beschleunigung später fair vergleichen kann.
+
+**Anforderungsbezug:** TR-1, TR-2, TR-3, TR-9, TR-10; bestehende AR-22 und Story-/Monatsabnahmen als Inventarquellen.
+
+**Abhängigkeiten und Umfang:** Benötigt nur den vorhandenen Projektstand. Liefert ein versioniertes Testinventar, eine Abdeckungs-/Verlagerungsmatrix und ein wiederholbares Messverfahren mit Baseline. Verändert noch keine fachlichen Assertions oder Pflichtprüfgruppen. Nachweise liegen bei Umsetzung nachvollziehbar unter den Implementierungsartefakten; die vorliegende Planung behauptet keine bereits ausgeführte Baseline.
+
+**Abnahmekriterien:**
+
+**AC-1 — Vollständiges Inventar einschließlich versteckter Mehrfachausführung**
+
+**Angenommen** die aktuelle Testkonfiguration und alle Pflichtjobs liegen vor\
+**Wenn** Quellbestand und Testdiscovery erfasst werden\
+**Dann** sind Backend-Unit-, Architektur-, Adapter-, PostgreSQL-, Prozess-, Python- sowie Frontend-/Browserprüfungen samt Startbefehlen, Fixtures und Infrastruktur klassifiziert.\
+**Und** geerbte Tests, Parameterfälle, Schleifen und versehentliche Mehrfachausführung zwischen Surefire/Failsafe/CI werden ausdrücklich erfasst; Dateinamen allein bestimmen weder Typ noch Fallzahl.
+
+**AC-2 — Nachvollziehbare Abdeckungs- und Verlagerungsmatrix**
+
+**Angenommen** die bisherigen Abnahmen und Regressionsprüfungen sind bekannt\
+**Wenn** jeder unterscheidbare Prüffall einen stabilen Inventarverweis erhält\
+**Dann** verbindet die Matrix Anforderung beziehungsweise Story/AC, alten Test samt Parameter-/Schleifenfall, beobachtete Eigenschaft, Risikogruppe, vorgesehene Testart, notwendige verbleibende Integration und späteren Ersatznachweis.\
+**Und** alle 17 Monatsfälle und zusätzlichen AD-8/AD-9/AD-10-Präzisierungen sind zugeordnet; noch nicht implementierte Abnahmen bleiben sichtbar offen und werden nicht als vorhandene Abdeckung ausgegeben.
+
+**AC-3 — Wiederholbare vollständige Laufzeit-Baseline**
+
+**Angenommen** ein reproduzierbarer Referenzstand und die Voraussetzungen der Messvereinbarung sind verfügbar\
+**Wenn** Warm-up und mindestens drei vollständige erfolgreiche lokale Prüfläufe ausgeführt werden\
+**Dann** dokumentiert die Baseline Revision, Befehle, Umgebung/Last, Cachezustand, Einzelwerte und Median sowie Zeiten für Setup, Generierung, Kompilierung und Prüfgruppen.\
+**Und** der zusätzliche Lauf mit bereinigten Build-/Testausgaben ist erfolgreich; fehlgeschlagene oder abgebrochene Läufe gelten nicht als Leistungsnachweis.
+
+**AC-4 — CI-Ausgangslage und konkrete Kostenkandidaten**
+
+**Angenommen** erfolgreiche vergleichbare CI-Läufe und die lokalen Detailzeiten liegen vor\
+**Wenn** die Kosten nach Prüfgruppe und Klasse ausgewertet werden\
+**Dann** werden der CI-Pfad bis zum letzten Pflichtjob, summierte Jobzeiten, Setup-/Prozess-/Datenbankkosten und Mehrfach-Builds getrennt ausgewiesen.\
+**Und** `ReleaseTransitionIT` und `AdministrativeSerializationIT` werden anhand aktueller Messwerte untersucht; alte Reports werden nur als Hinweis gekennzeichnet. Ein fehlender CI-Zugang bleibt ein offener Nachweis und wird nicht durch erfundene Messwerte ersetzt.
+
+**AC-5 — Überprüfbares Leistungsziel und ehrliche Testverteilung**
+
+**Angenommen** Inventar und Baseline sind ausgewertet\
+**Wenn** die Reihenfolge der Refaktorierung festgelegt wird\
+**Dann** werden die 30-%-Planungsannahme aus TR-1, das konkrete Ziel in Sekunden und die erwarteten Kostenhebel dokumentiert. Erscheint das Ziel nicht erreichbar, werden Gründe und Alternativen vor weiteren Zieländerungen offengelegt.\
+**Und** die Zählregel aus TR-2 erfasst unterschiedliche fachliche Szenarien je Backend/Frontend ohne Inflation durch Duplikate; Unit-, Komponenten-, Adapter- und Integrationsanteile sind getrennt prüfbar.
+
+**AC-6 — Geschützte Integrationsfälle und bekannte Fehler als Referenz**
+
+**Angenommen** ein Fall prüft eine reale Sicherheits-, Datenbank-, Prozess- oder Browsergrenze\
+**Wenn** seine mögliche Verlagerung bewertet wird\
+**Dann** nennt die Matrix die konkrete Eigenschaft, die echte Integration erfordert, und deren dauerhaft zu erhaltende Prüfung.\
+**Und** bekannte Regressionsfälle sowie geeignete gezielte Fehlervarianten für Geld/Kalender, Autorisierung, Commit/Rollback, Versionen und Sitzungsgrenzen sind als spätere Vergleichsreferenz festgehalten.
+
+**AC-7 — Vergleichbare Abdeckung ohne Scheinsicherheit**
+
+**Angenommen** die Laufzeit-Baseline ist abgeschlossen\
+**Wenn** ergänzende Code-/Zweigabdeckung für den selbst geschriebenen Code erfasst wird\
+**Dann** sind Umfang, Werkzeuge und Ausschlüsse einschließlich generiertem Code dokumentiert; Instrumentierung wird für Vorher/Nachher identisch verwendet und separat von den primären Laufzeitmessungen ausgewiesen.\
+**Und** fehlende Frontend-Unit-Abdeckung gilt als Ausgangslücke statt als erfülltes Qualitätsziel; globale Prozentwerte ersetzen keine Fallzuordnung oder Fehlererkennung.
+
+**AC-8 — Eigenständig nutzbares Ergebnis**
+
+**Angenommen** Inventar, Matrix und Messverfahren sind abgelegt\
+**Wenn** eine andere entwickelnde Person die dokumentierten Befehle am Referenzstand ausführt\
+**Dann** kann sie die Testgruppen und Messausgaben ohne Wissen aus diesem Chat reproduzieren und erkennt fehlende Voraussetzungen an einem Fehlerstatus.\
+**Und** die priorisierten Arbeitsbereiche für 5.2 bis 5.4 sind konkret benannt; alle bisherigen Pflichtprüfungen bleiben ausführbar.
+
+### Story 5.2: Backend-Fachregeln überwiegend mit isolierten Unit Tests absichern
+
+Als Entwickler\
+möchte ich Backend-Fachfälle ohne vollständigen Anwendungs- und Datenbankstart prüfen,\
+damit Fehler in Berechnungen und Entscheidungen schnell und präzise erkennbar werden.
+
+**Anforderungsbezug:** TR-2, TR-3, TR-4, TR-8, TR-9, TR-10; insbesondere Geld-/Kalenderregeln, bestehende Modulgrenzen und AR-22.
+
+**Abhängigkeiten und Umfang:** Benötigt die Matrix und Baseline aus 5.1; keine Abhängigkeit von 5.3. Priorisiert gemessene Fachfallmatrizen in `access`, `expenses`, `budget`, `savingsgoals` und `monthlysurplus`. Kleine verhaltenserhaltende Extraktionen sind erlaubt, wenn sonst ausschließlich volle Integration möglich ist. Jede veränderte Testgruppe ist am Story-Ende vollständig abgesichert; ein noch fehlender Ersatz darf nicht auf 5.4/5.5 verschoben werden.
+
+**Abnahmekriterien:**
+
+**AC-1 — Echte schnelle Backend-Unit-Prüfung**
+
+**Angenommen** die geeigneten Fachfälle aus 5.1 sind ausgewählt\
+**Wenn** der dokumentierte Unit-Test-Befehl ausgeführt wird\
+**Dann** prüft er reale Fachimplementierungen ohne gestarteten Spring-Anwendungskontext, HTTP-Server, PostgreSQL oder externe Anwendungsprozesse.\
+**Und** die JVM darf lokal starten; kontrollierte Ports-/Datenbankverfügbarkeit ist keine Voraussetzung. Architektur-/Prozesshilfsprüfungen werden gesondert klassifiziert, statt die Unit-Zählung zu erhöhen.
+
+**AC-2 — Geldgrenzen und vollständige Fachfallmatrizen**
+
+**Angenommen** bisherige Integrationsfälle prüfen Betragsvalidierung oder Berechnungen\
+**Wenn** ihre fachlichen Varianten als Unit Tests umgesetzt werden\
+**Dann** bleiben Null-/Positiv-/Negativregeln, exakte Cent-Grenzen einschließlich Überschreitung, Summe/Differenz, fehlendes gegenüber Nullbudget, Überschuss, Vormerkung und tatsächlicher signierter Fortschritt mit ihren bisherigen Ergebnissen abgesichert.\
+**Und** erwartete Ergebnisse stammen aus den Fachregeln und expliziten Beispielen, nicht aus einer Kopie derselben Implementierungsformel.
+
+**AC-3 — Kalender, Herkunft und zustandsabhängige Entscheidungen**
+
+**Angenommen** eine Prüfung benötigt fachliche Zeit oder historische Zustände\
+**Wenn** Monate, Aktivierung, Zielwechsel/-löschung und Korrekturen isoliert geprüft werden\
+**Dann** decken kontrollierte Zeit und explizite Zustände insbesondere Monatsgrenzen/Sommerzeit, den gesamten Erstaktivierungsmonat, historische Null-/Ohne-Budget-Fälle, verbrauchte Bindungen und Korrekturen am manuell veränderten Stand ab.\
+**Und** echte Persistenz von Herkunft, Eindeutigkeit und Wiederholungswirkung bleibt ergänzend integriert geprüft; In-Memory-Fakes werden nicht als Datenbanknachweis gewertet.
+
+**AC-4 — Zugang und Adapter am richtigen Prüfpunkt**
+
+**Angenommen** bisherige Varianten betreffen Zugangsdaten, Tokens oder Anfragevalidierung\
+**Wenn** reine Entscheidungen von HTTP-/Datenbankeigenschaften getrennt werden\
+**Dann** prüfen Unit Tests geeignete Passwort-/Link-/Tokenregeln mit echten kryptografischen Kernimplementierungen; JSON-Typen, unbekannte Felder und Fehlerabbildung werden bei Bedarf in separat gezählten Adaptertests geprüft.\
+**Und** tatsächliche Authentifizierung, CSRF/Origin, Cookie-Attribute/-Rotation, Replay, Kontotrennung und Versionsverdrahtung bleiben durch reale Integrationsprüfungen abgesichert; Testoptimierung ändert keine produktiven Kryptoparameter.
+
+**AC-5 — Verhalten und Datenbesitz bei Extraktionen erhalten**
+
+**Angenommen** eine fachliche Entscheidung ist bisher eng mit Infrastruktur verbunden\
+**Wenn** sie zur isolierten Prüfung extrahiert wird\
+**Dann** bleibt sie innerhalb des zuständigen Moduls oder der bereits vorgesehenen technischen Infrastruktur und wird vom produktiven Ablauf tatsächlich verwendet. Öffentliche Verträge, Transaktionsgrenzen und Autorisierung bleiben erhalten.\
+**Und** Architekturprüfungen verhindern neue Geschwisterimporte, fremde Repository-/Tabellenzugriffe oder rein für Tests geschaffene produktive Umgehungen.
+
+**AC-6 — Ersatz besteht vor Entfernung und erkennt Fehler**
+
+**Angenommen** ein bisheriger Integrationsfall soll entfallen oder zusammengeführt werden\
+**Wenn** die Umstellung abgeschlossen wird\
+**Dann** verweisen Matrix und Prüfergebnisse auf den erfolgreichen Ersatz sowie die erhaltene reale Grenzprüfung; neue Prüfungen bestehen zunächst zusätzlich zu den alten.\
+**Und** gezielte Mutationen oder kontrollierte Fehlereinbauten der betroffenen Risikogruppe lassen die neuen Prüfungen scheitern. Eine fehlende Erkennung wird vor Entfernung behoben.
+
+**AC-7 — Deterministische und aussagekräftige Tests**
+
+**Angenommen** die neue Unit-Gruppe läuft einzeln oder gemeinsam\
+**Wenn** Reihenfolge, Zeit- und Testdaten unabhängig variiert werden\
+**Dann** hängen Ergebnisse nicht von aktueller Uhrzeit, gemeinsamem Mutable-State oder vorangehenden Tests ab; Parameterfälle benennen ihren fachlichen Unterschied.\
+**Und** Mocks ersetzen nur notwendige technische Grenzen. Assertions auf Ergebnisse und beobachtbare Effekte statt bloßer Aufrufzählungen verhindern Tests, die nur die Implementierung nacherzählen.
+
+**AC-8 — Nachgewiesene Backend-Verlagerung**
+
+**Angenommen** die vereinbarten Backend-Gruppen sind refactort\
+**Wenn** Unit-, Adapter- und vollständige Backend-Prüfung ausgeführt und verglichen werden\
+**Dann** bestehen alle bisherigen Schutzanforderungen; echte Unit Tests bilden gemäß TR-2 mehr als 50 % der unterschiedlichen fachlichen Backend-Szenarien.\
+**Und** Laufzeit, verbliebene teure Fälle, geänderte Abdeckung und konkrete Ersatzreferenzen sind dokumentiert. Pflichtintegration bleibt im regulären `verify`-Pfad.
+
+### Story 5.3: Frontend-Verhalten mit Unit- und isolierten Komponententests absichern
+
+Als Entwickler\
+möchte ich Eingaben, Zustände und asynchrone Antworten ohne vollständigen E2E-Aufbau prüfen,\
+damit die Oberfläche schnell getestet wird und Sitzungs- sowie Bedienregeln zuverlässig erhalten bleiben.
+
+**Anforderungsbezug:** TR-2, TR-3, TR-6 bis TR-10; NFR-6/NFR-11, UX-DR4 bis UX-DR30 soweit umgesetzt und die bestehenden Browser-Abnahmen.
+
+**Abhängigkeiten und Umfang:** Benötigt 5.1, keine Abhängigkeit von 5.2. Führt eine zur vorhandenen Angular-/Node-/TypeScript-Basis passende Testausführung ein; Werkzeugwahl und Versionierung werden bei Umsetzung dokumentiert. Weder ein Framework-Upgrade noch ein neues UI-Verhalten ist Bestandteil der Story. Neue Tests liegen außerhalb der generierten API-Verzeichnisse.
+
+**Abnahmekriterien:**
+
+**AC-1 — Eigenständiger ausführbarer Frontend-Testpfad**
+
+**Angenommen** die gepinnten Projektabhängigkeiten sind installiert\
+**Wenn** der dokumentierte Frontend-Unit-/Komponententest-Befehl lokal oder in CI läuft\
+**Dann** entdeckt und prüft er die neuen Tests ohne laufende Gesamt-SPA, echte Backend-API oder PostgreSQL, endet mit belastbarem Exitstatus und benötigt keinen interaktiven Watch-Modus.\
+**Und** Unit- und Komponentenergebnisse sind getrennt erkennbar; ein bestehender Build- oder Vertragsbefehl wird dadurch nicht ersetzt.
+
+**AC-2 — Eingaben, Anzeige und vollständige Wertebereiche**
+
+**Angenommen** Geldfelder, Kalenderdaten und Fortschrittsdarstellung erhalten gültige beziehungsweise ungültige Eingaben\
+**Wenn** die isolierten Prüfungen laufen\
+**Dann** sind deutsche Euro-/Datumsformate, Nachkommastellengrenzen, sichere Cent-Grenzen, Null-/Positivregeln, negativer und übererfüllter Fortschritt sowie ausschließlich auf 0–100 % begrenzte Balken abgesichert.\
+**Und** fehlendes Budget, Nullwerte, leere Ansichten und Nutzernamen mit „Berlin“ werden korrekt unterschieden; systemseitige Zeitzonenerläuterungen kehren nicht zurück.
+
+**AC-3 — Speichern, Fehler und erneuter Versuch**
+
+**Angenommen** kontrollierbare HTTP-Antworten können verzögert werden oder fehlschlagen\
+**Wenn** Erfassen, Bearbeiten, Löschen oder Fortschritts-/Automatikaktionen geprüft werden\
+**Dann** belegen Tests Doppelsendesperre, fehlenden Erfolg vor bestätigter Antwort, verständliche Feld-/Speicherfehler, erhaltene Entwürfe im offenen Tab und einen zulässigen erneuten Versuch.\
+**Und** unbestätigte Mutationen werden nicht blind wiederholt oder als gespeichert angezeigt; Bestätigung und Abbruch einer Löschung bleiben unterscheidbar.
+
+**AC-4 — Sitzungsende und späte Antworten**
+
+**Angenommen** eine Anfrage läuft beim Abmelden, Tokenablauf, Ansichts- oder Kontowechsel\
+**Wenn** Antworten danach in verschiedenen Reihenfolgen eintreffen\
+**Dann** belegen isolierte Prüfungen, dass alte Finanzdaten, Entwürfe und Erfolgsmeldungen nicht in eine neue Sitzungs-/Ansichtsgeneration gelangen und Finanzdaten/Tokens ausschließlich im Arbeitsspeicher verbleiben.\
+**Und** die relevante Interceptor-/Session-Verdrahtung wird einbezogen; ein Fake darf die zu prüfende Generationsentscheidung nicht bereits selbst vorwegnehmen.
+
+**AC-5 — Komponentenverhalten und zugängliche Zustände**
+
+**Angenommen** Hauptansichten, Formulare und Dialoge werden isoliert gerendert\
+**Wenn** Lade-, Fehler-, Leer-, Bestätigungs- und Erfolgszustände ausgelöst werden\
+**Dann** prüfen Komponententests die sichtbaren Texte, Labels, zugeordneten Fehlermeldungen, Statusankündigungen und die Bindung der relevanten Aktionen.\
+**Und** sie ersetzen keine realen Fokus-, Layout-, Reflow- oder Kontrastprüfungen; erforderliche Browsernachweise aus der Zuordnungstabelle bleiben bestehen.
+
+**AC-6 — E2E-Fälle mit nachgewiesenem Ersatz verschlanken**
+
+**Angenommen** ein Playwright-Fall wiederholt ausschließlich bereits isoliert abgesicherte Varianten\
+**Wenn** diese Varianten aus dem E2E-Aufbau entfernt werden\
+**Dann** sind jeder Variante neue Prüfreferenzen zugeordnet und die betroffenen Tests haben vor der Entfernung zusätzlich bestanden. Zentrale vollständige Zugangs-, Ausgaben-, Monats-, Sparziel- und vorhandene Automatikabläufe bleiben mit echter API erhalten.\
+**Und** tatsächliche Cookie-/CSRF-/Origin-/HTTP-Integration, Sitzungswechsel, Fokus/Tastatur, responsive Größen, Reflow und bestehende Barrierefreiheitsnachweise werden nicht durch gemockte E2E-Routen ersetzt.
+
+**AC-7 — Fehlererkennung des neuen Prüfverbunds**
+
+**Angenommen** Formatierung, Doppelsendesperre, Antwortzuordnung oder Fortschrittsbegrenzung wird gezielt fehlerhaft verändert\
+**Wenn** der jeweils neue Testverbund ausgeführt wird\
+**Dann** erkennt er die in 5.1 beziehungsweise während der Verlagerung festgelegten Fehlervarianten; Beispiele umfassen eine angenommene späte Antwort nach Kontowechsel und eine fälschlich auf null gekürzte tatsächliche Fortschrittszahl.\
+**Und** ein Test, der nur einen künstlichen Zustand ohne produktive Bindung prüft, genügt nicht als Ersatz. Fehlereinbauten bleiben kontrolliert und werden vollständig entfernt.
+
+**AC-8 — Nachgewiesene Frontend-Verlagerung**
+
+**Angenommen** die vorgesehenen Frontend-Fallgruppen sind migriert\
+**Wenn** die isolierten Tests und alle drei Playwright-Konfigurationen laufen\
+**Dann** bestehen sie; Unit-/isolierte Komponententests bilden gemäß TR-2 mehr als 50 % der unterschiedlichen fachlichen Frontend-Szenarien.\
+**Und** Matrix, getrennte Testzahlen, Abdeckung und Laufzeiten zeigen die Verlagerung und die erhaltenen realen Browserprüfungen. Neue reine Unit Tests benötigen weder API-Client-Regenerierung je Testfall noch einen vollständigen Anwendungsstart.
+
+### Story 5.4: Teure Integrationsprüfungen auf ihren Schutzzweck konzentrieren
+
+Als Entwickler\
+möchte ich echte Integration ohne redundante Fachfallmatrizen und vermeidbare Aufbaukosten prüfen,\
+damit die erforderliche Absicherung von Datenbank, Prozessen und Browsern schneller und verlässlich bleibt.
+
+**Anforderungsbezug:** TR-1, TR-3 bis TR-10; insbesondere AR-4 bis AR-10, AR-17 bis AR-22 und die bisherigen Versions-/Transaktionsabnahmen.
+
+**Abhängigkeiten und Umfang:** Benötigt 5.2 und 5.3. Untersucht zuerst die in 5.1 gemessenen Kostenkandidaten. Optimierungen dürfen Testaufbau und reine Entscheidungsteile betreffen; die reale Beobachtung der Integrationsgrenze bleibt zwingend. Gemeinsame Fixtures, Teststartskripte, Referenzartefakt-Caches und Maven-/Playwright-Ausführungszuordnung werden nur mit belegter Isolation verändert.
+
+**Abnahmekriterien:**
+
+**AC-1 — Redundanz anhand des Schutzzwecks abbauen**
+
+**Angenommen** schnelle Ersatzprüfungen und verbleibende Integrationsfälle bestehen\
+**Wenn** Integrationstests zusammengeführt oder Fallmatrizen verkürzt werden\
+**Dann** dokumentiert die Matrix pro Entfernung die bereits geprüfte Fachvariante und den weiterhin real beobachteten Grenzfall.\
+**Und** unterschiedliche API-Versionen, Rollen, Commit-Ausgänge, Konkurrenzlagen oder bekannte Regressionen gelten nicht allein wegen ähnlicher Assertions als Duplikate.
+
+**AC-2 — PostgreSQL-, Rollen- und Migrationsnachweise erhalten**
+
+**Angenommen** Datenbankfixtures oder Testkontexte werden wiederverwendet\
+**Wenn** die verbleibende Integrationsgruppe läuft\
+**Dann** bleiben echte PostgreSQL-Prüfungen für Rollen/erzwungene RLS, fehlenden/fremden Kontext, Pool-Wiederverwendung, Schema-/Rechteänderungen und Migration bestehender Finanzdaten ausführbar.\
+**Und** Testzustände werden unabhängig hergestellt; Laufzeitrollen werden für bequemeres Setup nicht privilegiert und eine In-Memory-Datenbank ersetzt PostgreSQL nicht.
+
+**AC-3 — Äußerer Commit, Rollback und Parallelität real beobachten**
+
+**Angenommen** Finanzmutationen, Wiederholungen und konkurrierende Vorgänge werden geprüft\
+**Wenn** Fixtures oder Synchronisation optimiert werden\
+**Dann** bleiben unabhängige Verbindungen, tatsächliche Kontosperren, vollständiger äußerer Rollback einschließlich Nachweisen/Markern und die Beobachtung erst nach bestätigtem Commit erhalten.\
+**Und** zeitgesteuerte Sleeps dürfen durch explizite Signale ersetzt werden, aber Konkurrenzfälle werden nicht zu rein sequenziellen Aufrufprüfungen umgebaut.
+
+**AC-4 — Versions- und Prozesssicherheit real erhalten**
+
+**Angenommen** insbesondere `ReleaseTransitionIT` und `AdministrativeSerializationIT` werden beschleunigt\
+**Wenn** reine Entscheidungsprüfungen ausgelagert und teure Prozessaufbauten reduziert werden\
+**Dann** bleiben echte Nachweise zu älterem Release, Schema-/Rollen-/Zertifikatsdrift, vollständiger Lese-/Schreib-/DB-Barriere, Prozessabbruch/-neustart, konkurrierender Administration und ausgeschlossener Rücknahme nach Nutzung erhalten.\
+**Und** Lebenszyklen werden nicht vorgetäuscht; noch aktive Prozesse oder Datenbankarbeit dürfen durch ein optimiertes Testharness keinen erfolgreichen Stilllegungsnachweis erzeugen.
+
+**AC-5 — Aufbaukosten nur mit gültigen Artefakten sparen**
+
+**Angenommen** ein Build-, Referenzrelease- oder Kontextcache spart wiederholten Aufbau\
+**Wenn** Eingangsrevision, Quellstand, Vertrag, Buildkonfiguration oder erforderliche Umgebung wechseln\
+**Dann** macht die dokumentierte Gültigkeitsregel veraltete Artefakte unbrauchbar und baut benötigte Ergebnisse neu auf. Fachlicher Testzustand, Konten und Datenbank-Nutzungsmarker werden nicht aus einem fremden Fall übernommen.\
+**Und** ein Lauf aus bereinigten Build-/Testausgaben besteht; die primäre Laufzeitmessung enthält die für den dokumentierten Cachezustand notwendigen Vorbereitungen.
+
+**AC-6 — Testdiscovery und alle Pflichtgruppen erhalten**
+
+**Angenommen** Ausführungszuordnung oder Startskripte ändern sich\
+**Wenn** lokale Standardbefehle und alle CI-Jobs ausgeführt werden\
+**Dann** entdeckt jede Pflichtgruppe ihre vorgesehenen Fälle, einschließlich vererbter/parametrisierter Varianten; versehentliche doppelte Ausführung wird beseitigt und erforderliche Varianten bleiben explizit zugeordnet.\
+**Und** Unit Tests bleiben schnell einzeln startbar; reguläres Backend-`verify`, Python-, Vertrags-/SPA- und alle drei Browsergruppen werden weiterhin verpflichtend ausgeführt.
+
+**AC-7 — Wiederholbarkeit und vollständiges Cleanup**
+
+**Angenommen** die veränderten Integrationsgruppen starten mehrere Datenbank-/Prozess-/Browserlebenszyklen\
+**Wenn** sie dreimal hintereinander und die betroffenen kritischen Fälle zusätzlich einzeln ausgeführt werden\
+**Dann** bestehen sie ohne pauschale Retries und ohne Abhängigkeit von vorherigen Fällen; hinterlassene Prozesse, Verbindungen, Sperren, Ports und temporäre Testdaten werden zuverlässig bereinigt.\
+**Und** Wartebedingungen besitzen begrenzte Timeouts mit Diagnose. Produktionssicherheitsfristen werden nicht zur Testbeschleunigung verkürzt.
+
+**AC-8 — Belegter Kostenabbau bei erhaltener Absicherung**
+
+**Angenommen** die gemessenen Kostenkandidaten sind optimiert\
+**Wenn** deren Vorher-/Nachher-Zeiten und die vollständige Prüfung gegenübergestellt werden\
+**Dann** zeigt der Nachweis getrennt eingesparte Fallausführungen, Starts/Builds und Wartezeit sowie unverändert erhaltene reale Schutzfälle.\
+**Und** Matrix und gezielte Fehlerprüfungen der betroffenen Integrationsgrenzen sind vollständig; eine Beschleunigung durch Auslassen oder Abschwächen wird verworfen.
+
+### Story 5.5: Qualitätsgleichwertigkeit und schnelleren vollständigen Build nachweisen
+
+Als Projektverantwortlicher\
+möchte ich den refactorten Prüfverbund anhand nachvollziehbarer Qualitäts- und Laufzeitnachweise beurteilen,\
+damit ich kürzeres Feedback erhalte und der bisherigen Absicherung weiterhin vertrauen kann.
+
+**Anforderungsbezug:** TR-1 bis TR-10; sämtliche bestehenden Schutzanforderungen im tatsächlich implementierten Vergleichsumfang.
+
+**Abhängigkeiten und Umfang:** Benötigt 5.4. Verbindet die bereits während der Verlagerung erzeugten Nachweise, ergänzt alle neuen schnellen Tests in die reguläre CI und dokumentiert die Bedienung. Performance- und Qualitätsabweichungen werden vor dem Epic-Abschluss behoben oder als Zielverfehlung ausgewiesen; diese Story ersetzt keine Produktabnahme aus Epic 3/4.
+
+**Abnahmekriterien:**
+
+**AC-1 — Vollständige Qualitätsbilanz ohne verlorenen Prüffall**
+
+**Angenommen** alle Refaktorierungsstories sind umgesetzt\
+**Wenn** das ursprüngliche Inventar mit dem Zielstand abgeglichen wird\
+**Dann** besitzt jeder bisher vorhandene fachliche, Sicherheits-, Datenbank-, Prozess- und Browserprüffall einen bestandenen Ersatz oder einen begründeten, weiterhin bestehenden Nachweis. Zusammenführungen sind nachvollziehbar und es gibt keine ungeklärte Entfernung.\
+**Und** offene Produktabnahmen bleiben offen; eine bessere Testarchitektur setzt sie nicht auf erfüllt. Die 17 Monatsfälle und Architekturpräzisierungen sind lückenlos als umgesetzt/geprüft oder noch offen ausgewiesen.
+
+**AC-2 — Vergleichbare Fehlererkennung und Abdeckung**
+
+**Angenommen** die verlagerten Risikogruppen und Fehlervarianten sind festgelegt\
+**Wenn** die kontrollierten Fehlerprüfungen am alten beziehungsweise neuen Prüfverbund verglichen werden\
+**Dann** erkennt der neue Verbund alle weiterhin relevanten Varianten, die der alte Verbund erkannt hat; zusätzliche gezielte Varianten zu Geldgrenzen, Kalender, Autorisierung, Teilcommit, Doppelwirkung, Versionsbarriere und späten Antworten sind je betroffenem Bereich belegt.\
+**Und** Code-/Zweigabdeckung des vergleichbaren selbst geschriebenen Codes verschlechtert sich nicht ungeklärt; Ausschlüsse oder geänderte Messnenner erzeugen keinen Scheinerfolg. Äquivalente oder nicht anwendbare Mutationen werden einzeln begründet, erkannte Fehler nicht nachträglich aus der Referenz gestrichen.
+
+**AC-3 — Merklich kürzerer vollständiger lokaler Prüflauf**
+
+**Angenommen** Referenz und Zielstand erfüllen dieselben Anforderungen und die Messvereinbarung\
+**Wenn** nach Warm-up mindestens drei vollständige erfolgreiche Zielmessungen vorliegen\
+**Dann** beträgt deren Median höchstens 70 % des Referenzmedians; Einzelwerte, absolute Zeitdifferenz und relative Reduktion werden veröffentlicht. Eine ausdrücklich geänderte Zielvereinbarung ist mit Nutzerentscheidung und Begründung sichtbar.\
+**Und** alle Pflichtgruppen einschließlich neuer Frontend-Tests sind enthalten, der zusätzliche Lauf mit bereinigten Ausgaben besteht und Setupkosten werden nicht außerhalb der Messung versteckt.
+
+**AC-4 — Reguläre CI mit allen Pflichtprüfungen**
+
+**Angenommen** die neue Testverteilung ist integriert\
+**Wenn** Push oder Pull Request die CI auslösen\
+**Dann** laufen Python-, beide Vertrags-/Generator-/Kompilierprüfungen, SPA-Build, Backend-Unit-/Integrations-/Versionsgruppen, neue Frontend-Unit-/Komponententests und alle drei Browsergruppen verpflichtend. Fehler lassen ihre Pflichtprüfung scheitern.\
+**Und** aus mindestens drei vergleichbaren erfolgreichen Läufen je Stand sind kritischer Pfad, summierte Jobzeit und Cachebedingungen ersichtlich; die mediane Dauer bis zum letzten Pflichtjob steigt nicht. Auslagerung, `continue-on-error`, pauschale Retries oder nachträgliche Parallelisierung gelten nicht als erfülltes Refaktorierungsziel.
+
+**AC-5 — Umgekehrte Verteilung mit ehrlicher Zählung**
+
+**Angenommen** das finale Inventar verwendet die Zählregel aus 5.1\
+**Wenn** die Verteilung je Backend und Frontend ausgewiesen wird\
+**Dann** bilden Backend-Unit-Tests beziehungsweise Frontend-Unit-/isolierte Komponententests jeweils mehr als 50 % der unterschiedlichen fachlichen Szenarien; die anderen Testarten bleiben getrennt sichtbar.\
+**Und** aufgeblähte Dateizahlen, doppelte Parameterwerte oder triviale Zusatzprüfungen erfüllen das Ziel nicht. Sicherheitskritische Integrationsfälle bleiben auch dann erhalten, wenn dadurch eine Quote verfehlt und der Abschluss vorerst blockiert wird.
+
+**AC-6 — Stabiler, sauberer Standardlauf**
+
+**Angenommen** ein sauberer Checkout mit den dokumentierten Voraussetzungen liegt vor\
+**Wenn** schnelle Tests und vollständiger Standardlauf gemäß README ausgeführt werden\
+**Dann** funktionieren sie ohne private manuelle Vorbereitungen, vorhandene Testergebnisse oder Testreihenfolge-Tricks; Diagnoseausgaben nennen fehlende Voraussetzungen und fehlerhafte Gruppen.\
+**Und** die Wiederholungsnachweise aus 5.4 bleiben erfolgreich, Ressourcen werden bereinigt und produktive Sicherheits-/Geld-/Kalender-/Versionsregeln sind unverändert.
+
+**AC-7 — Dokumentation und wartbare Entscheidungsgrundlage**
+
+**Angenommen** die Abnahmen sind nachgewiesen\
+**Wenn** README, Testanleitung und erforderliche Projektkontextangaben aktualisiert werden\
+**Dann** erklären sie die Testarten, schnellen und vollständigen Befehle, Messwiederholung, Fixture-Regeln, CI-Zuordnung und die Entscheidung, wann neue Fälle Unit-, Adapter- oder echte Integration benötigen.\
+**Und** Nachweise enthalten Referenz-/Zielrevision, Ergebnisse und verbleibende Risiken; generierte Dateien werden nicht manuell bearbeitet und es entsteht keine implizite Produktions- oder GitHub-Veröffentlichung.
+
+**AC-8 — Nachvollziehbarer Epic-Abschluss**
+
+**Angenommen** vollständige Matrix, Fehlererkennung, Verteilung und Laufzeitvergleich liegen vor\
+**Wenn** Epic 5 zur Abnahme vorgelegt wird\
+**Dann** zeigt der Abschlussbericht jedes TR-Ziel mit Ergebnis und Prüfreferenz; nur vollständig erfüllte beziehungsweise ausdrücklich neu vereinbarte Ziele erlauben den Abschluss.\
+**Und** verbleibende Qualitätslücken, fehlende CI-Messungen oder eine unerreichte Laufzeit-/Verteilungsanforderung werden als offen ausgewiesen, statt allein aufgrund grüner Einzeltests einen Erfolg zu behaupten.
+
+### Planungsabschluss und Anforderungsabdeckung von Epic 5
+
+| Story | Ergebnis | Voraussetzung | Abnahmen |
+| --- | --- | --- | --- |
+| 5.1 | Inventar, Verlagerungsmatrix, Baseline und Zielprüfung | Vorhandener Projektstand | AC-1 bis AC-8 |
+| 5.2 | Überwiegend isolierte Backend-Fachtests mit erhaltenen Integrationsgrenzen | 5.1 | AC-1 bis AC-8 |
+| 5.3 | Frontend-Unit-/Komponententests mit erhaltenen Browsergrenzen | 5.1 | AC-1 bis AC-8 |
+| 5.4 | Gemessen günstigere echte Integration und Testaufbauten | 5.2 und 5.3 | AC-1 bis AC-8 |
+| 5.5 | Vollständiger Qualitäts-, Verteilungs-, Laufzeit- und CI-Nachweis | 5.4 | AC-1 bis AC-8 |
+
+| Anforderung | Primäre konkrete Abdeckung |
+| --- | --- |
+| TR-1 | 5.1/AC-3 bis AC-5; 5.4/AC-5/AC-8; 5.5/AC-3/AC-4/AC-8 |
+| TR-2 | 5.1/AC-1/AC-5; 5.2/AC-1/AC-8; 5.3/AC-1/AC-8; 5.5/AC-5 |
+| TR-3 | 5.1/AC-2/AC-6; 5.2/AC-2 bis AC-6; 5.3/AC-2 bis AC-7; 5.4/AC-1; 5.5/AC-1 |
+| TR-4 | 5.1/AC-6; 5.2/AC-3/AC-4/AC-6; 5.4/AC-2/AC-3; 5.5/AC-1/AC-2 |
+| TR-5 | 5.1/AC-4/AC-6; 5.4/AC-4/AC-5; 5.5/AC-1/AC-2 |
+| TR-6 | 5.3/AC-2 bis AC-8; 5.5/AC-1/AC-2/AC-4 |
+| TR-7 | 5.1/AC-8; 5.2/AC-8; 5.3/AC-1/AC-8; 5.4/AC-6; 5.5/AC-4/AC-6/AC-7 |
+| TR-8 | 5.2/AC-4/AC-5; 5.3/AC-2 bis AC-6; 5.4/AC-2 bis AC-4/AC-7; 5.5/AC-6/AC-7 |
+| TR-9 | 5.1/AC-6/AC-7; 5.2/AC-6; 5.3/AC-7; 5.4/AC-8; 5.5/AC-2 |
+| TR-10 | 5.1/AC-3/AC-8; 5.2/AC-7; 5.3/AC-3/AC-4; 5.4/AC-3/AC-5/AC-7; 5.5/AC-6/AC-7 |
+
+Epic 5 umfasst **fünf Stories mit 40 Abnahmekriterien**. Alle fünf Stories und das Epic werden zunächst als `backlog` geführt; die erste Umsetzungsarbeit ist Story 5.1. Die vorhandenen Status der Epics 1 bis 4 bleiben erhalten. Der 30-%-Wert ist eine offengelegte Planungsannahme, kein bereits gemessener oder vom Nutzer numerisch vorgegebener Erfolg. Die Ausarbeitung verändert weder Anwendungscode noch bisherige Abnahmen; ein gesonderter formaler BMAD-Workflow-Abschluss wird für diese Ergänzung nicht behauptet.

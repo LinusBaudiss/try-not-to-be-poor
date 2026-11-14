@@ -38,6 +38,11 @@ class MonthlySurplusTest {
         assertThatThrownBy(()->MonthlySurplus.replacementPending(java.math.BigDecimal.valueOf(Money.MAX_CENTS),open,20001L)).isInstanceOf(ArithmeticException.class);
         var bound = new MonthlySurplus.MonthRecord(20000L,java.util.UUID.randomUUID(),true);
         assertThat(MonthlySurplus.replacementPending(java.math.BigDecimal.ZERO,bound,15000L)).isZero();
+        // Verbrauchte Null-/Ohne-Budget-Herkunft darf bei späterem positiven Überschuss nicht offen werden.
+        for (Long previous : new Long[]{0L, null}) {
+            var consumed = new MonthlySurplus.MonthRecord(previous,java.util.UUID.randomUUID(),true);
+            assertThat(MonthlySurplus.replacementPending(java.math.BigDecimal.valueOf(30000),consumed,Money.MAX_CENTS)).isEqualTo(30000);
+        }
         var noBudget = new MonthlySurplus.MonthRecord(null,null,false);
         assertThat(MonthlySurplus.replacementPending(java.math.BigDecimal.ZERO,noBudget,null)).isZero();
     }

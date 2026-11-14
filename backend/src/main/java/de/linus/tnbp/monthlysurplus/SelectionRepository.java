@@ -10,10 +10,15 @@ class SelectionRepository {
     private final JdbcTemplate jdbc;
     SelectionRepository(JdbcTemplate jdbc) { this.jdbc = jdbc; }
     UUID selected(UUID userId, LocalDate month) {
-        return jdbc.query("""
+        var rows = jdbc.query("""
             SELECT goal_id FROM monthly_surplus.selections
             WHERE user_id = ? AND effective_month <= ? ORDER BY effective_month DESC LIMIT 1
-            """, (row, index) -> row.getObject(1, UUID.class), userId, month).stream().findFirst().orElse(null);
+            """, (row, index) -> row.getObject(1, UUID.class), userId, month);
+        return rows.isEmpty() ? null : rows.getFirst();
+    }
+    boolean references(UUID userId, UUID goalId) {
+        return Boolean.TRUE.equals(jdbc.queryForObject("SELECT EXISTS (SELECT 1 FROM monthly_surplus.selections WHERE user_id = ? AND goal_id = ?)",
+            Boolean.class, userId, goalId));
     }
     void select(UUID userId, LocalDate month, UUID goalId) {
         jdbc.update("""

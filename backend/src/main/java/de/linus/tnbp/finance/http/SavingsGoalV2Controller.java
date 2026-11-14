@@ -17,7 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v2")
 public class SavingsGoalV2Controller implements SavingsGoalsApi {
     private final FinanceApplication goals;
-    public SavingsGoalV2Controller(FinanceApplication goals) { this.goals = goals; }
+    private final jakarta.servlet.http.HttpServletRequest request;
+    public SavingsGoalV2Controller(FinanceApplication goals, jakarta.servlet.http.HttpServletRequest request) {
+        this.goals = goals; this.request = request;
+    }
     @Override public ResponseEntity<List<SavingsGoalResponse>> getSavingsGoals() {
         return ResponseEntity.ok().header("Cache-Control", "no-store").body(goals.allGoals(userId()).stream().map(this::response).toList());
     }
@@ -26,16 +29,25 @@ public class SavingsGoalV2Controller implements SavingsGoalsApi {
             .body(response(goals.saveGoal(userId(), input.getName(), input.getTargetAmountCents(), input.getTargetDate())));
     }
     @Override public ResponseEntity<SavingsGoalResponse> putSavingsGoalProgress(UUID id, SavingsGoalProgressRequest input) {
+        validateId(id);
         return ResponseEntity.ok().header("Cache-Control", "no-store")
             .body(response(goals.progressGoalV2(userId(), id, input.getProgressCents())));
     }
     @Override public ResponseEntity<SavingsGoalResponse> putSavingsGoal(UUID id, SavingsGoalRequest input) {
+        validateId(id);
         return ResponseEntity.ok().header("Cache-Control", "no-store")
             .body(response(goals.updateGoal(userId(), id, input.getName(), input.getTargetAmountCents(), input.getTargetDate())));
     }
     @Override public ResponseEntity<Void> deleteSavingsGoal(UUID id) {
+        validateId(id);
         goals.deleteGoal(userId(), id);
         return ResponseEntity.noContent().header("Cache-Control", "no-store").build();
+    }
+    private void validateId(UUID id) {
+        Object variables = request.getAttribute(org.springframework.web.servlet.HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+        if (!(variables instanceof java.util.Map<?, ?> path) || !(path.get("id") instanceof String original)
+                || !id.toString().equalsIgnoreCase(original))
+            throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.BAD_REQUEST);
     }
     private UUID userId() { return UUID.fromString(SecurityContextHolder.getContext().getAuthentication().getName()); }
     private SavingsGoalResponse response(SavingsGoals.Goal goal) {

@@ -24,10 +24,14 @@ import tools.jackson.core.JacksonException;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @RestControllerAdvice(assignableTypes = SavingsGoalV2Controller.class)
 class SavingsGoalV2Errors {
-    @ExceptionHandler({SavingsGoals.NotFound.class, org.springframework.web.method.annotation.MethodArgumentTypeMismatchException.class})
+    @ExceptionHandler(SavingsGoals.NotFound.class)
     ResponseEntity<SavingsGoalNotFoundError> missing() {
         return ResponseEntity.status(404).header("Cache-Control", "no-store").body(new SavingsGoalNotFoundError(
             SavingsGoalNotFoundError.CodeEnum.SAVINGS_GOAL_NOT_FOUND, "Das Sparziel wurde nicht gefunden.", Map.of()));
+    }
+    @ExceptionHandler(org.springframework.web.method.annotation.MethodArgumentTypeMismatchException.class)
+    ResponseEntity<SavingsGoalError> invalidId() {
+        return bad(SavingsGoalError.CodeEnum.VALIDATION_FAILED, "Gib eine gültige Sparziel-ID an.", Map.of());
     }
     @ExceptionHandler(de.linus.tnbp.finance.FinanceApplication.FeatureNotAvailable.class)
     ResponseEntity<de.linus.tnbp.contract.v2.model.SavingsGoalFeatureNotAvailableError> featureUnavailable() {

@@ -151,6 +151,7 @@ export class MonthlyAutomation {
     return this.state()?.goals.find(goal => goal.id === this.state()?.selectedGoalId)?.name ?? null;
   }
   protected draftName(): string {
+    if (this.draft() === '') return 'Keine neue Zielauswahl getroffen';
     const id = this.draft() ?? this.state()?.selectedGoalId;
     return this.state()?.goals.find(goal => goal.id === id)?.name ?? (id ? 'Sparziel nicht mehr verfügbar' : 'Kein Ziel ausgewählt');
   }

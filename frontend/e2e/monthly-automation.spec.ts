@@ -278,15 +278,14 @@ for (const mutation of ['Aktivierung', 'Auswahl']) test(`Fortbestehende 401 nach
   })).toEqual({ user: null, token: null, overview: null, items: [], draft: null, name: '', amount: '', progress: '', editing: null });
 });
 
-test('Gelöschtes Entwurfsziel bleibt ausdrücklich unverfügbar bis zur eigenen Ersatzwahl', async ({ page, request }) => {
+test('Bestätigt gelöschtes Entwurfsziel wird verworfen und erfordert eigene neue Auswahl', async ({ page, request }) => {
   await login(page, await pendingAccount(request)); await createGoal(page, 'Eigenes Ersatzziel'); await choose(page);
-  const draft = await selection(page).inputValue(); let puts = 0;
+  let puts = 0;
   page.on('request', item => { if (item.url().endsWith('/monthly-surplus/selection') && item.method() === 'PUT') puts++; });
   await card(page).getByRole('button', { name: 'Sparziel löschen: Vorhandenes Ziel', exact: true }).click();
   await page.getByRole('button', { name: 'Endgültig löschen', exact: true }).click();
-  await expect(page.locator('#selection-draft')).toContainText('Sparziel nicht mehr verfügbar');
-  await expect(page.locator('#selection-draft')).toContainText('Wähle ein vorhandenes eigenes Sparziel als Ersatz');
-  await expect(selection(page)).toHaveValue(draft); await expect(selection(page)).toHaveAttribute('aria-invalid', 'true'); await expect(saveSelection(page)).toBeDisabled();
+  await expect(selection(page)).toHaveValue(''); await expect(saveSelection(page)).toBeDisabled();
+  expect(await page.evaluate(() => (window as any).ng.getComponent(document.querySelector('app-savings-goals')).selectionDraft())).toBe('');
   await selection(page).evaluate(element => (element.closest('form') as HTMLFormElement).requestSubmit());
   expect(puts).toBe(0); await expect(page.locator('#pending-state')).toContainText('200,00');
   await choose(page, 'Eigenes Ersatzziel'); await expect(saveSelection(page)).toBeEnabled(); await saveSelection(page).click();
@@ -813,4 +812,252 @@ test('Echter Korrekturgrenzfehler erhält den Entwurf bis zur manuellen Reparatu
     await expect(card(page)).toContainText('70,00'); await expect(page.locator('#pending-state')).toContainText('0,00');
     await pendingReload(other).click(); await expect(card(other)).toContainText('70,00');
   } finally { await other.close(); }
+});
+
+async function deletionAccount(request: APIRequestContext): Promise<string> {
+  const email = await account(request);
+  expect((await request.post('http://127.0.0.1:8081/deletion-fixture', { data: email })).status()).toBe(204);
+  return email;
+}
+for (const viewport of [{ width: 320, height: 568 }, { width: 390, height: 844 }, { width: 768, height: 1024 }, { width: 1280, height: 800 }]) {
+  test(`Ziellöschung erklärt Verbrauch und erhält frische Vormerkung ohne Ziel bei ${viewport.width} und 200 Prozent`, async ({ page, request, context }) => {
+    await page.setViewportSize(viewport); const email = await deletionAccount(request); await login(page, email);
+    await expect(card(page, 'Historisches Ziel')).toContainText('−30,00'); await expect(page.locator('#pending-state')).toContainText('300,00');
+    await choose(page, 'Historisches Ziel');
+    await page.getByLabel('Name des Sparziels', { exact: true }).fill('Unabhängiger Entwurf');
+    await page.getByLabel('Zielbetrag in Euro', { exact: true }).fill('123,45');
+    await page.evaluate(() => document.documentElement.style.fontSize = '200%');
+    const trigger = page.getByRole('button', { name: 'Sparziel löschen: Historisches Ziel', exact: true });
+    let deletes = 0; page.on('request', req => { if (req.method() === 'DELETE' && req.url().includes('/savings-goals/')) deletes++; });
+    await trigger.click(); const dialog = page.getByRole('dialog', { name: 'Sparziel löschen?' });
+    await expect(dialog).toContainText('„Historisches Ziel“ und sein Gesamtfortschritt');
+    await expect(dialog).toContainText('abgeschlossene Monate, die noch nicht verarbeitet wurden');
+    await expect(dialog).toContainText('Bereits offene Vormerkungen bleiben erhalten');
+    await expect(dialog).toContainText('Weitere Monatsüberschüsse werden ohne neue Zielauswahl vorgemerkt');
+    await expect(page.locator('#goal-delete-cancel')).toBeFocused();
+    await page.keyboard.press('Shift+Tab'); await expect(dialog.getByRole('button', { name: 'Endgültig löschen', exact: true })).toBeFocused();
+    await page.keyboard.press('Tab'); await expect(page.locator('#goal-delete-cancel')).toBeFocused();
+    expect((await new AxeBuilder({ page }).include('.savings-delete-dialog').withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze()).violations).toEqual([]);
+    for (const button of await dialog.getByRole('button').all()) {
+      await button.focus(); await button.evaluate(element => element.scrollIntoView({ block: 'center' }));
+      await expect(button).toHaveCSS('outline-style', 'solid'); await expect(button).toBeInViewport({ ratio: 1 });
+      const size = (await button.boundingBox())!; expect(size.width).toBeGreaterThanOrEqual(44); expect(size.height).toBeGreaterThanOrEqual(44);
+    }
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBeTruthy();
+    if (viewport.width === 320) {
+      const bounds = (await dialog.boundingBox())!;
+      expect(bounds.x).toBeCloseTo(16, 0); expect(viewport.width - bounds.x - bounds.width).toBeCloseTo(16, 0);
+    }
+    if (viewport.width === 320) await page.screenshot({ path: '../.local/story-4.5-verification/dialog-320-200.png' });
+    await page.keyboard.press('Escape'); await expect(trigger).toBeFocused(); expect(deletes).toBe(0);
+    await trigger.click(); await context.setOffline(true); await expect(dialog.getByRole('button', { name: 'Endgültig löschen', exact: true })).toBeDisabled();
+    await context.setOffline(false); await page.locator('#goal-delete-cancel').click(); await expect(trigger).toBeFocused();
+    await expect(page.locator('#saved-selection')).toContainText('Historisches Ziel'); await expect(page.locator('#pending-state')).toContainText('300,00');
+    // Sichere Ablehnung erhält den bestätigten Vorzustand samt Auswahlentwurf.
+    await page.route('**/api/v2/savings-goals/*', route => route.fulfill({ status: 404, json: { code: 'SAVINGS_GOAL_NOT_FOUND' } }));
+    await trigger.click(); await dialog.getByRole('button', { name: 'Endgültig löschen', exact: true }).click();
+    await expect(page.locator('#goal-delete-status')).toContainText('Es wurde nichts geändert');
+    await expect(page.locator('#saved-selection')).toContainText('Historisches Ziel'); await expect(page.locator('#pending-state')).toContainText('300,00');
+    await page.keyboard.press('Escape'); await page.unroute('**/api/v2/savings-goals/*');
+    const readStarted = gate(), releaseRead = gate();
+    await page.route(endpoint, async route => { readStarted.release(); await releaseRead.promise; await route.fulfill({ status: 500, json: {} }); });
+    await trigger.click(); await dialog.getByRole('button', { name: 'Endgültig löschen', exact: true }).click(); await readStarted.promise;
+    await expect(page.locator('#goal-mutation-status')).toHaveText('Dein Sparziel wurde gelöscht.');
+    await expect(page.getByRole('button', { name: 'Sparziel anlegen', exact: true })).toBeFocused();
+    await expect(page.locator('#saved-selection')).toHaveCount(0); await expect(page.locator('#pending-state')).not.toContainText('Vorgemerkt:');
+    expect(await page.evaluate(() => (window as any).ng.getComponent(document.querySelector('app-savings-goals')).selectionDraft())).toBe('');
+    releaseRead.release(); await expect(page.locator('#automation-state')).toContainText('konnte nicht geladen');
+    await expect(page.locator('#goal-mutation-status')).toHaveText('Dein Sparziel wurde gelöscht.');
+    await expect(page.getByLabel('Name des Sparziels', { exact: true })).toHaveValue('Unabhängiger Entwurf');
+    await expect(page.getByLabel('Zielbetrag in Euro', { exact: true })).toHaveValue('123,45');
+    expect(deletes).toBe(2); await page.unroute(endpoint); await pendingReload(page).click();
+    await expect(page.locator('#pending-state')).toContainText('300,00'); await expect(page.locator('#saved-selection')).toHaveText('Kein Ziel ausgewählt');
+    await expect(page.locator('#automation-state')).toContainText('aktiv'); await expect(page.locator('.savings-cards li')).toHaveCount(0);
+    await accessibleAutomation(page);
+    // Tatsächliche folgende Korrektur und Ausgabenlöschung ändern die verbrauchte Herkunft nicht.
+    await page.getByRole('link', { name: 'Ausgaben', exact: true }).click();
+    await page.getByRole('button', { name: 'Historische Reise bearbeiten', exact: true }).click();
+    await page.getByLabel('Betrag bearbeiten in Euro', { exact: true }).fill('850');
+    await page.getByRole('button', { name: 'Änderungen speichern', exact: true }).click(); await expect(page.locator('#expense-status')).toContainText('gemeinsam gespeichert');
+    await page.getByRole('button', { name: 'Historische Reise löschen', exact: true }).click();
+    await page.getByRole('button', { name: 'Endgültig löschen', exact: true }).click(); await expect(page.locator('#expense-status')).toContainText('gemeinsam gespeichert');
+    expect((await request.post('http://127.0.0.1:8081/close-month', { data: `${email}\n2026-11-01` })).status()).toBe(204);
+    await page.getByRole('link', { name: 'Sparziele', exact: true }).click(); await expect(page.locator('#pending-state')).toContainText('300,00');
+    await createGoal(page, 'Historisches Ziel'); await expect(card(page, 'Historisches Ziel')).toContainText('0,00');
+    await expect(page.locator('#saved-selection')).toHaveText('Kein Ziel ausgewählt'); await choose(page, 'Historisches Ziel'); await saveSelection(page).click();
+    await expect(card(page, 'Historisches Ziel')).toContainText('300,00'); await expect(page.locator('#pending-state')).toContainText('0,00');
+  });
+}
+
+for (const viewport of [{ width: 320, height: 568 }, { width: 390, height: 844 }, { width: 768, height: 1024 }, { width: 1280, height: 800 }]) test(`Späte Übersichten erhalten Löschung und unabhängigen Entwurf und bleiben nach Kontowechsel bei ${viewport.width} leer`, async ({ page, request }) => {
+  await page.setViewportSize(viewport); const otherEmail = await account(request);
+  await login(page, await deletionAccount(request));
+  await page.evaluate(() => document.documentElement.style.fontSize = '200%');
+  await createGoal(page, 'Unabhängiges Ziel'); await choose(page, 'Unabhängiges Ziel'); const draft = await selection(page).inputValue();
+  await page.getByRole('button', { name: 'Sparziel löschen: Historisches Ziel', exact: true }).click();
+  const oldRead = gate(), releaseOld = gate(); let reads = 0;
+  await page.route(endpoint, async route => {
+    const response = await route.fetch();
+    if (++reads === 1) { oldRead.release(); await releaseOld.promise; }
+    await route.fulfill({ response });
+  });
+  await page.evaluate(() => window.dispatchEvent(new Event('focus'))); await oldRead.promise;
+  await page.getByRole('button', { name: 'Endgültig löschen', exact: true }).click();
+  await expect(page.locator('#goal-mutation-status')).toHaveText('Dein Sparziel wurde gelöscht.');
+  await expect(page.locator('#saved-selection')).toHaveText('Kein Ziel ausgewählt'); await expect(page.locator('#pending-state')).toContainText('300,00');
+  await deliver(page, releaseOld.release, [{ path: '/api/v2/monthly-surplus', method: 'GET' }]);
+  await expect(page.locator('.savings-cards li')).toHaveCount(1); await expect(page.locator('#saved-selection')).toHaveText('Kein Ziel ausgewählt');
+  await expect(card(page, 'Historisches Ziel')).toHaveCount(0); await expect(selection(page)).toHaveValue(draft);
+  await expect(saveSelection(page)).toBeEnabled();
+  await page.unroute(endpoint);
+  const ownerRead = gate(), releaseOwner = gate(); let ownerReads = 0;
+  await page.route(endpoint, async route => {
+    const response = await route.fetch();
+    if (++ownerReads === 1) { ownerRead.release(); await releaseOwner.promise; }
+    await route.fulfill({ response });
+  });
+  await page.evaluate(() => { (window as any).oldOwnerSavings = (window as any).ng.getComponent(document.querySelector('app-savings-goals')); });
+  await pendingReload(page).click(); await ownerRead.promise;
+  await page.getByRole('button', { name: 'Abmelden', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Anmelden', exact: true })).toBeVisible();
+  await login(page, otherEmail); await expect(page.locator('#automation-state')).toContainText('noch nicht aktiviert');
+  await deliver(page, releaseOwner.release, [{ path: '/api/v2/monthly-surplus', method: 'GET' }]);
+  await expect(page.locator('.savings-cards li')).toHaveCount(0); await expect(page.locator('#saved-selection')).toHaveCount(0);
+  await expect(page.locator('#pending-state')).not.toContainText('300,00');
+  expect(await page.evaluate(() => {
+    const old = (window as any).oldOwnerSavings;
+    return { items: old.items(), overview: old.overview(), selection: old.selectionDraft(), name: old.name, progress: old.progressAmount };
+  })).toEqual({ items: [], overview: null, selection: null, name: '', progress: '' });
+
+});
+
+async function externalFinance(page: Page, method: string, path: string, data?: unknown) {
+  const token = await page.evaluate(() => (window as any).ng.getComponent(document.querySelector('app-savings-goals')).session.token());
+  return page.request.fetch(`https://localhost:4200/api/v2/${path}`, { method, headers: { Authorization: `Bearer ${token}` }, data });
+}
+async function goalId(page: Page, name: string): Promise<string> {
+  return card(page, name).locator('h3').getAttribute('id').then(id => id!.replace('goal-title-', ''));
+}
+async function creationDraft(page: Page): Promise<void> {
+  await page.getByLabel('Name des Sparziels', { exact: true }).fill('Unabhängiger Entwurf');
+  await page.getByLabel('Zielbetrag in Euro', { exact: true }).fill('123,45');
+}
+for (const status of [400, 404]) test(`Reviewfix: bestätigte Dialogdaten überstehen gehaltenes focus-GET und sichere ${status}`, async ({ page, request }) => {
+  await login(page, await deletionAccount(request)); await createGoal(page, 'B'); await choose(page, 'B'); const draft = await selection(page).inputValue();
+  await creationDraft(page); await page.getByRole('button', { name: 'Sparziel löschen: Historisches Ziel', exact: true }).click();
+  const read = gate(), release = gate();
+  await page.route(endpoint, async route => { const response = await route.fetch(); read.release(); await release.promise; await route.fulfill({ response }); });
+  await page.evaluate(() => window.dispatchEvent(new Event('focus'))); await read.promise;
+  await expect(page.locator('.savings-cards li')).toHaveCount(0);
+  await page.route('**/api/v2/savings-goals/*', route => route.fulfill({ status, json: {} }));
+  await page.getByRole('button', { name: 'Endgültig löschen', exact: true }).click();
+  await expect(page.locator('#goal-delete-status')).toContainText(status === 404 ? 'Es wurde nichts geändert' : 'nicht gelöscht');
+  await expect(page.locator('.savings-cards li')).toHaveCount(2); await expect(page.locator('#saved-selection')).toContainText('Historisches Ziel');
+  await expect(page.locator('#pending-state')).toContainText('300,00'); await expect(selection(page)).toHaveValue(draft);
+  await deliver(page, release.release, [{ path: '/api/v2/monthly-surplus', method: 'GET' }]);
+  await page.keyboard.press('Escape'); await expect(page.getByRole('button', { name: 'Sparziel löschen: Historisches Ziel', exact: true })).toBeFocused();
+  await expect(page.getByLabel('Name des Sparziels', { exact: true })).toHaveValue('Unabhängiger Entwurf');
+});
+
+test('Reviewfix: 204 nach gehaltenem GET erhält bestätigtes B und dessen Fokus auch bei Ladefehler', async ({ page, request }) => {
+  await login(page, await deletionAccount(request)); await createGoal(page, 'B'); await choose(page, 'B'); const draft = await selection(page).inputValue();
+  await creationDraft(page); await page.getByRole('button', { name: 'Sparziel löschen: Historisches Ziel', exact: true }).click();
+  const read = gate(), release = gate(); let reads = 0, deletes = 0;
+  page.on('request', req => { if (req.method() === 'DELETE' && req.url().includes('/savings-goals/')) deletes++; });
+  await page.route(endpoint, async route => {
+    if (++reads === 1) { const response = await route.fetch(); read.release(); await release.promise; await route.fulfill({ response }); }
+    else await route.fulfill({ status: 500, json: {} });
+  });
+  await page.evaluate(() => window.dispatchEvent(new Event('focus'))); await read.promise;
+  await expect(page.locator('.savings-cards li')).toHaveCount(0);
+  await page.getByRole('button', { name: 'Endgültig löschen', exact: true }).click();
+  await expect(page.locator('#goal-mutation-status')).toHaveText('Dein Sparziel wurde gelöscht.');
+  await expect(card(page, 'B')).toBeVisible(); await expect(card(page, 'B').getByRole('button', { name: 'Sparziel bearbeiten: B', exact: true })).toBeFocused();
+  await expect(page.locator('#automation-state')).toContainText('konnte nicht geladen'); await expect(page.locator('#saved-selection')).toHaveCount(0);
+  await deliver(page, release.release, [{ path: '/api/v2/monthly-surplus', method: 'GET' }]);
+  await expect(page.locator('.savings-cards li')).toHaveCount(1); await expect(card(page, 'B')).toBeVisible();
+  expect(await page.evaluate(() => (window as any).ng.getComponent(document.querySelector('app-savings-goals')).selectionDraft())).toBe(draft);
+  await expect(page.getByLabel('Name des Sparziels', { exact: true })).toHaveValue('Unabhängiger Entwurf'); expect(deletes).toBe(1);
+});
+
+test('Reviewfix: externe Auswahländerung aktualisiert den offenen Löschdialog und erhält B', async ({ page, request }) => {
+  await login(page, await deletionAccount(request)); await createGoal(page, 'B'); const b = await goalId(page, 'B');
+  await page.getByRole('button', { name: 'Sparziel löschen: Historisches Ziel', exact: true }).click();
+  await expect(page.locator('#goal-delete-future')).toContainText('Dieses Ziel ist aktuell ausgewählt');
+  expect((await externalFinance(page, 'PUT', 'monthly-surplus/selection', { goalId: b })).status()).toBe(200);
+  await page.evaluate(() => window.dispatchEvent(new Event('focus')));
+  await expect(page.locator('#saved-selection')).toContainText('B');
+  await expect(page.locator('#goal-delete-future')).not.toContainText('Dieses Ziel ist aktuell ausgewählt');
+  await expect(page.locator('#goal-delete-future')).toContainText('Falls ein anderes Ziel ausgewählt ist, bleibt diese Auswahl erhalten');
+  await page.getByRole('button', { name: 'Endgültig löschen', exact: true }).click();
+  await expect(page.locator('#saved-selection')).toContainText('B'); await expect(card(page, 'B')).toContainText('300,00');
+});
+
+test('Reviewfix: gewöhnliche inaktive Ziellöschung verspricht keine künftigen Vormerkungen', async ({ page, request }) => {
+  await login(page, await account(request)); await createGoal(page, 'Ohne Automatik');
+  await page.getByRole('button', { name: 'Sparziel löschen: Ohne Automatik', exact: true }).click();
+  await expect(page.locator('#goal-delete-future')).toContainText('Die Monatsautomatik ist nicht aktiviert');
+  await expect(page.locator('#goal-delete-future')).toContainText('erzeugt keine Vormerkungen');
+  await expect(page.locator('#goal-delete-future')).not.toContainText('weitere Monatsüberschüsse');
+  await page.getByRole('button', { name: 'Endgültig löschen', exact: true }).click();
+  await expect(page.locator('#automation-state')).toContainText('noch nicht aktiviert');
+});
+
+for (const mode of ['lokal', 'extern']) test(`Reviewfix: gespeichertes B ersetzt verworfenen A-Entwurf nicht automatisch (${mode})`, async ({ page, request }) => {
+  await login(page, await pendingAccount(request)); await createGoal(page, 'B'); await choose(page, 'B'); await saveSelection(page).click();
+  await expect(page.locator('#saved-selection')).toContainText('B'); const a = await goalId(page, 'Vorhandenes Ziel');
+  await choose(page); await creationDraft(page); let puts = 0, fallbackReads = 0;
+  page.on('request', req => { if (req.method() === 'PUT' && req.url().endsWith('/monthly-surplus/selection')) puts++;
+    if (req.method() === 'GET' && req.url().endsWith('/api/v2/savings-goals')) fallbackReads++; });
+  if (mode === 'extern') { expect((await externalFinance(page, 'DELETE', `savings-goals/${a}`)).status()).toBe(204); await pendingReload(page).click(); }
+  else { await page.getByRole('button', { name: 'Sparziel löschen: Vorhandenes Ziel', exact: true }).click(); await page.getByRole('button', { name: 'Endgültig löschen', exact: true }).click(); }
+  await expect(card(page)).toHaveCount(0); await expect(page.locator('#saved-selection')).toContainText('B');
+  await expect(selection(page)).toHaveValue(''); await expect(saveSelection(page)).toBeDisabled();
+  await expect(page.locator('#selection-draft')).toContainText('Keine neue Zielauswahl getroffen');
+  await selection(page).evaluate(element => (element.closest('form') as HTMLFormElement).requestSubmit());
+  expect(puts).toBe(0); expect(fallbackReads).toBe(0);
+  await expect(page.getByLabel('Name des Sparziels', { exact: true })).toHaveValue('Unabhängiger Entwurf');
+});
+
+for (const kind of ['Fortschritt', 'Zielwerte']) for (const focused of [true, false]) test(`Reviewfix: gemeinsamer GET verwirft extern entfallenen ${kind}-Entwurf mit bedingtem Fokus (${focused})`, async ({ page, request }) => {
+  await login(page, await pendingAccount(request)); await createGoal(page, 'B'); const a = await goalId(page, 'Vorhandenes Ziel');
+  await creationDraft(page);
+  if (kind === 'Fortschritt') {
+    await card(page).getByRole('button', { name: 'Fortschritt aktualisieren: Vorhandenes Ziel', exact: true }).click();
+    await page.getByLabel('Gesamtfortschritt in Euro', { exact: true }).fill('77,77');
+  } else {
+    await card(page).getByRole('button', { name: 'Sparziel bearbeiten: Vorhandenes Ziel', exact: true }).click();
+    await page.getByLabel('Name des Sparziels bearbeiten', { exact: true }).fill('');
+    await page.getByRole('button', { name: 'Änderungen speichern', exact: true }).click();
+    await expect(page.locator('#goal-mutation-status')).toHaveClass(/error/);
+  }
+  if (!focused) await page.getByLabel('Name des Sparziels', { exact: true }).focus();
+  let fallbackReads = 0; page.on('request', req => { if (req.method() === 'GET' && req.url().endsWith('/api/v2/savings-goals')) fallbackReads++; });
+  expect((await externalFinance(page, 'DELETE', `savings-goals/${a}`)).status()).toBe(204);
+  await page.evaluate(() => window.dispatchEvent(new Event('focus')));
+  await expect(page.locator('.savings-editor')).toHaveCount(0); await expect(page.locator('#goal-mutation-status')).toContainText('Entwurf wurde verworfen');
+  await expect(page.locator('#goal-mutation-status')).not.toHaveClass(/error|success/);
+  await expect(page.locator('#pending-state')).toContainText('200,00'); expect(fallbackReads).toBe(0);
+  if (focused) await expect(card(page, 'B').getByRole('button', { name: 'Sparziel bearbeiten: B', exact: true })).toBeFocused();
+  else await expect(page.getByLabel('Name des Sparziels', { exact: true })).toBeFocused();
+  await expect(page.getByLabel('Name des Sparziels', { exact: true })).toHaveValue('Unabhängiger Entwurf');
+});
+
+test('Reviewfix: Ladezustand eines gehaltenen post-mutation GET wird nach sicherer Ablehnung nicht wiederhergestellt', async ({ page, request }) => {
+  await login(page, await pendingAccount(request)); await choose(page); const draft = await selection(page).inputValue();
+  const read = gate(), release = gate();
+  await page.route(endpoint, async route => { const response = await route.fetch(); read.release(); await release.promise; await route.fulfill({ response }); });
+  await createGoal(page, 'B'); await read.promise;
+  await expect(page.locator('#automation-state')).toContainText('werden geladen');
+  await creationDraft(page); await page.getByRole('button', { name: 'Sparziel löschen: Vorhandenes Ziel', exact: true }).click();
+  await page.route('**/api/v2/savings-goals/*', route => route.fulfill({ status: 400, json: {} }));
+  await page.getByRole('button', { name: 'Endgültig löschen', exact: true }).click();
+  await expect(page.locator('#goal-delete-status')).toContainText('nicht gelöscht');
+  await expect(page.locator('#automation-state')).toContainText('noch nicht geladen');
+  await expect(page.locator('#pending-state')).toContainText('noch nicht geladen');
+  await expect(page.locator('.savings-cards li')).toHaveCount(2);
+  expect(await page.evaluate(() => (window as any).ng.getComponent(document.querySelector('app-savings-goals')).selectionDraft())).toBe(draft);
+  await deliver(page, release.release, [{ path: '/api/v2/monthly-surplus', method: 'GET' }]);
+  await expect(page.locator('#automation-state')).toContainText('noch nicht geladen');
+  await page.keyboard.press('Escape'); await expect(page.getByLabel('Name des Sparziels', { exact: true })).toHaveValue('Unabhängiger Entwurf');
 });

@@ -180,7 +180,8 @@ class MonthlySelectionIT {
     }
     @Test void historischFehlendesZielWirdVerbrauchtUndNiemalsAufHeuteUmgeleitet() {
         fixture();UUID a=goal(first,5000),b=goal(first,0);application.activateMonthlyAutomation(first);application.selectMonthlyGoal(first,a);
-        application.deleteGoal(first,a); // Vollständige Löschkoordination folgt erst in Story 4.5.
+        CLOCK.now=Instant.parse("2026-12-01T12:00:00Z");
+        application.deleteGoal(first,a); // Oktober und November sind historisch gebunden.
         CLOCK.now=Instant.parse("2026-12-01T12:00:00Z");application.selectMonthlyGoal(first,b);
         assertThat(progress(first,b)).isZero();assertThat(application.monthlyPending(first)).isZero();
         for(var row:records()){assertThat(row.get("goal_id")).isEqualTo(a);assertThat(row.get("consumed")).isEqualTo(true);}

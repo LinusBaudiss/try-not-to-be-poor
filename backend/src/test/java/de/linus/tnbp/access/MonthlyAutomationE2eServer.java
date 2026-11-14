@@ -157,6 +157,21 @@ public final class MonthlyAutomationE2eServer {
         controls.createContext("/readiness",exchange->{READY.open=Boolean.parseBoolean(new String(exchange.getRequestBody().readAllBytes(),java.nio.charset.StandardCharsets.UTF_8));exchange.sendResponseHeaders(204,-1);exchange.close();});
         // Ausschließlich Loopback/Testklassenpfad: synthetische Quellen, echte äußere Abschlusskoordination.
         var finance=application.getBean(de.linus.tnbp.finance.FinanceApplication.class);
+        controls.createContext("/deletion-fixture",exchange->{
+            try {
+                String email=new String(exchange.getRequestBody().readAllBytes(),java.nio.charset.StandardCharsets.UTF_8);
+                UUID user=PostgresFixture.ADMIN.queryForObject("SELECT id FROM access.accounts WHERE email=?",UUID.class,email);
+                CLOCK.now=Instant.parse("2026-07-01T12:00:00Z");finance.activateMonthlyAutomation(user);
+                var goal=finance.saveGoal(user,"Historisches Ziel",10000L,null);
+                PostgresFixture.ADMIN.update("INSERT INTO budget.budgets VALUES (?,DATE '2026-07-01',100000),(?,DATE '2026-11-01',0),(?,DATE '2026-12-01',10000)",user,user,user);
+                PostgresFixture.ADMIN.update("INSERT INTO expenses.expenses VALUES (?,?,'Historische Reise',80000,DATE '2026-10-01')",UUID.randomUUID(),user);
+                PostgresFixture.ADMIN.update("INSERT INTO monthly_surplus.month_records VALUES (?,DATE '2026-07-01',20000,NULL,false),(?,DATE '2026-08-01',10000,NULL,false),(?,DATE '2026-09-01',0,NULL,false)",user,user,user);
+                PostgresFixture.ADMIN.update("INSERT INTO monthly_surplus.selections VALUES (?,DATE '2026-10-01',?)",user,goal.id());
+                CLOCK.now=Instant.parse("2026-12-01T12:00:00Z");finance.closeMonthlySurplusMonth(user,LocalDate.of(2026,10,1));
+                finance.progressGoalV2(user,goal.id(),-3000L);
+                exchange.sendResponseHeaders(204,-1);
+            } catch(RuntimeException failure) {exchange.sendResponseHeaders(500,-1);} finally {exchange.close();}
+        });
         controls.createContext("/pending-fixture",exchange->{
             try {
                 String email=new String(exchange.getRequestBody().readAllBytes(),java.nio.charset.StandardCharsets.UTF_8);

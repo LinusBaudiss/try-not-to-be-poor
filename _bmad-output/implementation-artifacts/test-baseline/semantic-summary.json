@@ -1,0 +1,39 @@
+{
+  "source_cases": 746,
+  "source_groups": 1534,
+  "canonical_scenarios": 1624,
+  "inner_browser_loops": 99,
+  "semantic_review_complete": true,
+  "by_scope": {
+    "backend": {
+      "business_scenarios": 1096,
+      "unit_component_scenarios": 143,
+      "unit_component_percent": 13.05,
+      "types_including_infrastructure": {
+        "HTTP/PostgreSQL": 758,
+        "PostgreSQL": 42,
+        "architecture": 27,
+        "process/PostgreSQL": 153,
+        "tool/infrastructure": 1,
+        "unit": 143
+      }
+    },
+    "frontend": {
+      "business_scenarios": 467,
+      "unit_component_scenarios": 0,
+      "unit_component_percent": 0.0,
+      "types_including_infrastructure": {
+        "browser": 467
+      }
+    },
+    "infrastructure": {
+      "business_scenarios": 0,
+      "unit_component_scenarios": 0,
+      "unit_component_percent": null,
+      "types_including_infrastructure": {
+        "tool/infrastructure": 33
+      }
+    }
+  },
+  "cross_source_groups": 124
+}

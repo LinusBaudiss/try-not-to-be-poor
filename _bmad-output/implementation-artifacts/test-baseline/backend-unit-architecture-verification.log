@@ -1,0 +1,452 @@
+[INFO] Scanning for projects...
+[INFO] Loaded 24477 auto-discovered prefixes for remote repository central (prefixes-central.txt)
+[INFO] 
+[INFO] ---------------------------< de.linus:tnbp >----------------------------
+[INFO] Building Try Not to Be Poor 0.1.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] Loaded 24477 auto-discovered prefixes for remote repository maven-central (prefixes-maven-central.txt)
+[INFO] 
+[INFO] --- openapi-generator:7.26.0:generate (contract-v1) @ tnbp ---
+[INFO] Loaded 64 auto-discovered prefixes for remote repository apache.snapshots (prefixes-apache.snapshots.txt)
+[INFO] Generating with dryRun=false
+[INFO] No .openapi-generator-ignore file found.
+[INFO] OpenAPI Generator: spring (server)
+[INFO] Generator 'spring' is considered stable.
+[INFO] ----------------------------------
+[INFO] Environment variable JAVA_POST_PROCESS_FILE not defined so the Java code may not be properly formatted. To define it, try 'export JAVA_POST_PROCESS_FILE="/usr/local/bin/clang-format -i"' (Linux/Mac)
+[INFO] NOTE: To enable file post-processing, 'enablePostProcessFile' must be set to `true` (--enable-post-process-file for CLI).
+[INFO] Invoker Package Name, originally not set, is now derived from api package name: de.linus.tnbp.contract
+[INFO] Defaulting includeHttpRequestContext to 'false' for blocking
+[WARNING] 'generateJsonIncludeAnnotations' is not set. Defaulting to false: no @JsonInclude annotations are generated and property inclusion is governed entirely by the global ObjectMapper (7.23.0-equivalent output). Set 'generateJsonIncludeAnnotations=false' to keep this behavior and silence this warning, or 'generateJsonIncludeAnnotations=true' to emit spec-honest @JsonInclude annotations (see 'optionalNonNullPropertyJsonInclude'). Note: before 7.24.0 released output had no field-level @JsonInclude, so leaving this unset preserves that behavior.
+[WARNING] 'generateJsonSetterNullsAnnotations' is not set. Defaulting to false: no @JsonSetter(nulls = ...) annotations are generated and deserialization null-handling is governed entirely by the global ObjectMapper (7.23.0-equivalent output). Set 'generateJsonSetterNullsAnnotations=false' to keep this behavior and silence this warning, or 'generateJsonSetterNullsAnnotations=true' to emit @JsonSetter(nulls = ...) on optional non-nullable fields.
+[INFO] Processing operation register
+[INFO] Processing operation sessionCsrf
+[INFO] Processing operation login
+[INFO] Processing operation refreshSession
+[INFO] Processing operation logoutSession
+[INFO] Processing operation sessionIdentity
+[INFO] Processing operation getBudget
+[INFO] Processing operation putBudget
+[INFO] Processing operation getMonthSummary
+[INFO] Processing operation getExpenses
+[INFO] Processing operation postExpense
+[INFO] Processing operation putExpense
+[INFO] Processing operation deleteExpense
+[INFO] Processing operation getSavingsGoals
+[INFO] Processing operation postSavingsGoal
+[INFO] Processing operation putSavingsGoal
+[INFO] Processing operation deleteSavingsGoal
+[INFO] Processing operation putSavingsGoalProgress
+[INFO]  ONCE 'host' (OAS 2.0) or 'servers' (OAS 3.0) not defined in the spec. Default to [http://localhost] for server URL [http://localhost/api/v1]
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/model/ApiError.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/model/BudgetError.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/model/BudgetRequest.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/model/BudgetResponse.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/model/CsrfResponse.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/model/ExpenseError.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/model/ExpenseNotFoundError.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/model/ExpenseRequest.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/model/ExpenseResponse.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/model/LoginRequest.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/model/MonthSummaryError.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/model/MonthSummaryResponse.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/model/RegistrationCreated.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/model/RegistrationRequest.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/model/SavingsGoalError.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/model/SavingsGoalNotFoundError.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/model/SavingsGoalProgressRequest.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/model/SavingsGoalRequest.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/model/SavingsGoalResponse.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/model/SessionError.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/model/SessionIdentity.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/model/SessionResponse.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/api/AccessApi.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/api/BudgetApi.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/api/ExpensesApi.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/api/MonthSummaryApi.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/api/SavingsGoalsApi.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/api/SessionsApi.java
+[INFO] Skipping generation of Webhooks.
+[INFO] Skipping generation of supporting files.
+############################################################################################
+# Thanks for using OpenAPI Generator.                                                      #
+# We appreciate your support! Please consider donating to help us maintain this project.   #
+# https://opencollective.com/openapi_generator/donate                                      #
+############################################################################################
+[INFO] 
+[INFO] --- openapi-generator:7.26.0:generate (contract-v2) @ tnbp ---
+[INFO] Generating with dryRun=false
+[INFO] No .openapi-generator-ignore file found.
+[INFO] OpenAPI Generator: spring (server)
+[INFO] Generator 'spring' is considered stable.
+[INFO] ----------------------------------
+[INFO] Environment variable JAVA_POST_PROCESS_FILE not defined so the Java code may not be properly formatted. To define it, try 'export JAVA_POST_PROCESS_FILE="/usr/local/bin/clang-format -i"' (Linux/Mac)
+[INFO] NOTE: To enable file post-processing, 'enablePostProcessFile' must be set to `true` (--enable-post-process-file for CLI).
+[INFO] Invoker Package Name, originally not set, is now derived from api package name: de.linus.tnbp.contract.v2
+[INFO] Defaulting includeHttpRequestContext to 'false' for blocking
+[WARNING] 'generateJsonIncludeAnnotations' is not set. Defaulting to false: no @JsonInclude annotations are generated and property inclusion is governed entirely by the global ObjectMapper (7.23.0-equivalent output). Set 'generateJsonIncludeAnnotations=false' to keep this behavior and silence this warning, or 'generateJsonIncludeAnnotations=true' to emit spec-honest @JsonInclude annotations (see 'optionalNonNullPropertyJsonInclude'). Note: before 7.24.0 released output had no field-level @JsonInclude, so leaving this unset preserves that behavior.
+[WARNING] 'generateJsonSetterNullsAnnotations' is not set. Defaulting to false: no @JsonSetter(nulls = ...) annotations are generated and deserialization null-handling is governed entirely by the global ObjectMapper (7.23.0-equivalent output). Set 'generateJsonSetterNullsAnnotations=false' to keep this behavior and silence this warning, or 'generateJsonSetterNullsAnnotations=true' to emit @JsonSetter(nulls = ...) on optional non-nullable fields.
+[INFO] Processing operation getMonthlySurplus
+[INFO] Processing operation putMonthlySurplusSelection
+[INFO] Processing operation getMonthlySurplusPending
+[INFO] Processing operation getMonthlySurplusActivation
+[INFO] Processing operation postMonthlySurplusActivation
+[INFO] Processing operation getCapabilities
+[INFO] Processing operation register
+[INFO] Processing operation sessionCsrf
+[INFO] Processing operation login
+[INFO] Processing operation refreshSession
+[INFO] Processing operation logoutSession
+[INFO] Processing operation sessionIdentity
+[INFO] Processing operation getExpenses
+[INFO] Processing operation postExpense
+[INFO] Processing operation putExpense
+[INFO] Processing operation deleteExpense
+[INFO] Processing operation getBudget
+[INFO] Processing operation putBudget
+[INFO] Processing operation getMonthSummary
+[INFO] Processing operation getSavingsGoals
+[INFO] Processing operation postSavingsGoal
+[INFO] Processing operation putSavingsGoal
+[INFO] Processing operation deleteSavingsGoal
+[INFO] Processing operation putSavingsGoalProgress
+[INFO]  ONCE 'host' (OAS 2.0) or 'servers' (OAS 3.0) not defined in the spec. Default to [http://localhost] for server URL [http://localhost/api/v2]
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/ApiError.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/BudgetError.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/BudgetRequest.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/BudgetResponse.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/CapabilitiesError.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/CapabilitiesResponse.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/CsrfResponse.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/ExpenseCorrectionError.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/ExpenseError.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/ExpenseNotFoundError.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/ExpenseRequest.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/ExpenseResponse.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/LoginRequest.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/MonthSummaryError.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/MonthSummaryResponse.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/MonthlySurplusActivationResponse.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/MonthlySurplusError.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/MonthlySurplusFeatureNotAvailableError.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/MonthlySurplusOverviewResponse.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/MonthlySurplusPendingResponse.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/MonthlySurplusSelectionError.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/MonthlySurplusSelectionRequest.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/RegistrationCreated.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/RegistrationRequest.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/SavingsGoalError.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/SavingsGoalFeatureNotAvailableError.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/SavingsGoalNotFoundError.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/SavingsGoalProgressRequest.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/SavingsGoalRequest.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/SavingsGoalResponse.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/SessionError.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/SessionIdentity.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/model/SessionResponse.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/api/AccessApi.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/api/BudgetApi.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/api/CapabilitiesApi.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/api/ExpensesApi.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/api/MonthSummaryApi.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/api/MonthlySurplusApi.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/api/SavingsGoalsApi.java
+[INFO] writing file /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v2/src/main/java/de/linus/tnbp/contract/v2/api/SessionsApi.java
+[INFO] Skipping generation of Webhooks.
+[INFO] Skipping generation of supporting files.
+############################################################################################
+# Thanks for using OpenAPI Generator.                                                      #
+# We appreciate your support! Please consider donating to help us maintain this project.   #
+# https://opencollective.com/openapi_generator/donate                                      #
+############################################################################################
+[INFO] 
+[INFO] --- resources:3.5.0:resources (default-resources) @ tnbp ---
+[INFO] Copying 1 resource from src/main/resources to target/classes
+[INFO] Copying 18 resources from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.15.0:compile (default-compile) @ tnbp ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 126 source files with javac [debug parameters release 25] to target/classes
+[INFO] /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/model/RegistrationRequest.java: Some input files use or override a deprecated API.
+[INFO] /home/linus/dev/try-not-to-be-poor/backend/target/generated-sources/openapi/v1/src/main/java/de/linus/tnbp/contract/model/RegistrationRequest.java: Recompile with -Xlint:deprecation for details.
+[INFO] 
+[INFO] --- resources:3.5.0:testResources (default-testResources) @ tnbp ---
+[INFO] skip non existing resourceDirectory /home/linus/dev/try-not-to-be-poor/backend/src/test/resources
+[INFO] 
+[INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ tnbp ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 39 source files with javac [debug parameters release 25] to target/test-classes
+[INFO] /home/linus/dev/try-not-to-be-poor/backend/src/test/java/de/linus/tnbp/expensebudget/ExpenseIT.java: Some input files use or override a deprecated API.
+[INFO] /home/linus/dev/try-not-to-be-poor/backend/src/test/java/de/linus/tnbp/expensebudget/ExpenseIT.java: Recompile with -Xlint:deprecation for details.
+[INFO] /home/linus/dev/try-not-to-be-poor/backend/src/test/java/de/linus/tnbp/versions/ReleaseTransitionIT.java: Some input files use unchecked or unsafe operations.
+[INFO] /home/linus/dev/try-not-to-be-poor/backend/src/test/java/de/linus/tnbp/versions/ReleaseTransitionIT.java: Recompile with -Xlint:unchecked for details.
+[INFO] 
+[INFO] --- surefire:3.5.6:test (default-test) @ tnbp ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running de.linus.tnbp.monthlysurplus.MonthlySurplusTest
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.087 s -- in de.linus.tnbp.monthlysurplus.MonthlySurplusTest
+[INFO] Running de.linus.tnbp.expenses.ExpenseTest
+Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build as described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org.mockito/org/mockito/Mockito.html#0.3
+Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build as described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org.mockito/org/mockito/Mockito.html#0.3
+[ERROR] Tests run: 4, Failures: 0, Errors: 2, Skipped: 0, Time elapsed: 21.26 s <<< FAILURE! -- in de.linus.tnbp.expenses.ExpenseTest
+[ERROR] de.linus.tnbp.expenses.ExpenseTest.nullzeichenWirdVorDerTransaktionAlsNamensfehlerAbgewiesen -- Time elapsed: 21.25 s <<< ERROR!
+java.lang.IllegalStateException: Could not initialize plugin: interface org.mockito.plugins.MockMaker (alternate: null)
+	at org.mockito.internal.configuration.plugins.PluginLoader$1.invoke(PluginLoader.java:85)
+	at jdk.proxy2/jdk.proxy2.$Proxy29.isTypeMockable(Unknown Source)
+	at org.mockito.internal.util.MockUtil.typeMockabilityOf(MockUtil.java:78)
+	at org.mockito.internal.util.MockCreationValidator.validateType(MockCreationValidator.java:22)
+	at org.mockito.internal.creation.MockSettingsImpl.validatedSettings(MockSettingsImpl.java:275)
+	at org.mockito.internal.creation.MockSettingsImpl.build(MockSettingsImpl.java:236)
+	at org.mockito.internal.MockitoCore.mock(MockitoCore.java:78)
+	at org.mockito.Mockito.mock(Mockito.java:2235)
+	at org.mockito.Mockito.mock(Mockito.java:2150)
+	at de.linus.tnbp.expenses.ExpenseTest.nullzeichenWirdVorDerTransaktionAlsNamensfehlerAbgewiesen(ExpenseTest.java:17)
+Caused by: java.lang.IllegalStateException: Internal problem occurred, please report it. Mockito is unable to load the default implementation of class that is a part of Mockito distribution. Failed to load interface org.mockito.plugins.MockMaker
+	at org.mockito.internal.configuration.plugins.DefaultMockitoPlugins.create(DefaultMockitoPlugins.java:105)
+	at org.mockito.internal.configuration.plugins.DefaultMockitoPlugins.getDefaultPlugin(DefaultMockitoPlugins.java:79)
+	at org.mockito.internal.configuration.plugins.PluginLoader.loadPlugin(PluginLoader.java:75)
+	at org.mockito.internal.configuration.plugins.PluginLoader.loadPlugin(PluginLoader.java:49)
+	at org.mockito.internal.configuration.plugins.PluginRegistry.<init>(PluginRegistry.java:29)
+	at org.mockito.internal.configuration.plugins.Plugins.<clinit>(Plugins.java:26)
+	at org.mockito.internal.MockitoCore.<clinit>(MockitoCore.java:74)
+	at org.mockito.Mockito.<clinit>(Mockito.java:1810)
+	... 1 more
+Caused by: java.lang.reflect.InvocationTargetException
+	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:74)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:499)
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:483)
+	at org.mockito.internal.configuration.plugins.DefaultMockitoPlugins.create(DefaultMockitoPlugins.java:103)
+	... 8 more
+Caused by: org.mockito.exceptions.base.MockitoInitializationException: 
+Could not initialize inline Byte Buddy mock maker.
+
+It appears as if your JDK does not supply a working agent attachment mechanism.
+Java               : 25
+JVM vendor name    : Ubuntu
+JVM vendor version : 25.0.5.0.3+1-1-24.04.1-Ubuntu
+JVM name           : OpenJDK 64-Bit Server VM
+JVM version        : 25.0.5.0.3+1-1-24.04.1-Ubuntu
+JVM info           : mixed mode, sharing
+OS name            : Linux
+OS version         : 7.0.0-43-generic
+
+	at org.mockito.internal.creation.bytebuddy.InlineDelegateByteBuddyMockMaker.<init>(InlineDelegateByteBuddyMockMaker.java:279)
+	at org.mockito.internal.creation.bytebuddy.InlineByteBuddyMockMaker.<init>(InlineByteBuddyMockMaker.java:23)
+	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62)
+	... 11 more
+Caused by: java.lang.IllegalStateException: Could not self-attach to current VM using external process - set a property net.bytebuddy.agent.attacher.dump to dump the process output to a file at the specified location
+	at net.bytebuddy.agent.ByteBuddyAgent.installExternal(ByteBuddyAgent.java:710)
+	at net.bytebuddy.agent.ByteBuddyAgent.install(ByteBuddyAgent.java:615)
+	at net.bytebuddy.agent.ByteBuddyAgent.install(ByteBuddyAgent.java:595)
+	at net.bytebuddy.agent.ByteBuddyAgent.install(ByteBuddyAgent.java:547)
+	at net.bytebuddy.agent.ByteBuddyAgent.install(ByteBuddyAgent.java:524)
+	at org.mockito.internal.PremainAttachAccess.getInstrumentation(PremainAttachAccess.java:80)
+	at org.mockito.internal.creation.bytebuddy.InlineDelegateByteBuddyMockMaker.<clinit>(InlineDelegateByteBuddyMockMaker.java:139)
+	... 13 more
+
+[ERROR] de.linus.tnbp.expenses.ExpenseTest.bearbeitungValidiertEbenfallsVorJedemDatenbankzugriff -- Time elapsed: 0.001 s <<< ERROR!
+java.lang.IllegalStateException: Could not initialize plugin: interface org.mockito.plugins.MockMaker (alternate: null)
+	at org.mockito.internal.configuration.plugins.PluginLoader$1.invoke(PluginLoader.java:85)
+	at jdk.proxy2/jdk.proxy2.$Proxy29.isTypeMockable(Unknown Source)
+	at org.mockito.internal.util.MockUtil.typeMockabilityOf(MockUtil.java:78)
+	at org.mockito.internal.util.MockCreationValidator.validateType(MockCreationValidator.java:22)
+	at org.mockito.internal.creation.MockSettingsImpl.validatedSettings(MockSettingsImpl.java:275)
+	at org.mockito.internal.creation.MockSettingsImpl.build(MockSettingsImpl.java:236)
+	at org.mockito.internal.MockitoCore.mock(MockitoCore.java:78)
+	at org.mockito.Mockito.mock(Mockito.java:2235)
+	at org.mockito.Mockito.mock(Mockito.java:2150)
+	at de.linus.tnbp.expenses.ExpenseTest.bearbeitungValidiertEbenfallsVorJedemDatenbankzugriff(ExpenseTest.java:25)
+Caused by: java.lang.IllegalStateException: Internal problem occurred, please report it. Mockito is unable to load the default implementation of class that is a part of Mockito distribution. Failed to load interface org.mockito.plugins.MockMaker
+	at org.mockito.internal.configuration.plugins.DefaultMockitoPlugins.create(DefaultMockitoPlugins.java:105)
+	at org.mockito.internal.configuration.plugins.DefaultMockitoPlugins.getDefaultPlugin(DefaultMockitoPlugins.java:79)
+	at org.mockito.internal.configuration.plugins.PluginLoader.loadPlugin(PluginLoader.java:75)
+	at org.mockito.internal.configuration.plugins.PluginLoader.loadPlugin(PluginLoader.java:49)
+	at org.mockito.internal.configuration.plugins.PluginRegistry.<init>(PluginRegistry.java:29)
+	at org.mockito.internal.configuration.plugins.Plugins.<clinit>(Plugins.java:26)
+	at org.mockito.internal.MockitoCore.<clinit>(MockitoCore.java:74)
+	at org.mockito.Mockito.<clinit>(Mockito.java:1810)
+	at de.linus.tnbp.expenses.ExpenseTest.nullzeichenWirdVorDerTransaktionAlsNamensfehlerAbgewiesen(ExpenseTest.java:17)
+Caused by: java.lang.reflect.InvocationTargetException
+	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:74)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:499)
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:483)
+	at org.mockito.internal.configuration.plugins.DefaultMockitoPlugins.create(DefaultMockitoPlugins.java:103)
+	... 8 more
+Caused by: org.mockito.exceptions.base.MockitoInitializationException: 
+Could not initialize inline Byte Buddy mock maker.
+
+It appears as if your JDK does not supply a working agent attachment mechanism.
+Java               : 25
+JVM vendor name    : Ubuntu
+JVM vendor version : 25.0.5.0.3+1-1-24.04.1-Ubuntu
+JVM name           : OpenJDK 64-Bit Server VM
+JVM version        : 25.0.5.0.3+1-1-24.04.1-Ubuntu
+JVM info           : mixed mode, sharing
+OS name            : Linux
+OS version         : 7.0.0-43-generic
+
+	at org.mockito.internal.creation.bytebuddy.InlineDelegateByteBuddyMockMaker.<init>(InlineDelegateByteBuddyMockMaker.java:279)
+	at org.mockito.internal.creation.bytebuddy.InlineByteBuddyMockMaker.<init>(InlineByteBuddyMockMaker.java:23)
+	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62)
+	... 11 more
+Caused by: java.lang.IllegalStateException: Could not self-attach to current VM using external process - set a property net.bytebuddy.agent.attacher.dump to dump the process output to a file at the specified location
+	at net.bytebuddy.agent.ByteBuddyAgent.installExternal(ByteBuddyAgent.java:710)
+	at net.bytebuddy.agent.ByteBuddyAgent.install(ByteBuddyAgent.java:615)
+	at net.bytebuddy.agent.ByteBuddyAgent.install(ByteBuddyAgent.java:595)
+	at net.bytebuddy.agent.ByteBuddyAgent.install(ByteBuddyAgent.java:547)
+	at net.bytebuddy.agent.ByteBuddyAgent.install(ByteBuddyAgent.java:524)
+	at org.mockito.internal.PremainAttachAccess.getInstrumentation(PremainAttachAccess.java:80)
+	at org.mockito.internal.creation.bytebuddy.InlineDelegateByteBuddyMockMaker.<clinit>(InlineDelegateByteBuddyMockMaker.java:139)
+	... 13 more
+
+[INFO] Running de.linus.tnbp.savingsgoals.SavingsGoalTest
+[ERROR] Tests run: 3, Failures: 0, Errors: 2, Skipped: 0, Time elapsed: 0.009 s <<< FAILURE! -- in de.linus.tnbp.savingsgoals.SavingsGoalTest
+[ERROR] de.linus.tnbp.savingsgoals.SavingsGoalTest.validierungGeschiehtVorDatenbankzugriffUndTrimEntsprichtDerOberflaeche -- Time elapsed: 0.002 s <<< ERROR!
+java.lang.IllegalStateException: Could not initialize plugin: interface org.mockito.plugins.MockMaker (alternate: null)
+	at org.mockito.internal.configuration.plugins.PluginLoader$1.invoke(PluginLoader.java:85)
+	at jdk.proxy2/jdk.proxy2.$Proxy29.isTypeMockable(Unknown Source)
+	at org.mockito.internal.util.MockUtil.typeMockabilityOf(MockUtil.java:78)
+	at org.mockito.internal.util.MockCreationValidator.validateType(MockCreationValidator.java:22)
+	at org.mockito.internal.creation.MockSettingsImpl.validatedSettings(MockSettingsImpl.java:275)
+	at org.mockito.internal.creation.MockSettingsImpl.build(MockSettingsImpl.java:236)
+	at org.mockito.internal.MockitoCore.mock(MockitoCore.java:78)
+	at org.mockito.Mockito.mock(Mockito.java:2235)
+	at org.mockito.Mockito.mock(Mockito.java:2150)
+	at de.linus.tnbp.savingsgoals.SavingsGoalTest.validierungGeschiehtVorDatenbankzugriffUndTrimEntsprichtDerOberflaeche(SavingsGoalTest.java:20)
+Caused by: java.lang.IllegalStateException: Internal problem occurred, please report it. Mockito is unable to load the default implementation of class that is a part of Mockito distribution. Failed to load interface org.mockito.plugins.MockMaker
+	at org.mockito.internal.configuration.plugins.DefaultMockitoPlugins.create(DefaultMockitoPlugins.java:105)
+	at org.mockito.internal.configuration.plugins.DefaultMockitoPlugins.getDefaultPlugin(DefaultMockitoPlugins.java:79)
+	at org.mockito.internal.configuration.plugins.PluginLoader.loadPlugin(PluginLoader.java:75)
+	at org.mockito.internal.configuration.plugins.PluginLoader.loadPlugin(PluginLoader.java:49)
+	at org.mockito.internal.configuration.plugins.PluginRegistry.<init>(PluginRegistry.java:29)
+	at org.mockito.internal.configuration.plugins.Plugins.<clinit>(Plugins.java:26)
+	at org.mockito.internal.MockitoCore.<clinit>(MockitoCore.java:74)
+	at org.mockito.Mockito.<clinit>(Mockito.java:1810)
+	at de.linus.tnbp.expenses.ExpenseTest.nullzeichenWirdVorDerTransaktionAlsNamensfehlerAbgewiesen(ExpenseTest.java:17)
+Caused by: java.lang.reflect.InvocationTargetException
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:499)
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:483)
+	at org.mockito.internal.configuration.plugins.DefaultMockitoPlugins.create(DefaultMockitoPlugins.java:103)
+	... 8 more
+Caused by: org.mockito.exceptions.base.MockitoInitializationException: 
+Could not initialize inline Byte Buddy mock maker.
+
+It appears as if your JDK does not supply a working agent attachment mechanism.
+Java               : 25
+JVM vendor name    : Ubuntu
+JVM vendor version : 25.0.5.0.3+1-1-24.04.1-Ubuntu
+JVM name           : OpenJDK 64-Bit Server VM
+JVM version        : 25.0.5.0.3+1-1-24.04.1-Ubuntu
+JVM info           : mixed mode, sharing
+OS name            : Linux
+OS version         : 7.0.0-43-generic
+
+	at org.mockito.internal.creation.bytebuddy.InlineDelegateByteBuddyMockMaker.<init>(InlineDelegateByteBuddyMockMaker.java:279)
+	at org.mockito.internal.creation.bytebuddy.InlineByteBuddyMockMaker.<init>(InlineByteBuddyMockMaker.java:23)
+	... 11 more
+Caused by: java.lang.IllegalStateException: Could not self-attach to current VM using external process - set a property net.bytebuddy.agent.attacher.dump to dump the process output to a file at the specified location
+	at net.bytebuddy.agent.ByteBuddyAgent.installExternal(ByteBuddyAgent.java:710)
+	at net.bytebuddy.agent.ByteBuddyAgent.install(ByteBuddyAgent.java:615)
+	at net.bytebuddy.agent.ByteBuddyAgent.install(ByteBuddyAgent.java:595)
+	at net.bytebuddy.agent.ByteBuddyAgent.install(ByteBuddyAgent.java:547)
+	at net.bytebuddy.agent.ByteBuddyAgent.install(ByteBuddyAgent.java:524)
+	at org.mockito.internal.PremainAttachAccess.getInstrumentation(PremainAttachAccess.java:80)
+	at org.mockito.internal.creation.bytebuddy.InlineDelegateByteBuddyMockMaker.<clinit>(InlineDelegateByteBuddyMockMaker.java:139)
+	... 12 more
+
+[ERROR] de.linus.tnbp.savingsgoals.SavingsGoalTest.ungueltigerFortschrittWirdVorTransaktionUndDatenbankAbgewiesen -- Time elapsed: 0.001 s <<< ERROR!
+java.lang.IllegalStateException: Could not initialize plugin: interface org.mockito.plugins.MockMaker (alternate: null)
+	at org.mockito.internal.configuration.plugins.PluginLoader$1.invoke(PluginLoader.java:85)
+	at jdk.proxy2/jdk.proxy2.$Proxy29.isTypeMockable(Unknown Source)
+	at org.mockito.internal.util.MockUtil.typeMockabilityOf(MockUtil.java:78)
+	at org.mockito.internal.util.MockCreationValidator.validateType(MockCreationValidator.java:22)
+	at org.mockito.internal.creation.MockSettingsImpl.validatedSettings(MockSettingsImpl.java:275)
+	at org.mockito.internal.creation.MockSettingsImpl.build(MockSettingsImpl.java:236)
+	at org.mockito.internal.MockitoCore.mock(MockitoCore.java:78)
+	at org.mockito.Mockito.mock(Mockito.java:2235)
+	at org.mockito.Mockito.mock(Mockito.java:2150)
+	at de.linus.tnbp.savingsgoals.SavingsGoalTest.ungueltigerFortschrittWirdVorTransaktionUndDatenbankAbgewiesen(SavingsGoalTest.java:28)
+Caused by: java.lang.IllegalStateException: Internal problem occurred, please report it. Mockito is unable to load the default implementation of class that is a part of Mockito distribution. Failed to load interface org.mockito.plugins.MockMaker
+	at org.mockito.internal.configuration.plugins.DefaultMockitoPlugins.create(DefaultMockitoPlugins.java:105)
+	at org.mockito.internal.configuration.plugins.DefaultMockitoPlugins.getDefaultPlugin(DefaultMockitoPlugins.java:79)
+	at org.mockito.internal.configuration.plugins.PluginLoader.loadPlugin(PluginLoader.java:75)
+	at org.mockito.internal.configuration.plugins.PluginLoader.loadPlugin(PluginLoader.java:49)
+	at org.mockito.internal.configuration.plugins.PluginRegistry.<init>(PluginRegistry.java:29)
+	at org.mockito.internal.configuration.plugins.Plugins.<clinit>(Plugins.java:26)
+	at org.mockito.internal.MockitoCore.<clinit>(MockitoCore.java:74)
+	at org.mockito.Mockito.<clinit>(Mockito.java:1810)
+	at de.linus.tnbp.expenses.ExpenseTest.nullzeichenWirdVorDerTransaktionAlsNamensfehlerAbgewiesen(ExpenseTest.java:17)
+Caused by: java.lang.reflect.InvocationTargetException
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:499)
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:483)
+	at org.mockito.internal.configuration.plugins.DefaultMockitoPlugins.create(DefaultMockitoPlugins.java:103)
+	... 8 more
+Caused by: org.mockito.exceptions.base.MockitoInitializationException: 
+Could not initialize inline Byte Buddy mock maker.
+
+It appears as if your JDK does not supply a working agent attachment mechanism.
+Java               : 25
+JVM vendor name    : Ubuntu
+JVM vendor version : 25.0.5.0.3+1-1-24.04.1-Ubuntu
+JVM name           : OpenJDK 64-Bit Server VM
+JVM version        : 25.0.5.0.3+1-1-24.04.1-Ubuntu
+JVM info           : mixed mode, sharing
+OS name            : Linux
+OS version         : 7.0.0-43-generic
+
+	at org.mockito.internal.creation.bytebuddy.InlineDelegateByteBuddyMockMaker.<init>(InlineDelegateByteBuddyMockMaker.java:279)
+	at org.mockito.internal.creation.bytebuddy.InlineByteBuddyMockMaker.<init>(InlineByteBuddyMockMaker.java:23)
+	... 11 more
+Caused by: java.lang.IllegalStateException: Could not self-attach to current VM using external process - set a property net.bytebuddy.agent.attacher.dump to dump the process output to a file at the specified location
+	at net.bytebuddy.agent.ByteBuddyAgent.installExternal(ByteBuddyAgent.java:710)
+	at net.bytebuddy.agent.ByteBuddyAgent.install(ByteBuddyAgent.java:615)
+	at net.bytebuddy.agent.ByteBuddyAgent.install(ByteBuddyAgent.java:595)
+	at net.bytebuddy.agent.ByteBuddyAgent.install(ByteBuddyAgent.java:547)
+	at net.bytebuddy.agent.ByteBuddyAgent.install(ByteBuddyAgent.java:524)
+	at org.mockito.internal.PremainAttachAccess.getInstrumentation(PremainAttachAccess.java:80)
+	at org.mockito.internal.creation.bytebuddy.InlineDelegateByteBuddyMockMaker.<clinit>(InlineDelegateByteBuddyMockMaker.java:139)
+	... 12 more
+
+[INFO] Running de.linus.tnbp.finance.ArchitectureTest
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.056 s -- in de.linus.tnbp.finance.ArchitectureTest
+[INFO] Running de.linus.tnbp.access.SessionTest
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.065 s -- in de.linus.tnbp.access.SessionTest
+[INFO] Running de.linus.tnbp.access.RegistrationTest
+[INFO] Tests run: 26, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.484 s -- in de.linus.tnbp.access.RegistrationTest
+[INFO] Running de.linus.tnbp.budget.BudgetTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.001 s -- in de.linus.tnbp.budget.BudgetTest
+[INFO] Running de.linus.tnbp.shared.MoneyTest
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.004 s -- in de.linus.tnbp.shared.MoneyTest
+[INFO] 
+[INFO] Results:
+[INFO] 
+[ERROR] Errors: 
+[ERROR]   ExpenseTest.bearbeitungValidiertEbenfallsVorJedemDatenbankzugriff:25 » IllegalState Could not initialize plugin: interface org.mockito.plugins.MockMaker (alternate: null)
+[ERROR]   ExpenseTest.nullzeichenWirdVorDerTransaktionAlsNamensfehlerAbgewiesen:17 » IllegalState Could not initialize plugin: interface org.mockito.plugins.MockMaker (alternate: null)
+[ERROR]   SavingsGoalTest.ungueltigerFortschrittWirdVorTransaktionUndDatenbankAbgewiesen:28 » IllegalState Could not initialize plugin: interface org.mockito.plugins.MockMaker (alternate: null)
+[ERROR]   SavingsGoalTest.validierungGeschiehtVorDatenbankzugriffUndTrimEntsprichtDerOberflaeche:20 » IllegalState Could not initialize plugin: interface org.mockito.plugins.MockMaker (alternate: null)
+[INFO] 
+[ERROR] Tests run: 48, Failures: 0, Errors: 4, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[ERROR] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  29.656 s
+[INFO] Finished at: 2026-11-14T18:11:14+01:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:3.5.6:test (default-test) on project tnbp: 
+[ERROR] 
+[ERROR] See /home/linus/dev/try-not-to-be-poor/backend/target/surefire-reports for the individual test results.
+[ERROR] See dump files (if any exist) [date].dump, [date]-jvmRun[N].dump and [date].dumpstream.
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

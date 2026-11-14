@@ -707,3 +707,31 @@ und umzusetzen:
 Die geplante Produktionsform ist ein deutscher VPS mit Compose, Caddy, API und
 PostgreSQL; nur Caddy soll öffentlich erreichbar sein. Die dafür benötigte
 Produktionskonfiguration liegt noch nicht vor.
+
+### Reproduzierbare Test-Baseline (Story 5.1)
+
+Das Inventar, die Monats-/Schutzmatrix, CI-Rohdaten und bekannte Nachweislücken stehen in [`_bmad-output/implementation-artifacts/test-baseline/REPORT.md`](_bmad-output/implementation-artifacts/test-baseline/REPORT.md). Story 5.1 bleibt bis zu vollständigen erfolgreichen Messungen und Abdeckungsnachweisen offen.
+
+Auf demselben unprivilegierten Linux-x86_64-Host mit Java/Javac 25, Node **24.22.0**, Python 3, `unzip`, `curl`, `tar`, `sha256sum`, freien Ports 8080/4200 und installiertem Playwright-Chromium:
+
+```sh
+python3 scripts/test-baseline.py \
+  --output _bmad-output/implementation-artifacts/test-baseline/local-reference-01 \
+  --cache-note 'Abhängigkeiten und Chromium zuvor geladen; Hostlast und Ressourcenlimits hier konkret beschreiben'
+```
+
+Der Ausgabepfad muss neu sein. Der Befehl führt **Warm-up → drei vollständige Messungen → bereinigten Lauf** aus. Jeweils in dieser Reihenfolge: Python, vollständiger Vertragscheck (beide Versionen, Generatoren, Java-/TypeScript-Kompilierung und SPA), Backend-`verify`, Browser normal, Übergang, Automatik. Ein neuer Frontend-Unitbefehl existiert noch nicht und muss nach Einführung ergänzt werden. Downloads und wiederholte Builds bleiben innerhalb der Gruppenzeit; Erstdownloads vorher als gesonderten Setupversuch dokumentieren. Alle Abhängigkeitscaches bleiben erhalten. Der letzte Lauf entfernt nur die im Ergebnis angegebenen Build-/Testausgaben, keine Datenbanken oder Abhängigkeitscaches.
+
+`results.json` enthält Revision/Dirty-Status, Umgebung, Befehle, Einzelzeiten, Fehlerstatus, Median ausschließlich erfolgreicher vollständiger Messungen und `target_seconds_70_percent`. Logs bleiben je Gruppe erhalten; optionale Vertragsphasendateien unterscheiden Abhängigkeitssetup, Validierung/Generierung und Kompilierung einschließlich des zusätzlichen SPA-`prebuild`. Diese Phasen sind inklusive Teilzeiten, keine reinen Compiler-/CPU-Kosten. `--preflight-only` prüft Voraussetzungen ohne Prüfgruppen; fehlende Werkzeuge/Ports führen zu Exit 2, Gruppenfehler zu Exit 1. Der erste Gruppenfehler beendet die Serie und bleibt als Fehlversuch erhalten; anschließend neuen Ausgabepfad verwenden. Gruppen haben eine Zweistunden-Grenze; Abbruch/Timeout beendet ihre Prozessgruppe und liefert keinen Leistungsnachweis. Messergebnisse immer zusammen mit Revision und Eingabeprüfsummen beurteilen; für endgültige Vergleiche einen sauberen veröffentlichten Referenz-/Zielstand verwenden.
+
+Separat instrumentierte Backend-Abdeckung, **niemals Laufzeit-Baseline**:
+
+```sh
+./backend/mvnw -B -f backend/pom.xml -Pcoverage clean verify
+```
+
+Das nur ausdrücklich aktivierte Profil verwendet JaCoCo 0.8.14 und schreibt `backend/target/site/jacoco/index.html`, `jacoco.xml` und `jacoco.csv`. `de/linus/tnbp/contract/**` schließt beide generierten Java-Namespaces aus. Vorher/Nachher denselben Befehl, Profil, Ausschluss, Quellumfang und Nenner aus dem XML verwenden; Prozess-Unter-JVMs werden nicht automatisch mitinstrumentiert. Die fehlende Frontend-Unit-/Komponentenabdeckung ist eine Ausgangslücke. Globale Prozentwerte ersetzen weder Fallzuordnung noch gezielte Fehlervarianten.
+
+Gezählt werden fachlich unterschiedliche Kombinationen aus Regel, Eingabe/Zustand und erwartetem Verhalten, getrennt für Backend und Frontend. Parameterdoppelungen, Vererbungs-/CI-Wiederholungen und ergänzende Assertions erhöhen die Szenariozahl nicht. Die expliziten Szenario-IDs und Anforderungszuordnungen stehen in `reviewed-scenario-manifest.json`; das daraus abgeleitete Inventar weist Backend-/Frontendverteilung getrennt aus. Der Refresh verweigert neue oder geänderte Fälle ohne erneute Manifestprüfung. Echte PostgreSQL-RLS/Rollen/Migrationen, äußerer Commit/Rollback, unabhängige konkurrierende Verbindungen, alte/neue Releaseprozesse, Versionsbarriere sowie reale Browser-/Cookie-/CSRF-/Origin-/Fokus-/Reflowgrenzen bleiben geschützt. Vor späterer Entfernung müssen Ersatz und verbleibende Integration bestanden sein; kontrollierte Fehler für Geld/Kalender, Autorisierung, Commit/Doppelwirkung, Versionen und Sitzungsende werden an derselben Matrix verglichen.
+
+Der abgeschlossene statische [Szenario-Abgleich](_bmad-output/implementation-artifacts/test-baseline/SCENARIO-REVIEW.md) enthält die fachliche Zählregel, konkrete Zusammenführungen und geschützte Unterschiede. `python3 _bmad-output/implementation-artifacts/test-baseline/semantic-scenarios.py` prüft die expliziten Zuordnungen und erzeugt die kanonische Matrix samt getrennter Backend-/Frontendverteilung; es führt keine Produkttests aus.

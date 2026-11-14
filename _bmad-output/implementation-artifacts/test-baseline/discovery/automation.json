@@ -1,0 +1,1929 @@
+{
+  "config": {
+    "argv": [
+      "/home/linus/.nvm/versions/node/v24.22.0/bin/node",
+      "/home/linus/dev/try-not-to-be-poor/frontend/node_modules/.bin/playwright",
+      "test",
+      "--config",
+      "frontend/playwright.automation.config.ts",
+      "--list",
+      "--reporter=json"
+    ],
+    "configFile": "/home/linus/dev/try-not-to-be-poor/frontend/playwright.automation.config.ts",
+    "rootDir": "/home/linus/dev/try-not-to-be-poor/frontend/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {},
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/linus/dev/try-not-to-be-poor/frontend/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {},
+        "id": "",
+        "name": "",
+        "testDir": "/home/linus/dev/try-not-to-be-poor/frontend/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/monthly-automation.spec.ts"
+        ],
+        "timeout": 45000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/home/linus/dev/try-not-to-be-poor/frontend/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {},
+        "name": "",
+        "testDir": "/home/linus/dev/try-not-to-be-poor/frontend/e2e",
+        "snapshotDir": "/home/linus/dev/try-not-to-be-poor/frontend/e2e",
+        "testIgnore": [],
+        "testMatch": "**/monthly-automation.spec.ts",
+        "timeout": 45000,
+        "use": {
+          "baseURL": "https://localhost:4200",
+          "ignoreHTTPSErrors": true,
+          "timezoneId": "Pacific/Honolulu",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "actionTimeout": 15000,
+          "screenshot": "only-on-failure",
+          "launchOptions": {}
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "monthly-automation.spec.ts",
+      "file": "monthly-automation.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Aktivierung ohne Ziel bleibt ausdrücklich und erhält ihren Erstmonat",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-3f436d56a0b7d78e45c1",
+          "file": "monthly-automation.spec.ts",
+          "line": 100,
+          "column": 5
+        },
+        {
+          "title": "Gemeinsamer Commit holt die Monatslücke nach und übernimmt 300 € auf 50 € genau einmal",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-288ffcd01881500b3223",
+          "file": "monthly-automation.spec.ts",
+          "line": 111,
+          "column": 5
+        },
+        {
+          "title": "Ladefehler lässt manuelle Zielpflege ohne erfundene Automatikwerte erreichbar",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-d53ec16a0ef23704dd47",
+          "file": "monthly-automation.spec.ts",
+          "line": 130,
+          "column": 5
+        },
+        {
+          "title": "Abgewiesene Authentifizierung eröffnet keinen Ersatz-Leseweg",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-30ca6b9cdf8809c2ca6b",
+          "file": "monthly-automation.spec.ts",
+          "line": 142,
+          "column": 5
+        },
+        {
+          "title": "Auswahl offline und während des Vorgangs gesperrt; bestätigte Werte bleiben bis Commit",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-8ea5d6ad9321a63d53bf",
+          "file": "monthly-automation.spec.ts",
+          "line": 149,
+          "column": 5
+        },
+        {
+          "title": "Grenzfehler erhält Auswahlentwurf und manuelle Reparatur braucht keinen Nachhollauf",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-d0007ba33409aaff9395",
+          "file": "monthly-automation.spec.ts",
+          "line": 162,
+          "column": 5
+        },
+        {
+          "title": "Unbestätigte Auswahl ohne Commit verlangt gemeinsamen neuen Stand",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-584c8b7f51bde925a736",
+          "file": "monthly-automation.spec.ts",
+          "line": 174,
+          "column": 44
+        },
+        {
+          "title": "Unbestätigte Auswahl mit Commit verlangt gemeinsamen neuen Stand",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-4c0aab8a63f7b0129fd6",
+          "file": "monthly-automation.spec.ts",
+          "line": 174,
+          "column": 44
+        },
+        {
+          "title": "Sicherer Auswahlfehler lässt gespeicherte Werte und offenen Fortschrittsentwurf unverändert",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-bc5f08bfe14df71bc859",
+          "file": "monthly-automation.spec.ts",
+          "line": 184,
+          "column": 5
+        },
+        {
+          "title": "Manueller Commit entkräftet eine ältere Übersicht und erhält Auswahlentwurf",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-4de19c6247096f50fe90",
+          "file": "monthly-automation.spec.ts",
+          "line": 193,
+          "column": 5
+        },
+        {
+          "title": "Späte Auswahlantwort nach Kontowechsel bringt weder Werte noch Auswahl zurück",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-9906c76f46355727844a",
+          "file": "monthly-automation.spec.ts",
+          "line": 207,
+          "column": 5
+        },
+        {
+          "title": "Rückkehr und Monatswechsel laden einen gemeinsamen Stand ohne Entwurfsverlust",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-db343c086d35a9899aef",
+          "file": "monthly-automation.spec.ts",
+          "line": 229,
+          "column": 5
+        },
+        {
+          "title": "Monatswechsel während gehaltener Auswahl wird nach sicherer Ablehnung frisch gelesen",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-c8145bd3ed68437e010f",
+          "file": "monthly-automation.spec.ts",
+          "line": 239,
+          "column": 5
+        },
+        {
+          "title": "Fortbestehende 401 nach Aktivierung leert Sitzung und Entwürfe ohne Ersatz-Leseweg",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-4e9ff2de02adeca227e2",
+          "file": "monthly-automation.spec.ts",
+          "line": 256,
+          "column": 56
+        },
+        {
+          "title": "Fortbestehende 401 nach Auswahl leert Sitzung und Entwürfe ohne Ersatz-Leseweg",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-562598b971fb16ed7d0e",
+          "file": "monthly-automation.spec.ts",
+          "line": 256,
+          "column": 56
+        },
+        {
+          "title": "Bestätigt gelöschtes Entwurfsziel wird verworfen und erfordert eigene neue Auswahl",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-7ead9a0ef6866bae6508",
+          "file": "monthly-automation.spec.ts",
+          "line": 281,
+          "column": 5
+        },
+        {
+          "title": "Sichere manuelle Ablehnung bei Anlage erneuert die unabhängige Automatik und erhält Entwürfe",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-ccde4639214ce3a581ec",
+          "file": "monthly-automation.spec.ts",
+          "line": 296,
+          "column": 96
+        },
+        {
+          "title": "Sichere manuelle Ablehnung bei Zielbearbeitung erneuert die unabhängige Automatik und erhält Entwürfe",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-fc006c4005d17b99ba68",
+          "file": "monthly-automation.spec.ts",
+          "line": 296,
+          "column": 96
+        },
+        {
+          "title": "Sichere manuelle Ablehnung bei Fortschritt erneuert die unabhängige Automatik und erhält Entwürfe",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-86106f8e12eb2a10b43a",
+          "file": "monthly-automation.spec.ts",
+          "line": 296,
+          "column": 96
+        },
+        {
+          "title": "Sichere manuelle Ablehnung bei signierter Fortschritt erneuert die unabhängige Automatik und erhält Entwürfe",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-4ba7f065a9b1ee85854c",
+          "file": "monthly-automation.spec.ts",
+          "line": 296,
+          "column": 96
+        },
+        {
+          "title": "Nach initialem Übersichtfehler erholter gemeinsamer Stand merkt Serverzeit für folgenden Monatswechsel",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-5c04e152c95f65051726",
+          "file": "monthly-automation.spec.ts",
+          "line": 328,
+          "column": 5
+        },
+        {
+          "title": "Strukturell gültige Auswahlbestätigung mit anderes eigenes Ziel verlangt erfolgreichen gemeinsamen Prüfstand vor Wiederholung",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-86336d50956f4a4a8646",
+          "file": "monthly-automation.spec.ts",
+          "line": 341,
+          "column": 75
+        },
+        {
+          "title": "Strukturell gültige Auswahlbestätigung mit offene Vormerkung verlangt erfolgreichen gemeinsamen Prüfstand vor Wiederholung",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-f53c44c3eb0158a9503b",
+          "file": "monthly-automation.spec.ts",
+          "line": 341,
+          "column": 75
+        },
+        {
+          "title": "Auswahl, gemeinsame 350-/0-Anzeige und 200 % Text bei 320×568",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-ca9265ff10ef34cbbb09",
+          "file": "monthly-automation.spec.ts",
+          "line": 360,
+          "column": 7
+        },
+        {
+          "title": "Auswahl, gemeinsame 350-/0-Anzeige und 200 % Text bei 390×844",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-6b12a1ee35ae948313f4",
+          "file": "monthly-automation.spec.ts",
+          "line": 360,
+          "column": 7
+        },
+        {
+          "title": "Auswahl, gemeinsame 350-/0-Anzeige und 200 % Text bei 768×1024",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-82bbb366acede5a62b1a",
+          "file": "monthly-automation.spec.ts",
+          "line": 360,
+          "column": 7
+        },
+        {
+          "title": "Auswahl, gemeinsame 350-/0-Anzeige und 200 % Text bei 1280×800",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-e3cf68384b764c3cfac1",
+          "file": "monthly-automation.spec.ts",
+          "line": 360,
+          "column": 7
+        },
+        {
+          "title": "Fehlende und ungültige Capabilityfelder öffnen keine Aktivierung; Fehler bleiben erneut prüfbar",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-653014736d90711ec64a",
+          "file": "monthly-automation.spec.ts",
+          "line": 394,
+          "column": 5
+        },
+        {
+          "title": "Offline wird nichts gesendet und während der Aktivierung ist Doppelsenden gesperrt",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-50b205c3d6eb6b002869",
+          "file": "monthly-automation.spec.ts",
+          "line": 409,
+          "column": 5
+        },
+        {
+          "title": "Sicher abgewiesene Aktivierung meldet keinen Erfolg und lässt gespeicherten Zustand erhalten",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-b3be54f224d02ffe38d4",
+          "file": "monthly-automation.spec.ts",
+          "line": 422,
+          "column": 5
+        },
+        {
+          "title": "Späte Zustands- und Capabilityantworten geben nach Abmeldung keine alten Kontodaten frei",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-e2d33e5305da0415109d",
+          "file": "monthly-automation.spec.ts",
+          "line": 432,
+          "column": 67
+        },
+        {
+          "title": "Späte Zustands- und Capabilityantworten geben nach Ablauf keine alten Kontodaten frei",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-3782de740bead44184b1",
+          "file": "monthly-automation.spec.ts",
+          "line": 432,
+          "column": 67
+        },
+        {
+          "title": "Späte Zustands- und Capabilityantworten geben nach Kontowechsel keine alten Kontodaten frei",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-e4d2db471896fcaad6f8",
+          "file": "monthly-automation.spec.ts",
+          "line": 432,
+          "column": 67
+        },
+        {
+          "title": "Reconnect ersetzt eine noch laufende alte Vormerkungsantwort durch eine neue Abfrage",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-2000694dabfe0445f0fc",
+          "file": "monthly-automation.spec.ts",
+          "line": 481,
+          "column": 5
+        },
+        {
+          "title": "Rückkehr erkennt die Aktivierung aus einem anderen Tab bei zuvor inaktiv",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-bc0f6d0786303c66a45e",
+          "file": "monthly-automation.spec.ts",
+          "line": 499,
+          "column": 55
+        },
+        {
+          "title": "Rückkehr erkennt die Aktivierung aus einem anderen Tab bei zuvor nicht geladen",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-e85d46809e56430f1a29",
+          "file": "monthly-automation.spec.ts",
+          "line": 499,
+          "column": 55
+        },
+        {
+          "title": "Ungültige Aktivierungsantwort {\"active\":false,\"activationMonth\":null} gibt keinen Erfolg frei",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-164171a6aa71412318f9",
+          "file": "monthly-automation.spec.ts",
+          "line": 530,
+          "column": 8
+        },
+        {
+          "title": "Ungültige Aktivierungsantwort {} gibt keinen Erfolg frei",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-89acdabdd00c06c50fbd",
+          "file": "monthly-automation.spec.ts",
+          "line": 530,
+          "column": 8
+        },
+        {
+          "title": "Ungültige Aktivierungsantwort {\"active\":true} gibt keinen Erfolg frei",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-b9268a2cddeb4618b60d",
+          "file": "monthly-automation.spec.ts",
+          "line": 530,
+          "column": 8
+        },
+        {
+          "title": "Ungültige Aktivierungsantwort {\"active\":false,\"activationMonth\":\"2026-10-01\"} gibt keinen Erfolg frei",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-1f528e7b3413799e8f8f",
+          "file": "monthly-automation.spec.ts",
+          "line": 530,
+          "column": 8
+        },
+        {
+          "title": "Ungültige Aktivierungsantwort {\"active\":true,\"activationMonth\":null} gibt keinen Erfolg frei",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-583335c2231b1951ae92",
+          "file": "monthly-automation.spec.ts",
+          "line": 530,
+          "column": 8
+        },
+        {
+          "title": "Ungültige Aktivierungsantwort {\"active\":\"true\",\"activationMonth\":\"2026-10-01\"} gibt keinen Erfolg frei",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-af6835bf53eb163c7a7c",
+          "file": "monthly-automation.spec.ts",
+          "line": 530,
+          "column": 8
+        },
+        {
+          "title": "Ungültige Aktivierungsantwort {\"active\":true,\"activationMonth\":\"2026-10-02\"} gibt keinen Erfolg frei",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-dd2b328f536fbdda4fef",
+          "file": "monthly-automation.spec.ts",
+          "line": 530,
+          "column": 8
+        },
+        {
+          "title": "Ungültige Aktivierungsantwort {\"active\":true,\"activationMonth\":\"2026-10-01\",\"diagnostic\":\"fremd\"} gibt keinen Erfolg frei",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-e775b1cb338cfc54c6e8",
+          "file": "monthly-automation.spec.ts",
+          "line": 530,
+          "column": 8
+        },
+        {
+          "title": "Unbestätigte Aktivierung ohne Commit wird vor Wiederholung neu gelesen",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-fa9a98ecb9c5d2784afb",
+          "file": "monthly-automation.spec.ts",
+          "line": 538,
+          "column": 44
+        },
+        {
+          "title": "Unbestätigte Aktivierung mit Commit wird vor Wiederholung neu gelesen",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-fe50b238857efa288b2b",
+          "file": "monthly-automation.spec.ts",
+          "line": 538,
+          "column": 44
+        },
+        {
+          "title": "Ungültiger gemeinsamer pendingCents-Wert bestätigt keine Automatikwerte",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-d28d659b637418e48cb4",
+          "file": "monthly-automation.spec.ts",
+          "line": 548,
+          "column": 86
+        },
+        {
+          "title": "Ungültiger gemeinsamer selectedGoalId-Wert bestätigt keine Automatikwerte",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-b2515284a1797b99a1ac",
+          "file": "monthly-automation.spec.ts",
+          "line": 548,
+          "column": 86
+        },
+        {
+          "title": "Ungültiger gemeinsamer currentMonth-Wert bestätigt keine Automatikwerte",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-f1262b4857e9a81d202c",
+          "file": "monthly-automation.spec.ts",
+          "line": 548,
+          "column": 86
+        },
+        {
+          "title": "Ungültiger gemeinsamer goals-Wert bestätigt keine Automatikwerte",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-ee1e0b2e2e065970a30d",
+          "file": "monthly-automation.spec.ts",
+          "line": 548,
+          "column": 86
+        },
+        {
+          "title": "Normale manuelle Zielbearbeitung, Datum-entfernen und bestätigtes Löschen erneuern den echten gemeinsamen Stand",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-556595798ac53cc0fa33",
+          "file": "monthly-automation.spec.ts",
+          "line": 559,
+          "column": 5
+        },
+        {
+          "title": "Navigation während ausstehender Bestätigung bewahrt die Ungewissheit und lädt nach deren Ende neu",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-e8907fd5ffb17ab73f11",
+          "file": "monthly-automation.spec.ts",
+          "line": 575,
+          "column": 5
+        },
+        {
+          "title": "Späte Aktivierungsbestätigung nach Abmeldung verändert das folgende Konto nicht",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-1c1c1ae12c29dc968cd3",
+          "file": "monthly-automation.spec.ts",
+          "line": 589,
+          "column": 5
+        },
+        {
+          "title": "Gemeinsames Laden ist sichtbar und beide Ladeaktionen behalten den Fokus ohne Doppelsenden",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-b95f1ba499734c9662e4",
+          "file": "monthly-automation.spec.ts",
+          "line": 608,
+          "column": 5
+        },
+        {
+          "title": "Ungültige gemeinsame Vormerkung -1 bestätigt keinen Betrag",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-4cd16419aaa42f65f822",
+          "file": "monthly-automation.spec.ts",
+          "line": 623,
+          "column": 86
+        },
+        {
+          "title": "Ungültige gemeinsame Vormerkung 9007199254740992 bestätigt keinen Betrag",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-98f827778c73afb8ba8c",
+          "file": "monthly-automation.spec.ts",
+          "line": 623,
+          "column": 86
+        },
+        {
+          "title": "Ungültige gemeinsame Vormerkung 0.1 bestätigt keinen Betrag",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-7b452ae7f7b1f544d1ee",
+          "file": "monthly-automation.spec.ts",
+          "line": 623,
+          "column": 86
+        },
+        {
+          "title": "Ungültige gemeinsame Vormerkung 30000 bestätigt keinen Betrag",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-45073dcc78f140cdb908",
+          "file": "monthly-automation.spec.ts",
+          "line": 623,
+          "column": 86
+        },
+        {
+          "title": "Ungültige gemeinsame Vormerkung null bestätigt keinen Betrag",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-16f277776f52226e5013",
+          "file": "monthly-automation.spec.ts",
+          "line": 623,
+          "column": 86
+        },
+        {
+          "title": "Ungültige gemeinsame Vormerkung undefined bestätigt keinen Betrag",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-efbf250df9d846b35f17",
+          "file": "monthly-automation.spec.ts",
+          "line": 623,
+          "column": 86
+        },
+        {
+          "title": "Nur geladene Null gilt als bestätigte Vormerkung; Ladefehler bleibt unterscheidbar",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-0e17884f288ae055d058",
+          "file": "monthly-automation.spec.ts",
+          "line": 634,
+          "column": 5
+        },
+        {
+          "title": "Historische Korrektur liefert frische Vormerkung und tatsächliche −30/70/150 Prozent bei 320",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-bb153a7b6dd9aca7823f",
+          "file": "monthly-automation.spec.ts",
+          "line": 656,
+          "column": 7
+        },
+        {
+          "title": "Historische Korrektur liefert frische Vormerkung und tatsächliche −30/70/150 Prozent bei 390",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-107bbea4bb64dad42d68",
+          "file": "monthly-automation.spec.ts",
+          "line": 656,
+          "column": 7
+        },
+        {
+          "title": "Historische Korrektur liefert frische Vormerkung und tatsächliche −30/70/150 Prozent bei 768",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-2a5172697e1d66a4b659",
+          "file": "monthly-automation.spec.ts",
+          "line": 656,
+          "column": 7
+        },
+        {
+          "title": "Historische Korrektur liefert frische Vormerkung und tatsächliche −30/70/150 Prozent bei 1280",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-c1364d880ad1e320a472",
+          "file": "monthly-automation.spec.ts",
+          "line": 656,
+          "column": 7
+        },
+        {
+          "title": "Echte Gatesperre erhält historischen Entwurf, Listeneintrag und manuelle Reparatur",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-e8eaec37355f882fdb62",
+          "file": "monthly-automation.spec.ts",
+          "line": 704,
+          "column": 5
+        },
+        {
+          "title": "Echter Commitfehler nach historischem PUT bleibt unbestätigt und klärt den gemeinsamen Stand",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-6974906dbe3bb918baa8",
+          "file": "monthly-automation.spec.ts",
+          "line": 726,
+          "column": 7
+        },
+        {
+          "title": "Echter Commitfehler nach historischem DELETE bleibt unbestätigt und klärt den gemeinsamen Stand",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-b419b16d07acdb7ff54b",
+          "file": "monthly-automation.spec.ts",
+          "line": 726,
+          "column": 7
+        },
+        {
+          "title": "Späte historische PUT-Bestätigung nach Kontowechsel belebt keine Finanzdaten oder Entwürfe",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-9f467e06ed5005503584",
+          "file": "monthly-automation.spec.ts",
+          "line": 751,
+          "column": 45
+        },
+        {
+          "title": "Späte historische DELETE-Bestätigung nach Kontowechsel belebt keine Finanzdaten oder Entwürfe",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-3d707295aa2425efbb54",
+          "file": "monthly-automation.spec.ts",
+          "line": 751,
+          "column": 45
+        },
+        {
+          "title": "Echter Korrekturgrenzfehler erhält den Entwurf bis zur manuellen Reparatur im zweiten Tab",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-22234e7388f3d08946a4",
+          "file": "monthly-automation.spec.ts",
+          "line": 773,
+          "column": 5
+        },
+        {
+          "title": "Ziellöschung erklärt Verbrauch und erhält frische Vormerkung ohne Ziel bei 320 und 200 Prozent",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-38b8cd47bdc833967fc9",
+          "file": "monthly-automation.spec.ts",
+          "line": 823,
+          "column": 7
+        },
+        {
+          "title": "Ziellöschung erklärt Verbrauch und erhält frische Vormerkung ohne Ziel bei 390 und 200 Prozent",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-55a42ec45974800dd1d8",
+          "file": "monthly-automation.spec.ts",
+          "line": 823,
+          "column": 7
+        },
+        {
+          "title": "Ziellöschung erklärt Verbrauch und erhält frische Vormerkung ohne Ziel bei 768 und 200 Prozent",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-7e54bb5da7957f8d8229",
+          "file": "monthly-automation.spec.ts",
+          "line": 823,
+          "column": 7
+        },
+        {
+          "title": "Ziellöschung erklärt Verbrauch und erhält frische Vormerkung ohne Ziel bei 1280 und 200 Prozent",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-662659edae5444c71294",
+          "file": "monthly-automation.spec.ts",
+          "line": 823,
+          "column": 7
+        },
+        {
+          "title": "Späte Übersichten erhalten Löschung und unabhängigen Entwurf und bleiben nach Kontowechsel bei 320 leer",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-12bb0c1f6ba010e7e0a0",
+          "file": "monthly-automation.spec.ts",
+          "line": 892,
+          "column": 148
+        },
+        {
+          "title": "Späte Übersichten erhalten Löschung und unabhängigen Entwurf und bleiben nach Kontowechsel bei 390 leer",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-f3b3541f0293136290c3",
+          "file": "monthly-automation.spec.ts",
+          "line": 892,
+          "column": 148
+        },
+        {
+          "title": "Späte Übersichten erhalten Löschung und unabhängigen Entwurf und bleiben nach Kontowechsel bei 768 leer",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-52d8b70657b9fe076356",
+          "file": "monthly-automation.spec.ts",
+          "line": 892,
+          "column": 148
+        },
+        {
+          "title": "Späte Übersichten erhalten Löschung und unabhängigen Entwurf und bleiben nach Kontowechsel bei 1280 leer",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-52cd7120ecc1998f9fb4",
+          "file": "monthly-automation.spec.ts",
+          "line": 892,
+          "column": 148
+        },
+        {
+          "title": "Reviewfix: bestätigte Dialogdaten überstehen gehaltenes focus-GET und sichere 400",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-882f3eb4fe717604211f",
+          "file": "monthly-automation.spec.ts",
+          "line": 945,
+          "column": 38
+        },
+        {
+          "title": "Reviewfix: bestätigte Dialogdaten überstehen gehaltenes focus-GET und sichere 404",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-66dba8a20a432f6761e0",
+          "file": "monthly-automation.spec.ts",
+          "line": 945,
+          "column": 38
+        },
+        {
+          "title": "Reviewfix: 204 nach gehaltenem GET erhält bestätigtes B und dessen Fokus auch bei Ladefehler",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-c9b8f6205d7c536021f5",
+          "file": "monthly-automation.spec.ts",
+          "line": 962,
+          "column": 5
+        },
+        {
+          "title": "Reviewfix: externe Auswahländerung aktualisiert den offenen Löschdialog und erhält B",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-aaf8987a82584982659e",
+          "file": "monthly-automation.spec.ts",
+          "line": 983,
+          "column": 5
+        },
+        {
+          "title": "Reviewfix: gewöhnliche inaktive Ziellöschung verspricht keine künftigen Vormerkungen",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-5ae3e4535f58f07cdf58",
+          "file": "monthly-automation.spec.ts",
+          "line": 996,
+          "column": 5
+        },
+        {
+          "title": "Reviewfix: gespeichertes B ersetzt verworfenen A-Entwurf nicht automatisch (lokal)",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-a717e5b425ceee4393ea",
+          "file": "monthly-automation.spec.ts",
+          "line": 1006,
+          "column": 45
+        },
+        {
+          "title": "Reviewfix: gespeichertes B ersetzt verworfenen A-Entwurf nicht automatisch (extern)",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-5e0b1277c43fc3696a9e",
+          "file": "monthly-automation.spec.ts",
+          "line": 1006,
+          "column": 45
+        },
+        {
+          "title": "Reviewfix: gemeinsamer GET verwirft extern entfallenen Fortschritt-Entwurf mit bedingtem Fokus (true)",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-39b4d47e8cbd4fd85638",
+          "file": "monthly-automation.spec.ts",
+          "line": 1022,
+          "column": 91
+        },
+        {
+          "title": "Reviewfix: gemeinsamer GET verwirft extern entfallenen Fortschritt-Entwurf mit bedingtem Fokus (false)",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-f165e9a1e2c620e7e542",
+          "file": "monthly-automation.spec.ts",
+          "line": 1022,
+          "column": 91
+        },
+        {
+          "title": "Reviewfix: gemeinsamer GET verwirft extern entfallenen Zielwerte-Entwurf mit bedingtem Fokus (true)",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-0df11eaf4f3f675a6e36",
+          "file": "monthly-automation.spec.ts",
+          "line": 1022,
+          "column": 91
+        },
+        {
+          "title": "Reviewfix: gemeinsamer GET verwirft extern entfallenen Zielwerte-Entwurf mit bedingtem Fokus (false)",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-4dd9c89118b2f3b76d92",
+          "file": "monthly-automation.spec.ts",
+          "line": 1022,
+          "column": 91
+        },
+        {
+          "title": "Reviewfix: Ladezustand eines gehaltenen post-mutation GET wird nach sicherer Ablehnung nicht wiederhergestellt",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8be1e74eefb21a46962c-7ecf07abc9e93ad3f4a1",
+          "file": "monthly-automation.spec.ts",
+          "line": 1046,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-14T17:04:14.466Z",
+    "duration": 91.47000000000003,
+    "expected": 0,
+    "skipped": 91,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

@@ -80,7 +80,7 @@ test('Bearbeiten ist vorbelegt, abbrechbar und bestätigt Werte erst nach Antwor
   await expect(page.getByRole('button', { name: 'Bearbeitung abbrechen', exact: true })).toBeDisabled();
   await page.getByLabel('Betrag bearbeiten in Euro').press('Enter'); expect(puts).toBe(1);
   held.release();
-  await expect(page.locator('#expense-status')).toHaveText('Deine Ausgabe wurde geändert.');
+  await expect(page.locator('#expense-status')).toContainText('Deine Ausgabe wurde geändert.');
   await expect(page.locator('.expense-cards')).toContainText('Brot korrigiert');
   await expect(page.locator('.expense-cards')).toContainText('20,01 €');
   await expect(page.locator('.expense-cards dd').last()).toHaveText(originalDate!);
@@ -463,3 +463,89 @@ test('Touch am kleinen Smartphone ermöglicht Bearbeiten und bestätigtes Lösch
     await expect(page.getByText('Noch keine Ausgaben erfasst.')).toBeVisible();
   } finally { await context.close(); }
 });
+
+for (const method of ['PUT', 'DELETE']) for (const code of ['AMOUNT_LIMIT_EXCEEDED', 'FEATURE_NOT_AVAILABLE', 'UNKNOWN_CORRECTION']) {
+  test(`${method} unterscheidet sicheren Korrekturfehler ${code} von unbestätigtem Ausgang`, async ({ page, request }) => {
+    await login(page, await account(request)); await save(page, 'Berlin-Fahrt', '10');
+    await page.route(endpoint, route => route.request().method() === method
+      ? route.fulfill({ status: 409, json: { code, message: 'Synthetisch', fieldErrors: {} } }) : route.continue());
+    if (method === 'PUT') {
+      await action(page, 'Berlin-Fahrt', 'bearbeiten').click(); await edit(page, 'Entwurf', '12');
+      await page.getByRole('button', { name: 'Änderungen speichern', exact: true }).click();
+      await expect(page.getByLabel('Name bearbeiten', { exact: true })).toHaveValue('Entwurf');
+      await expect(page.getByLabel('Betrag bearbeiten in Euro', { exact: true })).toHaveValue('12');
+      await expect(page.locator('#expense-status')).toContainText(code === 'UNKNOWN_CORRECTION' ? 'nicht bestätigt' : 'nicht gespeichert');
+    } else {
+      await action(page, 'Berlin-Fahrt', 'löschen').click(); await page.getByRole('button', { name: 'Endgültig löschen', exact: true }).click();
+      await expect(page.locator('#expense-delete-status')).toContainText(code === 'UNKNOWN_CORRECTION' ? 'nicht bestätigt' : 'nicht gespeichert');
+      await page.keyboard.press('Escape');
+      await expect(code === 'UNKNOWN_CORRECTION' ? page.locator('#history-title') : action(page, 'Berlin-Fahrt', 'löschen')).toBeFocused();
+    }
+    await expect(page.locator('.expense-cards')).toContainText('Berlin-Fahrt'); await expect(page.locator('.expense-cards')).toContainText('10,00');
+    await expect(page.locator('.expense-uncertainty')).toHaveCount(code === 'UNKNOWN_CORRECTION' ? 1 : 0);
+  });
+}
+
+async function accessibleCorrectionState(page: Page, scope: '.expense-editor' | '.expense-delete-dialog'): Promise<void> {
+  const region = page.locator(scope);
+  await page.keyboard.press('Tab');
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  expect(await region.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
+  for (const control of await region.locator('button:not(:disabled), input:not(:disabled)').all()) {
+    await control.focus(); await control.evaluate(element => element.scrollIntoView({ block: 'center', inline: 'nearest' }));
+    await expect(control).toBeFocused(); await expect(control).toHaveCSS('outline-style', 'solid');
+    const measured = await control.evaluate(element => {
+      const style = getComputedStyle(element), rect = element.getBoundingClientRect();
+      let surface = element.parentElement!;
+      while (getComputedStyle(surface).backgroundColor === 'rgba(0, 0, 0, 0)') surface = surface.parentElement!;
+      const rgb = (color: string) => color.match(/[\d.]+/g)!.slice(0, 3).map(Number);
+      const luminance = (color: number[]) => {
+        const linear = color.map(value => value / 255).map(value => value <= .04045 ? value / 12.92 : ((value + .055) / 1.055) ** 2.4);
+        return .2126 * linear[0] + .7152 * linear[1] + .0722 * linear[2];
+      };
+      const contrast = (first: string, second: string) => (Math.max(luminance(rgb(first)), luminance(rgb(second))) + .05) / (Math.min(luminance(rgb(first)), luminance(rgb(second))) + .05);
+      const surrounding = getComputedStyle(surface).backgroundColor;
+      const reach = parseFloat(style.outlineWidth) + parseFloat(style.outlineOffset);
+      return { width: rect.width, height: rect.height, field: element.tagName === 'INPUT',
+        text: contrast(style.color, style.backgroundColor), focus: contrast(style.outlineColor, surrounding),
+        control: contrast(element.tagName === 'INPUT' ? style.borderTopColor : style.backgroundColor, surrounding),
+        visible: rect.left - reach >= 0 && rect.right + reach <= innerWidth && rect.top - reach >= 0 && rect.bottom + reach <= innerHeight,
+        unobscured: element.contains(document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2)) };
+    });
+    expect(measured.width).toBeGreaterThanOrEqual(44); expect(measured.height).toBeGreaterThanOrEqual(measured.field ? 48 : 44);
+    expect(measured.text).toBeGreaterThanOrEqual(4.5); expect(measured.focus).toBeGreaterThanOrEqual(3); expect(measured.control).toBeGreaterThanOrEqual(3);
+    expect(measured.visible).toBe(true); expect(measured.unobscured).toBe(true);
+  }
+  expect((await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze()).violations).toEqual([]);
+}
+for (const viewport of [{ width: 320, height: 568 }, { width: 390, height: 844 }, { width: 768, height: 1024 }, { width: 1280, height: 800 }]) {
+  test(`Sichere Korrekturfehler in Editor und Löschdialog sind bei ${viewport.width} und 100/200 Prozent zugänglich`, async ({ page, request }) => {
+    test.slow(); await page.setViewportSize(viewport); await login(page, await account(request)); await save(page, 'Berlin-Fahrt', '10');
+    let code = 'AMOUNT_LIMIT_EXCEEDED';
+    await page.route(endpoint, route => route.fulfill({ status: 409, json: { code, message: 'Synthetisch', fieldErrors: {} } }));
+    for (const size of ['100%', '200%']) {
+      await page.evaluate(value => { document.documentElement.style.fontSize = value; }, size);
+      await action(page, 'Berlin-Fahrt', 'bearbeiten').click(); await edit(page, 'Berlin-Fahrt Entwurf', '12');
+      for (code of ['AMOUNT_LIMIT_EXCEEDED', 'FEATURE_NOT_AVAILABLE']) {
+        await page.getByRole('button', { name: 'Änderungen speichern', exact: true }).click();
+        await expect(page.locator('#expense-status')).toContainText('nicht gespeichert'); await expect(page.locator('#expense-status')).toBeFocused();
+        await expect(page.locator('#expense-status')).toHaveAttribute('role', 'status'); await expect(page.locator('#expense-status')).toHaveAttribute('aria-live', 'polite');
+        await expect(page.getByLabel('Betrag bearbeiten in Euro', { exact: true })).toHaveValue('12');
+        await accessibleCorrectionState(page, '.expense-editor');
+      }
+      await page.getByRole('button', { name: 'Bearbeitung abbrechen', exact: true }).click(); await expect(action(page, 'Berlin-Fahrt', 'bearbeiten')).toBeFocused();
+      await action(page, 'Berlin-Fahrt', 'löschen').click();
+      for (code of ['AMOUNT_LIMIT_EXCEEDED', 'FEATURE_NOT_AVAILABLE']) {
+        await page.getByRole('button', { name: 'Endgültig löschen', exact: true }).click();
+        await expect(page.locator('#expense-delete-status')).toContainText('nicht gespeichert'); await expect(page.locator('#expense-delete-status')).toBeFocused();
+        await expect(page.locator('#expense-delete-status')).toHaveAttribute('role', 'status'); await expect(page.locator('#expense-delete-status')).toHaveAttribute('aria-live', 'polite');
+        await accessibleCorrectionState(page, '.expense-delete-dialog');
+        await page.getByRole('button', { name: 'Abbrechen', exact: true }).focus();
+        await page.keyboard.press('Shift+Tab'); await expect(page.getByRole('button', { name: 'Endgültig löschen', exact: true })).toBeFocused();
+        await page.keyboard.press('Tab'); await expect(page.getByRole('button', { name: 'Abbrechen', exact: true })).toBeFocused();
+      }
+      await page.keyboard.press('Escape'); await expect(action(page, 'Berlin-Fahrt', 'löschen')).toBeFocused();
+      await expect(page.locator('.expense-uncertainty')).toHaveCount(0);
+    }
+  });
+}

@@ -23,9 +23,9 @@ class DatabaseRoleVerifier implements InitializingBean {
         Boolean unsafe = jdbc.queryForObject("""
             SELECT r.rolsuper OR r.rolbypassrls OR r.rolcreaterole OR r.rolcreatedb
                 OR EXISTS (SELECT 1 FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
-                           WHERE n.nspname IN ('access', 'expenses', 'budget', 'savings_goals', 'api_version') AND pg_has_role(current_user, c.relowner, 'MEMBER'))
+                           WHERE n.nspname IN ('access', 'expenses', 'budget', 'savings_goals', 'monthly_surplus', 'api_version') AND pg_has_role(current_user, c.relowner, 'MEMBER'))
                 OR EXISTS (SELECT 1 FROM pg_namespace n
-                           WHERE n.nspname IN ('access', 'expenses', 'budget', 'savings_goals', 'api_version')
+                           WHERE n.nspname IN ('access', 'expenses', 'budget', 'savings_goals', 'monthly_surplus', 'api_version')
                              AND (pg_has_role(current_user, n.nspowner, 'MEMBER') OR has_schema_privilege(current_user, n.oid, 'CREATE')))
             FROM pg_roles r WHERE r.rolname = current_user
             """, Boolean.class);
@@ -33,14 +33,54 @@ class DatabaseRoleVerifier implements InitializingBean {
             throw new IllegalStateException("Die Laufzeitrolle darf weder privilegiert noch Tabellenbesitzer sein.");
         }
         Boolean protectedFinance = jdbc.queryForObject("""
-            SELECT count(*) = 3 AND bool_and(c.relrowsecurity AND c.relforcerowsecurity
+            SELECT count(*) = 7 AND bool_and(c.relrowsecurity AND c.relforcerowsecurity
                 AND has_schema_privilege(current_user, n.oid, 'USAGE'))
             FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
-            WHERE (n.nspname, c.relname) IN (('expenses', 'expenses'), ('budget', 'budgets'), ('savings_goals', 'goals'))
+            WHERE (n.nspname, c.relname) IN (('expenses', 'expenses'), ('budget', 'budgets'), ('savings_goals', 'goals'), ('monthly_surplus', 'activations'), ('monthly_surplus', 'month_records'), ('monthly_surplus', 'selections'), ('monthly_surplus', 'deleted_goals'))
             """, Boolean.class);
         if (!Boolean.TRUE.equals(protectedFinance)) {
             throw new IllegalStateException("Die Finanzschemas benötigen minimale Laufzeitrechte und erzwungene RLS.");
         }
+        Boolean immutableActivation = jdbc.queryForObject("""
+            SELECT has_table_privilege(current_user, 'monthly_surplus.activations', 'SELECT')
+                AND has_table_privilege(current_user, 'monthly_surplus.activations', 'INSERT')
+                AND NOT has_table_privilege(current_user, 'monthly_surplus.activations', 'UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER')
+                AND NOT has_any_column_privilege(current_user, 'monthly_surplus.activations', 'UPDATE,REFERENCES')
+            """, Boolean.class);
+        if (!Boolean.TRUE.equals(immutableActivation))
+            throw new IllegalStateException("Der Aktivierungsbeginn benötigt unveränderliche minimale Laufzeitrechte.");
+        Boolean immutableDeletedGoals = jdbc.queryForObject("""
+            SELECT has_table_privilege(current_user, 'monthly_surplus.deleted_goals', 'SELECT')
+                AND has_table_privilege(current_user, 'monthly_surplus.deleted_goals', 'INSERT')
+                AND NOT has_table_privilege(current_user, 'monthly_surplus.deleted_goals', 'UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER')
+                AND NOT has_any_column_privilege(current_user, 'monthly_surplus.deleted_goals', 'UPDATE,REFERENCES')
+            """, Boolean.class);
+        if (!Boolean.TRUE.equals(immutableDeletedGoals))
+            throw new IllegalStateException("Der dauerhafte Zielverbrauch benötigt unveränderliche minimale Laufzeitrechte.");
+        Boolean immutableRecords = jdbc.queryForObject("""
+            SELECT has_table_privilege(current_user, 'monthly_surplus.month_records', 'SELECT')
+                AND has_table_privilege(current_user, 'monthly_surplus.month_records', 'INSERT')
+                AND NOT has_table_privilege(current_user, 'monthly_surplus.month_records', 'UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER')
+                AND has_column_privilege(current_user, 'monthly_surplus.month_records', 'goal_id', 'UPDATE')
+                AND has_column_privilege(current_user, 'monthly_surplus.month_records', 'consumed', 'UPDATE')
+                AND NOT has_column_privilege(current_user, 'monthly_surplus.month_records', 'user_id', 'UPDATE')
+                AND NOT has_column_privilege(current_user, 'monthly_surplus.month_records', 'origin_month', 'UPDATE')
+                AND has_column_privilege(current_user, 'monthly_surplus.month_records', 'surplus_cents', 'UPDATE')
+                AND NOT has_any_column_privilege(current_user, 'monthly_surplus.month_records', 'REFERENCES')
+            """, Boolean.class);
+        if (!Boolean.TRUE.equals(immutableRecords))
+            throw new IllegalStateException("Monatsnachweise benötigen minimale Herkunfts-/Bindungsrechte.");
+        Boolean selectionRights = jdbc.queryForObject("""
+            SELECT has_table_privilege(current_user, 'monthly_surplus.selections', 'SELECT')
+                AND has_table_privilege(current_user, 'monthly_surplus.selections', 'INSERT')
+                AND has_column_privilege(current_user, 'monthly_surplus.selections', 'goal_id', 'UPDATE')
+                AND NOT has_table_privilege(current_user, 'monthly_surplus.selections', 'UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER')
+                AND NOT has_column_privilege(current_user, 'monthly_surplus.selections', 'user_id', 'UPDATE')
+                AND NOT has_column_privilege(current_user, 'monthly_surplus.selections', 'effective_month', 'UPDATE')
+                AND NOT has_any_column_privilege(current_user, 'monthly_surplus.selections', 'REFERENCES')
+            """, Boolean.class);
+        if (!Boolean.TRUE.equals(selectionRights))
+            throw new IllegalStateException("Auswahlhistorie benötigt minimale Auswahlrechte.");
         Boolean protectedVersion = jdbc.queryForObject("""
             SELECT has_table_privilege(current_user, 'api_version.state', 'SELECT')
               AND NOT has_table_privilege(current_user, 'api_version.state', 'INSERT,UPDATE,DELETE,TRUNCATE')
@@ -50,6 +90,7 @@ class DatabaseRoleVerifier implements InitializingBean {
               AND NOT has_function_privilege(current_user, 'api_version.set_retirement(boolean,uuid,text,text,text)', 'EXECUTE')
               AND has_function_privilege(current_user, 'api_version.mark_usage(text)', 'EXECUTE')
               AND has_function_privilege(current_user, 'api_version.signed_progress_available(boolean,uuid,text,text,text,timestamptz)', 'EXECUTE')
+              AND has_function_privilege(current_user, 'api_version.monthly_automation_available(boolean,uuid,text,text,text,timestamptz)', 'EXECUTE')
             """, Boolean.class);
         if (!Boolean.TRUE.equals(protectedVersion))
             throw new IllegalStateException("Der Versionszustand benötigt minimale Laufzeitrechte.");

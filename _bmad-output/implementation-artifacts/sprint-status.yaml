@@ -29,7 +29,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 # - Retrospective appends its action items to action_items; the status view surfaces open ones
 generated: 10-22-2026 11:51
-last_updated: 11-06-2026 21:37
+last_updated: 11-14-2026
 project: try-not-to-be-poor
 project_key: NOKEY
 tracking_system: file-system
@@ -63,13 +63,22 @@ development_status:
   3-8-tatsächlichen-gesamtfortschritt-auch-negativ-speichern: done
   epic-3-retrospective: optional
 
-  epic-4: backlog
-  4-1-monatsautomatik-ausdrücklich-ab-dem-ersten-aktivierungsmonat: backlog
-  4-2-abgeschlossene-monatsüberschüsse-ohne-ziel-vormerken: backlog
-  4-3-eigenes-ziel-auswählen-und-alle-offenen-vormerkungen-überneh: backlog
-  4-4-historische-ausgaben-mit-ihrer-monatsüberschusskorrektur-änd: backlog
-  4-5-sparziel-löschen-und-seine-historischen-monatsbindungen-verb: backlog
+  epic-4: in-progress
+  4-1-monatsautomatik-ausdrücklich-ab-dem-ersten-aktivierungsmonat: review
+  # 4.2: Umsetzung und technisches Review abgeschlossen; vollständiger Gesamtlauf erfolgreich.
+  4-2-abgeschlossene-monatsüberschüsse-ohne-ziel-vormerken: review
+  4-3-eigenes-ziel-auswählen-und-alle-offenen-vormerkungen-überneh: review
+  4-4-historische-ausgaben-mit-ihrer-monatsüberschusskorrektur-änd: review
+  4-5-sparziel-löschen-und-seine-historischen-monatsbindungen-verb: review
   4-6-fällige-monate-ohne-nutzersitzung-über-einen-begrenzten-jobz: backlog
   4-7-fällige-monate-regelmäßig-und-fair-nachholen-sowie-fehler-ve: backlog
   4-8-monatsautomatik-nach-vollständigem-nachweis-zur-ausdrücklich: backlog
   epic-4-retrospective: optional
+
+  epic-5: backlog
+  5-1-testbestand-und-vollständige-build-laufzeit-reproduzierbar-v: backlog
+  5-2-backend-fachregeln-überwiegend-mit-isolierten-unit-tests-abs: backlog
+  5-3-frontend-verhalten-mit-unit-und-isolierten-komponententests: backlog
+  5-4-teure-integrationsprüfungen-auf-ihren-schutzzweck-konzentrie: backlog
+  5-5-qualitätsgleichwertigkeit-und-schnelleren-vollständigen-buil: backlog
+  epic-5-retrospective: optional

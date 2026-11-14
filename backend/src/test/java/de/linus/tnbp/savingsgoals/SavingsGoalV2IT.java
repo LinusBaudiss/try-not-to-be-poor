@@ -76,6 +76,30 @@ class SavingsGoalV2IT extends SavingsGoalIT {
         return response;
     }
 
+    @Test void loeschvertragTrenntUngueltigeIdVonNeutraler404() throws Exception {
+        var invalid = version("v2", "DELETE", "/keine-uuid", null);
+        assertThat(invalid.statusCode()).isEqualTo(400);
+        assertThat(invalid.body()).contains("VALIDATION_FAILED");
+        var absent = version("v2", "DELETE", "/" + UUID.randomUUID(), null);
+        String foreign = goal(second);
+        assertThat(version("v2", "DELETE", "/" + foreign, null).body()).isEqualTo(absent.body());
+        assertThat(absent.statusCode()).isEqualTo(404);
+    }
+    @Test void abgekuerzteUuidSchreibweisenErreichenKeineMutationAuchBeiPassendemZiel() throws Exception {
+        UUID id=UUID.fromString("1-1-1-1-1");
+        de.linus.tnbp.access.PostgresFixture.ADMIN.update("INSERT INTO savings_goals.goals(id,user_id,name,target_amount_cents,progress_cents) VALUES (?,?,'Unverändert',10000,7)",id,first);
+        String before=call("GET",null,token(first)).body();
+        for(String spelling:List.of("1-1-1-1-1","00000001-1-0001-0001-000000000001","keine-uuid")) {
+            assertThat(version("v2","DELETE","/"+spelling,null).statusCode()).as(spelling).isEqualTo(400);
+            assertThat(version("v2","PUT","/"+spelling,"{\"name\":\"Falsch\",\"targetAmountCents\":20000}").statusCode()).isEqualTo(400);
+            assertThat(version("v2","PUT","/"+spelling+"/progress","{\"progressCents\":999}").statusCode()).isEqualTo(400);
+            assertThat(call("GET",null,token(first)).body()).isEqualTo(before);
+        }
+        assertThat(version("v2","PUT","/"+id+"/progress","{\"progressCents\":9}").statusCode()).isEqualTo(200);
+        assertThat(version("v2","DELETE","/"+id,null).statusCode()).isEqualTo(204);
+        assertThat(version("v2","DELETE","/"+id,null).statusCode()).isEqualTo(404);
+    }
+
     @Test void methodenUndMedientypenSindExplizitBegrenzt() throws Exception {
         String id = goal(first), bearer = token(first);
         for (String suffix : List.of("", "/" + id, "/" + id + "/progress")) {

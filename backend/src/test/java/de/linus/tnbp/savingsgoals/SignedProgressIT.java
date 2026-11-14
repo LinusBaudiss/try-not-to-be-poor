@@ -94,7 +94,11 @@ class SignedProgressIT {
 
     @Test void capabilityIstGeschuetztReinLesendUndFailClosedBeiVeraltetemBelegOderSchema() throws Exception {
         assertThat(call("GET","/api/v2/capabilities",null,null).statusCode()).isEqualTo(401);
-        assertThat(call("GET","/api/v2/capabilities",null,first).body()).isEqualTo("{\"signedProgressAvailable\":true}");
+        assertThat(call("GET","/api/v2/capabilities",null,first).body()).isEqualTo("{\"signedProgressAvailable\":true,\"monthlyAutomationAvailable\":false}");
+        // Tatsächlich stillgelegtes v1 und signierte Fortschrittsfreigabe öffnen die unfertige Gesamtfunktion nicht.
+        var automation=call("POST","/api/v2/monthly-surplus/activation",null,first);
+        assertThat(automation.statusCode()).isEqualTo(409);assertThat(automation.body()).contains("FEATURE_NOT_AVAILABLE");
+        assertThat(call("GET","/api/v2/monthly-surplus/activation",null,first).body()).isEqualTo("{\"active\":false,\"activationMonth\":null}");
         assertThat(marked()).isFalse();
         UUID id=goal(first);
         for(String column:List.of("release_sha256","schema_sha256","roles_sha256","stopped_instance","retired_at")) {
@@ -102,7 +106,7 @@ class SignedProgressIT {
             String changed=column.equals("stopped_instance")?"gen_random_uuid()":column.equals("retired_at")?"retired_at+interval '1 second'":"repeat('b',64)";
             try {
                 ADMIN.execute("UPDATE api_version.state SET "+column+"="+changed);
-                assertThat(call("GET","/api/v2/capabilities",null,first).body()).isEqualTo("{\"signedProgressAvailable\":false}");
+                assertThat(call("GET","/api/v2/capabilities",null,first).body()).isEqualTo("{\"signedProgressAvailable\":false,\"monthlyAutomationAvailable\":false}");
                 assertThat(progress(id,"-3000",first).statusCode()).isEqualTo(409);
                 assertThat(progress(id,"7000",first).statusCode()).isEqualTo(200);
                 assertThat(marked()).isFalse();
@@ -114,7 +118,7 @@ class SignedProgressIT {
             try {
                 ADMIN.execute("ALTER TABLE savings_goals.goals DROP CONSTRAINT goals_progress_cents_check; ALTER TABLE savings_goals.goals ADD CONSTRAINT goals_progress_cents_check "+definition);
                 assertThat(versions.signedProgressAvailable()).isFalse();
-                assertThat(call("GET","/api/v2/capabilities",null,first).body()).isEqualTo("{\"signedProgressAvailable\":false}");
+                assertThat(call("GET","/api/v2/capabilities",null,first).body()).isEqualTo("{\"signedProgressAvailable\":false,\"monthlyAutomationAvailable\":false}");
                 assertThat(progress(id,"-3000",first).statusCode()).isEqualTo(409);
                 assertThat(application.allGoals(first)).isEqualTo(before);assertThat(marked()).isFalse();
                 assertThat(ADMIN.queryForList("SELECT conname,pg_get_constraintdef(oid),convalidated FROM pg_constraint WHERE conrelid='savings_goals.goals'::regclass AND conname<>'goals_progress_cents_check' ORDER BY conname")).isEqualTo(otherConstraints);
@@ -123,7 +127,7 @@ class SignedProgressIT {
         var proof=ADMIN.queryForMap("SELECT * FROM api_version.state");
         try {
             ADMIN.execute("ALTER TABLE api_version.state DISABLE TRIGGER monotone_usage; DELETE FROM api_version.state; ALTER TABLE api_version.state ENABLE TRIGGER monotone_usage");
-            assertThat(call("GET","/api/v2/capabilities",null,first).body()).isEqualTo("{\"signedProgressAvailable\":false}");
+            assertThat(call("GET","/api/v2/capabilities",null,first).body()).isEqualTo("{\"signedProgressAvailable\":false,\"monthlyAutomationAvailable\":false}");
             assertThat(progress(id,"-3000",first).statusCode()).isEqualTo(409);
         } finally {
             ADMIN.update("INSERT INTO api_version.state(singleton,v1_retired,signed_progress_used,monthly_effects_used,stopped_instance,release_sha256,schema_sha256,roles_sha256,retired_at) VALUES(true,?,?,?,?,?,?,?,?)",proof.get("v1_retired"),proof.get("signed_progress_used"),proof.get("monthly_effects_used"),proof.get("stopped_instance"),proof.get("release_sha256"),proof.get("schema_sha256"),proof.get("roles_sha256"),proof.get("retired_at"));

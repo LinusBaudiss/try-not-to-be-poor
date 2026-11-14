@@ -59,9 +59,10 @@ class ExpenseOperations {
       <button type="submit" [disabled]="pending() || loading() || !loaded() || !online() || uncertain()">{{ creating() ? 'Ausgabe wird gespeichert …' : 'Ausgabe speichern' }}</button>
     </form>
     @if (editing(); as expense) {
-      <form class="expense-editor" (ngSubmit)="update()" novalidate [attr.aria-busy]="pending()" aria-labelledby="expense-edit-title">
+      <form class="expense-editor" (ngSubmit)="update()" novalidate [attr.aria-busy]="pending()" aria-labelledby="expense-edit-title" aria-describedby="expense-correction-hint">
         <h3 id="expense-edit-title">Ausgabe bearbeiten</h3>
         <p>Erfasst am {{ date(expense.recordedOn) }}. Das Datum bleibt unverändert.</p>
+        <p id="expense-correction-hint" class="hint">Bei Betragsänderungen abgeschlossener Monate wird eine erforderliche Korrektur der Vormerkung oder des ursprünglichen Sparziels gemeinsam gespeichert. Nach der Bestätigung siehst du den neuen Stand unter Sparziele.</p>
         <div class="field">
           <label for="expense-edit-name">Name bearbeiten</label>
           <input id="expense-edit-name" name="editName" type="text" autocomplete="off" required
@@ -86,7 +87,7 @@ class ExpenseOperations {
     <dialog #deleteDialog class="expense-delete-dialog" aria-labelledby="expense-delete-title" aria-describedby="expense-delete-description" (cancel)="cancelDelete($event)" (keydown)="trapDeleteFocus($event)" [attr.aria-busy]="pending()">
       @if (deleting(); as expense) {
         <h2 id="expense-delete-title">Ausgabe löschen?</h2>
-        <p id="expense-delete-description">„{{ expense.name }}“ mit {{ money(expense.amountCents) }} vom {{ date(expense.recordedOn) }} wird endgültig gelöscht. Die Historie und dein Restbudget werden anschließend aktualisiert. Diese Aktion kann nicht rückgängig gemacht werden.</p>
+        <p id="expense-delete-description">„{{ expense.name }}“ mit {{ money(expense.amountCents) }} vom {{ date(expense.recordedOn) }} wird endgültig gelöscht. Eine erforderliche Korrektur der Vormerkung oder des ursprünglichen Sparziels wird gemeinsam mit der Löschung gespeichert. Die Historie und dein Restbudget werden anschließend aktualisiert. Diese Aktion kann nicht rückgängig gemacht werden.</p>
         @if (!online()) { <p class="error">Du bist offline. Löschen ist erst online möglich.</p> }
         <p id="expense-delete-status" tabindex="-1" role="status" aria-live="polite" [class.error]="failed()">{{ deleteStatus() }}</p>
         <div class="expense-actions">
@@ -266,7 +267,10 @@ export class Expenses {
     this.deleting.set(expense); this.deleteStatus.set(''); this.status.set(''); this.failed.set(false); this.saved.set(false);
     requestAnimationFrame(() => {
       if (!this.accepts() || this.deleting()?.id !== expense.id) return;
-      this.deleteDialog?.nativeElement.showModal(); this.focus('expense-delete-cancel');
+      const dialog = this.deleteDialog?.nativeElement;
+      dialog?.showModal();
+      // Kein späterer Frame darf die erste Tastaturnavigation zurücksetzen.
+      dialog?.querySelector<HTMLButtonElement>('#expense-delete-cancel')?.focus();
     });
   }
   protected cancelDelete(event?: Event): void {
@@ -307,7 +311,7 @@ export class Expenses {
       this.failed.set(true); this.status.set('Prüfe Name und Betrag.');
       this.focus(this.editNameError() ? 'expense-edit-name' : 'expense-edit-amount'); return;
     }
-    const operation = this.operations.begin(); this.status.set('Änderungen werden gespeichert …');
+    const operation = this.operations.begin(); this.status.set('Ausgabe und erforderliche Monatskorrektur werden gemeinsam gespeichert …');
     try {
       const response = await firstValueFrom(this.api.putExpense(expense.id, { name, amountCents: amountCents! }, 'response').pipe(timeout(30_000)));
       if (!this.accepts()) return;
@@ -315,7 +319,7 @@ export class Expenses {
       if (response.status !== 200 || !this.valid(result) || result.id !== expense.id || result.recordedOn !== expense.recordedOn || result.name !== name || result.amountCents !== amountCents)
         throw new Error('Änderung nicht bestätigt.');
       this.items.set(this.sort(this.items().map(value => value.id === result.id ? result : value)));
-      this.resetEditor(); this.status.set('Deine Ausgabe wurde geändert.'); this.saved.set(true); this.restoreTrigger('edit');
+      this.resetEditor(); this.status.set('Deine Ausgabe wurde geändert. Falls eine Monatskorrektur erforderlich war, wurde sie gemeinsam gespeichert.'); this.saved.set(true); this.restoreTrigger('edit');
     } catch (failure) {
       if (!this.accepts()) return;
       this.failed.set(true);
@@ -325,6 +329,8 @@ export class Expenses {
         if (typeof fields?.amountCents === 'string') this.editAmountError.set(fields.amountCents);
         this.status.set('Die Ausgabe wurde nicht geändert. Prüfe die Eingaben.');
         this.focus(this.editNameError() ? 'expense-edit-name' : this.editAmountError() ? 'expense-edit-amount' : 'expense-status');
+      } else if (this.correctionFailure(failure)) {
+        this.status.set(this.correctionFailure(failure)!); this.focus('expense-status');
       } else {
         if (!(failure instanceof HttpErrorResponse && failure.status === 404)) this.markUncertain();
         this.status.set(failure instanceof HttpErrorResponse && failure.status === 404
@@ -337,7 +343,7 @@ export class Expenses {
   protected async remove(): Promise<void> {
     const expense = this.deleting();
     if (!expense || !this.accepts() || this.pending() || !this.online() || !this.loaded() || this.loading() || this.uncertain()) return;
-    const operation = this.operations.begin(); this.failed.set(false); this.saved.set(false); this.deleteStatus.set('Ausgabe wird gelöscht …');
+    const operation = this.operations.begin(); this.failed.set(false); this.saved.set(false); this.deleteStatus.set('Löschung und erforderliche Monatskorrektur werden gemeinsam gespeichert …');
     this.focus('expense-delete-status');
     try {
       const response = await firstValueFrom(this.api.deleteExpense(expense.id, 'response').pipe(timeout(30_000)));
@@ -348,7 +354,7 @@ export class Expenses {
       this.items.set(remaining);
       if (this.editing()?.id === expense.id) { this.resetEditor(); this.editTrigger = null; }
       this.closeDelete(); this.deleteTrigger = null;
-      this.status.set('Deine Ausgabe wurde gelöscht.'); this.saved.set(true);
+      this.status.set('Deine Ausgabe wurde gelöscht. Falls eine Monatskorrektur erforderlich war, wurde sie gemeinsam gespeichert.'); this.saved.set(true);
       const next = remaining[index] ?? remaining[index - 1];
       requestAnimationFrame(() => {
         if (!this.accepts()) return;
@@ -359,11 +365,20 @@ export class Expenses {
     } catch (failure) {
       if (!this.accepts()) return;
       this.failed.set(true);
+      if (this.correctionFailure(failure)) { this.deleteStatus.set(this.correctionFailure(failure)!); return; }
       if (!(failure instanceof HttpErrorResponse && failure.status === 404)) this.markUncertain();
       this.deleteStatus.set(failure instanceof HttpErrorResponse && failure.status === 404
         ? 'Die Ausgabe wurde nicht gefunden. Schließe den Dialog und aktualisiere die Historie.'
         : 'Die Löschung wurde nicht bestätigt. Die Ausgabe wurde möglicherweise bereits gelöscht. Schließe den Dialog und aktualisiere die Historie, bevor du es erneut versuchst.');
     } finally { this.operations.settle(operation); }
+  }
+  private correctionFailure(failure: unknown): string | null {
+    if (!(failure instanceof HttpErrorResponse) || failure.status !== 409) return null;
+    if (failure.error?.code === 'AMOUNT_LIMIT_EXCEEDED')
+      return 'Die Ausgabe und ihre Monatskorrektur wurden nicht gespeichert. Die gemeinsame Finanzwirkung überschreitet die zulässige Centgrenze. Dein Entwurf und der bestätigte Stand bleiben erhalten. Die manuelle Fortschrittspflege unter Sparziele bleibt erreichbar.';
+    if (failure.error?.code === 'FEATURE_NOT_AVAILABLE')
+      return 'Die Ausgabe und ihre Monatskorrektur wurden nicht gespeichert. Die erforderliche Monatskorrektur ist derzeit gesperrt. Dein Entwurf und der bestätigte Stand bleiben erhalten.';
+    return null;
   }
   private markUncertain(): void { this.uncertain.set(true); this.uncertaintyReloaded.set(false); }
   protected confirmReview(): void {

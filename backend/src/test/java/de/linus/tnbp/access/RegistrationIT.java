@@ -391,6 +391,36 @@ class RegistrationIT {
                 "Die Finanzschemas benötigen minimale Laufzeitrechte und erzwungene RLS."},
             {"GRANT CREATE ON SCHEMA savings_goals TO tnbp_runtime", "REVOKE CREATE ON SCHEMA savings_goals FROM tnbp_runtime",
                 "Die Laufzeitrolle darf weder privilegiert noch Tabellenbesitzer sein."},
+            {"GRANT UPDATE ON monthly_surplus.activations TO tnbp_runtime", "REVOKE UPDATE ON monthly_surplus.activations FROM tnbp_runtime",
+                "Der Aktivierungsbeginn benötigt unveränderliche minimale Laufzeitrechte."},
+            {"GRANT DELETE ON monthly_surplus.activations TO tnbp_runtime", "REVOKE DELETE ON monthly_surplus.activations FROM tnbp_runtime",
+                "Der Aktivierungsbeginn benötigt unveränderliche minimale Laufzeitrechte."},
+            {"GRANT UPDATE (activation_month) ON monthly_surplus.activations TO PUBLIC", "REVOKE UPDATE (activation_month) ON monthly_surplus.activations FROM PUBLIC",
+                "Der Aktivierungsbeginn benötigt unveränderliche minimale Laufzeitrechte."},
+            {"ALTER TABLE monthly_surplus.month_records NO FORCE ROW LEVEL SECURITY", "ALTER TABLE monthly_surplus.month_records FORCE ROW LEVEL SECURITY",
+                "Die Finanzschemas benötigen minimale Laufzeitrechte und erzwungene RLS."},
+            {"GRANT UPDATE ON monthly_surplus.month_records TO tnbp_runtime", "REVOKE UPDATE ON monthly_surplus.month_records FROM tnbp_runtime",
+                "Monatsnachweise benötigen minimale Herkunfts-/Bindungsrechte."},
+            {"GRANT UPDATE (origin_month) ON monthly_surplus.month_records TO PUBLIC", "REVOKE UPDATE (origin_month) ON monthly_surplus.month_records FROM PUBLIC",
+                "Monatsnachweise benötigen minimale Herkunfts-/Bindungsrechte."},
+            {"GRANT DELETE ON monthly_surplus.month_records TO tnbp_runtime", "REVOKE DELETE ON monthly_surplus.month_records FROM tnbp_runtime",
+                "Monatsnachweise benötigen minimale Herkunfts-/Bindungsrechte."},
+            {"REVOKE UPDATE (consumed) ON monthly_surplus.month_records FROM tnbp_runtime", "GRANT UPDATE (consumed) ON monthly_surplus.month_records TO tnbp_runtime",
+                "Monatsnachweise benötigen minimale Herkunfts-/Bindungsrechte."},
+            {"REVOKE UPDATE (surplus_cents) ON monthly_surplus.month_records FROM tnbp_runtime", "GRANT UPDATE (surplus_cents) ON monthly_surplus.month_records TO tnbp_runtime",
+                "Monatsnachweise benötigen minimale Herkunfts-/Bindungsrechte."},
+            {"GRANT UPDATE (effective_month) ON monthly_surplus.selections TO PUBLIC", "REVOKE UPDATE (effective_month) ON monthly_surplus.selections FROM PUBLIC",
+                "Auswahlhistorie benötigt minimale Auswahlrechte."},
+            {"ALTER TABLE monthly_surplus.selections NO FORCE ROW LEVEL SECURITY", "ALTER TABLE monthly_surplus.selections FORCE ROW LEVEL SECURITY",
+                "Die Finanzschemas benötigen minimale Laufzeitrechte und erzwungene RLS."},
+            {"ALTER TABLE monthly_surplus.deleted_goals NO FORCE ROW LEVEL SECURITY", "ALTER TABLE monthly_surplus.deleted_goals FORCE ROW LEVEL SECURITY",
+                "Die Finanzschemas benötigen minimale Laufzeitrechte und erzwungene RLS."},
+            {"GRANT DELETE ON monthly_surplus.deleted_goals TO tnbp_runtime", "REVOKE DELETE ON monthly_surplus.deleted_goals FROM tnbp_runtime",
+                "Der dauerhafte Zielverbrauch benötigt unveränderliche minimale Laufzeitrechte."},
+            {"GRANT UPDATE (goal_id) ON monthly_surplus.deleted_goals TO PUBLIC", "REVOKE UPDATE (goal_id) ON monthly_surplus.deleted_goals FROM PUBLIC",
+                "Der dauerhafte Zielverbrauch benötigt unveränderliche minimale Laufzeitrechte."},
+            {"REVOKE INSERT ON monthly_surplus.deleted_goals FROM tnbp_runtime", "GRANT INSERT ON monthly_surplus.deleted_goals TO tnbp_runtime",
+                "Der dauerhafte Zielverbrauch benötigt unveränderliche minimale Laufzeitrechte."},
             {"GRANT EXECUTE ON FUNCTION api_version.set_retirement(boolean,uuid,text,text,text) TO tnbp_runtime",
                 "REVOKE EXECUTE ON FUNCTION api_version.set_retirement(boolean,uuid,text,text,text) FROM tnbp_runtime",
                 "Der Versionszustand benötigt minimale Laufzeitrechte."}
@@ -404,7 +434,7 @@ class RegistrationIT {
                 org.assertj.core.api.Assertions.assertThatThrownBy(() -> {
                     try (var unexpected = app.run(args.toArray(String[]::new))) { /* Schließt einen irrtümlich erlaubten Start. */ }
                 }).as(testCase[0]).hasRootCauseInstanceOf(IllegalStateException.class).hasStackTraceContaining(testCase[2]);
-            } finally { PostgresFixture.ADMIN.execute(testCase[1]); }
+            } finally { PostgresFixture.ADMIN.execute(testCase[1]); PostgresFixture.ADMIN.execute("GRANT UPDATE (goal_id) ON monthly_surplus.month_records TO tnbp_runtime"); }
         }
     }
 

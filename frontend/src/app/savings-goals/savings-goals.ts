@@ -1,49 +1,33 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, DestroyRef, ElementRef, ViewChild, HostListener, Injectable, computed, effect, inject, signal } from '@angular/core';
+import { Component, DestroyRef, ElementRef, ViewChild, HostListener, computed, effect, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { firstValueFrom, timeout } from 'rxjs';
 import { SavingsGoalResponse } from '../api/v2/model/savingsGoalResponse';
 import { CapabilitiesService } from '../api/v2/api/capabilities.service';
 import { SavingsGoalsService } from '../api/v2/api/savingsGoals.service';
+import { MonthlySurplusService } from '../api/v2/api/monthlySurplus.service';
+import { MonthlySurplusOverviewResponse } from '../api/v2/model/monthlySurplusOverviewResponse';
+import { MonthlyAutomation, SavingsOperations, OverviewLoadState } from './monthly-automation';
 import { savingsProgress } from '../shared/savings-progress';
 import { Session } from '../session/session';
 import { LogoutButton } from '../session/logout-button';
 import { SessionsService } from '../api/v2/api/sessions.service';
 import { MAX_CENTS, euroInput, signedEuroInput, formatSignedEuro, parseEuro, parseSignedEuro } from '../shared/money';
 
-// Nur Vorgangsflags überleben die Navigation; persönliche Werte bleiben in der Ansicht.
-@Injectable({ providedIn: 'root' })
-class SavingsOperations {
-  private readonly session = inject(Session);
-  private version = this.session.generation();
-  private sequence = 0;
-  readonly pending = signal(false);
-  readonly uncertain = signal(false);
-  constructor() { effect(() => { this.session.generation(); this.synchronize(); }); }
-  synchronize(): void {
-    if (this.version === this.session.generation()) return;
-    this.version = this.session.generation(); ++this.sequence;
-    this.pending.set(false); this.uncertain.set(false);
-  }
-  begin(): { version: number; sequence: number } {
-    this.synchronize(); this.pending.set(true);
-    return { version: this.version, sequence: ++this.sequence };
-  }
-  abandon(): void { this.synchronize(); if (this.pending()) this.uncertain.set(true); }
-  settle(operation: { version: number; sequence: number }): void {
-    this.synchronize();
-    if (operation.version === this.version && operation.sequence === this.sequence) this.pending.set(false);
-  }
-}
-
 @Component({
   selector: 'app-savings-goals',
-  imports: [FormsModule, LogoutButton],
+  imports: [FormsModule, LogoutButton, MonthlyAutomation],
   template: `<section class="auth-card" aria-labelledby="savings-title">
     <h1 id="savings-title" tabindex="-1">Sparziele</h1>
     <p role="status" aria-live="polite" [class.error]="identityFailed()">{{ identityStatus() }}</p>
     @if (identityFailed()) { <button type="button" (click)="open()" [disabled]="opening() || !online()">Zugang erneut prüfen</button> }
     @if (identityConfirmed()) {
+      <app-monthly-automation [capability]="monthlyCapabilityState()" (retryCapability)="loadCapabilities()"
+        [state]="overview" [loadState]="overviewState()" [online]="online()" [blocked]="automationBlocked()"
+        [activationPending]="activationPending()" [activationUncertain]="activationUncertain()" [activationFailed]="activationFailed()" [activationResult]="activationResult()"
+        [selectionPending]="selectionPending()" [selectionUncertain]="selectionUncertain()" [selectionFailed]="selectionFailed()" [selectionResult]="selectionResult()"
+        [manualPending]="pending()" [draft]="selectionDraft" (draftChange)="selectionDraft.set($event)" (selectGoal)="selectMonthlyGoal($event)"
+        (activate)="activateMonthly()" (reloadOverview)="load(false, true)" />
       <h2 id="goals-list-title">Deine Sparziele</h2>
       <p id="goals-list-status" role="status" aria-live="polite" aria-atomic="true" [class.savings-placeholder]="loading()" [class.error]="loadFailed()">{{ listStatus() }}</p>
       @if (pending() && !loaded()) { <p role="status">Ein Sparzielvorgang läuft noch. Warte auf die Bestätigung, bevor du den aktuellen Stand prüfst.</p> }
@@ -143,10 +127,12 @@ class SavingsOperations {
         </section>
       }
       <p id="goal-mutation-status" tabindex="-1" role="status" aria-live="polite" aria-atomic="true" [class.error]="mutationFailed()" [class.success]="mutationSaved()">{{ mutationStatus() }}</p>
-      <dialog #deleteDialog class="savings-delete-dialog" aria-labelledby="goal-delete-title" aria-describedby="goal-delete-description" (cancel)="cancelDelete($event)" (keydown)="trapDeleteFocus($event)" [attr.aria-busy]="pending()">
+      <dialog #deleteDialog class="savings-delete-dialog" aria-labelledby="goal-delete-title" aria-describedby="goal-delete-description goal-delete-months goal-delete-future" (cancel)="cancelDelete($event)" (keydown)="trapDeleteFocus($event)" [attr.aria-busy]="pending()">
         @if (deleting(); as goal) {
           <h2 id="goal-delete-title">Sparziel löschen?</h2>
           <p id="goal-delete-description">„{{ goal.name }}“ und sein Gesamtfortschritt werden endgültig gelöscht. Diese Aktion kann nicht rückgängig gemacht werden.</p>
+          <p id="goal-delete-months">Frühere Monatsüberschüsse, die diesem Ziel zugeordnet waren, werden weder auf ein anderes Ziel übertragen noch neu vorgemerkt. Das gilt auch für abgeschlossene Monate, die noch nicht verarbeitet wurden.</p>
+          <p id="goal-delete-future">Bereits offene Vormerkungen bleiben erhalten. {{ deletingActive() === false ? 'Die Monatsautomatik ist nicht aktiviert. Die Löschung aktiviert sie nicht und erzeugt keine Vormerkungen.' : deletingSelected() ? 'Dieses Ziel ist aktuell ausgewählt. Weitere Monatsüberschüsse werden ohne neue Zielauswahl vorgemerkt. Die Monatsautomatik bleibt aktiv.' : 'Falls ein anderes Ziel ausgewählt ist, bleibt diese Auswahl erhalten. Wenn die Monatsautomatik ausdrücklich aktiviert ist und danach kein Ziel ausgewählt ist, werden weitere Monatsüberschüsse bis zur nächsten Zielauswahl vorgemerkt. Die Löschung aktiviert die Monatsautomatik nicht.' }}</p>
           @if (!online()) { <p class="error" role="status">Du bist offline. Löschen ist erst online möglich.</p> }
           <p id="goal-delete-status" tabindex="-1" role="status" aria-live="polite" [class.error]="mutationFailed()">{{ deleteStatus() }}</p>
           @if (uncertain()) {
@@ -199,6 +185,7 @@ export class SavingsGoals {
   private readonly capabilities = inject(CapabilitiesService);
   private capabilitySequence = 0;
   protected readonly capabilityState = signal<'unknown' | 'loading' | 'open' | 'closed' | 'failed'>('unknown');
+  protected readonly monthlyCapabilityState = signal<'unknown' | 'loading' | 'open' | 'closed' | 'failed'>('unknown');
   protected readonly signedAvailable = computed(() => this.capabilityState() === 'open');
   protected readonly capabilityStatus = computed(() => this.capabilityState() === 'loading' ? 'Fortschrittseingabe wird geprüft …'
     : this.capabilityState() === 'open' ? 'Negative Gesamtfortschritte sind verfügbar.'
@@ -207,6 +194,25 @@ export class SavingsGoals {
     : 'Die Fortschrittseingabe wurde noch nicht geprüft. Nichtnegative Beträge kannst du speichern.');
   private readonly operations = inject(SavingsOperations);
   private confirmedRevision = 0;
+  private overviewSequence = 0;
+  private overviewRefreshRequired = false;
+  private manualReadFallback = false;
+  private readonly monthly = inject(MonthlySurplusService);
+  protected readonly overview = signal<MonthlySurplusOverviewResponse | null>(null);
+  protected readonly overviewState = signal<OverviewLoadState>('unknown');
+  protected readonly automationBlocked = signal(false);
+  protected readonly activationPending = this.operations.activationPending;
+  protected readonly activationUncertain = this.operations.activationUncertain;
+  protected readonly activationFailed = signal(false);
+  protected readonly activationResult = signal('');
+  protected readonly selectionPending = this.operations.selectionPending;
+  protected readonly selectionUncertain = this.operations.selectionUncertain;
+  protected readonly selectionDraft = signal<string | null>(null);
+  protected readonly selectionFailed = signal(false);
+  protected readonly selectionResult = signal('');
+  private readonly monthFormatter = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Berlin', year: 'numeric', month: '2-digit' });
+  private observedMonth: string | null = null;
+  private serverTime: { epoch: number; monotonic: number } | null = null;
   private readonly access = inject(SessionsService);
   private readonly owner = this.session.userId();
   private readonly version = this.session.generation();
@@ -220,6 +226,9 @@ export class SavingsGoals {
   protected editDate = '';
   protected readonly targetEditing = signal<SavingsGoalResponse | null>(null);
   protected readonly deleting = signal<SavingsGoalResponse | null>(null);
+  protected readonly deletingSelected = signal(false);
+  protected readonly deletingActive = signal<boolean | null>(null);
+  private deleteSnapshot: { overview: MonthlySurplusOverviewResponse | null; goals: SavingsGoalResponse[]; state: OverviewLoadState } | null = null;
   protected readonly targetPending = signal(false);
   protected readonly editNameError = signal('');
   protected readonly editAmountError = signal('');
@@ -265,18 +274,32 @@ export class SavingsGoals {
 
   constructor() {
     this.operations.synchronize();
-    let wasPending = this.pending();
+    let wasPending = this.pending() || this.selectionPending() || this.activationPending();
     effect(() => {
-      const pending = this.pending();
-      if (wasPending && !pending && this.accepts() && this.identityConfirmed() && !this.loaded()) void this.load();
+      const pending = this.pending() || this.selectionPending() || this.activationPending();
+      if (wasPending && !pending && this.accepts() && this.identityConfirmed()) {
+        if (!this.loaded()) void this.load();
+        else if (!this.uncertain()) void this.refreshConfirmedOverview();
+      }
       wasPending = pending;
     });
     this.focus('savings-title');
     effect(() => { if (this.session.userId() !== this.owner || this.session.generation() !== this.version) this.clear(); });
-    inject(DestroyRef).onDestroy(() => { this.operations.abandon(); this.active = false; this.clear(); });
+    const timer = setInterval(() => this.checkMonth(), 1_000);
+    inject(DestroyRef).onDestroy(() => { clearInterval(timer); this.operations.abandon(); this.operations.abandonSelection(); this.operations.abandonActivation(); this.active = false; this.clear(); });
     void this.open();
   }
-  @HostListener('window:online') connected(): void { this.online.set(true); }
+  @HostListener('window:online') connected(): void { this.online.set(true); if (this.identityConfirmed()) void this.load(false, true); }
+  @HostListener('window:focus')
+  @HostListener('document:visibilitychange') returned(): void {
+    if (document.visibilityState === 'visible' && this.identityConfirmed()) void this.load(false, true);
+  }
+  private checkMonth(): void {
+    if (!this.accepts() || !this.identityConfirmed() || !this.online() || !this.serverTime || document.visibilityState !== 'visible'
+      || this.pending() || this.selectionPending() || this.activationPending()) return;
+    const month = this.monthFormatter.format(new Date(this.serverTime.epoch + performance.now() - this.serverTime.monotonic));
+    if (month !== this.observedMonth) { this.observedMonth = month; void this.load(false, true); }
+  }
   @HostListener('window:offline') disconnected(): void { this.online.set(false); }
   protected async open(): Promise<void> {
     if (!this.accepts() || this.opening()) return;
@@ -294,47 +317,69 @@ export class SavingsGoals {
   protected async loadCapabilities(): Promise<void> {
     if (!this.accepts() || !this.identityConfirmed() || !this.online() || this.capabilityState() === 'loading') return;
     const sequence = ++this.capabilitySequence;
-    this.capabilityState.set('loading');
+    this.capabilityState.set('loading'); this.monthlyCapabilityState.set('loading'); this.automationBlocked.set(false);
     try {
       const response = await firstValueFrom(this.capabilities.getCapabilities('response').pipe(timeout(30_000)));
       if (!this.accepts() || sequence !== this.capabilitySequence) return;
       const result = response.body;
-      if (response.status !== 200 || !result || Object.keys(result).length !== 1 || typeof result.signedProgressAvailable !== 'boolean')
+      if (response.status !== 200 || !result || Object.keys(result).some(key => !['signedProgressAvailable', 'monthlyAutomationAvailable'].includes(key)) || typeof result.signedProgressAvailable !== 'boolean')
         throw new Error('Ungültiger Funktionszustand.');
       this.capabilityState.set(result.signedProgressAvailable ? 'open' : 'closed');
+      this.monthlyCapabilityState.set(result.monthlyAutomationAvailable === true ? 'open' : 'closed');
       if (result.signedProgressAvailable && this.progressError() === this.unavailableProgress) this.progressError.set('');
     } catch {
-      if (this.accepts() && sequence === this.capabilitySequence) this.capabilityState.set('failed');
+      if (this.accepts() && sequence === this.capabilitySequence) { this.capabilityState.set('failed'); this.monthlyCapabilityState.set('failed'); }
     }
   }
   protected edit(field: 'name' | 'amount' | 'targetDate', value: string): void {
     this[field] = value; this.saved.set(false); this.failed.set(false); this.status.set('');
     (field === 'name' ? this.nameError : field === 'amount' ? this.amountError : this.dateError).set('');
   }
-  protected async load(review = false): Promise<void> {
-    if (!this.accepts() || !this.identityConfirmed() || this.loading() || this.pending()) return;
+  protected async load(review = false, refresh = false): Promise<void> {
+    if (!this.accepts() || !this.identityConfirmed() || !this.online() || !refresh && this.loading() || this.pending() || this.selectionPending() || this.activationPending()) return;
     if (review && this.deleting()) this.cancelDelete();
     if (review) {
       this.mutationFailed.set(false); this.mutationSaved.set(false);
       this.mutationStatus.set('Sparziele werden zur Prüfung geladen …'); this.focus('goal-mutation-status');
     }
-    const revision = this.confirmedRevision;
+    const individualOnly = this.manualReadFallback && !refresh;
+    const revision = this.confirmedRevision, sequence = ++this.overviewSequence;
+    this.overviewRefreshRequired = false;
+    this.overview.set(null); this.overviewState.set(individualOnly ? 'failed' : 'loading');
     this.items.set([]); this.loaded.set(false); this.reviewLoaded.set(false); this.loading.set(true); this.loadFailed.set(false);
     try {
-      const response = await firstValueFrom(this.goals.getSavingsGoals('response').pipe(timeout(30_000)));
-      const result = response.body;
-      if (!this.accepts()) return;
-      if (response.status !== 200 || !Array.isArray(result) || !result.every(value => this.valid(value)) || new Set(result.map(value => value.id)).size !== result.length)
-        throw new Error('Ungültige Sparzielantwort.');
-      if (revision !== this.confirmedRevision) return;
-      this.items.set(this.sort(result)); this.loaded.set(true);
+      let overview: MonthlySurplusOverviewResponse | null = null;
+      let result: SavingsGoalResponse[];
+      if (individualOnly) {
+        result = await this.readIndividualGoals();
+      } else try {
+        const response = await firstValueFrom(this.monthly.getMonthlySurplus('response').pipe(timeout(30_000)));
+        if (!this.accepts() || sequence !== this.overviewSequence || revision !== this.confirmedRevision) return;
+        if (response.status !== 200 || !this.validOverview(response.body)) throw new Error('Ungültige Automatikübersicht.');
+        overview = response.body; result = overview.goals;
+        this.rememberServerTime(response.headers.get('Date'));
+      } catch (failure) {
+        if (!this.accepts() || sequence !== this.overviewSequence || revision !== this.confirmedRevision) return;
+        this.overviewState.set('failed');
+        // Eine abgewiesene Sitzung eröffnet keinen zweiten Leseweg.
+        if (this.rejectAuthentication(failure)) return;
+        this.manualReadFallback = true;
+        result = await this.readIndividualGoals();
+      }
+      if (!this.accepts() || sequence !== this.overviewSequence || revision !== this.confirmedRevision) return;
+      if (overview) { this.acceptOverview(overview); this.activationUncertain.set(false); this.selectionUncertain.set(false); }
+      else {
+        this.items.set(this.sort(result)); this.loaded.set(true); this.discardMissingGoalDrafts(result);
+        if (this.deleting()) this.rememberDeleteState(null, result, this.overviewState());
+      }
       if (review && this.uncertain()) {
         this.reviewLoaded.set(true);
         this.mutationStatus.set('Aktuelle Sparziele geladen. Prüfe die gespeicherten Werte und deinen Entwurf.');
         this.focus('goal-mutation-status');
       }
-    } catch {
-      if (this.accepts()) {
+    } catch (failure) {
+      if (this.accepts() && sequence === this.overviewSequence && revision === this.confirmedRevision) {
+        if (this.rejectAuthentication(failure)) return;
         this.loadFailed.set(true);
         if (review) {
           this.mutationFailed.set(true);
@@ -343,7 +388,7 @@ export class SavingsGoals {
         }
       }
     }
-    finally { if (this.accepts()) this.loading.set(false); }
+    finally { if (this.accepts() && sequence === this.overviewSequence) this.loading.set(false); }
   }
   protected confirmReview(): void {
     if (!this.accepts() || this.pending() || this.loading() || !this.reviewLoaded()) return;
@@ -363,7 +408,7 @@ export class SavingsGoals {
     if (this.nameError() || this.amountError() || this.dateError()) {
       this.failed.set(true); this.status.set('Prüfe die Eingaben für dein Sparziel.'); this.focusError(); return;
     }
-    ++this.confirmedRevision;
+    this.invalidateOverview();
     const operation = this.operations.begin(); this.status.set('Sparziel wird gespeichert …');
     try {
       const response = await firstValueFrom(this.goals.postSavingsGoal(
@@ -373,12 +418,14 @@ export class SavingsGoals {
       if (response.status !== 201 || !this.valid(result) || result.name !== name || result.targetAmountCents !== targetAmountCents
         || result.progressCents !== 0 || (result.targetDate ?? null) !== (targetDate || null) || this.items().some(value => value.id === result.id))
         throw new Error('Speicherung nicht bestätigt.');
+      this.overviewRefreshRequired = true;
       this.items.set(this.sort([...this.items(), result])); this.name = ''; this.amount = ''; this.targetDate = '';
       this.status.set('Dein Sparziel wurde gespeichert.'); this.saved.set(true); this.focusName();
     } catch (failure) {
       if (!this.accepts()) return;
       this.failed.set(true);
       if (failure instanceof HttpErrorResponse && failure.status === 400) {
+        this.overviewRefreshRequired = true;
         const fields = failure.error?.fieldErrors;
         if (typeof fields?.name === 'string') this.nameError.set(fields.name);
         if (typeof fields?.targetAmountCents === 'string') this.amountError.set(fields.targetAmountCents);
@@ -389,7 +436,7 @@ export class SavingsGoals {
         this.status.set('Die Speicherung wurde nicht bestätigt. Das Sparziel wurde möglicherweise bereits gespeichert. Dein Entwurf bleibt erhalten. Aktualisiere und prüfe vor erneutem Speichern die Sparziele, um Duplikate zu vermeiden.');
         this.focus('goal-status');
       }
-    } finally { this.operations.settle(operation); }
+    } finally { this.operations.settle(operation); if (this.accepts()) void this.refreshConfirmedOverview(); }
   }
   protected openProgress(goal: SavingsGoalResponse): void {
     if (!this.accepts() || this.pending() || this.loading() || this.targetEditing() || this.deleting()) return;
@@ -420,7 +467,7 @@ export class SavingsGoals {
       this.progressError.set(this.unavailableProgress);
       this.progressStatus.set('Der Fortschritt wurde nicht gespeichert.'); this.progressFailed.set(true); this.focus('goal-progress-amount'); return;
     }
-    ++this.confirmedRevision;
+    this.invalidateOverview();
     const operation = this.operations.begin(); this.progressPending.set(true); this.progressStatus.set('Fortschritt wird gespeichert …');
     try {
       const response = await firstValueFrom(this.goals.putSavingsGoalProgress(goal.id, { progressCents }, 'response').pipe(timeout(30_000)));
@@ -428,6 +475,7 @@ export class SavingsGoals {
       const result = response.body;
       if (response.status !== 200 || !this.valid(result) || result.id !== goal.id || result.progressCents !== progressCents)
         throw new Error('Fortschritt nicht bestätigt.');
+      this.overviewRefreshRequired = true;
       this.items.update(values => values.map(value => value.id === goal.id ? result : value));
       this.editing.set(null); this.progressAmount = ''; this.progressSaved.set(true);
       this.progressStatus.set(`Der Gesamtfortschritt für „${result.name}“ wurde mit ${formatSignedEuro(result.progressCents)} gespeichert.`); this.focus('goal-progress-' + goal.id);
@@ -435,10 +483,12 @@ export class SavingsGoals {
       if (!this.accepts()) return;
       this.progressFailed.set(true);
       if (failure instanceof HttpErrorResponse && failure.status === 400) {
+        this.overviewRefreshRequired = true;
         const message = failure.error?.fieldErrors?.progressCents;
         this.progressError.set(typeof message === 'string' ? message : 'Prüfe den Gesamtfortschritt in Euro.');
         this.progressStatus.set('Der Fortschritt wurde nicht gespeichert. Prüfe die Eingabe.'); this.focus('goal-progress-amount');
       } else if (failure instanceof HttpErrorResponse && failure.status === 409 && failure.error?.code === 'FEATURE_NOT_AVAILABLE') {
+        this.overviewRefreshRequired = true;
         ++this.capabilitySequence; this.capabilityState.set('closed');
         this.progressStatus.set('Negative Gesamtfortschritte sind derzeit nicht verfügbar. Der Fortschritt wurde nicht gespeichert. Dein Entwurf bleibt erhalten.');
         this.focus('goal-progress-status'); void this.loadCapabilities();
@@ -449,7 +499,7 @@ export class SavingsGoals {
           : 'Die Speicherung wurde nicht bestätigt. Dein Entwurf bleibt erhalten. Lade die Sparziele erneut und prüfe den bestätigten Fortschritt.');
         this.focus('goal-progress-status');
       }
-    } finally { this.operations.settle(operation); if (this.accepts()) this.progressPending.set(false); }
+    } finally { this.operations.settle(operation); if (this.accepts()) void this.refreshConfirmedOverview(); if (this.accepts()) this.progressPending.set(false); }
   }
   protected openTarget(goal: SavingsGoalResponse): void {
     if (!this.accepts() || this.pending() || this.loading() || this.editing() || this.targetEditing() || this.deleting()) return;
@@ -489,7 +539,7 @@ export class SavingsGoals {
     if (this.editNameError() || this.editAmountError() || this.editDateError()) {
       this.mutationFailed.set(true); this.mutationStatus.set('Prüfe die Eingaben für dein Sparziel.'); this.focusTargetError(); return;
     }
-    ++this.confirmedRevision;
+    this.invalidateOverview();
     const operation = this.operations.begin(); this.targetPending.set(true); this.mutationStatus.set('Änderungen werden gespeichert …');
     try {
       const response = await firstValueFrom(this.goals.putSavingsGoal(goal.id, { name, targetAmountCents: targetAmountCents!, targetDate }, 'response').pipe(timeout(30_000)));
@@ -497,12 +547,14 @@ export class SavingsGoals {
       const result = response.body;
       if (response.status !== 200 || !this.valid(result) || result.id !== goal.id || result.name !== name
         || result.targetAmountCents !== targetAmountCents || (result.targetDate ?? null) !== targetDate) throw new Error('Änderung nicht bestätigt.');
+      this.overviewRefreshRequired = true;
       this.items.update(values => values.map(value => value.id === goal.id ? result : value)); this.resetTarget();
       this.mutationStatus.set(`Dein Sparziel „${result.name}“ wurde geändert.`); this.mutationSaved.set(true); this.focus('goal-edit-' + goal.id);
     } catch (failure) {
       if (!this.accepts()) return;
       this.mutationFailed.set(true);
       if (failure instanceof HttpErrorResponse && failure.status === 400) {
+        this.overviewRefreshRequired = true;
         const fields = failure.error?.fieldErrors;
         if (typeof fields?.name === 'string') this.editNameError.set(fields.name);
         if (typeof fields?.targetAmountCents === 'string') this.editAmountError.set(fields.targetAmountCents);
@@ -514,11 +566,11 @@ export class SavingsGoals {
           ? 'Das Sparziel wurde nicht gefunden. Dein Entwurf bleibt erhalten. Lade die Sparziele erneut.'
           : 'Die Änderung wurde nicht bestätigt. Dein Entwurf bleibt erhalten. Lade die Sparziele erneut und prüfe die gespeicherten Werte.'); this.focus('goal-mutation-status');
       }
-    } finally { this.operations.settle(operation); if (this.accepts()) this.targetPending.set(false); }
+    } finally { this.operations.settle(operation); if (this.accepts()) void this.refreshConfirmedOverview(); if (this.accepts()) this.targetPending.set(false); }
   }
   protected startDelete(goal: SavingsGoalResponse): void {
     if (!this.accepts() || this.pending() || this.loading() || this.editing() || this.targetEditing() || this.deleting()) return;
-    this.deleting.set(goal); this.deleteStatus.set(''); this.resetMutationStatus();
+    this.deleting.set(goal); this.rememberDeleteState(this.overview(), this.items(), this.overviewState()); this.deleteStatus.set(''); this.resetMutationStatus();
     requestAnimationFrame(() => {
       if (!this.accepts() || this.deleting()?.id !== goal.id) return;
       const dialog = this.deleteDialog?.nativeElement;
@@ -533,7 +585,15 @@ export class SavingsGoals {
     const id = this.deleting()?.id; this.closeDelete(); this.resetMutationStatus();
     if (id) this.focus('goal-delete-' + id, 'goals-refresh');
   }
-  private closeDelete(): void { this.deleteDialog?.nativeElement.close(); this.deleting.set(null); this.deleteStatus.set(''); }
+  private rememberDeleteState(overview: MonthlySurplusOverviewResponse | null, goals: SavingsGoalResponse[], state: OverviewLoadState): void {
+    this.deleteSnapshot = { overview, goals: [...goals], state };
+    this.deletingSelected.set(!!overview && overview.selectedGoalId === this.deleting()?.id);
+    this.deletingActive.set(overview?.active ?? null);
+  }
+  private closeDelete(): void {
+    this.deleteDialog?.nativeElement.close(); this.deleting.set(null); this.deleteSnapshot = null;
+    this.deletingSelected.set(false); this.deletingActive.set(null); this.deleteStatus.set('');
+  }
   protected trapDeleteFocus(event: KeyboardEvent): void {
     if (event.key !== 'Tab') return;
     const buttons = [...(this.deleteDialog?.nativeElement.querySelectorAll<HTMLButtonElement>('button:not(:disabled)') ?? [])];
@@ -546,22 +606,40 @@ export class SavingsGoals {
   protected async remove(): Promise<void> {
     const goal = this.deleting();
     if (!goal || !this.accepts() || this.pending() || !this.online() || this.uncertain()) return;
-    ++this.confirmedRevision;
+    const before = this.deleteSnapshot ?? { overview: this.overview(), goals: [...this.items()], state: this.overviewState() };
+    const revision = this.invalidateOverview();
     const operation = this.operations.begin(); this.mutationFailed.set(false); this.mutationSaved.set(false); this.deleteStatus.set('Sparziel wird gelöscht …'); this.focus('goal-delete-status');
     try {
       const response = await firstValueFrom(this.goals.deleteSavingsGoal(goal.id, 'response').pipe(timeout(30_000)));
       if (!this.accepts()) return;
       if (response.status !== 204 || response.body) throw new Error('Löschung nicht bestätigt.');
-      const index = this.items().findIndex(value => value.id === goal.id), remaining = this.items().filter(value => value.id !== goal.id);
-      this.items.set(remaining); this.closeDelete(); this.mutationStatus.set('Dein Sparziel wurde gelöscht.'); this.mutationSaved.set(true);
+      const index = before.goals.findIndex(value => value.id === goal.id), remaining = before.goals.filter(value => value.id !== goal.id);
+      this.overviewRefreshRequired = true;
+      this.discardGoalDrafts(goal.id);
+      if (revision === this.confirmedRevision) { this.items.set(remaining); this.loaded.set(true); this.loadFailed.set(false); }
+      this.closeDelete(); this.mutationStatus.set('Dein Sparziel wurde gelöscht.'); this.mutationSaved.set(true);
       const next = remaining[index] ?? remaining[index - 1]; this.focus(next ? 'goal-edit-' + next.id : 'goal-create', 'goal-name');
     } catch (failure) {
       if (!this.accepts()) return;
-      this.mutationFailed.set(true); this.unconfirmed();
-      this.deleteStatus.set(failure instanceof HttpErrorResponse && failure.status === 404
-        ? 'Das Sparziel wurde nicht gefunden. Schließe den Dialog und lade die Sparziele erneut.'
-        : 'Die Löschung wurde nicht bestätigt. Das Sparziel wurde möglicherweise bereits gelöscht. Schließe den Dialog und lade die Sparziele erneut, bevor du es erneut versuchst.'); this.focus('goal-delete-status');
-    } finally { this.operations.settle(operation); }
+      if (this.rejectAuthentication(failure)) return;
+      this.mutationFailed.set(true);
+      if (failure instanceof HttpErrorResponse && [400, 404].includes(failure.status)) {
+        if (revision === this.confirmedRevision) {
+          if (before.overview) this.acceptOverview(before.overview);
+          else {
+            this.items.set(this.sort(before.goals)); this.loaded.set(true); this.loadFailed.set(false);
+            this.overviewState.set(before.state === 'loading' ? 'unknown' : before.state);
+          }
+        }
+        this.deleteStatus.set(failure.status === 404
+          ? 'Das Sparziel wurde nicht gefunden. Es wurde nichts geändert. Schließe den Dialog und lade die Sparziele erneut.'
+          : 'Das Sparziel wurde nicht gelöscht. Prüfe die Anfrage und versuche es erneut.');
+      } else {
+        this.unconfirmed();
+        this.deleteStatus.set('Die Löschung wurde nicht bestätigt. Das Sparziel wurde möglicherweise bereits gelöscht. Schließe den Dialog und lade die Sparziele erneut, bevor du es erneut versuchst.');
+      }
+      this.focus('goal-delete-status');
+    } finally { this.operations.settle(operation); if (this.accepts()) void this.refreshConfirmedOverview(); }
   }
   protected focusName(): void { this.focus('goal-name'); }
   private focusError(): void { this.focus(this.nameError() ? 'goal-name' : this.amountError() ? 'goal-amount' : this.dateError() ? 'goal-date' : 'goal-status'); }
@@ -588,8 +666,152 @@ export class SavingsGoals {
     const leap = year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
     return year > 0 && month > 0 && month <= 12 && day > 0 && day <= [31, leap ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month - 1];
   }
+  private validOverview(value: unknown): value is MonthlySurplusOverviewResponse {
+    if (!value || typeof value !== 'object') return false;
+    const state = value as MonthlySurplusOverviewResponse;
+    return Object.keys(state).length === 6 && typeof state.active === 'boolean'
+      && (state.active ? this.validMonth(state.activationMonth) : state.activationMonth === null)
+      && this.validMonth(state.currentMonth) && (!state.active || state.activationMonth! <= state.currentMonth)
+      && Number.isSafeInteger(state.pendingCents) && state.pendingCents >= 0 && state.pendingCents <= MAX_CENTS
+      && Array.isArray(state.goals) && state.goals.every(value => this.valid(value)) && new Set(state.goals.map(value => value.id)).size === state.goals.length
+      && (state.selectedGoalId === null || typeof state.selectedGoalId === 'string' && state.goals.some(goal => goal.id === state.selectedGoalId))
+      && (state.active || state.selectedGoalId === null && state.pendingCents === 0);
+  }
+  private validMonth(value: unknown): value is string { return typeof value === 'string' && /^(?!0000)\d{4}-(0[1-9]|1[0-2])-01$/.test(value); }
+  private acceptOverview(state: MonthlySurplusOverviewResponse): void {
+    this.manualReadFallback = false;
+    this.overview.set(state); this.overviewState.set('loaded'); this.items.set(this.sort(state.goals)); this.loaded.set(true); this.loadFailed.set(false);
+    this.discardMissingGoalDrafts(state.goals);
+    if (this.deleting()) this.rememberDeleteState(state, state.goals, 'loaded');
+  }
+  private discardMissingGoalDrafts(goals: SavingsGoalResponse[]): void {
+    for (const id of new Set([this.selectionDraft(), this.editing()?.id, this.targetEditing()?.id]))
+      if (id && !goals.some(goal => goal.id === id)) this.discardGoalDrafts(id);
+  }
+  private discardGoalDrafts(id: string): void {
+    if (this.selectionDraft() === id) {
+      this.selectionDraft.set(''); this.selectionFailed.set(false);
+      this.selectionResult.set('Das Ziel deines Auswahlentwurfs ist nicht mehr vorhanden. Wähle ausdrücklich ein vorhandenes eigenes Sparziel.');
+    }
+    const progressRemoved = this.editing()?.id === id, targetRemoved = this.targetEditing()?.id === id;
+    const previousFocus = (progressRemoved || targetRemoved) && document.activeElement?.closest('.savings-editor') ? document.activeElement : null;
+    if (progressRemoved) { this.editing.set(null); this.progressAmount = ''; this.resetProgressStatus(); }
+    if (targetRemoved) this.resetTarget();
+    if (progressRemoved || targetRemoved) {
+      this.resetMutationStatus();
+      this.mutationStatus.set('Das Sparziel ist nicht mehr vorhanden. Dein zugehöriger Entwurf wurde verworfen.');
+      if (previousFocus) requestAnimationFrame(() => {
+        if (!this.accepts() || document.activeElement !== previousFocus && document.activeElement !== document.body) return;
+        (document.getElementById(this.items()[0] ? 'goal-edit-' + this.items()[0].id : 'goal-create') ?? document.getElementById('goal-name'))?.focus();
+      });
+    }
+  }
+  private rememberServerTime(date: string | null): void {
+    const now = Date.parse(date ?? '');
+    if (Number.isFinite(now)) { this.serverTime = { epoch: now, monotonic: performance.now() }; this.observedMonth = this.monthFormatter.format(new Date(now)); }
+  }
+  private rejectAuthentication(failure: unknown): boolean {
+    if (!(failure instanceof HttpErrorResponse) || failure.status !== 401) return false;
+    this.manualReadFallback = false;
+    this.session.end('Deine Sitzung konnte nicht bestätigt werden. Melde dich erneut an.');
+    return true;
+  }
+  private async readIndividualGoals(): Promise<SavingsGoalResponse[]> {
+    const response = await firstValueFrom(this.goals.getSavingsGoals('response').pipe(timeout(30_000)));
+    if (response.status !== 200 || !Array.isArray(response.body) || !response.body.every(value => this.valid(value)) || new Set(response.body.map(value => value.id)).size !== response.body.length)
+      throw new Error('Ungültige Sparzielantwort.');
+    return response.body;
+  }
+  private invalidateOverview(): number {
+    ++this.overviewSequence; this.overview.set(null); this.overviewState.set('unknown'); this.loading.set(false);
+    return ++this.confirmedRevision;
+  }
+  private async refreshConfirmedOverview(): Promise<void> {
+    if (!this.accepts() || !this.identityConfirmed() || !this.online() || !this.overviewRefreshRequired
+      || this.pending() || this.selectionPending() || this.activationPending() || this.uncertain()) return;
+    this.overviewRefreshRequired = false;
+    const revision = this.confirmedRevision, sequence = ++this.overviewSequence;
+    this.overview.set(null); this.overviewState.set('loading');
+    try {
+      const response = await firstValueFrom(this.monthly.getMonthlySurplus('response').pipe(timeout(30_000)));
+      if (!this.accepts() || sequence !== this.overviewSequence || revision !== this.confirmedRevision) return;
+      if (response.status !== 200 || !this.validOverview(response.body)) throw new Error('Ungültige Automatikübersicht.');
+      this.rememberServerTime(response.headers.get('Date'));
+      this.acceptOverview(response.body); this.activationUncertain.set(false); this.selectionUncertain.set(false);
+    } catch (failure) {
+      if (this.accepts() && sequence === this.overviewSequence && revision === this.confirmedRevision) {
+        if (this.rejectAuthentication(failure)) return;
+        this.manualReadFallback = true;
+        this.overviewState.set('failed');
+      }
+    }
+    // Die bestätigte manuelle Antwort bleibt gültig. Ein Übersichtfehler startet keine
+    // zusätzliche Zielabfrage und greift einem ausdrücklichen Prüf-/Ladevorgang nicht vor.
+  }
+  protected async activateMonthly(): Promise<void> {
+    if (!this.accepts() || this.monthlyCapabilityState() !== 'open' || this.automationBlocked() || this.activationPending() || this.activationUncertain()
+      || !this.online() || this.overviewState() !== 'loaded' || this.overview()?.active) return;
+    ++this.confirmedRevision; ++this.overviewSequence;
+    const operation = this.operations.beginActivation();
+    this.activationResult.set('Aktivierung wird gespeichert …'); this.activationFailed.set(false);
+    try {
+      const response = await firstValueFrom(this.monthly.postMonthlySurplusActivation('response').pipe(timeout(30_000)));
+      if (!this.accepts()) return;
+      if (response.status !== 200 || !response.body || Object.keys(response.body).length !== 2 || response.body.active !== true || !this.validMonth(response.body.activationMonth)) throw new Error('Unbestätigte Aktivierung.');
+      this.activationResult.set('Deine Monatsautomatik wurde aktiviert.');
+    } catch (failure) {
+      if (!this.accepts()) return;
+      if (this.rejectAuthentication(failure)) return;
+      this.activationFailed.set(true);
+      if (failure instanceof HttpErrorResponse && failure.status === 409 && failure.error?.code === 'FEATURE_NOT_AVAILABLE') {
+        this.automationBlocked.set(true); this.activationResult.set('Die Monatsautomatik ist derzeit nicht verfügbar. Die Aktivierung wurde nicht gespeichert.'); void this.loadCapabilities();
+      } else { this.activationUncertain.set(true); this.activationResult.set('Die Aktivierung wurde nicht bestätigt. Prüfe den gespeicherten Zustand vor einem weiteren Versuch.'); }
+    } finally {
+      this.operations.settleActivation(operation);
+      if (this.accepts()) { if (!this.activationUncertain()) void this.load(); this.focus('automation-result'); }
+    }
+  }
+  protected async selectMonthlyGoal(goalId: string): Promise<void> {
+    if (!this.accepts() || !this.online() || this.pending() || this.selectionPending() || this.selectionUncertain() || this.monthlyCapabilityState() !== 'open'
+      || this.automationBlocked() || this.overviewState() !== 'loaded' || !this.overview()?.active || !this.overview()?.goals.some(goal => goal.id === goalId)) return;
+    // Die bestätigten Werte bleiben bis zum Auswahlcommit sichtbar; ältere GETs sind entkräftet.
+    const before = this.overview()!;
+    const revision = ++this.confirmedRevision; ++this.overviewSequence;
+    const operation = this.operations.beginSelection();
+    this.selectionResult.set('Auswahl wird gespeichert …'); this.selectionFailed.set(false);
+    try {
+      const response = await firstValueFrom(this.monthly.putMonthlySurplusSelection({ goalId }, 'response').pipe(timeout(30_000)));
+      if (!this.accepts()) return;
+      if (response.status !== 200 || !this.validOverview(response.body) || response.body.selectedGoalId !== goalId || response.body.pendingCents !== 0) throw new Error('Unbestätigte Auswahl.');
+      if (revision === this.confirmedRevision) { this.acceptOverview(response.body); this.selectionDraft.set(null); }
+      else this.overviewRefreshRequired = true;
+      this.selectionResult.set('Deine Auswahl und alle offenen Vormerkungen wurden gemeinsam gespeichert.');
+    } catch (failure) {
+      if (!this.accepts()) return;
+      if (this.rejectAuthentication(failure)) return;
+      this.selectionFailed.set(true);
+      if (failure instanceof HttpErrorResponse && [400, 404, 409].includes(failure.status)) {
+        if (revision === this.confirmedRevision) this.acceptOverview(before);
+        const code = failure.error?.code;
+        this.selectionResult.set(code === 'AMOUNT_LIMIT_EXCEEDED'
+          ? 'Die vollständige Übernahme überschreitet die zulässige Betragsgrenze. Die Auswahl wurde nicht gespeichert. Du kannst den Gesamtfortschritt unabhängig korrigieren.'
+          : code === 'AUTOMATION_NOT_ACTIVE' ? 'Aktiviere zuerst ausdrücklich deine Monatsautomatik.'
+          : code === 'FEATURE_NOT_AVAILABLE' ? 'Die Monatsautomatik ist derzeit nicht verfügbar. Deine Auswahl wurde nicht gespeichert.'
+          : 'Das Sparziel konnte nicht ausgewählt werden. Prüfe die Auswahl.');
+        if (code === 'FEATURE_NOT_AVAILABLE') { this.automationBlocked.set(true); void this.loadCapabilities(); }
+      } else { this.selectionUncertain.set(true); this.selectionResult.set('Speicherung noch nicht bestätigt. Lade den gemeinsamen aktuellen Stand vor einem weiteren Versuch.'); }
+    } finally {
+      this.operations.settleSelection(operation);
+      if (this.accepts()) { if (revision !== this.confirmedRevision) void this.refreshConfirmedOverview(); this.focus('selection-result'); }
+    }
+  }
   private clear(): void {
-    ++this.capabilitySequence; this.capabilityState.set('unknown');
+    ++this.overviewSequence; this.overview.set(null); this.overviewState.set('unknown'); this.selectionDraft.set(null);
+    this.overviewRefreshRequired = false;
+    this.manualReadFallback = false;
+    this.selectionResult.set(''); this.selectionFailed.set(false); this.activationResult.set(''); this.activationFailed.set(false); this.automationBlocked.set(false);
+    this.serverTime = null; this.observedMonth = null;
+    ++this.capabilitySequence; this.capabilityState.set('unknown'); this.monthlyCapabilityState.set('unknown');
     this.closeDelete(); this.resetTarget(); this.resetMutationStatus(); this.targetPending.set(false);
     this.name = ''; this.amount = ''; this.targetDate = ''; this.progressAmount = ''; this.editing.set(null); this.resetProgressStatus(); this.progressPending.set(false); this.items.set([]); this.loaded.set(false); this.loading.set(false);
     this.reviewLoaded.set(false); this.opening.set(false); this.identityConfirmed.set(false); this.identityFailed.set(false); this.identityStatus.set('');

@@ -59,10 +59,10 @@ export async function completeV2Flow(page: Page, signed = false): Promise<void> 
   await page.getByRole('button', { name: 'Netzwerkprüfung bearbeiten', exact: true }).click();
   await page.getByLabel('Betrag bearbeiten in Euro').fill('2');
   await page.getByRole('button', { name: 'Änderungen speichern', exact: true }).click();
-  await expect(page.locator('#expense-status')).toHaveText('Deine Ausgabe wurde geändert.');
+  await expect(page.locator('#expense-status')).toContainText('Deine Ausgabe wurde geändert.');
   await page.getByRole('button', { name: 'Netzwerkprüfung löschen', exact: true }).click();
   await page.getByRole('button', { name: 'Endgültig löschen', exact: true }).click();
-  await expect(page.locator('#expense-status')).toHaveText('Deine Ausgabe wurde gelöscht.');
+  await expect(page.locator('#expense-status')).toContainText('Deine Ausgabe wurde gelöscht.');
   await page.getByRole('link', { name: 'Sparziele', exact: true }).click();
   await expect(page.getByText('Du bist angemeldet. Deine persönlichen Sparziele sind geöffnet.')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Sparziel speichern', exact: true })).toBeEnabled();
@@ -185,6 +185,16 @@ export async function completeV2Flow(page: Page, signed = false): Promise<void> 
   }
   await page.reload();
   await expect(page.getByText('Du bist angemeldet. Deine persönlichen Sparziele sind geöffnet.')).toBeVisible();
+  await expect(page.locator('#goals-list-status')).toHaveText('Noch keine Sparziele angelegt.');
+  // Der normale Zielstand kommt aus der gemeinsamen Übersicht. Den weiterhin
+  // kompatiblen einzelnen Ziel-Leseweg zusätzlich über seinen echten Ersatzweg prüfen.
+  await page.route('**/api/v2/monthly-surplus', route => route.fulfill({ status: 500, headers: { 'Cache-Control': 'no-store' },
+    json: { code: 'MONTHLY_SURPLUS_UNAVAILABLE', message: 'Nicht geladen' } }));
+  const individualGoals = page.waitForResponse(response => response.url().endsWith('/api/v2/savings-goals') && response.request().method() === 'GET');
+  await page.locator('#goals-refresh').click();
+  expect((await individualGoals).status()).toBe(200);
+  await expect(page.locator('#goals-list-status')).toHaveText('Noch keine Sparziele angelegt.');
+  await page.unroute('**/api/v2/monthly-surplus');
   await page.getByRole('button', { name: 'Abmelden', exact: true }).click();
   await expect(page.getByRole('status')).toHaveText('Du wurdest abgemeldet.');
   page.off('response', recordResponse); page.off('request', recordRequest); page.off('requestfinished', recordFinished);
@@ -201,7 +211,7 @@ export async function completeV2Flow(page: Page, signed = false): Promise<void> 
       expect(item.csrf).toBeTruthy(); expect(item.origin).toBe('https://localhost:4200');
     }
   }
-  expect([...finances]).toEqual(expect.arrayContaining(['GET /api/v2/budget', 'PUT /api/v2/budget', 'GET /api/v2/month-summary', 'GET /api/v2/savings-goals', 'GET /api/v2/capabilities']));
+  expect([...finances]).toEqual(expect.arrayContaining(['GET /api/v2/budget', 'PUT /api/v2/budget', 'GET /api/v2/month-summary', 'GET /api/v2/monthly-surplus', 'GET /api/v2/savings-goals', 'GET /api/v2/capabilities']));
   expect([...finances].filter(operation => operation.includes('/api/v2/expenses')).sort()).toEqual([
     `DELETE /api/v2/expenses/${expenseId}`, 'GET /api/v2/expenses', 'POST /api/v2/expenses', `PUT /api/v2/expenses/${expenseId}`
   ]);

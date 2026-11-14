@@ -363,13 +363,135 @@ offline sind Mutationen gesperrt. Bei verlorenen Antworten kann eine Mutation
 bereits gespeichert sein. Weitere Sparzielmutationen bleiben gesperrt, bis
 „Sparziele zur Prüfung laden“ den aktuellen Bestand erfolgreich geladen hat und
 „Ich habe die Sparziele geprüft“ ausdrücklich bestätigt wurde. Dabei bleiben
-alle offenen Entwürfe erhalten; ein gewöhnliches Aktualisieren oder fehlgeschlagenes
+offene Entwürfe erhalten, solange ihr Ziel noch vorhanden ist; bestätigte
+Ziellöschungen verwerfen zugehörige Entwürfe. Ein gewöhnliches Aktualisieren oder fehlgeschlagenes
 Laden hebt die Sperre nicht auf. Die Prüfung beweist keinen Serverabschluss nach
 einem Timeout. Bei Bereichswechsel bleiben nur Vorgangsflags erhalten; nach einer
 laufenden Anfrage muss ihr Ausgang abgewartet und der Bestand geprüft werden.
 Neuladen, Abmeldung, Sitzungsende und Kontowechsel verwerfen offene Entwürfe.
 
 ## Prüfen
+
+Die Aktivierungsgrundlage der Monatsautomatik (Story 4.1) besitzt eigene
+v2-GET-/POST-Routen unter `/api/v2/monthly-surplus/activation`. Lesen erzeugt
+keinen Start. Eine zulässige Erstaktivierung speichert den gesamten laufenden
+Monat; spätere Aufrufe erhalten diesen Start unverändert. Sie verändert keine
+Geldwerte und benötigt weder Budget noch Sparziel.
+
+Die öffentliche Gesamtfreigabe bleibt im Anwendungscode geschlossen. Der
+Automatikabschnitt in Sparziele zeigt Zustand und Verfügbarkeit getrennt;
+direkte Aktivierungsaufrufe erhalten `409 FEATURE_NOT_AVAILABLE`. Gespeicherte
+Starts bleiben auch bei gesperrter Funktion lesbar. Es gibt keinen öffentlichen
+Konfigurationsschalter zum Umgehen dieser Grenze. Der interne Einmonatsabschluss
+(Story 4.2) ist ausführbar, bleibt aber im regulären Auslieferungszustand ebenfalls
+gesperrt. Er verwendet den historischen Budgetstand und die damaligen Ausgaben
+ab dem Erstmonat; `max(0, Budget − Ausgaben)` wird je abgeschlossenem Monat
+getrennt gespeichert. Ohne Budget bleibt ein eigener Nachweis ohne Geldbetrag,
+budgetierte Nullmonate bewahren ihre offene oder historische Zielbindung. Wiederholung erhält den Erstnachweis.
+Nachweis, exakte Summenprüfung und dauerhafter Nutzungsmarker committen gemeinsam;
+auch Null-/Ohne-Budget-Nachweise schließen die Rücknahme auf v1 aus.
+
+`GET /api/v2/monthly-surplus/pending` liest ausschließlich die eigene exakte
+offene Summe (`pendingCents`, leer = 0) und führt keinen Abschluss aus. Der
+Bearer-geschützte Leseweg bleibt bei geschlossenem Gesamtgate verfügbar,
+verwendet `no-store` und bestätigt bei Ladefehlern keinen Betrag. Der Abschnitt
+„Monatsautomatik“ in Sparziele unterscheidet fehlende Aktivierung, Laden,
+Ladefehler und gespeicherte Vormerkung; Rückkehr, Fokus und Monatswechsel laden
+neu. Die Beträge sind noch keinem Ziel angerechnet; manuelle Zielpflege bleibt
+unabhängig. Die älteren Einzel-Lesewege bleiben kompatibel.
+
+Die gemeinsame Oberfläche verwendet `GET /api/v2/monthly-surplus`: Aktivierung,
+laufender Monat, gespeicherte Auswahl, offene Summe und vollständige eigene Ziele
+stammen aus derselben read-only REPEATABLE-READ-Transaktion. `PUT
+/api/v2/monthly-surplus/selection` nimmt ausschließlich eine eigene vorhandene
+`goalId` entgegen. Unter Kontosperre werden zuerst sämtliche fälligen Lücken
+chronologisch nach ihrer damaligen Auswahl geschlossen, dann alle offenen
+budgetierten Nachweise einschließlich Nullmonaten gebunden. Erst danach gilt die
+neue Auswahl ab dem laufenden Monat. 200 € + 100 € auf 50 € ergeben einmalig
+350 €, offene Summe 0; gespeicherte Herkunftsbeträge und frühere Zielbindungen
+bleiben erhalten. Eine fehlende historische Ziel-ID verbraucht den Monat ohne
+Umleitung. Auswahl, Nachholung, Anrechnung, Bindung und Nutzungsmarker teilen
+einen physischen Commit; auch ein späterer Grenz- oder Commitfehler rollt alle
+früheren Schritte zurück. V14 ergänzt diese Historie ohne Live-Ziel-Fremdschlüssel
+und erhält vorhandene offene V13-Nachweise.
+
+Die Zielauswahl ist ausdrücklich, ohne Vorauswahl des ersten Ziels. Zielanlage
+allein wählt nichts aus. Entwürfe bleiben bei Fehlern/offline im offenen Tab;
+ein unbestätigter Ausgang erfordert vor Wiederholung einen neuen gemeinsamen
+Stand. Während der Auswahl bleiben unabhängige manuelle Fortschrittskorrekturen
+erreichbar. Bei Übersicht-Ladefehler kann der eigene v2-Ziel-Leseweg die manuelle
+Pflege weiter ermöglichen; der Automatikteil bleibt ungeladen. Nach abgewiesener
+Authentifizierung gibt es keinen Ersatz-Leseweg. Bestätigte manuelle Mutationen entkräften
+ältere Übersichten und erneuern den gemeinsamen Stand im Hintergrund, ohne
+Entwürfe zu ersetzen. Ein Fehler dieser Aktualisierung erhält die bestätigten
+Zielwerte. Unbestätigte manuelle Mutationen warten auf den ausdrücklichen
+Prüf-/Ladeauftrag. Bei bekanntem Übersichtfehler liest die manuelle Ladeaktion
+direkt die eigenen Ziele; die Automatik-Ladeaktion versucht die gemeinsame
+Übersicht erneut. Nach weiterhin abgewiesener Authentifizierung schließt die
+persönliche Ansicht, ohne einen Ersatz-Leseweg zu öffnen.
+Historische Ausgabenänderungen und Löschungen (Story 4.4) korrigieren genau ihren
+abgeschlossenen Herkunftsmonat ab Aktivierung in derselben äußeren Transaktion.
+Ein fehlender Nachweis wird anhand des resultierenden Ausgabenstands und der
+damaligen Budget-/Zielauswahl erstmals geschlossen. Offene Vormerkungen werden
+ersetzt; bei gebundenen Monaten wirkt ausschließlich die Überschussdifferenz am
+aktuellen Gesamtfortschritt des ursprünglichen Ziels. Manuell 300 € minus 50 €
+ergeben 250 €, 20 € minus 50 € ergeben −30 €; spätere +100 € ergeben 70 €.
+Verbrauchte beziehungsweise fehlende historische Ziele werden weder neu angelegt
+noch umgeleitet. Budgetierte Nullmonate behalten ihre Bindung; ohne Budget bleibt
+der Betrag ausdrücklich fehlend. Unveränderter Betrag, reine Namensänderung,
+offener Monat und Monate vor Aktivierung haben keine Monatswirkung.
+
+V15 ergänzt ausschließlich Änderungsrechte für `surplus_cents` und `consumed`;
+Herkunftsidentitäten und alle Bestandsdaten bleiben erhalten. Fehler nach bereits
+ausgeführtem PUT/DELETE rollen Ausgabe, Nachweis, Fortschritt und Nutzungsmarker
+vollständig zurück. Bekannte 409-Codes `AMOUNT_LIMIT_EXCEEDED` und
+`FEATURE_NOT_AVAILABLE` bestätigen einen sicheren Fehlschlag; unbekannte oder
+unbestätigte Fehler erfordern vor Wiederholung die Zustandsprüfung. Der Browser
+berechnet keine Korrekturdifferenz. Die nächste Monats-/Sparzielansicht wird neu
+erzeugt und lädt den konsistenten gemeinsamen Stand, einschließlich tatsächlicher
+negativer und übererfüllter Fortschritte. PostgreSQL-Nachweise liegen in
+`MonthlyCorrectionIT`, HTTPS-Nachweise in `monthly-automation.spec.ts` und
+`expense-mutations.spec.ts`.
+
+Die Ziellöschung (Story 4.5) bestätigt Ziel und tatsächlichen Fortschritt zusammen
+mit dem dauerhaften Verbrauch seiner Monatsbindungen und einer nötigen Leerung
+der aktuellen Auswahl. V16 ergänzt dafür ausschließlich den kontogebundenen
+Löschmarker ohne Zielfinanzwerte und eine intern leere Auswahl ab dem offenen
+Monat. Frühere Ziel-IDs und Auswahlstände bleiben erhalten, auch für noch nicht
+verarbeitete abgeschlossene Monate und Nullmonate. Löschung berechnet keine
+ausstehenden Summen und bleibt bei blockierter Nachholung oder geschlossenem
+Gesamtgate möglich. Eine andere aktuelle Auswahl und offene Vormerkungen bleiben
+erhalten. Spätere Ausgabenkorrekturen erzeugen für verbrauchte Bindungen keine
+erneute Vormerkung oder Wirkung auf ein anderes Ziel.
+
+Der Löschdialog erklärt diese Folgen; nach 204 wird der gemeinsame Stand frisch
+geladen. Ein Ladefehler lässt den bestätigten Löscherfolg bestehen und zeigt
+abhängige Werte als ungeladen. Sichere Ablehnungen erhalten den bestätigten
+vorherigen Stand; bei unbestätigtem Ausgang ist vor Wiederholung eine Prüfung nötig.
+Bestätigt entfallene zielbezogene Entwürfe werden verworfen, unabhängige Entwürfe
+bleiben im offenen Tab. `MonthlyDeletionIT` prüft echte HTTP-/PostgreSQL-Fälle,
+Kontentrennung, beide Sperrreihenfolgen, Monatsgrenzwartezeit und vollständigen
+Rollback; die Automatik-Browserprüfung ergänzt vier Größen mit 200 % Text.
+
+Der Hintergrundlauf bleibt Folgeumfang. Die öffentliche Gesamtfreigabe bleibt geschlossen. Es gibt
+keinen öffentlichen Abschluss-/Jobauslöser.
+
+Der zusätzliche HTTPS-Positivnachweis läuft ausschließlich mit synthetischen
+Daten und Testklassen. Er startet und beendet zuerst einen echten kompatiblen
+API-Prozess über den geschützten Stilllegungsablauf; erst danach ersetzt der
+Test die Gesamtbereitschaft. JWT, frischer Versionsbeleg, Runtime-Rolle, RLS und
+Commitgrenze bleiben wirksam. Ports 8080, 8081, 4200 und 18082 müssen frei sein:
+
+```sh
+npm --prefix frontend run e2e:automation
+```
+
+Die testinterne Uhr, Bereitschaft, historischen Quellen, Abschlusssteuerung und
+gezielte Commitfehlersteuerung
+sind weder Bestandteil des Java-Releases
+noch Produktionskonfiguration. Der reguläre Browserlauf prüft die geschlossene
+Auslieferung zusätzlich zu den bisherigen manuellen Kernfunktionen. Diese
+Prüfungen erteilen keine öffentliche Automatik- oder Produktionsfreigabe.
 
 ```bash
 ./scripts/check-contract.sh

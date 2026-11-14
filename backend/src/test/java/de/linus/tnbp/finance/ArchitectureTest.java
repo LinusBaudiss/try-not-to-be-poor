@@ -22,7 +22,7 @@ class ArchitectureTest {
     @Test void fachmoduleImportierenNurEigeneZugaengeUndTechnischeInfrastruktur() throws Exception {
         Path java = projectRoot().resolve("backend/src/main/java/de/linus/tnbp");
         var imports = Pattern.compile("\\bde\\.linus\\.tnbp\\.([a-z]+)\\.");
-        for (String owner : List.of("access", "expenses", "budget", "savingsgoals", "shared")) {
+        for (String owner : List.of("access", "expenses", "budget", "savingsgoals", "monthlysurplus", "shared")) {
             try (var paths = Files.walk(java.resolve(owner))) {
                 for (Path file : paths.filter(path -> path.toString().endsWith(".java")).toList()) {
                     String source = Files.readString(file);
@@ -78,7 +78,7 @@ class ArchitectureTest {
     }
 
     private static void assertSchemaOwnership(String owner, String source, Path file) {
-        var schemaOwners = Map.of("expenses", "expenses", "budget", "budget", "savings_goals", "savingsgoals", "access", "access");
+        var schemaOwners = Map.of("expenses", "expenses", "budget", "budget", "savings_goals", "savingsgoals", "access", "access", "monthly_surplus", "monthlysurplus");
         var sql = Pattern.compile("(?i)\\b(?:FROM|JOIN|UPDATE|INTO|TABLE)\\s+\"?([a-z_][a-z0-9_]*)\"?\\s*\\.")
             .matcher(decodedSource(source));
         while (sql.find()) {
@@ -97,8 +97,18 @@ class ArchitectureTest {
         }
     }
 
+    @Test void monatsabschlussBleibtInternUndOhneFremdeTabellenOderOeffentlichenAusloeser() throws Exception {
+        Path root = projectRoot();
+        String contract = Files.readString(root.resolve("api-contract/v2/openapi.yaml"));
+        assertThat(contract).contains("/monthly-surplus/pending:", "operationId: getMonthlySurplusPending", "operationId: getMonthlySurplus", "operationId: putMonthlySurplusSelection");
+        try (var files = Files.walk(root.resolve("backend/src/main/java/de/linus/tnbp/finance/http"))) {
+            for (Path file : files.filter(path -> path.toString().endsWith("Controller.java")).toList())
+                assertThat(Files.readString(file)).doesNotContain("closeMonthlySurplusMonth", "closeMonth", "needsClosing");
+        }
+        assertThat(Files.readString(root.resolve("backend/src/main/java/de/linus/tnbp/finance/MonthlyAutomationReadiness.java"))).contains("return false;");
+    }
     @Test void oeffentlicheProjektionenExportierenKeineRepositorytypen() {
-        for (Class<?> facade : List.of(Expenses.class, Budgets.class, SavingsGoals.class)) {
+        for (Class<?> facade : List.of(Expenses.class, Budgets.class, SavingsGoals.class, de.linus.tnbp.monthlysurplus.MonthlySurplus.class)) {
             for (var method : facade.getMethods()) {
                 assertThat(method.toGenericString()).doesNotContain("Repository");
             }

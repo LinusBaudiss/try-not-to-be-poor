@@ -309,7 +309,7 @@ test('drei Hauptbereiche trennen Ausgaben und laden nach CRUD auch über Zurück
   await page.getByRole('button', { name: 'Berlin-Fahrt bearbeiten', exact: true }).click();
   await page.getByLabel('Betrag bearbeiten in Euro').fill('20');
   await page.getByRole('button', { name: 'Änderungen speichern', exact: true }).click();
-  await expect(page.locator('#expense-status')).toHaveText('Deine Ausgabe wurde geändert.');
+  await expect(page.locator('#expense-status')).toContainText('Deine Ausgabe wurde geändert.');
   await page.goBack(); await expect(page.locator('.summary-money')).toHaveText('80,00 €');
   await page.goForward();
   await page.getByRole('button', { name: 'Berlin-Fahrt löschen', exact: true }).click();

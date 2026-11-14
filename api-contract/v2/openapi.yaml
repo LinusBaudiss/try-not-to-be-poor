@@ -7,12 +7,142 @@ info:
 servers:
 - url: /api/v2
 paths:
+  /monthly-surplus:
+    get:
+      tags: [MonthlySurplus]
+      operationId: getMonthlySurplus
+      summary: Eigenen gemeinsamen Automatik- und Zielstand lesen
+      description: Rein lesender gemeinsamer Snapshot aus Aktivierung, heutiger Auswahl, offener Summe und allen eigenen Zielen; erzeugt keine Monatsnachweise. Ein serverseitiger Monat und eine read-only REPEATABLE-READ-Transaktion. Auch bei gesperrter Gesamtfunktion lesbar.
+      security:
+        - AccessBearer: []
+      responses:
+        '200':
+          $ref: '#/components/responses/MonthlySurplusOverview'
+        '401':
+          $ref: '#/components/responses/SessionRejected'
+        '500':
+          $ref: '#/components/responses/MonthlySurplusUnavailable'
+  /monthly-surplus/selection:
+    put:
+      tags: [MonthlySurplus]
+      operationId: putMonthlySurplusSelection
+      summary: Eigenes Ziel auswählen und alle offenen Vormerkungen übernehmen
+      description: Nur nach ausdrücklicher Aktivierung und gültiger Gesamtfreigabe. Vor der neuen Auswahl alle fälligen Lücken historisch nachholen, anschließend alle offenen budgetierten Nachweise einschließlich Nullmonaten genau einmal binden. Auswahl gilt ab dem serverseitigen laufenden Monat; frühere Bindungen bleiben erhalten. Sämtliche Nachhol-, Fortschritts-, Bindungs-, Auswahl- und Markeränderungen werden gemeinsam committed oder verworfen. Keine Teilübernahme und keine Auswahl null. 200 bestätigt den gesamten Commit; bei ungewissem Ausgang vor Wiederholung GET laden.
+      security:
+        - AccessBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MonthlySurplusSelectionRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/MonthlySurplusOverview'
+        '400':
+          description: Ungültige Auswahl; keine Mutation, no-store.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MonthlySurplusSelectionError'
+        '401':
+          $ref: '#/components/responses/SessionRejected'
+        '404':
+          description: Eigenes Ziel nicht gefunden; fremde und fehlende IDs identisch, no-store.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MonthlySurplusSelectionError'
+        '409':
+          description: FEATURE_NOT_AVAILABLE, AUTOMATION_NOT_ACTIVE oder AMOUNT_LIMIT_EXCEEDED; gesamter Vorgang ohne bestätigte Mutation, no-store.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MonthlySurplusSelectionError'
+        '500':
+          $ref: '#/components/responses/MonthlySurplusUnavailable'
+  /monthly-surplus/pending:
+    get:
+      tags: [MonthlySurplus]
+      operationId: getMonthlySurplusPending
+      summary: Eigene offene Monatsüberschüsse lesen
+      description: Rein lesend, erzeugt oder verarbeitet keine Monatsnachweise. Ausschließlich das verifizierte Bearer-sub bestimmt das Konto. Ohne offene Vormerkung ist pendingCents null Cent; ein Ladefehler bestätigt keinen Betrag. Auch bei gesperrter Gesamtfunktion lesbar.
+      security:
+        - AccessBearer: []
+      responses:
+        '200':
+          description: Exakte noch keinem Ziel angerechnete Gesamtsumme; no-store.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MonthlySurplusPendingResponse'
+        '401':
+          $ref: '#/components/responses/SessionRejected'
+        '500':
+          description: Vormerkung konnte nicht geladen werden; kein Betrag bestätigt, no-store.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MonthlySurplusError'
+  /monthly-surplus/activation:
+    get:
+      tags: [MonthlySurplus]
+      operationId: getMonthlySurplusActivation
+      summary: Eigenen unveränderlichen Automatikstart lesen
+      description: Rein lesend, ohne automatische Aktivierung. Ausschließlich das verifizierte Bearer-sub bestimmt das Konto. Gespeicherter Status bleibt auch bei gesperrter Gesamtfunktion lesbar.
+      security:
+        - AccessBearer: []
+      responses:
+        '200':
+          $ref: '#/components/responses/MonthlySurplusActivation'
+        '401':
+          $ref: '#/components/responses/SessionRejected'
+        '500':
+          $ref: '#/components/responses/MonthlySurplusUnavailable'
+    post:
+      tags: [MonthlySurplus]
+      operationId: postMonthlySurplusActivation
+      summary: Monatsautomatik ausdrücklich für das eigene Konto aktivieren
+      description: Keine fachlichen Eingabefelder. Konto und laufender Monat werden serverseitig bestimmt, der Zeitpunkt erst nach Erwerb der Kontosperre. Aktivierung ist ohne Budget oder Ziel möglich und verändert keine Geldwerte. Der gesamte erste Monat zählt; frühere Monate sind ausgeschlossen. Erst nach äußerem Commit wird 200 bestätigt. Zulässige Wiederholung erhält den gespeicherten Erstmonat. Die vollständige Gesamtfreigabe und ein frischer v1-Stilllegungsbeleg sind unabhängig erforderlich; ein einfacher Funktionsschalter genügt nicht.
+      security:
+        - AccessBearer: []
+      responses:
+        '200':
+          $ref: '#/components/responses/MonthlySurplusActivation'
+        '401':
+          $ref: '#/components/responses/SessionRejected'
+        '409':
+          description: Gesamtfunktion oder Versionsvoraussetzung nicht verfügbar; keine Mutation, no-store.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MonthlySurplusFeatureNotAvailableError'
+        '500':
+          $ref: '#/components/responses/MonthlySurplusUnavailable'
   /capabilities:
     get:
       tags: [Capabilities]
       operationId: getCapabilities
-      summary: Aktuell verfügbare Fortschrittseingabe lesen
-      description: Rein lesend; Freigabe aus Funktionsschalter, vollständigem aktuellem Stilllegungsbeleg und signiertem Schema. Negative Mutationen prüfen die Voraussetzungen erneut. Keine Finanzwerte oder technischen Diagnosen.
+      summary: Aktuell verfügbare Finanzfunktionen lesen
+      description: Rein lesend; negative Fortschrittseingabe benötigt Funktionsschalter, vollständigen aktuellen Stilllegungsbeleg und signiertes Schema. Monatsautomatik benötigt unabhängig davon die vollständige Gesamtbereitschaft und einen frischen Stilllegungsbeleg; ein einfacher Schalter öffnet sie nicht. Mutationen prüfen die Voraussetzungen erneut. Keine Finanzwerte oder technischen Diagnosen.
       security:
         - AccessBearer: []
       responses:
@@ -276,7 +406,7 @@ paths:
       tags: [Expenses]
       operationId: putExpense
       summary: Name und Betrag einer eigenen Ausgabe ändern
-      description: ID, Eigentümer und ursprüngliches Kalenderdatum bleiben unverändert. Ersatzsumme im ursprünglichen Monat atomar prüfen; Erfolg erst nach Commit. Ausschließlich geprüftes Bearer-sub bestimmt den Eigentümer.
+      description: ID, Eigentümer und ursprüngliches Kalenderdatum bleiben unverändert. Ersatzsumme im ursprünglichen Monat atomar prüfen. Eine tatsächliche Betragsänderung eines abgeschlossenen Monats ab Aktivierung korrigiert dessen Vormerkung oder ausschließlich die Überschussdifferenz am ursprünglichen Sparziel. Ausgabe, Monatsnachweis, erforderlicher Fortschritt und Nutzungsmarker werden gemeinsam bestätigt, erst nach äußerem Commit. Reine Namensänderungen erzeugen keine Monatswirkung. Der Client liefert weder Differenz noch Ziel oder Herkunftsmonat. Ausschließlich geprüftes Bearer-sub bestimmt den Eigentümer.
       security:
         - AccessBearer: []
       requestBody:
@@ -287,7 +417,7 @@ paths:
               $ref: '#/components/schemas/ExpenseRequest'
       responses:
         '200':
-          description: Verbindlich geändert; no-store.
+          description: Ausgabe und erforderliche Monats-/Zielkorrektur gemeinsam verbindlich geändert; no-store.
           headers:
             Cache-Control:
               $ref: '#/components/headers/NoStore'
@@ -310,18 +440,20 @@ paths:
           $ref: '#/components/responses/SessionRejected'
         '404':
           $ref: '#/components/responses/ExpenseNotFound'
+        '409':
+          $ref: '#/components/responses/ExpenseCorrectionConflict'
         '500':
           $ref: '#/components/responses/ExpenseUnavailable'
     delete:
       tags: [Expenses]
       operationId: deleteExpense
       summary: Eine eigene Ausgabe endgültig löschen
-      description: Ausschließlich geprüftes Bearer-sub bestimmt den Eigentümer. Erfolg erst nach Commit.
+      description: Ausschließlich geprüftes Bearer-sub bestimmt den Eigentümer. Bei einer Ausgabe aus einem abgeschlossenen Monat ab Aktivierung gehört die erforderliche Korrektur von Vormerkung oder ursprünglichem Sparziel zur Löschung. Ausgabe, Nachweis, Fortschritt und Nutzungsmarker werden erst nach gemeinsamem äußerem Commit bestätigt. Der Client liefert keine Korrekturdifferenz, Ziel-ID oder Herkunftsmonat.
       security:
         - AccessBearer: []
       responses:
         '204':
-          description: Verbindlich gelöscht; leerer Antwortkörper, no-store.
+          description: Ausgabe samt erforderlicher Monats-/Zielkorrektur verbindlich gelöscht; leerer Antwortkörper, no-store.
           headers:
             Cache-Control:
               $ref: '#/components/headers/NoStore'
@@ -329,6 +461,8 @@ paths:
           $ref: '#/components/responses/SessionRejected'
         '404':
           $ref: '#/components/responses/ExpenseNotFound'
+        '409':
+          $ref: '#/components/responses/ExpenseCorrectionConflict'
         '500':
           $ref: '#/components/responses/ExpenseUnavailable'
   /budget:
@@ -525,12 +659,12 @@ paths:
       tags: [SavingsGoals]
       operationId: deleteSavingsGoal
       summary: Ein eigenes Sparziel endgültig löschen
-      description: Ausschließlich geprüftes Bearer-sub bestimmt den Eigentümer. Erfolg erst nach Commit; no-store.
+      description: Ausschließlich geprüftes Bearer-sub bestimmt den Eigentümer. Ziel samt tatsächlichem Fortschritt, dauerhafter Verbrauch seiner historischen Monatsbindungen einschließlich noch nicht verarbeiteter abgeschlossener Monate und gegebenenfalls Leeren seiner aktuellen Auswahl werden gemeinsam committed. Frühere Herkunft und andere Auswahl bleiben erhalten; offene Vormerkungen bleiben offen. Kein Nachholen oder Ersatzziel ist Voraussetzung. Ungültige IDs ergeben 400, fremde und fehlende Ziele dieselbe neutrale 404. Erfolg erst nach dem gemeinsamen Commit; no-store.
       security:
         - AccessBearer: []
       responses:
         '204':
-          description: Verbindlich gelöscht; leerer Antwortkörper; no-store.
+          description: Ziel und Fortschritt entfernt, erforderlicher Verbrauch und Auswahlleerung gemeinsam verbindlich gespeichert; leerer Antwortkörper; no-store.
           headers:
             Cache-Control:
               $ref: '#/components/headers/NoStore'
@@ -629,6 +763,33 @@ components:
       schema:
         type: string
   responses:
+    MonthlySurplusOverview:
+      description: Gemeinsamer eigener Zustand; bei PUT erst nach äußerem Commit bestätigt, no-store.
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/NoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/MonthlySurplusOverviewResponse'
+    MonthlySurplusActivation:
+      description: Tatsächlich gespeicherter eigener Status; Erfolg bei Mutation erst nach Commit, no-store.
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/NoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/MonthlySurplusActivationResponse'
+    MonthlySurplusUnavailable:
+      description: Lesen oder Aktivierung nicht bestätigt; vor Wiederholung tatsächlichen Zustand laden, no-store.
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/NoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/MonthlySurplusError'
     SessionCreated:
       description: Erst nach Commit; no-store. Set-Cookie rotiert __Host-tnbp-refresh (HttpOnly; Secure; SameSite=Strict;
         Path=/; kein Domain).
@@ -679,6 +840,15 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ExpenseNotFoundError'
+    ExpenseCorrectionConflict:
+      description: AMOUNT_LIMIT_EXCEEDED bei unzulässiger gemeinsamer Finanzwirkung oder FEATURE_NOT_AVAILABLE bei gesperrter erforderlicher Korrektur. Gesamter Vorgang sicher ohne Mutation; no-store. Andere unbestätigte Fehler erlauben keine Rollbackaussage.
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/NoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ExpenseCorrectionError'
     ExpenseUnsupportedMediaType:
       description: Nicht unterstützter Content-Type; keine Mutation. Der Accept-Header nennt application/json.
       headers:
@@ -771,6 +941,100 @@ components:
           schema:
             $ref: '#/components/schemas/SavingsGoalFeatureNotAvailableError'
   schemas:
+    MonthlySurplusSelectionRequest:
+      type: object
+      additionalProperties: false
+      required: [goalId]
+      properties:
+        goalId:
+          type: string
+          format: uuid
+          description: Erforderliche eigene vorhandene Ziel-ID; null ist kein Auswahlbefehl.
+    MonthlySurplusSelectionError:
+      type: object
+      additionalProperties: false
+      required: [code, message]
+      properties:
+        code:
+          type: string
+          enum: [INVALID_SELECTION, GOAL_NOT_FOUND, FEATURE_NOT_AVAILABLE, AUTOMATION_NOT_ACTIVE, AMOUNT_LIMIT_EXCEEDED]
+        message:
+          type: string
+    MonthlySurplusOverviewResponse:
+      type: object
+      additionalProperties: false
+      required: [active, activationMonth, currentMonth, selectedGoalId, pendingCents, goals]
+      properties:
+        active:
+          type: boolean
+        activationMonth:
+          type: string
+          format: date
+          nullable: true
+          pattern: '^(?!0000)\d{4}-(0[1-9]|1[0-2])-01$'
+          description: Unveränderlicher erster Herkunftsmonat; null genau ohne Aktivierung.
+        currentMonth:
+          type: string
+          format: date
+          pattern: '^(?!0000)\d{4}-(0[1-9]|1[0-2])-01$'
+        selectedGoalId:
+          type: string
+          format: uuid
+          nullable: true
+          description: Heutige gespeicherte Auswahl, null ohne eigenes vorhandenes ausgewähltes Ziel.
+        pendingCents:
+          type: integer
+          format: int64
+          minimum: 0
+          maximum: 9007199254740991
+        goals:
+          type: array
+          items:
+            $ref: '#/components/schemas/SavingsGoalResponse'
+    MonthlySurplusPendingResponse:
+      type: object
+      additionalProperties: false
+      required: [pendingCents]
+      properties:
+        pendingCents:
+          type: integer
+          format: int64
+          minimum: 0
+          maximum: 9007199254740991
+          description: Exakte offene EUR-Cent; leere Menge ergibt 0.
+    MonthlySurplusActivationResponse:
+      type: object
+      additionalProperties: false
+      required: [active, activationMonth]
+      properties:
+        active:
+          type: boolean
+        activationMonth:
+          type: string
+          format: date
+          nullable: true
+          pattern: '^(?!0000)\d{4}-(0[1-9]|1[0-2])-01$'
+          description: Unveränderlicher erster Herkunftsmonat; null genau ohne Aktivierung.
+    MonthlySurplusError:
+      type: object
+      additionalProperties: false
+      required: [code, message]
+      properties:
+        code:
+          type: string
+          enum: [MONTHLY_SURPLUS_UNAVAILABLE]
+        message:
+          type: string
+    MonthlySurplusFeatureNotAvailableError:
+      type: object
+      additionalProperties: false
+      required: [code, message]
+      properties:
+        code:
+          type: string
+          enum: [FEATURE_NOT_AVAILABLE]
+        message:
+          type: string
     CapabilitiesResponse:
       type: object
       additionalProperties: false
@@ -778,6 +1042,9 @@ components:
       properties:
         signedProgressAvailable:
           type: boolean
+        monthlyAutomationAvailable:
+          type: boolean
+          description: Nur bei tatsächlich gültiger Gesamtfreigabe und Versionsbarriere wahr. Fehlendes oder ungültiges Feld gibt keine Aktivierung frei.
     CapabilitiesError:
       type: object
       additionalProperties: false
@@ -1010,6 +1277,20 @@ components:
         code:
           type: string
           enum: [EXPENSE_NOT_FOUND]
+        message:
+          type: string
+        fieldErrors:
+          type: object
+          additionalProperties:
+            type: string
+    ExpenseCorrectionError:
+      type: object
+      additionalProperties: false
+      required: [code, message, fieldErrors]
+      properties:
+        code:
+          type: string
+          enum: [AMOUNT_LIMIT_EXCEEDED, FEATURE_NOT_AVAILABLE]
         message:
           type: string
         fieldErrors:

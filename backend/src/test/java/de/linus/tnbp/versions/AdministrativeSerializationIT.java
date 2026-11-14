@@ -300,7 +300,7 @@ class AdministrativeSerializationIT {
                     return original(command,*args,**kwargs)
                 subprocess.run=paused;sys.argv=sys.argv[1:];sys.exit(m['main']())
                 """.replace("__FOLDER__",first.folder.toString());
-            Path migrating=first.variant(RELEASE,"parent-death-migration.jar",Map.of("BOOT-INF/classes/db/migration/V12__parent_death.sql",
+            Path migrating=first.variant(RELEASE,"parent-death-migration.jar",Map.of("BOOT-INF/classes/db/migration/V17__parent_death.sql",
                 "SELECT pg_sleep(2); CREATE TABLE api_version.parent_death_finished(id integer)"));
             var killed=spawn(first,driver,"start",migrating);
             await(() -> Files.exists(first.folder.resolve("migration-child")));

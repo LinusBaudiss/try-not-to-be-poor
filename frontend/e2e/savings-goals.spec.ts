@@ -1,6 +1,12 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, Page, APIRequestContext } from '@playwright/test';
 
+// Die manuellen Vertragsfälle prüfen ausdrücklich den unabhängigen Ersatz-Leseweg.
+// Die gemeinsame Übersicht und ihre Mutationen sind in monthly-automation.spec.ts belegt.
+test.beforeEach(async ({ page }) => {
+  await page.route('**/api/v2/monthly-surplus', route => route.fulfill({ status: 500, json: { code: 'MONTHLY_SURPLUS_UNAVAILABLE', message: 'Ladefehler' } }));
+});
+
 async function review(page: Page): Promise<void> {
   await expect(page.getByRole('button', { name: 'Ich habe die Sparziele geprüft', exact: true })).toBeDisabled();
   await page.getByRole('button', { name: 'Sparziele zur Prüfung laden', exact: true }).click();

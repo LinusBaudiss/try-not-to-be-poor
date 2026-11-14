@@ -28,7 +28,7 @@ h1 { font-size: 1.75rem; line-height: 1.2; font-weight: 650; margin: 0 0 1rem; o
 p { margin: 0 0 1.5rem; overflow-wrap: anywhere; }
 .field { margin: 0 0 1.5rem; }
 label { display: block; font-size: .875rem; font-weight: 550; line-height: 1.4; margin-bottom: .5rem; overflow-wrap: anywhere; }
-input { width: 100%; min-width: 0; min-height: 48px; padding: .75rem; border: 1px solid var(--border); border-radius: .25rem; color: var(--text-primary); background: var(--surface-raised); font: inherit; }
+input, select { width: 100%; min-width: 0; min-height: 48px; padding: .75rem; border: 1px solid var(--border); border-radius: .25rem; color: var(--text-primary); background: var(--surface-raised); font: inherit; }
 input[aria-invalid="true"] { border: 2px solid var(--error); }
 .hint, .field-error { font-size: .875rem; line-height: 1.5; margin: .5rem 0 0; }
 .hint { color: var(--text-secondary); }
@@ -121,8 +121,9 @@ nav a.active { color: var(--on-primary); background: var(--primary); }
 #goal-progress-status:empty { margin: 0; }
 #goal-progress-status:focus { outline: 3px solid var(--focus-ring); outline-offset: 3px; }
 
-.savings-delete-dialog { width: min(32rem, calc(100% - 2rem)); max-height: calc(100dvh - 2rem); overflow-y: auto; overflow-wrap: anywhere; padding: 1rem; border: 2px solid var(--primary); border-radius: .5rem; color: var(--text-primary); background: var(--surface-raised); }
+.savings-delete-dialog { width: min(32rem, calc(100% - 32px)); max-width: calc(100% - 32px); max-height: calc(100dvh - 32px); overflow-y: auto; overflow-wrap: anywhere; padding: 16px; border: 2px solid var(--primary); border-radius: .5rem; color: var(--text-primary); background: var(--surface-raised); }
 .savings-delete-dialog::backdrop { background: rgb(24 33 30 / .6); }
+.savings-delete-dialog button, .savings-delete-dialog [tabindex] { scroll-margin-block: .5rem; }
 .savings-delete-dialog .savings-actions { flex-direction: column; }
 .savings-delete-dialog .savings-actions button { flex-basis: auto; }
 
@@ -137,3 +138,26 @@ h1:focus, #expense-delete-status:focus { outline: 3px solid var(--focus-ring); o
 .savings-uncertainty { padding: min(1rem, 16px); margin-block: 1.5rem; border: 2px solid var(--error); border-radius: .5rem; }
 .savings-review-action + .savings-review-action { margin-top: .75rem; }
 .savings-delete-dialog .savings-review-action + .savings-review-action { margin-bottom: 1rem; }
+/* Der Automatikabschnitt bleibt auch mit leerer Zielliste eigenständig lesbar. */
+.monthly-automation { margin-block: 1.5rem; padding: 1rem; border: 1px solid var(--border, #6b7280); border-radius: .75rem; overflow-wrap: anywhere; }
+.monthly-automation button { display: block; min-height: 44px; max-width: 100%; margin-block: .75rem; white-space: normal; }
+.monthly-automation button[aria-disabled="true"] { cursor: default; opacity: .7; }
+.monthly-automation button:focus { outline: 3px solid var(--focus-ring); outline-offset: 3px; }
+@media (max-width: 30rem) {
+  .monthly-automation, .monthly-automation button { padding-inline: .25rem; }
+  /* Text darf wachsen, ohne die mobile Inhaltsspalte durch verschachtelte Abstände zu verengen. */
+  app-savings-goals .auth-card, app-savings-goals .savings-cards li { padding: 16px; }
+  app-savings-goals button { padding-inline: min(.75rem, 12px); }
+  app-expenses-page .auth-card, .expense-editor, .expense-delete-dialog { padding: 16px; }
+  app-expenses-page button { padding-inline: min(.75rem, 12px); }
+}
+#automation-result:empty { margin: 0; }
+#automation-result:focus { outline: 3px solid var(--focus-ring); outline-offset: 3px; }
+
+.monthly-pending { border-top: 1px solid var(--border, #68746D); margin-top: 1.5rem; padding-top: 1rem; min-width: 0; }
+.pending-money { display: block; font-size: 1.5rem; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+
+.monthly-automation select { max-width: 100%; min-width: 0; }
+.monthly-automation select:focus { outline: 3px solid var(--focus-ring); outline-offset: 3px; }
+
+#selection-result:focus, #automation-result:focus { outline: 3px solid var(--focus-ring); outline-offset: 3px; }

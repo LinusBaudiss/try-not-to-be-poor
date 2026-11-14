@@ -69,6 +69,21 @@ public final class ApiVersionState {
 
     public boolean v1Retired() { return retired; }
 
+    public boolean monthlyAutomationAvailable() { return monthlyAutomationAvailable(false); }
+
+    public boolean lockMonthlyAutomation(FinanceContext context) {
+        context.requireWrite();
+        return monthlyAutomationAvailable(true);
+    }
+
+    private boolean monthlyAutomationAvailable(boolean lock) {
+        if (!retired) return false;
+        return Boolean.TRUE.equals(jdbc.queryForObject(
+            "SELECT api_version.monthly_automation_available(?, ?, ?, ?, ?, ?)", Boolean.class, lock,
+            startupProof.get("stopped_instance"), startupProof.get("release_sha256"),
+            startupProof.get("schema_sha256"), startupProof.get("roles_sha256"), startupProof.get("retired_at")));
+    }
+
     private static boolean hash(Object value) { return value instanceof String text && text.matches("[0-9a-f]{64}"); }
 
     public void markSignedProgress(FinanceContext context) { mark(context, "signed-progress"); }

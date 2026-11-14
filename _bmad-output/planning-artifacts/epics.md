@@ -2521,11 +2521,11 @@ Maßgeblich bleiben die [Produktspezifikation](../specs/spec-try-not-to-be-poor/
 
 Die Quellsichtung findet 25 Backend-Dateien `*IT.java` und neun Dateien `*Test.java`; Letztere umfassen auch Architektur- und Testhilfsprüfungen. Im Frontend liegen zwölf Playwright-Spec-Dateien, aber keine `src/**/*.spec.ts` und kein Unit-Test-Skript vor. Diese Dateizahlen sind keine Zählung tatsächlich ausgeführter Szenarien: Vererbung, Parametrisierung und Schleifen vervielfachen teilweise die Ausführung. Vorhandene lokale Reports weisen besonders auf `ReleaseTransitionIT` und `AdministrativeSerializationIT` als Laufzeitkandidaten hin. Unterschiedliche Reportstände und fehlende Setup-Zeiten erlauben daraus weder eine aktuelle Gesamtlaufzeit noch eine zugesicherte Einsparung abzuleiten.
 
-### Verbindliche Anforderungen und Planungsannahme
+### Verbindliche Anforderungen und Leistungsziel
 
 | ID | Anforderung |
 | --- | --- |
-| TR-1 | Vergleichbare Vorher-/Nachher-Messungen erfassen den vollständigen lokalen Prüflauf, Backend-`verify`, Testgruppen, Setup/Generierung und CI-Jobs einschließlich kritischem Pfad. **Planungsannahme für „merklich“: mindestens 30 % weniger mediane Gesamtlaufzeit des vollständigen lokalen Prüflaufs.** Story 5.1 prüft die Erreichbarkeit an der Baseline; der Wert gilt bis zu einer ausdrücklich dokumentierten Nutzerentscheidung fort. Eine Zielverfehlung wird ausgewiesen und nicht durch stilles Absenken aufgelöst. |
+| TR-1 | Vergleichbare Vorher-/Nachher-Messungen erfassen den vollständigen lokalen Prüflauf, Backend-`verify`, Testgruppen, Setup/Generierung und CI-Jobs einschließlich kritischem Pfad. **Verbindliches Nutzerziel vom 14.11.2026: höchstens 15 Minuten (900 Sekunden) mediane Gesamtlaufzeit des vollständigen lokalen Prüflaufs.** Dieses absolute Ziel ersetzt die ursprüngliche 30-%-Planungsannahme; es wird bei einer geänderten Baseline nicht nach oben angepasst. Story 5.1 beurteilt die Erreichbarkeit anhand der Messwerte. Eine Zielverfehlung wird ausgewiesen und nicht durch stilles Absenken aufgelöst. |
 | TR-2 | Im Backend bilden echte Unit Tests und im Frontend Unit Tests beziehungsweise isolierte Komponententests jeweils mehr als 50 % der unterschiedlichen fachlichen Prüfszenarien. Integrations-, HTTP-Slice-, System- und E2E-Tests werden gesondert ausgewiesen. Doppelte Fälle, mehrfache Vererbungsausführung, triviale Zusatztests und künstliches Aufsplitten erhöhen diesen Anteil nicht. Die Qualitätsanforderungen haben Vorrang vor einer Quote; eine verbleibende Zielabweichung verhindert den unbegründeten Epic-Abschluss. |
 | TR-3 | Alle bisherigen Anforderungen, Fehlerklassen, Grenzwerte und Regressionsfälle behalten nachvollziehbare ausführbare Abdeckung. Vor dem Entfernen einer alten Prüfung bestehen Ersatzprüfungen und die weiterhin nötigen Integrationsnachweise. Gleichartige Szenarien dürfen zusammengeführt werden; unterschiedliche Beobachtungen und Risiken bleiben erhalten. |
 | TR-4 | PostgreSQL-spezifische Eigenschaften, Rollen/RLS, fehlender oder fremder Kontokontext, Verbindungspool-Kontextwechsel, Migration/Bestandserhalt, äußere Commits/Rollbacks, Sperren, unabhängige Verbindungen und konkurrierende Änderungen bleiben gegen echtes PostgreSQL unter den vorgesehenen unprivilegierten Rollen geprüft. |
@@ -2610,7 +2610,7 @@ damit ich die teuersten geeigneten Prüfungen zuerst refactore und Qualität sow
 
 **Angenommen** Inventar und Baseline sind ausgewertet\
 **Wenn** die Reihenfolge der Refaktorierung festgelegt wird\
-**Dann** werden die 30-%-Planungsannahme aus TR-1, das konkrete Ziel in Sekunden und die erwarteten Kostenhebel dokumentiert. Erscheint das Ziel nicht erreichbar, werden Gründe und Alternativen vor weiteren Zieländerungen offengelegt.\
+**Dann** werden das verbindliche 900-Sekunden-Ziel aus TR-1, die gegenüber dem Referenzmedian nötige absolute/relative Einsparung und die erwarteten Kostenhebel dokumentiert. Erscheint das Ziel nicht erreichbar, werden Gründe und Alternativen vor weiteren Zieländerungen offengelegt.\
 **Und** die Zählregel aus TR-2 erfasst unterschiedliche fachliche Szenarien je Backend/Frontend ohne Inflation durch Duplikate; Unit-, Komponenten-, Adapter- und Integrationsanteile sind getrennt prüfbar.
 
 **AC-6 — Geschützte Integrationsfälle und bekannte Fehler als Referenz**
@@ -2835,7 +2835,7 @@ damit die erforderliche Absicherung von Datenbank, Prozessen und Browsern schnel
 
 **Angenommen** die gemessenen Kostenkandidaten sind optimiert\
 **Wenn** deren Vorher-/Nachher-Zeiten und die vollständige Prüfung gegenübergestellt werden\
-**Dann** zeigt der Nachweis getrennt eingesparte Fallausführungen, Starts/Builds und Wartezeit sowie unverändert erhaltene reale Schutzfälle.\
+**Dann** zeigt der Nachweis getrennt eingesparte Fallausführungen, Starts/Builds und Wartezeit sowie unverändert erhaltene reale Schutzfälle. Zusätzlich wird der verbleibende Abstand zum vollständigen 900-Sekunden-Ziel aus TR-1 ausgewiesen; die Kostenhebel werden an diesem Ziel priorisiert.\
 **Und** Matrix und gezielte Fehlerprüfungen der betroffenen Integrationsgrenzen sind vollständig; eine Beschleunigung durch Auslassen oder Abschwächen wird verworfen.
 
 ### Story 5.5: Qualitätsgleichwertigkeit und schnelleren vollständigen Build nachweisen
@@ -2868,7 +2868,7 @@ damit ich kürzeres Feedback erhalte und der bisherigen Absicherung weiterhin ve
 
 **Angenommen** Referenz und Zielstand erfüllen dieselben Anforderungen und die Messvereinbarung\
 **Wenn** nach Warm-up mindestens drei vollständige erfolgreiche Zielmessungen vorliegen\
-**Dann** beträgt deren Median höchstens 70 % des Referenzmedians; Einzelwerte, absolute Zeitdifferenz und relative Reduktion werden veröffentlicht. Eine ausdrücklich geänderte Zielvereinbarung ist mit Nutzerentscheidung und Begründung sichtbar.\
+**Dann** beträgt deren Median höchstens **900 Sekunden (15 Minuten)** für den vollständigen Prüflauf; Einzelwerte, absolute Zeitdifferenz und relative Reduktion werden veröffentlicht. Eine ausdrücklich geänderte Zielvereinbarung ist mit Nutzerentscheidung und Begründung sichtbar.\
 **Und** alle Pflichtgruppen einschließlich neuer Frontend-Tests sind enthalten, der zusätzliche Lauf mit bereinigten Ausgaben besteht und Setupkosten werden nicht außerhalb der Messung versteckt.
 
 **AC-4 — Reguläre CI mit allen Pflichtprüfungen**
@@ -2929,4 +2929,8 @@ damit ich kürzeres Feedback erhalte und der bisherigen Absicherung weiterhin ve
 | TR-9 | 5.1/AC-6/AC-7; 5.2/AC-6; 5.3/AC-7; 5.4/AC-8; 5.5/AC-2 |
 | TR-10 | 5.1/AC-3/AC-8; 5.2/AC-7; 5.3/AC-3/AC-4; 5.4/AC-3/AC-5/AC-7; 5.5/AC-6/AC-7 |
 
-Epic 5 umfasst **fünf Stories mit 40 Abnahmekriterien**. Alle fünf Stories und das Epic werden zunächst als `backlog` geführt; die erste Umsetzungsarbeit ist Story 5.1. Die vorhandenen Status der Epics 1 bis 4 bleiben erhalten. Der 30-%-Wert ist eine offengelegte Planungsannahme, kein bereits gemessener oder vom Nutzer numerisch vorgegebener Erfolg. Die Ausarbeitung verändert weder Anwendungscode noch bisherige Abnahmen; ein gesonderter formaler BMAD-Workflow-Abschluss wird für diese Ergänzung nicht behauptet.
+Epic 5 umfasst **fünf Stories mit 40 Abnahmekriterien**. Alle fünf Stories und das Epic werden zunächst als `backlog` geführt; die erste Umsetzungsarbeit ist Story 5.1. Die vorhandenen Status der Epics 1 bis 4 bleiben erhalten. Historie: Die ursprüngliche 30-%-Planungsannahme wurde am 14.11.2026 durch Linus ausdrücklich durch das absolute 15-Minuten-Ziel ersetzt. Das Ziel ist noch kein nachgewiesener Erfolg. Die Ausarbeitung verändert weder Anwendungscode noch bisherige Abnahmen; ein gesonderter formaler BMAD-Workflow-Abschluss wird für diese Ergänzung nicht behauptet.
+
+### Nutzerentscheidung vom 14.11.2026 — absolutes Laufzeitziel
+
+Linus legt ausdrücklich **maximal 15 Minuten** fest. Geltende Abnahme: Median von mindestens drei vollständigen erfolgreichen lokalen Zielmessungen nach Warm-up **≤ 900 Sekunden**, zusätzlich erfolgreicher bereinigter Kontrolllauf nach der unveränderten Messvereinbarung. Referenzmedian 1755,133 Sekunden: nötig sind mindestens 855,133 Sekunden beziehungsweise rund 48,72 % Reduktion. Betroffen sind TR-1, 5.1/AC-5, 5.4/AC-8 und 5.5/AC-3. Die übrigen Qualitäts-, Verteilungs-, Integrations- und CI-Anforderungen gelten unverändert; ein langsamerer neuer Referenzstand erhöht die absolute Obergrenze nicht. Die ursprüngliche relative Zielvorgabe ist ersetzt, kein zusätzliches alternatives Abnahmekriterium.

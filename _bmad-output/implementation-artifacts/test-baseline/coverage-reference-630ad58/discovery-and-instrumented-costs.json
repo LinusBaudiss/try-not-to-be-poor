@@ -1,0 +1,177 @@
+{
+  "missing_classes": [],
+  "unexpected_classes": [],
+  "cost_note": "Ausschließlich instrumentierte Klassendiagnose; kein Leistungsnachweis und keine primäre Baseline.",
+  "classes": [
+    {
+      "class": "ReleaseTransitionIT",
+      "tests": 59,
+      "instrumented_seconds": 847.979
+    },
+    {
+      "class": "AdministrativeSerializationIT",
+      "tests": 20,
+      "instrumented_seconds": 222.942
+    },
+    {
+      "class": "FinanceMigrationIT",
+      "tests": 14,
+      "instrumented_seconds": 9.062
+    },
+    {
+      "class": "MonthlyDeletionIT",
+      "tests": 23,
+      "instrumented_seconds": 8.604
+    },
+    {
+      "class": "RegistrationV2IT",
+      "tests": 20,
+      "instrumented_seconds": 6.476
+    },
+    {
+      "class": "RegistrationIT",
+      "tests": 20,
+      "instrumented_seconds": 5.436
+    },
+    {
+      "class": "MonthlyCorrectionIT",
+      "tests": 44,
+      "instrumented_seconds": 3.061
+    },
+    {
+      "class": "SessionIT",
+      "tests": 13,
+      "instrumented_seconds": 2.43
+    },
+    {
+      "class": "MonthlyAutomationE2eServerTest",
+      "tests": 1,
+      "instrumented_seconds": 2.331
+    },
+    {
+      "class": "SessionV2IT",
+      "tests": 13,
+      "instrumented_seconds": 2.084
+    },
+    {
+      "class": "SavingsGoalV2IT",
+      "tests": 23,
+      "instrumented_seconds": 1.854
+    },
+    {
+      "class": "RegistrationTest",
+      "tests": 26,
+      "instrumented_seconds": 1.795
+    },
+    {
+      "class": "MonthlyPendingIT",
+      "tests": 16,
+      "instrumented_seconds": 1.706
+    },
+    {
+      "class": "MonthlySelectionIT",
+      "tests": 14,
+      "instrumented_seconds": 1.368
+    },
+    {
+      "class": "AccessVersionsIT",
+      "tests": 8,
+      "instrumented_seconds": 1.327
+    },
+    {
+      "class": "SavingsGoalIT",
+      "tests": 18,
+      "instrumented_seconds": 1.271
+    },
+    {
+      "class": "SignedProgressIT",
+      "tests": 11,
+      "instrumented_seconds": 1.258
+    },
+    {
+      "class": "ExpenseV2IT",
+      "tests": 23,
+      "instrumented_seconds": 1.239
+    },
+    {
+      "class": "ExpenseIT",
+      "tests": 22,
+      "instrumented_seconds": 1.217
+    },
+    {
+      "class": "MonthlySurplusIT",
+      "tests": 14,
+      "instrumented_seconds": 1.136
+    },
+    {
+      "class": "ExpenseTest",
+      "tests": 4,
+      "instrumented_seconds": 0.896
+    },
+    {
+      "class": "FinanceCoordinationIT",
+      "tests": 17,
+      "instrumented_seconds": 0.871
+    },
+    {
+      "class": "BudgetV2IT",
+      "tests": 11,
+      "instrumented_seconds": 0.765
+    },
+    {
+      "class": "BudgetIT",
+      "tests": 10,
+      "instrumented_seconds": 0.732
+    },
+    {
+      "class": "ApiVersionStateIT",
+      "tests": 5,
+      "instrumented_seconds": 0.667
+    },
+    {
+      "class": "MonthSummaryV2IT",
+      "tests": 8,
+      "instrumented_seconds": 0.626
+    },
+    {
+      "class": "MonthSummaryIT",
+      "tests": 6,
+      "instrumented_seconds": 0.536
+    },
+    {
+      "class": "ApiRetirementIT",
+      "tests": 1,
+      "instrumented_seconds": 0.508
+    },
+    {
+      "class": "SessionTest",
+      "tests": 4,
+      "instrumented_seconds": 0.223
+    },
+    {
+      "class": "MonthlySurplusTest",
+      "tests": 3,
+      "instrumented_seconds": 0.182
+    },
+    {
+      "class": "ArchitectureTest",
+      "tests": 5,
+      "instrumented_seconds": 0.095
+    },
+    {
+      "class": "SavingsGoalTest",
+      "tests": 3,
+      "instrumented_seconds": 0.065
+    },
+    {
+      "class": "MoneyTest",
+      "tests": 2,
+      "instrumented_seconds": 0.004
+    },
+    {
+      "class": "BudgetTest",
+      "tests": 1,
+      "instrumented_seconds": 0.002
+    }
+  ]
+}

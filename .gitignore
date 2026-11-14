@@ -21,3 +21,19 @@ __pycache__/
 # Intellij
 
 .idea/
+
+# Historische Story-5.1-Rohbelege: dauerhaft im geprüften Releasearchiv
+/_bmad-output/implementation-artifacts/test-baseline/**/*.log
+/_bmad-output/implementation-artifacts/test-baseline/**/*.patch
+/_bmad-output/implementation-artifacts/test-baseline/**/*.jsonl
+/_bmad-output/implementation-artifacts/test-baseline/attempt-*/
+/_bmad-output/implementation-artifacts/test-baseline/recheck-*/
+/_bmad-output/implementation-artifacts/test-baseline/local-reference-01/
+/_bmad-output/implementation-artifacts/test-baseline/coverage-reference-*/jacoco*/
+/_bmad-output/implementation-artifacts/test-baseline/coverage-reference-*/*.exec
+/_bmad-output/implementation-artifacts/test-baseline/coverage-reference-*/*-reports/
+/_bmad-output/implementation-artifacts/test-baseline/local-reference-02/*-reports/
+/_bmad-output/implementation-artifacts/test-baseline/source-inventory.json
+/_bmad-output/implementation-artifacts/test-baseline/observation-ledger.json
+/_bmad-output/implementation-artifacts/test-baseline/browser-loop-evidence.json
+/_bmad-output/implementation-artifacts/test-baseline/discovery/review-*.json

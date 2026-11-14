@@ -75,8 +75,8 @@ development_status:
   4-8-monatsautomatik-nach-vollständigem-nachweis-zur-ausdrücklich: backlog
   epic-4-retrospective: optional
 
-  epic-5: backlog
-  5-1-testbestand-und-vollständige-build-laufzeit-reproduzierbar-v: backlog
+  epic-5: in-progress
+  5-1-testbestand-und-vollständige-build-laufzeit-reproduzierbar-v: review
   5-2-backend-fachregeln-überwiegend-mit-isolierten-unit-tests-abs: backlog
   5-3-frontend-verhalten-mit-unit-und-isolierten-komponententests: backlog
   5-4-teure-integrationsprüfungen-auf-ihren-schutzzweck-konzentrie: backlog

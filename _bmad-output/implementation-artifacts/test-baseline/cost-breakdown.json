@@ -1,0 +1,190 @@
+{
+  "source": "local-reference-02/analysis.json; gleiche Klassen-/Gruppenprobe aus Medianlauf 2",
+  "median_run": 2,
+  "backend_group_seconds": 1216.4205218669958,
+  "inclusive_class_seconds_by_type": {
+    "tool/infrastructure": 2.384,
+    "unit": 2.781,
+    "architecture": 0.066,
+    "HTTP/PostgreSQL": 41.92499999999999,
+    "PostgreSQL": 11.261000000000001,
+    "process/PostgreSQL": 1145.868
+  },
+  "backend_nonclass_residual_seconds": 12.135521866995987,
+  "classes": [
+    {
+      "class": "MonthlyAutomationE2eServerTest",
+      "type": "tool/infrastructure",
+      "seconds": 2.384
+    },
+    {
+      "class": "RegistrationTest",
+      "type": "unit",
+      "seconds": 1.847
+    },
+    {
+      "class": "SessionTest",
+      "type": "unit",
+      "seconds": 0.08
+    },
+    {
+      "class": "BudgetTest",
+      "type": "unit",
+      "seconds": 0.001
+    },
+    {
+      "class": "ExpenseTest",
+      "type": "unit",
+      "seconds": 0.632
+    },
+    {
+      "class": "ArchitectureTest",
+      "type": "architecture",
+      "seconds": 0.066
+    },
+    {
+      "class": "MonthlySurplusTest",
+      "type": "unit",
+      "seconds": 0.18
+    },
+    {
+      "class": "SavingsGoalTest",
+      "type": "unit",
+      "seconds": 0.037
+    },
+    {
+      "class": "MoneyTest",
+      "type": "unit",
+      "seconds": 0.004
+    },
+    {
+      "class": "AccessVersionsIT",
+      "type": "HTTP/PostgreSQL",
+      "seconds": 1.288
+    },
+    {
+      "class": "RegistrationIT",
+      "type": "HTTP/PostgreSQL",
+      "seconds": 5.534
+    },
+    {
+      "class": "RegistrationV2IT",
+      "type": "HTTP/PostgreSQL",
+      "seconds": 6.672
+    },
+    {
+      "class": "SessionIT",
+      "type": "HTTP/PostgreSQL",
+      "seconds": 2.374
+    },
+    {
+      "class": "SessionV2IT",
+      "type": "HTTP/PostgreSQL",
+      "seconds": 1.978
+    },
+    {
+      "class": "BudgetIT",
+      "type": "HTTP/PostgreSQL",
+      "seconds": 0.727
+    },
+    {
+      "class": "BudgetV2IT",
+      "type": "HTTP/PostgreSQL",
+      "seconds": 0.777
+    },
+    {
+      "class": "ExpenseIT",
+      "type": "HTTP/PostgreSQL",
+      "seconds": 1.195
+    },
+    {
+      "class": "ExpenseV2IT",
+      "type": "HTTP/PostgreSQL",
+      "seconds": 1.377
+    },
+    {
+      "class": "MonthSummaryIT",
+      "type": "HTTP/PostgreSQL",
+      "seconds": 0.54
+    },
+    {
+      "class": "MonthSummaryV2IT",
+      "type": "HTTP/PostgreSQL",
+      "seconds": 0.562
+    },
+    {
+      "class": "FinanceCoordinationIT",
+      "type": "PostgreSQL",
+      "seconds": 0.763
+    },
+    {
+      "class": "FinanceMigrationIT",
+      "type": "PostgreSQL",
+      "seconds": 9.819
+    },
+    {
+      "class": "MonthlyCorrectionIT",
+      "type": "HTTP/PostgreSQL",
+      "seconds": 3.141
+    },
+    {
+      "class": "MonthlyDeletionIT",
+      "type": "HTTP/PostgreSQL",
+      "seconds": 6.915
+    },
+    {
+      "class": "MonthlyPendingIT",
+      "type": "HTTP/PostgreSQL",
+      "seconds": 1.656
+    },
+    {
+      "class": "MonthlySelectionIT",
+      "type": "HTTP/PostgreSQL",
+      "seconds": 1.358
+    },
+    {
+      "class": "MonthlySurplusIT",
+      "type": "HTTP/PostgreSQL",
+      "seconds": 1.117
+    },
+    {
+      "class": "SavingsGoalIT",
+      "type": "HTTP/PostgreSQL",
+      "seconds": 1.211
+    },
+    {
+      "class": "SavingsGoalV2IT",
+      "type": "HTTP/PostgreSQL",
+      "seconds": 1.741
+    },
+    {
+      "class": "SignedProgressIT",
+      "type": "HTTP/PostgreSQL",
+      "seconds": 1.244
+    },
+    {
+      "class": "AdministrativeSerializationIT",
+      "type": "process/PostgreSQL",
+      "seconds": 240.77
+    },
+    {
+      "class": "ApiRetirementIT",
+      "type": "HTTP/PostgreSQL",
+      "seconds": 0.518
+    },
+    {
+      "class": "ApiVersionStateIT",
+      "type": "PostgreSQL",
+      "seconds": 0.679
+    },
+    {
+      "class": "ReleaseTransitionIT",
+      "type": "process/PostgreSQL",
+      "seconds": 905.098
+    }
+  ],
+  "notes": [
+    "Klassen enthalten ihre Fixtures und gegebenenfalls PG-/HTTP-Aufbau; keine exklusiven Prozess-/DB-Phasen behauptet.",
+    "Residual ist restliche Build-/Driver-/Reportzeit innerhalb der Backend-Gruppe, keine reine Compilerzeit."
+  ]
+}

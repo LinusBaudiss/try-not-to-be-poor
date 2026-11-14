@@ -2,8 +2,17 @@
 set -eu
 PROJECT_ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 cd "$PROJECT_ROOT"
+# Optional measurement only; ordinary contract checks retain their exact commands.
+phase() {
+  if [ -n "${TEST_BASELINE_PHASE_LOG:-}" ]; then
+    python3 ./scripts/test-baseline.py --phase "$@"
+  else
+    shift
+    "$@"
+  fi
+}
 for CONTRACT in api-contract/openapi.yaml api-contract/v2/openapi.yaml; do
-  ./scripts/generator.sh validate --input-spec "$CONTRACT"
+  phase generation-validation ./scripts/generator.sh validate --input-spec "$CONTRACT"
 done
 
 CACHE_DIR="$PROJECT_ROOT/.cache/tools"
@@ -34,7 +43,7 @@ else
   for CONTRACT in api-contract/openapi.yaml api-contract/v2/openapi.yaml; do
     if git cat-file -e "$BASE_REF:$CONTRACT" 2>/dev/null; then
       git show "$BASE_REF:$CONTRACT" > "$BASE_CONTRACT"
-      "$OASDIFF" breaking "$BASE_CONTRACT" "$CONTRACT" --fail-on ERR --allow-external-refs=false
+      phase compatibility "$OASDIFF" breaking "$BASE_CONTRACT" "$CONTRACT" --fail-on ERR --allow-external-refs=false
     else
       printf 'Erstvertrag: Im Basiscommit liegt noch kein Vertrag für %s vor.\n' "$CONTRACT"
     fi
@@ -42,8 +51,8 @@ else
 fi
 
 # Beide Java-Versionen sowie auch ungenutzte Angular-Generatorausgaben kompilieren.
-./backend/mvnw -B -f backend/pom.xml -DskipTests compile
-npm --prefix frontend ci
-npm --prefix frontend run generate:api
-npm --prefix frontend run check:contracts
-npm --prefix frontend run build
+phase java-generation-compilation ./backend/mvnw -B -f backend/pom.xml -DskipTests compile
+phase dependency-setup npm --prefix frontend ci
+phase typescript-generation npm --prefix frontend run generate:api
+phase typescript-contract-compilation npm --prefix frontend run check:contracts
+phase spa-generation-compilation npm --prefix frontend run build

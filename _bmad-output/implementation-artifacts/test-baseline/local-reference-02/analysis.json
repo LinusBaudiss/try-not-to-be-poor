@@ -1,0 +1,1652 @@
+{
+  "source": "results.json + originale Gruppenlogs/Phasenlogs/XML-Berichte",
+  "reference_commit": "630ad58c5ad688e6436d1c4edf1a4d354d63def5",
+  "reference_tracked_diff_sha256": "c373419f35c47a71c8f1f32f429c3f07d0875f72f87982d056739e7df6393f00",
+  "reference_has_uncommitted_changes": true,
+  "environment": {
+    "platform": "Linux-7.0.0-43-generic-x86_64-with-glibc2.39",
+    "machine": "x86_64",
+    "cpu_count": 20,
+    "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+    "tools": {
+      "java": "openjdk version \"25.0.5.0.3\" 2026-10-24\nOpenJDK Runtime Environment (build 25.0.5.0.3+1-1-24.04.1-Ubuntu)\nOpenJDK 64-Bit Server VM (build 25.0.5.0.3+1-1-24.04.1-Ubuntu, mixed mode, sharing)",
+      "javac": "javac 25.0.5.0.3",
+      "node": "v24.22.0",
+      "npm": "11.19.1"
+    },
+    "load_average": [
+      2.96875,
+      3.53857421875,
+      4.69482421875
+    ],
+    "cache_note": "Abhängigkeiten vorbereitet; keine parallelen Builds; Phasenumgebung korrigiert",
+    "browser_executable": null,
+    "contract_base_ref": "HEAD"
+  },
+  "all_five_runs_successful": true,
+  "consistent_backend_test_identities_across_runs": true,
+  "runtime_input_drift_at_analysis": [],
+  "runs": [
+    {
+      "index": 0,
+      "kind": "warmup",
+      "seconds": 1607.7606949830006,
+      "groups": {
+        "python": 1.2657197520020418,
+        "contract": 19.8461365569965,
+        "backend": 1095.7525811000014,
+        "browser": 254.13856200499868,
+        "transition": 116.21433422800328,
+        "automation": 120.52209595900058
+      },
+      "counts": {
+        "python": 33,
+        "browser": 224,
+        "transition": 5,
+        "automation": 91,
+        "surefire": {
+          "tests": 49,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "failsafe": {
+          "tests": 433,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      },
+      "classes": [
+        {
+          "name": "de.linus.tnbp.access.MonthlyAutomationE2eServerTest",
+          "seconds": 2.316,
+          "tests": 1
+        },
+        {
+          "name": "de.linus.tnbp.access.RegistrationTest",
+          "seconds": 1.731,
+          "tests": 26
+        },
+        {
+          "name": "de.linus.tnbp.access.SessionTest",
+          "seconds": 0.077,
+          "tests": 4
+        },
+        {
+          "name": "de.linus.tnbp.budget.BudgetTest",
+          "seconds": 0.001,
+          "tests": 1
+        },
+        {
+          "name": "de.linus.tnbp.expenses.ExpenseTest",
+          "seconds": 0.552,
+          "tests": 4
+        },
+        {
+          "name": "de.linus.tnbp.finance.ArchitectureTest",
+          "seconds": 0.065,
+          "tests": 5
+        },
+        {
+          "name": "de.linus.tnbp.monthlysurplus.MonthlySurplusTest",
+          "seconds": 0.085,
+          "tests": 3
+        },
+        {
+          "name": "de.linus.tnbp.savingsgoals.SavingsGoalTest",
+          "seconds": 0.034,
+          "tests": 3
+        },
+        {
+          "name": "de.linus.tnbp.shared.MoneyTest",
+          "seconds": 0.003,
+          "tests": 2
+        },
+        {
+          "name": "de.linus.tnbp.access.AccessVersionsIT",
+          "seconds": 1.237,
+          "tests": 8
+        },
+        {
+          "name": "de.linus.tnbp.access.RegistrationIT",
+          "seconds": 5.123,
+          "tests": 20
+        },
+        {
+          "name": "de.linus.tnbp.access.RegistrationV2IT",
+          "seconds": 5.798,
+          "tests": 20
+        },
+        {
+          "name": "de.linus.tnbp.access.SessionIT",
+          "seconds": 2.186,
+          "tests": 13
+        },
+        {
+          "name": "de.linus.tnbp.access.SessionV2IT",
+          "seconds": 1.857,
+          "tests": 13
+        },
+        {
+          "name": "de.linus.tnbp.expensebudget.BudgetIT",
+          "seconds": 0.73,
+          "tests": 10
+        },
+        {
+          "name": "de.linus.tnbp.expensebudget.BudgetV2IT",
+          "seconds": 0.749,
+          "tests": 11
+        },
+        {
+          "name": "de.linus.tnbp.expensebudget.ExpenseIT",
+          "seconds": 1.212,
+          "tests": 22
+        },
+        {
+          "name": "de.linus.tnbp.expensebudget.ExpenseV2IT",
+          "seconds": 1.182,
+          "tests": 23
+        },
+        {
+          "name": "de.linus.tnbp.expensebudget.MonthSummaryIT",
+          "seconds": 0.502,
+          "tests": 6
+        },
+        {
+          "name": "de.linus.tnbp.expensebudget.MonthSummaryV2IT",
+          "seconds": 0.544,
+          "tests": 8
+        },
+        {
+          "name": "de.linus.tnbp.finance.FinanceCoordinationIT",
+          "seconds": 0.776,
+          "tests": 17
+        },
+        {
+          "name": "de.linus.tnbp.finance.FinanceMigrationIT",
+          "seconds": 9.278,
+          "tests": 14
+        },
+        {
+          "name": "de.linus.tnbp.monthlysurplus.MonthlyCorrectionIT",
+          "seconds": 2.963,
+          "tests": 44
+        },
+        {
+          "name": "de.linus.tnbp.monthlysurplus.MonthlyDeletionIT",
+          "seconds": 6.598,
+          "tests": 23
+        },
+        {
+          "name": "de.linus.tnbp.monthlysurplus.MonthlyPendingIT",
+          "seconds": 1.622,
+          "tests": 16
+        },
+        {
+          "name": "de.linus.tnbp.monthlysurplus.MonthlySelectionIT",
+          "seconds": 1.213,
+          "tests": 14
+        },
+        {
+          "name": "de.linus.tnbp.monthlysurplus.MonthlySurplusIT",
+          "seconds": 1.07,
+          "tests": 14
+        },
+        {
+          "name": "de.linus.tnbp.savingsgoals.SavingsGoalIT",
+          "seconds": 1.235,
+          "tests": 18
+        },
+        {
+          "name": "de.linus.tnbp.savingsgoals.SavingsGoalV2IT",
+          "seconds": 1.779,
+          "tests": 23
+        },
+        {
+          "name": "de.linus.tnbp.savingsgoals.SignedProgressIT",
+          "seconds": 1.472,
+          "tests": 11
+        },
+        {
+          "name": "de.linus.tnbp.versions.AdministrativeSerializationIT",
+          "seconds": 218.514,
+          "tests": 20
+        },
+        {
+          "name": "de.linus.tnbp.versions.ApiRetirementIT",
+          "seconds": 1.092,
+          "tests": 1
+        },
+        {
+          "name": "de.linus.tnbp.versions.ApiVersionStateIT",
+          "seconds": 0.636,
+          "tests": 5
+        },
+        {
+          "name": "de.linus.tnbp.versions.ReleaseTransitionIT",
+          "seconds": 811.032,
+          "tests": 59
+        }
+      ],
+      "contract_phases_inclusive_seconds": {
+        "generation-validation": 1.2318753099971218,
+        "compatibility": 0.06964564699592302,
+        "java-generation-compilation": 5.581636780996632,
+        "dependency-setup": 3.1816847380032414,
+        "typescript-generation": 2.5999466229986865,
+        "typescript-contract-compilation": 1.417377823003335,
+        "spa-generation-compilation": 5.367024395003682
+      }
+    },
+    {
+      "index": 1,
+      "kind": "measurement",
+      "seconds": 1689.1824304839975,
+      "groups": {
+        "python": 1.2656208769985824,
+        "contract": 20.59872243400605,
+        "backend": 1160.7499439089952,
+        "browser": 258.28158191699913,
+        "transition": 124.11661352800002,
+        "automation": 124.14852452900232
+      },
+      "counts": {
+        "python": 33,
+        "browser": 224,
+        "transition": 5,
+        "automation": 91,
+        "surefire": {
+          "tests": 49,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "failsafe": {
+          "tests": 433,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      },
+      "classes": [
+        {
+          "name": "de.linus.tnbp.access.MonthlyAutomationE2eServerTest",
+          "seconds": 2.32,
+          "tests": 1
+        },
+        {
+          "name": "de.linus.tnbp.access.RegistrationTest",
+          "seconds": 1.805,
+          "tests": 26
+        },
+        {
+          "name": "de.linus.tnbp.access.SessionTest",
+          "seconds": 0.082,
+          "tests": 4
+        },
+        {
+          "name": "de.linus.tnbp.budget.BudgetTest",
+          "seconds": 0.001,
+          "tests": 1
+        },
+        {
+          "name": "de.linus.tnbp.expenses.ExpenseTest",
+          "seconds": 0.564,
+          "tests": 4
+        },
+        {
+          "name": "de.linus.tnbp.finance.ArchitectureTest",
+          "seconds": 0.069,
+          "tests": 5
+        },
+        {
+          "name": "de.linus.tnbp.monthlysurplus.MonthlySurplusTest",
+          "seconds": 0.092,
+          "tests": 3
+        },
+        {
+          "name": "de.linus.tnbp.savingsgoals.SavingsGoalTest",
+          "seconds": 0.04,
+          "tests": 3
+        },
+        {
+          "name": "de.linus.tnbp.shared.MoneyTest",
+          "seconds": 0.003,
+          "tests": 2
+        },
+        {
+          "name": "de.linus.tnbp.access.AccessVersionsIT",
+          "seconds": 1.241,
+          "tests": 8
+        },
+        {
+          "name": "de.linus.tnbp.access.RegistrationIT",
+          "seconds": 5.223,
+          "tests": 20
+        },
+        {
+          "name": "de.linus.tnbp.access.RegistrationV2IT",
+          "seconds": 5.959,
+          "tests": 20
+        },
+        {
+          "name": "de.linus.tnbp.access.SessionIT",
+          "seconds": 2.16,
+          "tests": 13
+        },
+        {
+          "name": "de.linus.tnbp.access.SessionV2IT",
+          "seconds": 1.915,
+          "tests": 13
+        },
+        {
+          "name": "de.linus.tnbp.expensebudget.BudgetIT",
+          "seconds": 0.729,
+          "tests": 10
+        },
+        {
+          "name": "de.linus.tnbp.expensebudget.BudgetV2IT",
+          "seconds": 0.713,
+          "tests": 11
+        },
+        {
+          "name": "de.linus.tnbp.expensebudget.ExpenseIT",
+          "seconds": 1.208,
+          "tests": 22
+        },
+        {
+          "name": "de.linus.tnbp.expensebudget.ExpenseV2IT",
+          "seconds": 1.189,
+          "tests": 23
+        },
+        {
+          "name": "de.linus.tnbp.expensebudget.MonthSummaryIT",
+          "seconds": 0.503,
+          "tests": 6
+        },
+        {
+          "name": "de.linus.tnbp.expensebudget.MonthSummaryV2IT",
+          "seconds": 0.538,
+          "tests": 8
+        },
+        {
+          "name": "de.linus.tnbp.finance.FinanceCoordinationIT",
+          "seconds": 0.774,
+          "tests": 17
+        },
+        {
+          "name": "de.linus.tnbp.finance.FinanceMigrationIT",
+          "seconds": 9.771,
+          "tests": 14
+        },
+        {
+          "name": "de.linus.tnbp.monthlysurplus.MonthlyCorrectionIT",
+          "seconds": 3.039,
+          "tests": 44
+        },
+        {
+          "name": "de.linus.tnbp.monthlysurplus.MonthlyDeletionIT",
+          "seconds": 6.851,
+          "tests": 23
+        },
+        {
+          "name": "de.linus.tnbp.monthlysurplus.MonthlyPendingIT",
+          "seconds": 1.69,
+          "tests": 16
+        },
+        {
+          "name": "de.linus.tnbp.monthlysurplus.MonthlySelectionIT",
+          "seconds": 1.283,
+          "tests": 14
+        },
+        {
+          "name": "de.linus.tnbp.monthlysurplus.MonthlySurplusIT",
+          "seconds": 1.091,
+          "tests": 14
+        },
+        {
+          "name": "de.linus.tnbp.savingsgoals.SavingsGoalIT",
+          "seconds": 1.31,
+          "tests": 18
+        },
+        {
+          "name": "de.linus.tnbp.savingsgoals.SavingsGoalV2IT",
+          "seconds": 1.853,
+          "tests": 23
+        },
+        {
+          "name": "de.linus.tnbp.savingsgoals.SignedProgressIT",
+          "seconds": 1.619,
+          "tests": 11
+        },
+        {
+          "name": "de.linus.tnbp.versions.AdministrativeSerializationIT",
+          "seconds": 241.632,
+          "tests": 20
+        },
+        {
+          "name": "de.linus.tnbp.versions.ApiRetirementIT",
+          "seconds": 1.171,
+          "tests": 1
+        },
+        {
+          "name": "de.linus.tnbp.versions.ApiVersionStateIT",
+          "seconds": 0.663,
+          "tests": 5
+        },
+        {
+          "name": "de.linus.tnbp.versions.ReleaseTransitionIT",
+          "seconds": 850.498,
+          "tests": 59
+        }
+      ],
+      "contract_phases_inclusive_seconds": {
+        "generation-validation": 1.228429814989795,
+        "compatibility": 0.06898031100718072,
+        "java-generation-compilation": 6.0107095270068385,
+        "dependency-setup": 3.0937942570017185,
+        "typescript-generation": 2.698799730002065,
+        "typescript-contract-compilation": 1.4436999929966987,
+        "spa-generation-compilation": 5.642481377995864
+      }
+    },
+    {
+      "index": 2,
+      "kind": "measurement",
+      "seconds": 1755.1326350740055,
+      "groups": {
+        "python": 1.3159221280002384,
+        "contract": 22.068727557001694,
+        "backend": 1216.4205218669958,
+        "browser": 260.4463018440001,
+        "transition": 121.5701954410033,
+        "automation": 133.28311626399955
+      },
+      "counts": {
+        "python": 33,
+        "browser": 224,
+        "transition": 5,
+        "automation": 91,
+        "surefire": {
+          "tests": 49,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "failsafe": {
+          "tests": 433,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      },
+      "classes": [
+        {
+          "name": "de.linus.tnbp.access.MonthlyAutomationE2eServerTest",
+          "seconds": 2.384,
+          "tests": 1
+        },
+        {
+          "name": "de.linus.tnbp.access.RegistrationTest",
+          "seconds": 1.847,
+          "tests": 26
+        },
+        {
+          "name": "de.linus.tnbp.access.SessionTest",
+          "seconds": 0.08,
+          "tests": 4
+        },
+        {
+          "name": "de.linus.tnbp.budget.BudgetTest",
+          "seconds": 0.001,
+          "tests": 1
+        },
+        {
+          "name": "de.linus.tnbp.expenses.ExpenseTest",
+          "seconds": 0.632,
+          "tests": 4
+        },
+        {
+          "name": "de.linus.tnbp.finance.ArchitectureTest",
+          "seconds": 0.066,
+          "tests": 5
+        },
+        {
+          "name": "de.linus.tnbp.monthlysurplus.MonthlySurplusTest",
+          "seconds": 0.18,
+          "tests": 3
+        },
+        {
+          "name": "de.linus.tnbp.savingsgoals.SavingsGoalTest",
+          "seconds": 0.037,
+          "tests": 3
+        },
+        {
+          "name": "de.linus.tnbp.shared.MoneyTest",
+          "seconds": 0.004,
+          "tests": 2
+        },
+        {
+          "name": "de.linus.tnbp.access.AccessVersionsIT",
+          "seconds": 1.288,
+          "tests": 8
+        },
+        {
+          "name": "de.linus.tnbp.access.RegistrationIT",
+          "seconds": 5.534,
+          "tests": 20
+        },
+        {
+          "name": "de.linus.tnbp.access.RegistrationV2IT",
+          "seconds": 6.672,
+          "tests": 20
+        },
+        {
+          "name": "de.linus.tnbp.access.SessionIT",
+          "seconds": 2.374,
+          "tests": 13
+        },
+        {
+          "name": "de.linus.tnbp.access.SessionV2IT",
+          "seconds": 1.978,
+          "tests": 13
+        },
+        {
+          "name": "de.linus.tnbp.expensebudget.BudgetIT",
+          "seconds": 0.727,
+          "tests": 10
+        },
+        {
+          "name": "de.linus.tnbp.expensebudget.BudgetV2IT",
+          "seconds": 0.777,
+          "tests": 11
+        },
+        {
+          "name": "de.linus.tnbp.expensebudget.ExpenseIT",
+          "seconds": 1.195,
+          "tests": 22
+        },
+        {
+          "name": "de.linus.tnbp.expensebudget.ExpenseV2IT",
+          "seconds": 1.377,
+          "tests": 23
+        },
+        {
+          "name": "de.linus.tnbp.expensebudget.MonthSummaryIT",
+          "seconds": 0.54,
+          "tests": 6
+        },
+        {
+          "name": "de.linus.tnbp.expensebudget.MonthSummaryV2IT",
+          "seconds": 0.562,
+          "tests": 8
+        },
+        {
+          "name": "de.linus.tnbp.finance.FinanceCoordinationIT",
+          "seconds": 0.763,
+          "tests": 17
+        },
+        {
+          "name": "de.linus.tnbp.finance.FinanceMigrationIT",
+          "seconds": 9.819,
+          "tests": 14
+        },
+        {
+          "name": "de.linus.tnbp.monthlysurplus.MonthlyCorrectionIT",
+          "seconds": 3.141,
+          "tests": 44
+        },
+        {
+          "name": "de.linus.tnbp.monthlysurplus.MonthlyDeletionIT",
+          "seconds": 6.915,
+          "tests": 23
+        },
+        {
+          "name": "de.linus.tnbp.monthlysurplus.MonthlyPendingIT",
+          "seconds": 1.656,
+          "tests": 16
+        },
+        {
+          "name": "de.linus.tnbp.monthlysurplus.MonthlySelectionIT",
+          "seconds": 1.358,
+          "tests": 14
+        },
+        {
+          "name": "de.linus.tnbp.monthlysurplus.MonthlySurplusIT",
+          "seconds": 1.117,
+          "tests": 14
+        },
+        {
+          "name": "de.linus.tnbp.savingsgoals.SavingsGoalIT",
+          "seconds": 1.211,
+          "tests": 18
+        },
+        {
+          "name": "de.linus.tnbp.savingsgoals.SavingsGoalV2IT",
+          "seconds": 1.741,
+          "tests": 23
+        },
+        {
+          "name": "de.linus.tnbp.savingsgoals.SignedProgressIT",
+          "seconds": 1.244,
+          "tests": 11
+        },
+        {
+          "name": "de.linus.tnbp.versions.AdministrativeSerializationIT",
+          "seconds": 240.77,
+          "tests": 20
+        },
+        {
+          "name": "de.linus.tnbp.versions.ApiRetirementIT",
+          "seconds": 0.518,
+          "tests": 1
+        },
+        {
+          "name": "de.linus.tnbp.versions.ApiVersionStateIT",
+          "seconds": 0.679,
+          "tests": 5
+        },
+        {
+          "name": "de.linus.tnbp.versions.ReleaseTransitionIT",
+          "seconds": 905.098,
+          "tests": 59
+        }
+      ],
+      "contract_phases_inclusive_seconds": {
+        "generation-validation": 1.3686244179916685,
+        "compatibility": 0.07745735000207787,
+        "java-generation-compilation": 6.027745584993681,
+        "dependency-setup": 3.394120662000205,
+        "typescript-generation": 2.796321996000188,
+        "typescript-contract-compilation": 1.7712860530009493,
+        "spa-generation-compilation": 6.229612741997698
+      }
+    },
+    {
+      "index": 3,
+      "kind": "measurement",
+      "seconds": 1766.0594398739995,
+      "groups": {
+        "python": 1.36590674600302,
+        "contract": 23.524340240997844,
+        "backend": 1256.047895728996,
+        "browser": 247.92236614699505,
+        "transition": 115.70757597599732,
+        "automation": 121.46861811000417
+      },
+      "counts": {
+        "python": 33,
+        "browser": 224,
+        "transition": 5,
+        "automation": 91,
+        "surefire": {
+          "tests": 49,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "failsafe": {
+          "tests": 433,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      },
+      "classes": [
+        {
+          "name": "de.linus.tnbp.access.MonthlyAutomationE2eServerTest",
+          "seconds": 2.333,
+          "tests": 1
+        },
+        {
+          "name": "de.linus.tnbp.access.RegistrationTest",
+          "seconds": 1.762,
+          "tests": 26
+        },
+        {
+          "name": "de.linus.tnbp.access.SessionTest",
+          "seconds": 0.083,
+          "tests": 4
+        },
+        {
+          "name": "de.linus.tnbp.budget.BudgetTest",
+          "seconds": 0.001,
+          "tests": 1
+        },
+        {
+          "name": "de.linus.tnbp.expenses.ExpenseTest",
+          "seconds": 0.541,
+          "tests": 4
+        },
+        {
+          "name": "de.linus.tnbp.finance.ArchitectureTest",
+          "seconds": 0.071,
+          "tests": 5
+        },
+        {
+          "name": "de.linus.tnbp.monthlysurplus.MonthlySurplusTest",
+          "seconds": 0.096,
+          "tests": 3
+        },
+        {
+          "name": "de.linus.tnbp.savingsgoals.SavingsGoalTest",
+          "seconds": 0.041,
+          "tests": 3
+        },
+        {
+          "name": "de.linus.tnbp.shared.MoneyTest",
+          "seconds": 0.004,
+          "tests": 2
+        },
+        {
+          "name": "de.linus.tnbp.access.AccessVersionsIT",
+          "seconds": 1.175,
+          "tests": 8
+        },
+        {
+          "name": "de.linus.tnbp.access.RegistrationIT",
+          "seconds": 5.184,
+          "tests": 20
+        },
+        {
+          "name": "de.linus.tnbp.access.RegistrationV2IT",
+          "seconds": 5.589,
+          "tests": 20
+        },
+        {
+          "name": "de.linus.tnbp.access.SessionIT",
+          "seconds": 2.081,
+          "tests": 13
+        },
+        {
+          "name": "de.linus.tnbp.access.SessionV2IT",
+          "seconds": 1.77,
+          "tests": 13
+        },
+        {
+          "name": "de.linus.tnbp.expensebudget.BudgetIT",
+          "seconds": 0.687,
+          "tests": 10
+        },
+        {
+          "name": "de.linus.tnbp.expensebudget.BudgetV2IT",
+          "seconds": 0.72,
+          "tests": 11
+        },
+        {
+          "name": "de.linus.tnbp.expensebudget.ExpenseIT",
+          "seconds": 1.188,
+          "tests": 22
+        },
+        {
+          "name": "de.linus.tnbp.expensebudget.ExpenseV2IT",
+          "seconds": 1.144,
+          "tests": 23
+        },
+        {
+          "name": "de.linus.tnbp.expensebudget.MonthSummaryIT",
+          "seconds": 0.535,
+          "tests": 6
+        },
+        {
+          "name": "de.linus.tnbp.expensebudget.MonthSummaryV2IT",
+          "seconds": 0.52,
+          "tests": 8
+        },
+        {
+          "name": "de.linus.tnbp.finance.FinanceCoordinationIT",
+          "seconds": 0.784,
+          "tests": 17
+        },
+        {
+          "name": "de.linus.tnbp.finance.FinanceMigrationIT",
+          "seconds": 8.934,
+          "tests": 14
+        },
+        {
+          "name": "de.linus.tnbp.monthlysurplus.MonthlyCorrectionIT",
+          "seconds": 3.536,
+          "tests": 44
+        },
+        {
+          "name": "de.linus.tnbp.monthlysurplus.MonthlyDeletionIT",
+          "seconds": 7.366,
+          "tests": 23
+        },
+        {
+          "name": "de.linus.tnbp.monthlysurplus.MonthlyPendingIT",
+          "seconds": 2.004,
+          "tests": 16
+        },
+        {
+          "name": "de.linus.tnbp.monthlysurplus.MonthlySelectionIT",
+          "seconds": 1.504,
+          "tests": 14
+        },
+        {
+          "name": "de.linus.tnbp.monthlysurplus.MonthlySurplusIT",
+          "seconds": 1.299,
+          "tests": 14
+        },
+        {
+          "name": "de.linus.tnbp.savingsgoals.SavingsGoalIT",
+          "seconds": 1.185,
+          "tests": 18
+        },
+        {
+          "name": "de.linus.tnbp.savingsgoals.SavingsGoalV2IT",
+          "seconds": 1.651,
+          "tests": 23
+        },
+        {
+          "name": "de.linus.tnbp.savingsgoals.SignedProgressIT",
+          "seconds": 1.152,
+          "tests": 11
+        },
+        {
+          "name": "de.linus.tnbp.versions.AdministrativeSerializationIT",
+          "seconds": 232.186,
+          "tests": 20
+        },
+        {
+          "name": "de.linus.tnbp.versions.ApiRetirementIT",
+          "seconds": 0.493,
+          "tests": 1
+        },
+        {
+          "name": "de.linus.tnbp.versions.ApiVersionStateIT",
+          "seconds": 0.633,
+          "tests": 5
+        },
+        {
+          "name": "de.linus.tnbp.versions.ReleaseTransitionIT",
+          "seconds": 955.486,
+          "tests": 59
+        }
+      ],
+      "contract_phases_inclusive_seconds": {
+        "generation-validation": 1.6414449359945138,
+        "compatibility": 0.11226581100345356,
+        "java-generation-compilation": 6.839234626997495,
+        "dependency-setup": 3.4818815469989204,
+        "typescript-generation": 3.3313530259983963,
+        "typescript-contract-compilation": 1.6058881589997327,
+        "spa-generation-compilation": 6.005950944003416
+      }
+    },
+    {
+      "index": 4,
+      "kind": "clean",
+      "seconds": 1611.957513895999,
+      "groups": {
+        "python": 1.2655473470003926,
+        "contract": 19.947924683001474,
+        "backend": 1102.8012070030018,
+        "browser": 257.53602772600425,
+        "transition": 113.45291390200146,
+        "automation": 116.91311394899822
+      },
+      "counts": {
+        "python": 33,
+        "browser": 224,
+        "transition": 5,
+        "automation": 91,
+        "surefire": {
+          "tests": 49,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "failsafe": {
+          "tests": 433,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      },
+      "classes": [
+        {
+          "name": "de.linus.tnbp.access.MonthlyAutomationE2eServerTest",
+          "seconds": 2.296,
+          "tests": 1
+        },
+        {
+          "name": "de.linus.tnbp.access.RegistrationTest",
+          "seconds": 1.673,
+          "tests": 26
+        },
+        {
+          "name": "de.linus.tnbp.access.SessionTest",
+          "seconds": 0.086,
+          "tests": 4
+        },
+        {
+          "name": "de.linus.tnbp.budget.BudgetTest",
+          "seconds": 0.001,
+          "tests": 1
+        },
+        {
+          "name": "de.linus.tnbp.expenses.ExpenseTest",
+          "seconds": 0.541,
+          "tests": 4
+        },
+        {
+          "name": "de.linus.tnbp.finance.ArchitectureTest",
+          "seconds": 0.065,
+          "tests": 5
+        },
+        {
+          "name": "de.linus.tnbp.monthlysurplus.MonthlySurplusTest",
+          "seconds": 0.085,
+          "tests": 3
+        },
+        {
+          "name": "de.linus.tnbp.savingsgoals.SavingsGoalTest",
+          "seconds": 0.035,
+          "tests": 3
+        },
+        {
+          "name": "de.linus.tnbp.shared.MoneyTest",
+          "seconds": 0.004,
+          "tests": 2
+        },
+        {
+          "name": "de.linus.tnbp.access.AccessVersionsIT",
+          "seconds": 1.213,
+          "tests": 8
+        },
+        {
+          "name": "de.linus.tnbp.access.RegistrationIT",
+          "seconds": 5.224,
+          "tests": 20
+        },
+        {
+          "name": "de.linus.tnbp.access.RegistrationV2IT",
+          "seconds": 6.014,
+          "tests": 20
+        },
+        {
+          "name": "de.linus.tnbp.access.SessionIT",
+          "seconds": 2.097,
+          "tests": 13
+        },
+        {
+          "name": "de.linus.tnbp.access.SessionV2IT",
+          "seconds": 1.778,
+          "tests": 13
+        },
+        {
+          "name": "de.linus.tnbp.expensebudget.BudgetIT",
+          "seconds": 0.703,
+          "tests": 10
+        },
+        {
+          "name": "de.linus.tnbp.expensebudget.BudgetV2IT",
+          "seconds": 0.686,
+          "tests": 11
+        },
+        {
+          "name": "de.linus.tnbp.expensebudget.ExpenseIT",
+          "seconds": 1.129,
+          "tests": 22
+        },
+        {
+          "name": "de.linus.tnbp.expensebudget.ExpenseV2IT",
+          "seconds": 1.169,
+          "tests": 23
+        },
+        {
+          "name": "de.linus.tnbp.expensebudget.MonthSummaryIT",
+          "seconds": 0.506,
+          "tests": 6
+        },
+        {
+          "name": "de.linus.tnbp.expensebudget.MonthSummaryV2IT",
+          "seconds": 0.515,
+          "tests": 8
+        },
+        {
+          "name": "de.linus.tnbp.finance.FinanceCoordinationIT",
+          "seconds": 0.797,
+          "tests": 17
+        },
+        {
+          "name": "de.linus.tnbp.finance.FinanceMigrationIT",
+          "seconds": 8.959,
+          "tests": 14
+        },
+        {
+          "name": "de.linus.tnbp.monthlysurplus.MonthlyCorrectionIT",
+          "seconds": 2.857,
+          "tests": 44
+        },
+        {
+          "name": "de.linus.tnbp.monthlysurplus.MonthlyDeletionIT",
+          "seconds": 6.525,
+          "tests": 23
+        },
+        {
+          "name": "de.linus.tnbp.monthlysurplus.MonthlyPendingIT",
+          "seconds": 1.586,
+          "tests": 16
+        },
+        {
+          "name": "de.linus.tnbp.monthlysurplus.MonthlySelectionIT",
+          "seconds": 1.166,
+          "tests": 14
+        },
+        {
+          "name": "de.linus.tnbp.monthlysurplus.MonthlySurplusIT",
+          "seconds": 1.046,
+          "tests": 14
+        },
+        {
+          "name": "de.linus.tnbp.savingsgoals.SavingsGoalIT",
+          "seconds": 1.243,
+          "tests": 18
+        },
+        {
+          "name": "de.linus.tnbp.savingsgoals.SavingsGoalV2IT",
+          "seconds": 1.733,
+          "tests": 23
+        },
+        {
+          "name": "de.linus.tnbp.savingsgoals.SignedProgressIT",
+          "seconds": 1.318,
+          "tests": 11
+        },
+        {
+          "name": "de.linus.tnbp.versions.AdministrativeSerializationIT",
+          "seconds": 223.69,
+          "tests": 20
+        },
+        {
+          "name": "de.linus.tnbp.versions.ApiRetirementIT",
+          "seconds": 0.477,
+          "tests": 1
+        },
+        {
+          "name": "de.linus.tnbp.versions.ApiVersionStateIT",
+          "seconds": 0.582,
+          "tests": 5
+        },
+        {
+          "name": "de.linus.tnbp.versions.ReleaseTransitionIT",
+          "seconds": 815.066,
+          "tests": 59
+        }
+      ],
+      "contract_phases_inclusive_seconds": {
+        "generation-validation": 1.1829875590046868,
+        "compatibility": 0.07169732000329532,
+        "java-generation-compilation": 5.667360001003544,
+        "dependency-setup": 3.0313075879967073,
+        "typescript-generation": 2.547795392005355,
+        "typescript-contract-compilation": 1.3771100559970364,
+        "spa-generation-compilation": 5.687672568994458
+      }
+    }
+  ],
+  "median_seconds": 1755.1326350740055,
+  "required_saving_seconds": 855.1326350740055,
+  "measurement_range_seconds": 76.87700939000206,
+  "median_run_index": 2,
+  "group_median_seconds": {
+    "python": 1.3159221280002384,
+    "contract": 22.068727557001694,
+    "backend": 1216.4205218669958,
+    "browser": 258.28158191699913,
+    "transition": 121.5701954410033,
+    "automation": 124.14852452900232
+  },
+  "contract_phase_median_seconds": {
+    "generation-validation": 1.3686244179916685,
+    "compatibility": 0.07745735000207787,
+    "java-generation-compilation": 6.027745584993681,
+    "dependency-setup": 3.394120662000205,
+    "typescript-generation": 2.796321996000188,
+    "typescript-contract-compilation": 1.6058881589997327,
+    "spa-generation-compilation": 6.005950944003416
+  },
+  "classes_by_median": [
+    {
+      "name": "de.linus.tnbp.versions.ReleaseTransitionIT",
+      "samples_seconds": [
+        850.498,
+        905.098,
+        955.486
+      ],
+      "median_seconds": 905.098
+    },
+    {
+      "name": "de.linus.tnbp.versions.AdministrativeSerializationIT",
+      "samples_seconds": [
+        241.632,
+        240.77,
+        232.186
+      ],
+      "median_seconds": 240.77
+    },
+    {
+      "name": "de.linus.tnbp.finance.FinanceMigrationIT",
+      "samples_seconds": [
+        9.771,
+        9.819,
+        8.934
+      ],
+      "median_seconds": 9.771
+    },
+    {
+      "name": "de.linus.tnbp.monthlysurplus.MonthlyDeletionIT",
+      "samples_seconds": [
+        6.851,
+        6.915,
+        7.366
+      ],
+      "median_seconds": 6.915
+    },
+    {
+      "name": "de.linus.tnbp.access.RegistrationV2IT",
+      "samples_seconds": [
+        5.959,
+        6.672,
+        5.589
+      ],
+      "median_seconds": 5.959
+    },
+    {
+      "name": "de.linus.tnbp.access.RegistrationIT",
+      "samples_seconds": [
+        5.223,
+        5.534,
+        5.184
+      ],
+      "median_seconds": 5.223
+    },
+    {
+      "name": "de.linus.tnbp.monthlysurplus.MonthlyCorrectionIT",
+      "samples_seconds": [
+        3.039,
+        3.141,
+        3.536
+      ],
+      "median_seconds": 3.141
+    },
+    {
+      "name": "de.linus.tnbp.access.MonthlyAutomationE2eServerTest",
+      "samples_seconds": [
+        2.32,
+        2.384,
+        2.333
+      ],
+      "median_seconds": 2.333
+    },
+    {
+      "name": "de.linus.tnbp.access.SessionIT",
+      "samples_seconds": [
+        2.16,
+        2.374,
+        2.081
+      ],
+      "median_seconds": 2.16
+    },
+    {
+      "name": "de.linus.tnbp.access.SessionV2IT",
+      "samples_seconds": [
+        1.915,
+        1.978,
+        1.77
+      ],
+      "median_seconds": 1.915
+    },
+    {
+      "name": "de.linus.tnbp.access.RegistrationTest",
+      "samples_seconds": [
+        1.805,
+        1.847,
+        1.762
+      ],
+      "median_seconds": 1.805
+    },
+    {
+      "name": "de.linus.tnbp.savingsgoals.SavingsGoalV2IT",
+      "samples_seconds": [
+        1.853,
+        1.741,
+        1.651
+      ],
+      "median_seconds": 1.741
+    },
+    {
+      "name": "de.linus.tnbp.monthlysurplus.MonthlyPendingIT",
+      "samples_seconds": [
+        1.69,
+        1.656,
+        2.004
+      ],
+      "median_seconds": 1.69
+    },
+    {
+      "name": "de.linus.tnbp.monthlysurplus.MonthlySelectionIT",
+      "samples_seconds": [
+        1.283,
+        1.358,
+        1.504
+      ],
+      "median_seconds": 1.358
+    },
+    {
+      "name": "de.linus.tnbp.savingsgoals.SignedProgressIT",
+      "samples_seconds": [
+        1.619,
+        1.244,
+        1.152
+      ],
+      "median_seconds": 1.244
+    },
+    {
+      "name": "de.linus.tnbp.access.AccessVersionsIT",
+      "samples_seconds": [
+        1.241,
+        1.288,
+        1.175
+      ],
+      "median_seconds": 1.241
+    },
+    {
+      "name": "de.linus.tnbp.savingsgoals.SavingsGoalIT",
+      "samples_seconds": [
+        1.31,
+        1.211,
+        1.185
+      ],
+      "median_seconds": 1.211
+    },
+    {
+      "name": "de.linus.tnbp.expensebudget.ExpenseIT",
+      "samples_seconds": [
+        1.208,
+        1.195,
+        1.188
+      ],
+      "median_seconds": 1.195
+    },
+    {
+      "name": "de.linus.tnbp.expensebudget.ExpenseV2IT",
+      "samples_seconds": [
+        1.189,
+        1.377,
+        1.144
+      ],
+      "median_seconds": 1.189
+    },
+    {
+      "name": "de.linus.tnbp.monthlysurplus.MonthlySurplusIT",
+      "samples_seconds": [
+        1.091,
+        1.117,
+        1.299
+      ],
+      "median_seconds": 1.117
+    },
+    {
+      "name": "de.linus.tnbp.finance.FinanceCoordinationIT",
+      "samples_seconds": [
+        0.774,
+        0.763,
+        0.784
+      ],
+      "median_seconds": 0.774
+    },
+    {
+      "name": "de.linus.tnbp.expensebudget.BudgetIT",
+      "samples_seconds": [
+        0.729,
+        0.727,
+        0.687
+      ],
+      "median_seconds": 0.727
+    },
+    {
+      "name": "de.linus.tnbp.expensebudget.BudgetV2IT",
+      "samples_seconds": [
+        0.713,
+        0.777,
+        0.72
+      ],
+      "median_seconds": 0.72
+    },
+    {
+      "name": "de.linus.tnbp.versions.ApiVersionStateIT",
+      "samples_seconds": [
+        0.663,
+        0.679,
+        0.633
+      ],
+      "median_seconds": 0.663
+    },
+    {
+      "name": "de.linus.tnbp.expenses.ExpenseTest",
+      "samples_seconds": [
+        0.564,
+        0.632,
+        0.541
+      ],
+      "median_seconds": 0.564
+    },
+    {
+      "name": "de.linus.tnbp.expensebudget.MonthSummaryV2IT",
+      "samples_seconds": [
+        0.538,
+        0.562,
+        0.52
+      ],
+      "median_seconds": 0.538
+    },
+    {
+      "name": "de.linus.tnbp.expensebudget.MonthSummaryIT",
+      "samples_seconds": [
+        0.503,
+        0.54,
+        0.535
+      ],
+      "median_seconds": 0.535
+    },
+    {
+      "name": "de.linus.tnbp.versions.ApiRetirementIT",
+      "samples_seconds": [
+        1.171,
+        0.518,
+        0.493
+      ],
+      "median_seconds": 0.518
+    },
+    {
+      "name": "de.linus.tnbp.monthlysurplus.MonthlySurplusTest",
+      "samples_seconds": [
+        0.092,
+        0.18,
+        0.096
+      ],
+      "median_seconds": 0.096
+    },
+    {
+      "name": "de.linus.tnbp.access.SessionTest",
+      "samples_seconds": [
+        0.082,
+        0.08,
+        0.083
+      ],
+      "median_seconds": 0.082
+    },
+    {
+      "name": "de.linus.tnbp.finance.ArchitectureTest",
+      "samples_seconds": [
+        0.069,
+        0.066,
+        0.071
+      ],
+      "median_seconds": 0.069
+    },
+    {
+      "name": "de.linus.tnbp.savingsgoals.SavingsGoalTest",
+      "samples_seconds": [
+        0.04,
+        0.037,
+        0.041
+      ],
+      "median_seconds": 0.04
+    },
+    {
+      "name": "de.linus.tnbp.shared.MoneyTest",
+      "samples_seconds": [
+        0.003,
+        0.004,
+        0.004
+      ],
+      "median_seconds": 0.004
+    },
+    {
+      "name": "de.linus.tnbp.budget.BudgetTest",
+      "samples_seconds": [
+        0.001,
+        0.001,
+        0.001
+      ],
+      "median_seconds": 0.001
+    }
+  ],
+  "two_process_class_median_sum_seconds": 1145.868,
+  "process_pair_share_of_full_median_percent": 65.28668985473477,
+  "required_pair_saving_percent_if_other_costs_constant": 74.6274994217489,
+  "series_total_seconds": 8430.092714311002,
+  "source_file_sha256": {
+    "results.json": "19b27265af1248f026ccde4540f6016b57c6adff4c66109295bf22f17e769946",
+    "00-warmup-automation.log": "9ec9a6fdf6eb969d4d3fd1ee2585ac007422fa1544b6c509a1b5622ee331bfde",
+    "01-measurement-transition.log": "30791c829e29b64acbd585876474773c755bb667d0de59ece6c7847077c04549",
+    "03-measurement-python.log": "c09b9716817b4bbfeae4366eba04fd766f23b8a8e34e903911294a52f2bfac33",
+    "04-clean-contract.log": "b43086bcdc7228fe0e5e0e8b16236d989e01e55d3e3b6075c8e6b3355ad51e9a",
+    "02-measurement-contract.log": "1e25948e7d33cc268db9ec9a67a7f857e252ecbebf9b029a8db5aa79b3bd34e1",
+    "01-measurement-automation.log": "f44103d11457f96ef1323e805ec9f7db8343308b96db0c521129912c539dd56e",
+    "03-measurement-contract.log": "60a56cf60134c2416e1c860a343f2d926ab16038ee9a76365b6d6caa6185535a",
+    "00-warmup-contract-phases.jsonl": "9f48ea9d1de34bb3328135585f032cbbb3dbf7c2843f69400d61504b3ad250b7",
+    "04-clean-transition.log": "ce44f2cc0b03f81ef2e0b7899b2a3c8c7839271c84f4a013593d270b0af4bd11",
+    "02-measurement-transition.log": "a97292c8416dc28a166e161502a6d79f90fa1a5ba5f6715811149102368f302e",
+    "04-clean-python.log": "b8d32e1ae6e0436b70c4532152cea28a37efe299fde286534b15efe65fee6a9d",
+    "01-measurement-python.log": "71d9bf10cb2fc35f5f7c193b6640afeeccd5790959b09fb81982e8f558e841c8",
+    "input-sha256.json": "e986fc42a6a0f4419516ffcb1a6c1419617d0d915c06c1958effe473ec362d16",
+    "04-clean-contract-phases.jsonl": "ddfba451f4f8f416c0554a459a717d8a496a2666abe0b989887a5eab6b99a742",
+    "00-warmup-browser.log": "e2c8d56655a12e7c319c8efa8a0ee5e212453d057981fa1954ab150cf6b02a6b",
+    "04-clean-browser.log": "148ce927b8017206b409f462e475dd3ae18a375c2dd471c541df50d9973ebb66",
+    "02-measurement-automation.log": "ee1055dfb7d8d57e66a4ffbdce23a8693ffd02dad4fddd08f3fdcaf0c0b1cee9",
+    "01-measurement-backend.log": "a77fbeb8ab07deee2833fc637b33d5f79b37687e191405c8a6e24c306f436459",
+    "02-measurement-contract-phases.jsonl": "297c60db912cdeae68479462a34aacacb8b843527c51eedfd885b696165f9e50",
+    "03-measurement-automation.log": "0d10514b5138e8735cda87e7b566545c63cbb36c27856095e9d22d59db024b17",
+    "00-warmup-backend.log": "6379176892c85ef2f21fd828ee32458d6ee05cfd297c90345b8a7633b2f79e45",
+    "03-measurement-transition.log": "71f7c36c6ebe3429838915b502913820273769a1e3f2512cb7839aca1507adda",
+    "02-measurement-python.log": "dd5572c2444900c9a4ae560c72d2a318ced0a1731adbca44f2d84c47c3ba5718",
+    "01-measurement-contract.log": "e42c6a0ab362a70527829c702bb6a6fa528a6ec03e977b33d40c5572f9492eec",
+    "03-measurement-backend.log": "67518bcf54f917bf8c79232486aa8ad0ca8caecdd8a15cc50c0008cb4aa5c545",
+    "04-clean-backend.log": "b7d689898bc67a8798f0367ad0edc4f388019ad833aa4d660f772d46cbad4c26",
+    "02-measurement-browser.log": "b8aea50a09faf6572023269b92111a68a6f41e71b1ce41130cfa708a1c9f1a98",
+    "04-clean-automation.log": "e7edbff0a1504e7360bacd166d3e51c993a21c0e82e54290b7060152a2eec735",
+    "00-warmup-transition.log": "b738ffa4b97ac53958d3a21b9711cfe78f9d69207193952196d095ea32b0a91b",
+    "02-measurement-backend.log": "a78c8dc0cfc1d9fe26bc339d196b257a7eb616ced299e46afa470384a455287d",
+    "tracked-input.patch": "c373419f35c47a71c8f1f32f429c3f07d0875f72f87982d056739e7df6393f00",
+    "00-warmup-contract.log": "503e2401135244128f59a95aa27a4d7b704b922fc40f867d478950ef8613f0fe",
+    "01-measurement-browser.log": "b4ee6045a1814a193c8d5258fc140e12d990cd856c8ebe494bde32f48b9d3d95",
+    "03-measurement-contract-phases.jsonl": "13af051cc39b1f3ebd93d4f55a304b22cdfed45adf2dd680b83d4aa8d96e211b",
+    "03-measurement-browser.log": "c345254a849a91e2044e86971ce01d380ec1a1fddc70ef8416279237f70fdd0b",
+    "00-warmup-python.log": "b3f08600e8941a5f0e741059c961d4727a0a2ae1f353c14f0ced1a79105a05d1",
+    "01-measurement-contract-phases.jsonl": "b11a74bb06ac8d987ab623479e497bbe8d4c5881ac0e4d71d1913765f92a9108",
+    "01-measurement-surefire-reports/TEST-de.linus.tnbp.access.RegistrationTest.xml": "bfaffc56e45e5c56590a68fdac396d9d3173ac25cbc74246af2d9a0cb2419db5",
+    "01-measurement-surefire-reports/TEST-de.linus.tnbp.expenses.ExpenseTest.xml": "3276983013fc2db8a0f5daf8c8f09cbdc3c30fcf98bd12d997840c5000cb1c26",
+    "01-measurement-surefire-reports/TEST-de.linus.tnbp.access.MonthlyAutomationE2eServerTest.xml": "7e5a98d0dcdc42bde5a8c54e16cbdf8116e549b985764cb6b856a49ef89fd4ee",
+    "01-measurement-surefire-reports/TEST-de.linus.tnbp.savingsgoals.SavingsGoalTest.xml": "10eeac1a44ac91a0058fbb3ec46f167e14194676d990be75631361b77ed65e7b",
+    "01-measurement-surefire-reports/TEST-de.linus.tnbp.budget.BudgetTest.xml": "3ec14ea8109c8d4935ba2a27abed449ef8b7aa5b7ab8ec352237a4f24d53d7dc",
+    "01-measurement-surefire-reports/TEST-de.linus.tnbp.shared.MoneyTest.xml": "d191ab12bf68c6d913028aa21f47db016fbeaf73b548a52509cb53f84b4917a5",
+    "01-measurement-surefire-reports/TEST-de.linus.tnbp.access.SessionTest.xml": "36bfb610752e1948820455c99c885fc11b611aa7a2a3e41b0e20768495aee0be",
+    "01-measurement-surefire-reports/TEST-de.linus.tnbp.finance.ArchitectureTest.xml": "5043fc4c40a6c0949028f17b7abdfa790a328713c0d2bfda45c5b7d722abccc0",
+    "01-measurement-surefire-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlySurplusTest.xml": "28496f1b4536fda7b72799da75206ebca519696fe1123b19c672fb48d565f526",
+    "04-clean-surefire-reports/TEST-de.linus.tnbp.access.RegistrationTest.xml": "2e372cfd5c6eeff6c80ac8927391ddec555fb989c26f82add1d861d64276d919",
+    "04-clean-surefire-reports/TEST-de.linus.tnbp.expenses.ExpenseTest.xml": "88b143b63a542b286455a9a8ac62ea35c4467bb1bcd5c098fde71cf562060c48",
+    "04-clean-surefire-reports/TEST-de.linus.tnbp.access.MonthlyAutomationE2eServerTest.xml": "887351013ae38af6b11de9af3ca910dc114ec74c47d8f30370f28ddca6841a16",
+    "04-clean-surefire-reports/TEST-de.linus.tnbp.savingsgoals.SavingsGoalTest.xml": "64de077cc8662f5b12c5d871018ebdc3c1e5bbc45eb5ccac4cc76dc4fdf0266d",
+    "04-clean-surefire-reports/TEST-de.linus.tnbp.budget.BudgetTest.xml": "eb92dbd568dc4f2d5383ff62cb0311e804d62ab91b8bfd47c4e3e8deb7f44eb2",
+    "04-clean-surefire-reports/TEST-de.linus.tnbp.shared.MoneyTest.xml": "16ec6dc7fb36f9d017c795ec5e3bc91a571b7ec9b5d7aa16267a4bd325661045",
+    "04-clean-surefire-reports/TEST-de.linus.tnbp.access.SessionTest.xml": "48bfd3b647c4177b74ee2d2cd5b7ae2fb13d2f61d0bf9fccfc682e8b908d87fb",
+    "04-clean-surefire-reports/TEST-de.linus.tnbp.finance.ArchitectureTest.xml": "ab5c5f8b168a37df689a47fa782d070c48be5801ed3113675b88dc7c26c08b04",
+    "04-clean-surefire-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlySurplusTest.xml": "66735476279540ffe04bb201eb6ea3e67769f4d2322551ab9a0121d423e677da",
+    "02-measurement-surefire-reports/TEST-de.linus.tnbp.access.RegistrationTest.xml": "6226a0849e5836735df95ad7376f7115c5fbba132d658c8c50a97a8a37ed0a78",
+    "02-measurement-surefire-reports/TEST-de.linus.tnbp.expenses.ExpenseTest.xml": "b961e4319b30676de5f2f8ade5a39d60b8f62b6de54d7eb4d990a064937fb3a4",
+    "02-measurement-surefire-reports/TEST-de.linus.tnbp.access.MonthlyAutomationE2eServerTest.xml": "b46d2eea399c13af9daeac534da4a4f846aaf6899ab02a8d5341896b5b8082d6",
+    "02-measurement-surefire-reports/TEST-de.linus.tnbp.savingsgoals.SavingsGoalTest.xml": "464c61fb31d5680ca7e7d7a931c680d0196c0e1def7e4399fa1a880b04a34e4a",
+    "02-measurement-surefire-reports/TEST-de.linus.tnbp.budget.BudgetTest.xml": "86a6a1a5daf8b1db081785a2093082b75cd72652c1adff182d3a40df32831fda",
+    "02-measurement-surefire-reports/TEST-de.linus.tnbp.shared.MoneyTest.xml": "ff60d822ad0586b9487ba7c5d6789cb8071233a42e1076595b3090f1f7c53a9d",
+    "02-measurement-surefire-reports/TEST-de.linus.tnbp.access.SessionTest.xml": "3d2b85b1f25d80bc4fbfd8310557e553e19972c677d91d7ac600f52017314452",
+    "02-measurement-surefire-reports/TEST-de.linus.tnbp.finance.ArchitectureTest.xml": "2206e6ba8768cb33b9bd223614bdcf8f84ca95647f4d11247abc7362e8a367d7",
+    "02-measurement-surefire-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlySurplusTest.xml": "7dd5c67e02715a4ff736b36f7b23a3f8c9ac82b5b8374e525cd8e1261c1eb81d",
+    "00-warmup-surefire-reports/TEST-de.linus.tnbp.access.RegistrationTest.xml": "54f16f074e651540e403e7f433803991b95c5812c483e5001ce7fcdb317bf695",
+    "00-warmup-surefire-reports/TEST-de.linus.tnbp.expenses.ExpenseTest.xml": "f3095de76d382605dcb68dcbc8b8d8ad640d0f3adb8f04f766c9349902c123a5",
+    "00-warmup-surefire-reports/TEST-de.linus.tnbp.access.MonthlyAutomationE2eServerTest.xml": "39a05d6356514d95c8b4deb91c64f70a8ca140513cba7f9e15615fb19f48a0b2",
+    "00-warmup-surefire-reports/TEST-de.linus.tnbp.savingsgoals.SavingsGoalTest.xml": "15c5ba4da850e87049078396087fbdd54339b0b7076f5d1fd695692f6dd6d611",
+    "00-warmup-surefire-reports/TEST-de.linus.tnbp.budget.BudgetTest.xml": "bd147bd046791f015683596856c3d021d6eff9bfaac882b45b2082a000d004fa",
+    "00-warmup-surefire-reports/TEST-de.linus.tnbp.shared.MoneyTest.xml": "dfb692455d66fc853868b03a76832bc5c2828fcee6068c62d73678cd6c0a284d",
+    "00-warmup-surefire-reports/TEST-de.linus.tnbp.access.SessionTest.xml": "22f1a664e9df335a21a98451ce2b77007ccbcc9079e6d459b51e080628117d41",
+    "00-warmup-surefire-reports/TEST-de.linus.tnbp.finance.ArchitectureTest.xml": "aad6f22646af5e1d12b6f703731ad5986b07ac9f215cae95d3472c4321d63cc7",
+    "00-warmup-surefire-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlySurplusTest.xml": "f56311817ee7375276b197fdbe6ee1c10409f1afc11a2af7bdf2bea484199a3d",
+    "03-measurement-surefire-reports/TEST-de.linus.tnbp.access.RegistrationTest.xml": "d9c9d895761e95885e798a72e8f2ad11d5c2cbe30a20351bb562ba83395570b8",
+    "03-measurement-surefire-reports/TEST-de.linus.tnbp.expenses.ExpenseTest.xml": "c11156ba901e080f77208c91d52026b610e647322dc5f49500e45667f8964f4a",
+    "03-measurement-surefire-reports/TEST-de.linus.tnbp.access.MonthlyAutomationE2eServerTest.xml": "9d7efb2bd759f55a6a0ef6fce8277d85e147b1d5b562dc2593bb0370795a324f",
+    "03-measurement-surefire-reports/TEST-de.linus.tnbp.savingsgoals.SavingsGoalTest.xml": "3543deaaf73425269083cf77e3af13bdbf1e8902b2288ca4b4e6faad2f3f6b46",
+    "03-measurement-surefire-reports/TEST-de.linus.tnbp.budget.BudgetTest.xml": "c8132a2c6d4d91a4860e68af88679d61d532105b7bc7e9ea78ccec909abaeb4d",
+    "03-measurement-surefire-reports/TEST-de.linus.tnbp.shared.MoneyTest.xml": "05b5baed2fceb8548f993b95b7569bff730d257ba1a52a39999bbfee1a27b9bd",
+    "03-measurement-surefire-reports/TEST-de.linus.tnbp.access.SessionTest.xml": "756a209b90de94f82ea60705472aee760751bd3962be0ed419534c905d83edea",
+    "03-measurement-surefire-reports/TEST-de.linus.tnbp.finance.ArchitectureTest.xml": "585189150445ea06ef3869f33a4bb26976c2f392bdabc18ca47e4dc1883bf295",
+    "03-measurement-surefire-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlySurplusTest.xml": "36d7070a1f0ff522adba265e7b2e03b1f4edabf6f2d077e95ba61486d4a140b5",
+    "04-clean-failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlyDeletionIT.xml": "f9a0a18ab8c1fff6151e131d7e5fa9325836a61593a4736b00ac65ece77978de",
+    "04-clean-failsafe-reports/TEST-de.linus.tnbp.finance.FinanceCoordinationIT.xml": "f8193207761ceeb027f11ff5ed99df835bac38d6fde5dde2f4f223627f924c67",
+    "04-clean-failsafe-reports/TEST-de.linus.tnbp.versions.ReleaseTransitionIT.xml": "9647f18567133055618b1dad81adfdbc1924ae4714afffd71b378f7e3228cec8",
+    "04-clean-failsafe-reports/TEST-de.linus.tnbp.access.AccessVersionsIT.xml": "d754d6789414cbda5cbd3b98bed0a0370390b70044ac99fca1efc6f50395bdb3",
+    "04-clean-failsafe-reports/TEST-de.linus.tnbp.savingsgoals.SavingsGoalV2IT.xml": "d24b4504aa44b752d9b204afeb4682d3d400398b72ab4a5d2cf25874615aa2ce",
+    "04-clean-failsafe-reports/TEST-de.linus.tnbp.expensebudget.MonthSummaryV2IT.xml": "1f2f2aecb0b7f36308627ff21f38a97a185c3cf0d7ab4aed0a535898384e7a17",
+    "04-clean-failsafe-reports/TEST-de.linus.tnbp.expensebudget.ExpenseIT.xml": "999c991c3d2f31f361f7fd54be0e0b4b277e82b0f086ec2679ee52aca6aac31c",
+    "04-clean-failsafe-reports/TEST-de.linus.tnbp.access.RegistrationIT.xml": "3b5f8c197787bdf2b9740f3bd51467b10cc4dadc9f66636ecd8c72ed9f11ddfc",
+    "04-clean-failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlyCorrectionIT.xml": "703c2f9025699603158f4cc5ffe9f89dca934ab59bc2979df492290276e3084b",
+    "04-clean-failsafe-reports/TEST-de.linus.tnbp.versions.AdministrativeSerializationIT.xml": "a2df8a113cedc0f0373ba5d97ad48aaa55fac5cbb18cec4db7deb0e5bab460ed",
+    "04-clean-failsafe-reports/TEST-de.linus.tnbp.expensebudget.ExpenseV2IT.xml": "729911e78f35ee73e94f06834db2db9da14e5a22037829d727b27d3eeaf33726",
+    "04-clean-failsafe-reports/TEST-de.linus.tnbp.access.RegistrationV2IT.xml": "8a37e0f86389f68a69ac970ec03319ac9d325dc0043af617f9ad6d244a74d20e",
+    "04-clean-failsafe-reports/TEST-de.linus.tnbp.savingsgoals.SavingsGoalIT.xml": "598650c18ba7a34c55ccac174e82f29d76e6c417ea7378f7077628eb39f387e6",
+    "04-clean-failsafe-reports/TEST-de.linus.tnbp.access.SessionV2IT.xml": "c0980d1767438e44637d88dabab75d197e2b6f619186e189b09769e38062b7d9",
+    "04-clean-failsafe-reports/TEST-de.linus.tnbp.access.SessionIT.xml": "364748dd509d2df164daad1f179a5a3de23fb71982f24e2222c0785d2d093b82",
+    "04-clean-failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlySelectionIT.xml": "c5db5f4d7566636bc0e2603970f5d64ae38561421ba3a6ed18118394981703d5",
+    "04-clean-failsafe-reports/TEST-de.linus.tnbp.savingsgoals.SignedProgressIT.xml": "2fef41059427e762ec53f67e49615274e074db3aa1c64e40a20a4094917dac14",
+    "04-clean-failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlyPendingIT.xml": "3f7d6e0d0b511561ad3e18abb558d5ed9aeb31d781ce21e447e142a99a4a38bd",
+    "04-clean-failsafe-reports/TEST-de.linus.tnbp.expensebudget.MonthSummaryIT.xml": "690737f6dc797342c48dc3b2277d9d3859b3db0cf1318eb641f3e85cfde33012",
+    "04-clean-failsafe-reports/TEST-de.linus.tnbp.expensebudget.BudgetV2IT.xml": "30b381e79958d9a036eac406f4b0734bf57eb8263c0d35d885dc2ea097cfc8fb",
+    "04-clean-failsafe-reports/TEST-de.linus.tnbp.finance.FinanceMigrationIT.xml": "e934fd5ab8c82e3d1d437c380eaeb3593b04bfb67396c869e7f9e72e7651aae0",
+    "04-clean-failsafe-reports/TEST-de.linus.tnbp.versions.ApiVersionStateIT.xml": "69ce653b70c3fb690b95e75ef2db2cb3b12f2959664b3e82285298dbb9b797db",
+    "04-clean-failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlySurplusIT.xml": "378b1d2a384bdcf885caf89a9e61be45d274d1f47df8ebf224ace3177d9a9457",
+    "04-clean-failsafe-reports/TEST-de.linus.tnbp.versions.ApiRetirementIT.xml": "b9dc76597d66527a163164ee264cf2c3407a2ff2c49949830d62779b979006dd",
+    "04-clean-failsafe-reports/TEST-de.linus.tnbp.expensebudget.BudgetIT.xml": "af48fe2a644e7a423ef938dd27b78d7dd1d7eeb70e2ae20aadb521f4c254cd4f",
+    "02-measurement-failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlyDeletionIT.xml": "c6708349c3c00e51ac32aeb872548926b7c65cca1491e84e6649d1fd720971c8",
+    "02-measurement-failsafe-reports/TEST-de.linus.tnbp.finance.FinanceCoordinationIT.xml": "dd1f26782cf0a4ff0e509ad1870efbbb133cc5874233c80a3f854741f447b1d6",
+    "02-measurement-failsafe-reports/TEST-de.linus.tnbp.versions.ReleaseTransitionIT.xml": "71c43d4e8d93ded00fea9fa34b7a57b855853f05bcd0298ae1437b70d3306a36",
+    "02-measurement-failsafe-reports/TEST-de.linus.tnbp.access.AccessVersionsIT.xml": "f56b5c0aa1e37a3562100afe4148d95fdcf3e7c7782409bc804d0a9952b38a12",
+    "02-measurement-failsafe-reports/TEST-de.linus.tnbp.savingsgoals.SavingsGoalV2IT.xml": "ddcc0a29708e106c243ab06fee572c1dbdf2991d02c9116f887bcde7cab79eb2",
+    "02-measurement-failsafe-reports/TEST-de.linus.tnbp.expensebudget.MonthSummaryV2IT.xml": "7643a27b09117acf3884cfa2a407194ab3a5be4a15a8d6e68a150817f8a0a852",
+    "02-measurement-failsafe-reports/TEST-de.linus.tnbp.expensebudget.ExpenseIT.xml": "fab10cec72781f824f24fc24ef44b989b800b90cb188b4b91b5d1f7c61de08bd",
+    "02-measurement-failsafe-reports/TEST-de.linus.tnbp.access.RegistrationIT.xml": "98c74111ac691b40a5e7779fecf305e887aa22e3fe49c0129f641435558a06ee",
+    "02-measurement-failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlyCorrectionIT.xml": "1ccc80bf3b0d014e3ea7799463da5a6eb515f8b656e715a375caacff23cfd462",
+    "02-measurement-failsafe-reports/TEST-de.linus.tnbp.versions.AdministrativeSerializationIT.xml": "c42b587ec83330108923732007f452404095016950d05bea54717c8913868f53",
+    "02-measurement-failsafe-reports/TEST-de.linus.tnbp.expensebudget.ExpenseV2IT.xml": "83935728868b90358cb97bf922fde0ef96b155208fc3b7e11bf2ebe29dda9365",
+    "02-measurement-failsafe-reports/TEST-de.linus.tnbp.access.RegistrationV2IT.xml": "8f9a5fbadb7b96fed772a2436b681e847faf0818e089321ae805da3aafe78d61",
+    "02-measurement-failsafe-reports/TEST-de.linus.tnbp.savingsgoals.SavingsGoalIT.xml": "492d51eba5f55e83bf2ec442ed1e9c08cd65f4f8ece704914bb11ab126f0eeda",
+    "02-measurement-failsafe-reports/TEST-de.linus.tnbp.access.SessionV2IT.xml": "ffef45832d0c5c8a297c00582d3d6e17319097373fab6440f98f014d7febfd1b",
+    "02-measurement-failsafe-reports/TEST-de.linus.tnbp.access.SessionIT.xml": "f4da30d259f8294cb9abbdeba0c58e3fae58c6d743028a163f411e8d1674ed9b",
+    "02-measurement-failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlySelectionIT.xml": "e8627594b295ff8537b10033fefb36d5c3cb1b60ea881b9ebad78f183592b084",
+    "02-measurement-failsafe-reports/TEST-de.linus.tnbp.savingsgoals.SignedProgressIT.xml": "4f883c4af3069472c50efe22988a33b95561de12bbc8fc95d786a9a64030f9b6",
+    "02-measurement-failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlyPendingIT.xml": "2ea709cc8b096d655b46fdab1e9edfff2375ba75121227e6d021becf9f91e49a",
+    "02-measurement-failsafe-reports/TEST-de.linus.tnbp.expensebudget.MonthSummaryIT.xml": "950fe5aa15f5195777d7a9046492206cd9ef7beb5c9aa478f632a9f76d5bef9c",
+    "02-measurement-failsafe-reports/TEST-de.linus.tnbp.expensebudget.BudgetV2IT.xml": "1ce4512d7e0e56ea4e85f3cc218e179415861e3d3c3b2e9450c2d114660ee998",
+    "02-measurement-failsafe-reports/TEST-de.linus.tnbp.finance.FinanceMigrationIT.xml": "6df9e28d76d283b2beadaaee68c030443c875998a8426d14ea30e02f958c77fd",
+    "02-measurement-failsafe-reports/TEST-de.linus.tnbp.versions.ApiVersionStateIT.xml": "dafa08095120519d4b1f3472a53a7a8daee5af5e80df5021562c48ed9ed27ccd",
+    "02-measurement-failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlySurplusIT.xml": "0b541d06e318be247ae1f354469dfe33f7025da90474b69909f7aa7b9a17be26",
+    "02-measurement-failsafe-reports/TEST-de.linus.tnbp.versions.ApiRetirementIT.xml": "45952cd2a567a06897b9e2c49173614bb4bccd8f0faecc05b17bb099e4cb124b",
+    "02-measurement-failsafe-reports/TEST-de.linus.tnbp.expensebudget.BudgetIT.xml": "c5c301ca31714a6c10775409396ccf26804fd49f20398f1d41f02ac06fa05cd8",
+    "01-measurement-failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlyDeletionIT.xml": "3ef9237902713a6913b497fa02045d51da5f40f30d15e8a05fe55833971e9943",
+    "01-measurement-failsafe-reports/TEST-de.linus.tnbp.finance.FinanceCoordinationIT.xml": "9e00ac01c28830d4f838fc91026a016a92ae54214a0b1f6cdc8f76ffe78b3d09",
+    "01-measurement-failsafe-reports/TEST-de.linus.tnbp.versions.ReleaseTransitionIT.xml": "08ed0806e38bc64bdf051b73b4d06e7e64744cdd878d1cbfb60331fa2695c983",
+    "01-measurement-failsafe-reports/TEST-de.linus.tnbp.access.AccessVersionsIT.xml": "6ed5648cd5d98a0883011431b5a959992ed79ae69e9a421f522f5334d1c975cd",
+    "01-measurement-failsafe-reports/TEST-de.linus.tnbp.savingsgoals.SavingsGoalV2IT.xml": "c6818297df0ecfbd56b73f49fa23fd1d2cd422b398b703bb5e566a50d564f12b",
+    "01-measurement-failsafe-reports/TEST-de.linus.tnbp.expensebudget.MonthSummaryV2IT.xml": "0d056efa878bf8eef3932f96a5ab3bbf8f6063ff945493ce168a3c6f2c54c629",
+    "01-measurement-failsafe-reports/TEST-de.linus.tnbp.expensebudget.ExpenseIT.xml": "6cc6dc2a85a9c25ee3a891269d0c68d5f7aa3b079e2eee7981fe45910bc3ab94",
+    "01-measurement-failsafe-reports/TEST-de.linus.tnbp.access.RegistrationIT.xml": "bec7a36a3d26cc9c054f9486481f659c883215deb214dae42edf086286340a10",
+    "01-measurement-failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlyCorrectionIT.xml": "075cdf80727c4610842ce87b27b67e03ad30c18bd3409fbdb22e5c261a355705",
+    "01-measurement-failsafe-reports/TEST-de.linus.tnbp.versions.AdministrativeSerializationIT.xml": "bc88203c816ca2fd1b4d65ad8403464d9e46cec2efb38db1aaf2d3bec0099987",
+    "01-measurement-failsafe-reports/TEST-de.linus.tnbp.expensebudget.ExpenseV2IT.xml": "b350bc54a0e3b2adfab80cfeed5a638ad7e12c34c49eefc7d40f8945defa2037",
+    "01-measurement-failsafe-reports/TEST-de.linus.tnbp.access.RegistrationV2IT.xml": "9faa12275243344772821d8f48442e77c35880a83fc4c764d25ebdfc427b3610",
+    "01-measurement-failsafe-reports/TEST-de.linus.tnbp.savingsgoals.SavingsGoalIT.xml": "577d42a8ce11d623bad95aaa5aca5ada15fadc6252c2b47b7b69a49a721ee994",
+    "01-measurement-failsafe-reports/TEST-de.linus.tnbp.access.SessionV2IT.xml": "1dead84501e0869aeff3f3bf2bbfaa3ec231b6b865796f17eb68860bb20d02cc",
+    "01-measurement-failsafe-reports/TEST-de.linus.tnbp.access.SessionIT.xml": "1911777aeb325e822098324252679cef38cd702cf99bbb489d4b09e9768248aa",
+    "01-measurement-failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlySelectionIT.xml": "706a4c10473f2904f1971c4113c5c61016c67c2cb88c7dfdf72eb4766ac191c2",
+    "01-measurement-failsafe-reports/TEST-de.linus.tnbp.savingsgoals.SignedProgressIT.xml": "811c64cdd69c38ce88b401ecb4fea5cc3e1f5dacb7001f3d11199261076daeb0",
+    "01-measurement-failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlyPendingIT.xml": "4354ed3fefa266b6c5f204382ff5d62df46eddf742faeac5353eec385a38fc0c",
+    "01-measurement-failsafe-reports/TEST-de.linus.tnbp.expensebudget.MonthSummaryIT.xml": "3d181a60356b7af5a3af48628ff9a859308904e989d03815a4bc9d96868fe85f",
+    "01-measurement-failsafe-reports/TEST-de.linus.tnbp.expensebudget.BudgetV2IT.xml": "cd8480c70cecb252c2ad83e49bdaf9a2fbb30e0cdfa5f1b22698a7940c8b066d",
+    "01-measurement-failsafe-reports/TEST-de.linus.tnbp.finance.FinanceMigrationIT.xml": "b2ff7dc506b3d6d3c13492a5efaeaa2260d0c0d4c6f6ad8f50fb946098055668",
+    "01-measurement-failsafe-reports/TEST-de.linus.tnbp.versions.ApiVersionStateIT.xml": "be6b783fdca64ade5a17647a8b9e81a28a4d9366c7e1331faee9455dabe2bbf6",
+    "01-measurement-failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlySurplusIT.xml": "16ecd97da8c31885362a1c9a128c83dad51996e4efc5b17da519742b029581ad",
+    "01-measurement-failsafe-reports/TEST-de.linus.tnbp.versions.ApiRetirementIT.xml": "4e97a6a4d183ba7219b2dd736f05a8e91df3131f00ed574652a405dc137a0b82",
+    "01-measurement-failsafe-reports/TEST-de.linus.tnbp.expensebudget.BudgetIT.xml": "cbb11557f99f3a8653a5c187bdaa5701f88da064b4555fafd8e15581d43a7780",
+    "00-warmup-failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlyDeletionIT.xml": "1e5e9bb3e9b4e3491a81413ec3148acf78f8419c6254ab1d6e194a14857c3b53",
+    "00-warmup-failsafe-reports/TEST-de.linus.tnbp.finance.FinanceCoordinationIT.xml": "b9bebd8efe39eab6a7de3e0678ce59013d3bf3f395940de2024ff95d338c8952",
+    "00-warmup-failsafe-reports/TEST-de.linus.tnbp.versions.ReleaseTransitionIT.xml": "7d8be7f37949c87ab37292b380498351e5f8d87ad4343bac15892f8a10feaf60",
+    "00-warmup-failsafe-reports/TEST-de.linus.tnbp.access.AccessVersionsIT.xml": "6dd5c4b34db38e88f7050c66777ffa731f62b84ca2d70afb1d0b048dea014f5e",
+    "00-warmup-failsafe-reports/TEST-de.linus.tnbp.savingsgoals.SavingsGoalV2IT.xml": "39a3841c2559c05241b297f7aacad52f9b270f5c17283d0a7dd1b84baa295351",
+    "00-warmup-failsafe-reports/TEST-de.linus.tnbp.expensebudget.MonthSummaryV2IT.xml": "b0365df5a7db5228aa101f6ede6b77b330eccb1ea3a1ce5ab12e633fcf6e431e",
+    "00-warmup-failsafe-reports/TEST-de.linus.tnbp.expensebudget.ExpenseIT.xml": "5f61f28af964bcaab1389ef547232c67d3eb04fad0bacce1ac4f35e8366442db",
+    "00-warmup-failsafe-reports/TEST-de.linus.tnbp.access.RegistrationIT.xml": "f37c926d4e6c2157abd1e61a2ddf2a75ad2195044f8da0340d82448e1fc9359d",
+    "00-warmup-failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlyCorrectionIT.xml": "f05e50290d806f478824b267ce70f436b33af07b363e072b9a3211db8228bc94",
+    "00-warmup-failsafe-reports/TEST-de.linus.tnbp.versions.AdministrativeSerializationIT.xml": "40c3781f3b3fb267b61fbb4f0855088f100dab87e1ffa0cfca143dff696f8387",
+    "00-warmup-failsafe-reports/TEST-de.linus.tnbp.expensebudget.ExpenseV2IT.xml": "e2ef66169ff1563ca5fa13591d860d500e8dd723aba93637052471e70e11248f",
+    "00-warmup-failsafe-reports/TEST-de.linus.tnbp.access.RegistrationV2IT.xml": "312b091609042bca14123b39e6a50e3db33e0d4d33cdb62cf4f9bcc622c66ae9",
+    "00-warmup-failsafe-reports/TEST-de.linus.tnbp.savingsgoals.SavingsGoalIT.xml": "35cbeca1b2a05c89bf69d68b7220efabeb563a1dda9c53c5450735d018fcb8fd",
+    "00-warmup-failsafe-reports/TEST-de.linus.tnbp.access.SessionV2IT.xml": "dead194b89949c23558309d6aadb69e059551a54436c524f7941a0246b3ba318",
+    "00-warmup-failsafe-reports/TEST-de.linus.tnbp.access.SessionIT.xml": "cb8fc7d6a379101ab3994c76ea488fec6275ca44a58cadedc6c0c899bc3e4365",
+    "00-warmup-failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlySelectionIT.xml": "8a45d89da1ea32611747833a2e12e0a35cda176546146bc8df1103e114de3ac9",
+    "00-warmup-failsafe-reports/TEST-de.linus.tnbp.savingsgoals.SignedProgressIT.xml": "37e44432354b15a05be034b7197d813850a12919f5ff6a56b2d0380083343512",
+    "00-warmup-failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlyPendingIT.xml": "69c1a0eb82252398c85b486e7406489cf0b7cc4828c8dab41631c3f5028d1985",
+    "00-warmup-failsafe-reports/TEST-de.linus.tnbp.expensebudget.MonthSummaryIT.xml": "57e9957f6af3a1de033a2f421d767bf9ee6fb5dc253bab0ee36fbc873cfeba3e",
+    "00-warmup-failsafe-reports/TEST-de.linus.tnbp.expensebudget.BudgetV2IT.xml": "45eb2424b5ce71365ebd6889e0d40605744fc8998d373cdc82acb2cd8e66a795",
+    "00-warmup-failsafe-reports/TEST-de.linus.tnbp.finance.FinanceMigrationIT.xml": "d8af2c4986001d1d7a1c7f6acec4840d54de4e61bd4ec396eece895dc57d2e0a",
+    "00-warmup-failsafe-reports/TEST-de.linus.tnbp.versions.ApiVersionStateIT.xml": "34ef65c40f575bcce56134c62aa064736dbf81e6a74f9550a182f18b8674bd75",
+    "00-warmup-failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlySurplusIT.xml": "5b2f116f1b98f228fe680111ce5413fbb28a874c08fab0b93ec8f578a91c6fed",
+    "00-warmup-failsafe-reports/TEST-de.linus.tnbp.versions.ApiRetirementIT.xml": "ec67fcfde3206744213daf6c620e35ccf7dbc192c2136949dcdd0facae412389",
+    "00-warmup-failsafe-reports/TEST-de.linus.tnbp.expensebudget.BudgetIT.xml": "3df855408cecb1e8b29ed4fc4801e02a32ca5cb3c8911759cfe9bd1a03253820",
+    "03-measurement-failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlyDeletionIT.xml": "c17fe867b2581033d022f828494e978efee948e83d22ac877bfe51f58ad73dfe",
+    "03-measurement-failsafe-reports/TEST-de.linus.tnbp.finance.FinanceCoordinationIT.xml": "a0fa92b019ef4bc49940cccde4bb8c8069964505627605a6cadc27b9adfeb03d",
+    "03-measurement-failsafe-reports/TEST-de.linus.tnbp.versions.ReleaseTransitionIT.xml": "55655ad463c4b37c52d7451a9bee1126432000a99f8dd74cf1bfba519ff461f8",
+    "03-measurement-failsafe-reports/TEST-de.linus.tnbp.access.AccessVersionsIT.xml": "1b2ebe64207d5f9aae41ade5abd4b015af801a83a45d4d23f17e07f365a20cd3",
+    "03-measurement-failsafe-reports/TEST-de.linus.tnbp.savingsgoals.SavingsGoalV2IT.xml": "e425caa362d8e80750fb9201c658e884bc5e54af59a5cb92f5ceb33f12b9b25b",
+    "03-measurement-failsafe-reports/TEST-de.linus.tnbp.expensebudget.MonthSummaryV2IT.xml": "284c17cc9590cb7d434519f083d2640200f819d61960e2123732d1fb3c68c287",
+    "03-measurement-failsafe-reports/TEST-de.linus.tnbp.expensebudget.ExpenseIT.xml": "d05c4f3dce655ac9ae1147cb88cdc6a5df55b993df387df15286da6404449c3d",
+    "03-measurement-failsafe-reports/TEST-de.linus.tnbp.access.RegistrationIT.xml": "1340e8c9c6fc1ea738d5da8bd729cac77b735205c824412d5a2394dff135ba54",
+    "03-measurement-failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlyCorrectionIT.xml": "f047deb2961ea66cfa82d2df674733ed21e62c5093a73ef293401f95658f3f0b",
+    "03-measurement-failsafe-reports/TEST-de.linus.tnbp.versions.AdministrativeSerializationIT.xml": "b3492639b9cfaab78f5562c793a8bae7208ff0e5b5661e9d947613dd392889a7",
+    "03-measurement-failsafe-reports/TEST-de.linus.tnbp.expensebudget.ExpenseV2IT.xml": "30ae6614a162a73d2e649c80adcb7937fa5f928d94d0a74e6db0fd5ad5766e10",
+    "03-measurement-failsafe-reports/TEST-de.linus.tnbp.access.RegistrationV2IT.xml": "6dd200281db7f45e8955fa35a78eb75a46454d93c521efff8497d343f87ae756",
+    "03-measurement-failsafe-reports/TEST-de.linus.tnbp.savingsgoals.SavingsGoalIT.xml": "90e91b4d2b848ac667f2ceba89696f344f1967e264fe9495213d2396bd078a63",
+    "03-measurement-failsafe-reports/TEST-de.linus.tnbp.access.SessionV2IT.xml": "024ff7680e690bda90c54e3802fb182e6fda369a2439e10f27639897e193a1d1",
+    "03-measurement-failsafe-reports/TEST-de.linus.tnbp.access.SessionIT.xml": "30b43b3f4fb256fa6bff2699dd343697e210a4f4792b3be7d86c1defbfe3b10d",
+    "03-measurement-failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlySelectionIT.xml": "fe145d04346dd1323433d98f0d8181eae57b02905e0e81ee41f9afd2abef1a9a",
+    "03-measurement-failsafe-reports/TEST-de.linus.tnbp.savingsgoals.SignedProgressIT.xml": "40380fbdea3b474690fd16e2806c43aad1f77fc1a41e056d7c8a37a78248c6fe",
+    "03-measurement-failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlyPendingIT.xml": "f31b9cc3bff4e8cdf2f54ab89b6add2c023bc98099f282ae5f62e0b62f0e9c39",
+    "03-measurement-failsafe-reports/TEST-de.linus.tnbp.expensebudget.MonthSummaryIT.xml": "999e83fe478577cc1cabb1de0a2400c84d4152ece0bf3f05ce66b573dd408481",
+    "03-measurement-failsafe-reports/TEST-de.linus.tnbp.expensebudget.BudgetV2IT.xml": "fcbfea03eb1d7e30d4d9183936823840b6028e91336ea5c16163da5948f93241",
+    "03-measurement-failsafe-reports/TEST-de.linus.tnbp.finance.FinanceMigrationIT.xml": "24e53139fef4d99adb43dbc386c47e56c02e7ac1558937c5bda93b037c0f72b6",
+    "03-measurement-failsafe-reports/TEST-de.linus.tnbp.versions.ApiVersionStateIT.xml": "8abe90e5f34a4ba6efc0a227ddbc4d82a3ae6a5d71da5b2aadc8ca33cb0800d4",
+    "03-measurement-failsafe-reports/TEST-de.linus.tnbp.monthlysurplus.MonthlySurplusIT.xml": "d6e47895c891ae784bceb6f9a823fb7588669bee7a6f332ee612cfcefdf2c7d7",
+    "03-measurement-failsafe-reports/TEST-de.linus.tnbp.versions.ApiRetirementIT.xml": "10a71b0303ba1d4e329fd4f87074385e253e37fd5ad8489df26437a8cfa7c552",
+    "03-measurement-failsafe-reports/TEST-de.linus.tnbp.expensebudget.BudgetIT.xml": "721f55ef173d0a4a1f24b25342e88702d297acc7fa8b7f1363aeff3dd6af6663"
+  },
+  "limits": [
+    "Revision plus dokumentierter uncommitteter Patch/Hashmanifest, kein reiner Checkout nur des HEAD.",
+    "Last nur zu Serienbeginn erfasst; weitere Ressourcenlimits und laufbezogene Last-/Temperaturwerte fehlen.",
+    "XML-Klassendauern enthalten Setup/Prozesse/DB/Unterbuilds; keine exakte interne Aufteilung.",
+    "Gruppen-/Klassen-/Phasenmediane stammen teilweise aus unterschiedlichen Läufen und sind nicht exakt additiv.",
+    "Coverage separat; keine Instrumentierungszeit als Performanceprobe."
+  ],
+  "target_seconds": 900,
+  "target_met": false,
+  "required_saving_percent": 48.72182409382118,
+  "target_decision": {
+    "date": "2026-11-14",
+    "authority": "Ausdrücklicher Nutzerauftrag: maximal 15 Minuten",
+    "metric": "Median des vollständigen lokalen Prüflaufs nach bestehender Messvereinbarung",
+    "replaces": "ursprüngliche 30-%-Reduktionsannahme / 70 % des Referenzmedians",
+    "historical_target_seconds": 1228.5928445518039,
+    "raw_results_unchanged": true
+  }
+}

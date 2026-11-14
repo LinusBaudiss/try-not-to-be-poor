@@ -95,7 +95,7 @@ public class FinanceApplication {
         Long budget = budgets.current(context, month);
         long total = expenses.monthTotal(context, month);
         UUID selected = monthlySurplus.selected(context, month);
-        boolean consumed = selected != null && !goals.exists(context, selected);
+        boolean consumed = selected != null && (monthlySurplus.deleted(context, selected) || !goals.exists(context, selected));
         Long surplus = MonthlySurplus.surplus(budget, total);
         if (selected != null && !consumed && surplus != null) goals.applyDifference(context, selected, surplus);
         boolean created = monthlySurplus.closeMonth(context, month, budget, total, selected, consumed);
@@ -147,7 +147,8 @@ public class FinanceApplication {
             return;
         }
         Long surplus = MonthlySurplus.surplus(budgets.current(context, month), expenses.monthTotal(context, month));
-        boolean consumed = previous.consumed() || previous.goalId() != null && !goals.exists(context, previous.goalId());
+        boolean consumed = previous.consumed() || previous.goalId() != null
+            && (monthlySurplus.deleted(context, previous.goalId()) || !goals.exists(context, previous.goalId()));
         if (previous.goalId() != null && !consumed) {
             long difference = Money.subtract(surplus == null ? 0 : surplus, previous.surplusCents() == null ? 0 : previous.surplusCents());
             goals.applyDifference(context, previous.goalId(), difference);
@@ -191,6 +192,12 @@ public class FinanceApplication {
         return transactions.mutate(userId, context -> goals.update(context, id, name, targetAmountCents, targetDate));
     }
     public void deleteGoal(UUID userId, UUID id) {
-        transactions.mutate(userId, context -> { goals.delete(context, id); return null; });
+        transactions.mutate(userId, context -> {
+            goals.requireGoal(context, id);
+            boolean monthlyEffect = monthlySurplus.deleteGoal(context, id);
+            goals.delete(context, id);
+            if (monthlyEffect) versions.markMonthlyEffect(context);
+            return null;
+        });
     }
 }

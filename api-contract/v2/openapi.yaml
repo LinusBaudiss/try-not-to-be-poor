@@ -659,12 +659,12 @@ paths:
       tags: [SavingsGoals]
       operationId: deleteSavingsGoal
       summary: Ein eigenes Sparziel endgültig löschen
-      description: Ausschließlich geprüftes Bearer-sub bestimmt den Eigentümer. Erfolg erst nach Commit; no-store.
+      description: Ausschließlich geprüftes Bearer-sub bestimmt den Eigentümer. Ziel samt tatsächlichem Fortschritt, dauerhafter Verbrauch seiner historischen Monatsbindungen einschließlich noch nicht verarbeiteter abgeschlossener Monate und gegebenenfalls Leeren seiner aktuellen Auswahl werden gemeinsam committed. Frühere Herkunft und andere Auswahl bleiben erhalten; offene Vormerkungen bleiben offen. Kein Nachholen oder Ersatzziel ist Voraussetzung. Ungültige IDs ergeben 400, fremde und fehlende Ziele dieselbe neutrale 404. Erfolg erst nach dem gemeinsamen Commit; no-store.
       security:
         - AccessBearer: []
       responses:
         '204':
-          description: Verbindlich gelöscht; leerer Antwortkörper; no-store.
+          description: Ziel und Fortschritt entfernt, erforderlicher Verbrauch und Auswahlleerung gemeinsam verbindlich gespeichert; leerer Antwortkörper; no-store.
           headers:
             Cache-Control:
               $ref: '#/components/headers/NoStore'

@@ -127,10 +127,12 @@ import { MAX_CENTS, euroInput, signedEuroInput, formatSignedEuro, parseEuro, par
         </section>
       }
       <p id="goal-mutation-status" tabindex="-1" role="status" aria-live="polite" aria-atomic="true" [class.error]="mutationFailed()" [class.success]="mutationSaved()">{{ mutationStatus() }}</p>
-      <dialog #deleteDialog class="savings-delete-dialog" aria-labelledby="goal-delete-title" aria-describedby="goal-delete-description" (cancel)="cancelDelete($event)" (keydown)="trapDeleteFocus($event)" [attr.aria-busy]="pending()">
+      <dialog #deleteDialog class="savings-delete-dialog" aria-labelledby="goal-delete-title" aria-describedby="goal-delete-description goal-delete-months goal-delete-future" (cancel)="cancelDelete($event)" (keydown)="trapDeleteFocus($event)" [attr.aria-busy]="pending()">
         @if (deleting(); as goal) {
           <h2 id="goal-delete-title">Sparziel löschen?</h2>
           <p id="goal-delete-description">„{{ goal.name }}“ und sein Gesamtfortschritt werden endgültig gelöscht. Diese Aktion kann nicht rückgängig gemacht werden.</p>
+          <p id="goal-delete-months">Frühere Monatsüberschüsse, die diesem Ziel zugeordnet waren, werden weder auf ein anderes Ziel übertragen noch neu vorgemerkt. Das gilt auch für abgeschlossene Monate, die noch nicht verarbeitet wurden.</p>
+          <p id="goal-delete-future">Bereits offene Vormerkungen bleiben erhalten. {{ deletingActive() === false ? 'Die Monatsautomatik ist nicht aktiviert. Die Löschung aktiviert sie nicht und erzeugt keine Vormerkungen.' : deletingSelected() ? 'Dieses Ziel ist aktuell ausgewählt. Weitere Monatsüberschüsse werden ohne neue Zielauswahl vorgemerkt. Die Monatsautomatik bleibt aktiv.' : 'Falls ein anderes Ziel ausgewählt ist, bleibt diese Auswahl erhalten. Wenn die Monatsautomatik ausdrücklich aktiviert ist und danach kein Ziel ausgewählt ist, werden weitere Monatsüberschüsse bis zur nächsten Zielauswahl vorgemerkt. Die Löschung aktiviert die Monatsautomatik nicht.' }}</p>
           @if (!online()) { <p class="error" role="status">Du bist offline. Löschen ist erst online möglich.</p> }
           <p id="goal-delete-status" tabindex="-1" role="status" aria-live="polite" [class.error]="mutationFailed()">{{ deleteStatus() }}</p>
           @if (uncertain()) {
@@ -224,6 +226,9 @@ export class SavingsGoals {
   protected editDate = '';
   protected readonly targetEditing = signal<SavingsGoalResponse | null>(null);
   protected readonly deleting = signal<SavingsGoalResponse | null>(null);
+  protected readonly deletingSelected = signal(false);
+  protected readonly deletingActive = signal<boolean | null>(null);
+  private deleteSnapshot: { overview: MonthlySurplusOverviewResponse | null; goals: SavingsGoalResponse[]; state: OverviewLoadState } | null = null;
   protected readonly targetPending = signal(false);
   protected readonly editNameError = signal('');
   protected readonly editAmountError = signal('');
@@ -363,7 +368,10 @@ export class SavingsGoals {
       }
       if (!this.accepts() || sequence !== this.overviewSequence || revision !== this.confirmedRevision) return;
       if (overview) { this.acceptOverview(overview); this.activationUncertain.set(false); this.selectionUncertain.set(false); }
-      else { this.items.set(this.sort(result)); this.loaded.set(true); }
+      else {
+        this.items.set(this.sort(result)); this.loaded.set(true); this.discardMissingGoalDrafts(result);
+        if (this.deleting()) this.rememberDeleteState(null, result, this.overviewState());
+      }
       if (review && this.uncertain()) {
         this.reviewLoaded.set(true);
         this.mutationStatus.set('Aktuelle Sparziele geladen. Prüfe die gespeicherten Werte und deinen Entwurf.');
@@ -562,7 +570,7 @@ export class SavingsGoals {
   }
   protected startDelete(goal: SavingsGoalResponse): void {
     if (!this.accepts() || this.pending() || this.loading() || this.editing() || this.targetEditing() || this.deleting()) return;
-    this.deleting.set(goal); this.deleteStatus.set(''); this.resetMutationStatus();
+    this.deleting.set(goal); this.rememberDeleteState(this.overview(), this.items(), this.overviewState()); this.deleteStatus.set(''); this.resetMutationStatus();
     requestAnimationFrame(() => {
       if (!this.accepts() || this.deleting()?.id !== goal.id) return;
       const dialog = this.deleteDialog?.nativeElement;
@@ -577,7 +585,15 @@ export class SavingsGoals {
     const id = this.deleting()?.id; this.closeDelete(); this.resetMutationStatus();
     if (id) this.focus('goal-delete-' + id, 'goals-refresh');
   }
-  private closeDelete(): void { this.deleteDialog?.nativeElement.close(); this.deleting.set(null); this.deleteStatus.set(''); }
+  private rememberDeleteState(overview: MonthlySurplusOverviewResponse | null, goals: SavingsGoalResponse[], state: OverviewLoadState): void {
+    this.deleteSnapshot = { overview, goals: [...goals], state };
+    this.deletingSelected.set(!!overview && overview.selectedGoalId === this.deleting()?.id);
+    this.deletingActive.set(overview?.active ?? null);
+  }
+  private closeDelete(): void {
+    this.deleteDialog?.nativeElement.close(); this.deleting.set(null); this.deleteSnapshot = null;
+    this.deletingSelected.set(false); this.deletingActive.set(null); this.deleteStatus.set('');
+  }
   protected trapDeleteFocus(event: KeyboardEvent): void {
     if (event.key !== 'Tab') return;
     const buttons = [...(this.deleteDialog?.nativeElement.querySelectorAll<HTMLButtonElement>('button:not(:disabled)') ?? [])];
@@ -590,22 +606,39 @@ export class SavingsGoals {
   protected async remove(): Promise<void> {
     const goal = this.deleting();
     if (!goal || !this.accepts() || this.pending() || !this.online() || this.uncertain()) return;
-    this.invalidateOverview();
+    const before = this.deleteSnapshot ?? { overview: this.overview(), goals: [...this.items()], state: this.overviewState() };
+    const revision = this.invalidateOverview();
     const operation = this.operations.begin(); this.mutationFailed.set(false); this.mutationSaved.set(false); this.deleteStatus.set('Sparziel wird gelöscht …'); this.focus('goal-delete-status');
     try {
       const response = await firstValueFrom(this.goals.deleteSavingsGoal(goal.id, 'response').pipe(timeout(30_000)));
       if (!this.accepts()) return;
       if (response.status !== 204 || response.body) throw new Error('Löschung nicht bestätigt.');
-      const index = this.items().findIndex(value => value.id === goal.id), remaining = this.items().filter(value => value.id !== goal.id);
+      const index = before.goals.findIndex(value => value.id === goal.id), remaining = before.goals.filter(value => value.id !== goal.id);
       this.overviewRefreshRequired = true;
-      this.items.set(remaining); this.closeDelete(); this.mutationStatus.set('Dein Sparziel wurde gelöscht.'); this.mutationSaved.set(true);
+      this.discardGoalDrafts(goal.id);
+      if (revision === this.confirmedRevision) { this.items.set(remaining); this.loaded.set(true); this.loadFailed.set(false); }
+      this.closeDelete(); this.mutationStatus.set('Dein Sparziel wurde gelöscht.'); this.mutationSaved.set(true);
       const next = remaining[index] ?? remaining[index - 1]; this.focus(next ? 'goal-edit-' + next.id : 'goal-create', 'goal-name');
     } catch (failure) {
       if (!this.accepts()) return;
-      this.mutationFailed.set(true); this.unconfirmed();
-      this.deleteStatus.set(failure instanceof HttpErrorResponse && failure.status === 404
-        ? 'Das Sparziel wurde nicht gefunden. Schließe den Dialog und lade die Sparziele erneut.'
-        : 'Die Löschung wurde nicht bestätigt. Das Sparziel wurde möglicherweise bereits gelöscht. Schließe den Dialog und lade die Sparziele erneut, bevor du es erneut versuchst.'); this.focus('goal-delete-status');
+      if (this.rejectAuthentication(failure)) return;
+      this.mutationFailed.set(true);
+      if (failure instanceof HttpErrorResponse && [400, 404].includes(failure.status)) {
+        if (revision === this.confirmedRevision) {
+          if (before.overview) this.acceptOverview(before.overview);
+          else {
+            this.items.set(this.sort(before.goals)); this.loaded.set(true); this.loadFailed.set(false);
+            this.overviewState.set(before.state === 'loading' ? 'unknown' : before.state);
+          }
+        }
+        this.deleteStatus.set(failure.status === 404
+          ? 'Das Sparziel wurde nicht gefunden. Es wurde nichts geändert. Schließe den Dialog und lade die Sparziele erneut.'
+          : 'Das Sparziel wurde nicht gelöscht. Prüfe die Anfrage und versuche es erneut.');
+      } else {
+        this.unconfirmed();
+        this.deleteStatus.set('Die Löschung wurde nicht bestätigt. Das Sparziel wurde möglicherweise bereits gelöscht. Schließe den Dialog und lade die Sparziele erneut, bevor du es erneut versuchst.');
+      }
+      this.focus('goal-delete-status');
     } finally { this.operations.settle(operation); if (this.accepts()) void this.refreshConfirmedOverview(); }
   }
   protected focusName(): void { this.focus('goal-name'); }
@@ -648,6 +681,30 @@ export class SavingsGoals {
   private acceptOverview(state: MonthlySurplusOverviewResponse): void {
     this.manualReadFallback = false;
     this.overview.set(state); this.overviewState.set('loaded'); this.items.set(this.sort(state.goals)); this.loaded.set(true); this.loadFailed.set(false);
+    this.discardMissingGoalDrafts(state.goals);
+    if (this.deleting()) this.rememberDeleteState(state, state.goals, 'loaded');
+  }
+  private discardMissingGoalDrafts(goals: SavingsGoalResponse[]): void {
+    for (const id of new Set([this.selectionDraft(), this.editing()?.id, this.targetEditing()?.id]))
+      if (id && !goals.some(goal => goal.id === id)) this.discardGoalDrafts(id);
+  }
+  private discardGoalDrafts(id: string): void {
+    if (this.selectionDraft() === id) {
+      this.selectionDraft.set(''); this.selectionFailed.set(false);
+      this.selectionResult.set('Das Ziel deines Auswahlentwurfs ist nicht mehr vorhanden. Wähle ausdrücklich ein vorhandenes eigenes Sparziel.');
+    }
+    const progressRemoved = this.editing()?.id === id, targetRemoved = this.targetEditing()?.id === id;
+    const previousFocus = (progressRemoved || targetRemoved) && document.activeElement?.closest('.savings-editor') ? document.activeElement : null;
+    if (progressRemoved) { this.editing.set(null); this.progressAmount = ''; this.resetProgressStatus(); }
+    if (targetRemoved) this.resetTarget();
+    if (progressRemoved || targetRemoved) {
+      this.resetMutationStatus();
+      this.mutationStatus.set('Das Sparziel ist nicht mehr vorhanden. Dein zugehöriger Entwurf wurde verworfen.');
+      if (previousFocus) requestAnimationFrame(() => {
+        if (!this.accepts() || document.activeElement !== previousFocus && document.activeElement !== document.body) return;
+        (document.getElementById(this.items()[0] ? 'goal-edit-' + this.items()[0].id : 'goal-create') ?? document.getElementById('goal-name'))?.focus();
+      });
+    }
   }
   private rememberServerTime(date: string | null): void {
     const now = Date.parse(date ?? '');

@@ -205,6 +205,7 @@ class MonthlyCorrectionIT {
         application.activateMonthlyAutomation(first);
         // Modulseigene historische Auswahlfixtures: spätere Auswahl darf Erstabschluss nicht umleiten.
         ADMIN.update("INSERT INTO monthly_surplus.selections VALUES (?,?,?),(?,?,?)",first,OCT,a,first,OCT.plusMonths(1),b);
+        CLOCK.now=Instant.parse("2026-12-01T12:00:00Z");
         if(missingGoal) application.deleteGoal(first,a);
         CLOCK.now=Instant.parse("2026-12-01T12:00:00Z");application.updateExpense(first,id,"Korrigiert",85000L);
         assertThat(count()).isEqualTo(1);assertThat(records().getFirst()).containsEntry("goal_id",a).containsEntry("surplus_cents",15000L).containsEntry("consumed",missingGoal);
@@ -308,7 +309,7 @@ class MonthlyCorrectionIT {
         budget(first,"2026-10-01",100000);UUID id=historical(80000),a=closeBoundOctober(),b=goal(first,17);
         assertThat(records().getFirst()).containsEntry("goal_id",a).containsEntry("surplus_cents",20000L).containsEntry("consumed",false);
         application.deleteGoal(first,a);
-        assertThat(records().getFirst()).containsEntry("consumed",false);
+        assertThat(records().getFirst()).containsEntry("consumed",true);
         var goalsBefore=application.allGoals(first);long pendingBefore=application.monthlyPending(first);
         var response=mutation(method,first,id,method.equals("PUT")?85000L:null);
         assertThat(response.statusCode()).isEqualTo(method.equals("PUT")?200:204);

@@ -363,7 +363,8 @@ offline sind Mutationen gesperrt. Bei verlorenen Antworten kann eine Mutation
 bereits gespeichert sein. Weitere Sparzielmutationen bleiben gesperrt, bis
 „Sparziele zur Prüfung laden“ den aktuellen Bestand erfolgreich geladen hat und
 „Ich habe die Sparziele geprüft“ ausdrücklich bestätigt wurde. Dabei bleiben
-alle offenen Entwürfe erhalten; ein gewöhnliches Aktualisieren oder fehlgeschlagenes
+offene Entwürfe erhalten, solange ihr Ziel noch vorhanden ist; bestätigte
+Ziellöschungen verwerfen zugehörige Entwürfe. Ein gewöhnliches Aktualisieren oder fehlgeschlagenes
 Laden hebt die Sperre nicht auf. Die Prüfung beweist keinen Serverabschluss nach
 einem Timeout. Bei Bereichswechsel bleiben nur Vorgangsflags erhalten; nach einer
 laufenden Anfrage muss ihr Ausgang abgewartet und der Bestand geprüft werden.
@@ -452,7 +453,27 @@ negativer und übererfüllter Fortschritte. PostgreSQL-Nachweise liegen in
 `MonthlyCorrectionIT`, HTTPS-Nachweise in `monthly-automation.spec.ts` und
 `expense-mutations.spec.ts`.
 
-Vollständige Löschkoordination und Hintergrundlauf bleiben Folgeumfang. Die öffentliche Gesamtfreigabe bleibt geschlossen. Es gibt
+Die Ziellöschung (Story 4.5) bestätigt Ziel und tatsächlichen Fortschritt zusammen
+mit dem dauerhaften Verbrauch seiner Monatsbindungen und einer nötigen Leerung
+der aktuellen Auswahl. V16 ergänzt dafür ausschließlich den kontogebundenen
+Löschmarker ohne Zielfinanzwerte und eine intern leere Auswahl ab dem offenen
+Monat. Frühere Ziel-IDs und Auswahlstände bleiben erhalten, auch für noch nicht
+verarbeitete abgeschlossene Monate und Nullmonate. Löschung berechnet keine
+ausstehenden Summen und bleibt bei blockierter Nachholung oder geschlossenem
+Gesamtgate möglich. Eine andere aktuelle Auswahl und offene Vormerkungen bleiben
+erhalten. Spätere Ausgabenkorrekturen erzeugen für verbrauchte Bindungen keine
+erneute Vormerkung oder Wirkung auf ein anderes Ziel.
+
+Der Löschdialog erklärt diese Folgen; nach 204 wird der gemeinsame Stand frisch
+geladen. Ein Ladefehler lässt den bestätigten Löscherfolg bestehen und zeigt
+abhängige Werte als ungeladen. Sichere Ablehnungen erhalten den bestätigten
+vorherigen Stand; bei unbestätigtem Ausgang ist vor Wiederholung eine Prüfung nötig.
+Bestätigt entfallene zielbezogene Entwürfe werden verworfen, unabhängige Entwürfe
+bleiben im offenen Tab. `MonthlyDeletionIT` prüft echte HTTP-/PostgreSQL-Fälle,
+Kontentrennung, beide Sperrreihenfolgen, Monatsgrenzwartezeit und vollständigen
+Rollback; die Automatik-Browserprüfung ergänzt vier Größen mit 200 % Text.
+
+Der Hintergrundlauf bleibt Folgeumfang. Die öffentliche Gesamtfreigabe bleibt geschlossen. Es gibt
 keinen öffentlichen Abschluss-/Jobauslöser.
 
 Der zusätzliche HTTPS-Positivnachweis läuft ausschließlich mit synthetischen

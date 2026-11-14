@@ -16,8 +16,24 @@ public class MonthlySurplus {
     private final ActivationRepository activations;
     private final MonthRecordRepository records;
     private final SelectionRepository selections;
-    MonthlySurplus(ActivationRepository activations, MonthRecordRepository records, SelectionRepository selections) {
-        this.activations = activations; this.records = records; this.selections = selections;
+    private final DeletedGoalRepository deletedGoals;
+    MonthlySurplus(ActivationRepository activations, MonthRecordRepository records, SelectionRepository selections, DeletedGoalRepository deletedGoals) {
+        this.activations = activations; this.records = records; this.selections = selections; this.deletedGoals = deletedGoals;
+    }
+    public boolean deleted(FinanceContext context, UUID goalId) {
+        context.requireRead();
+        return goalId != null && deletedGoals.exists(context.userId(), goalId);
+    }
+    /** Ohne Quell-/Summenberechnung: erhaltene Historie schützt auch noch fehlende Nachweise. */
+    public boolean deleteGoal(FinanceContext context, UUID goalId) {
+        context.requireWrite();
+        java.util.Objects.requireNonNull(goalId);
+        if (!selections.references(context.userId(), goalId) && !records.references(context.userId(), goalId)) return false;
+        deletedGoals.insert(context.userId(), goalId);
+        records.consume(context.userId(), goalId);
+        if (goalId.equals(selections.selected(context.userId(), context.month())))
+            selections.select(context.userId(), context.month(), null);
+        return true;
     }
     public UUID selected(FinanceContext context, LocalDate month) {
         context.requireRead();

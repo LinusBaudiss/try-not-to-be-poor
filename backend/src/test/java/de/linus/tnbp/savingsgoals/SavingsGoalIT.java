@@ -316,7 +316,8 @@ class SavingsGoalIT {
         assertThat(foreign.statusCode()).isEqualTo(404); assertThat(missing.statusCode()).isEqualTo(404);
         assertThat(foreign.body()).isEqualTo(missing.body()).doesNotContain(other, second.toString());
         assertThat(JSON.readTree(foreign.body()).get("code").asText()).isEqualTo("SAVINGS_GOAL_NOT_FOUND");
-        assertThat(progress("ungueltig", "{\"progressCents\":999}", token(first)).body()).isEqualTo(missing.body());
+        if (path().contains("/v2/")) assertThat(progress("ungueltig", "{\"progressCents\":999}", token(first)).statusCode()).isEqualTo(400);
+        else assertThat(progress("ungueltig", "{\"progressCents\":999}", token(first)).body()).isEqualTo(missing.body());
         for (String bearer : Arrays.asList(null, "ungueltig"))
             assertThat(progress(id, "{\"progressCents\":999}", bearer).statusCode()).isEqualTo(401);
         var request = HttpRequest.newBuilder(URI.create("http://localhost:" + port + path() + "/" + id + "/progress"))
@@ -410,7 +411,8 @@ class SavingsGoalIT {
             assertThat(foreign.statusCode()).isEqualTo(404);
             assertThat(missing.statusCode()).isEqualTo(404);
             assertThat(foreign.body()).isEqualTo(missing.body()).doesNotContain(other, second.toString());
-            assertThat(call(method, body, token(first), "/ungueltig").body()).isEqualTo(missing.body());
+            if (path().contains("/v2/")) assertThat(call(method, body, token(first), "/ungueltig").statusCode()).isEqualTo(400);
+            else assertThat(call(method, body, token(first), "/ungueltig").body()).isEqualTo(missing.body());
             for (String bearer : Arrays.asList(null, "ungueltig")) assertThat(call(method, body, bearer, "/" + own).statusCode()).isEqualTo(401);
         }
         assertThat(count(first)).isEqualTo(1); assertThat(count(second)).isEqualTo(1);

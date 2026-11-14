@@ -217,7 +217,9 @@ test('DELETE-404, Fehler und unpassende Bestätigungen erhalten Ziel und empfehl
     await startDelete(page);
     await page.route(endpoint, route => route.fulfill(result)); await remove(page);
     await expect(page.locator('#goal-delete-status')).toContainText('lade die Sparziele erneut'); await expect(page.locator('.savings-cards li')).toHaveCount(1);
-    await expect(page.getByRole('dialog')).toBeVisible(); await expect(page.locator('#goal-mutation-status')).not.toHaveClass(/success/); await page.unroute(endpoint); await review(page);
+    await expect(page.getByRole('dialog')).toBeVisible(); await expect(page.locator('#goal-mutation-status')).not.toHaveClass(/success/); await page.unroute(endpoint);
+    if (result.status === 404) { await page.keyboard.press('Escape'); await page.locator('#goals-refresh').click(); await expect(page.locator('#goals-list-status')).toContainText('geladen'); }
+    else await review(page);
   }
   await startDelete(page);
   await page.route(endpoint, async route => { const response = await route.fetch(); expect(response.status()).toBe(204); await route.abort('failed'); });
@@ -555,3 +557,22 @@ for (const [width, height] of [[320, 568], [390, 844], [768, 1024], [1280, 800]]
     expect(deletes).toBe(1);
   });
 }
+
+for (const kind of ['Fortschritt', 'Zielwerte']) test(`Frischer Bestand verwirft bestätigte entfallene ${kind}-Entwürfe und erhält den unabhängigen Neuanlageentwurf`, async ({ page, request }) => {
+  await login(page, await account(request)); const goal = await create(page);
+  await page.getByLabel('Name des Sparziels', { exact: true }).fill('Unabhängiger Entwurf');
+  if (kind === 'Fortschritt') {
+    await page.getByRole('button', { name: 'Fortschritt aktualisieren: Reise', exact: true }).click();
+    await page.getByLabel('Gesamtfortschritt in Euro', { exact: true }).fill('77,77');
+  } else { await open(page); await draft(page, 'Zielentwurf'); }
+  const token = await page.evaluate(() => (window as any).ng.getComponent(document.querySelector('app-savings-goals')).session.token());
+  const removed = await request.delete(`http://127.0.0.1:8080/api/v2/savings-goals/${goal.id}`, { headers: { Authorization: `Bearer ${token}` } });
+  expect(removed.status()).toBe(204);
+  await page.locator('#goals-refresh').click(); await expect(page.locator('#goals-list-status')).toHaveText('Noch keine Sparziele angelegt.');
+  await expect(page.locator('.savings-editor')).toHaveCount(0);
+  await expect(page.getByLabel('Name des Sparziels', { exact: true })).toHaveValue('Unabhängiger Entwurf');
+  expect(await page.evaluate(() => {
+    const goals = (window as any).ng.getComponent(document.querySelector('app-savings-goals'));
+    return { progress: goals.progressAmount, progressGoal: goals.editing(), targetGoal: goals.targetEditing(), targetName: goals.editName };
+  })).toEqual({ progress: '', progressGoal: null, targetGoal: null, targetName: '' });
+});

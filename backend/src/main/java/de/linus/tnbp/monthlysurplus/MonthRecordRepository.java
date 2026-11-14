@@ -46,4 +46,11 @@ class MonthRecordRepository {
             WHERE user_id = ? AND surplus_cents IS NOT NULL AND goal_id IS NULL
             """, goalId, userId);
     }
+    boolean references(UUID userId, UUID goalId) {
+        return Boolean.TRUE.equals(jdbc.queryForObject("SELECT EXISTS (SELECT 1 FROM monthly_surplus.month_records WHERE user_id = ? AND goal_id = ?)",
+            Boolean.class, userId, goalId));
+    }
+    void consume(UUID userId, UUID goalId) {
+        jdbc.update("UPDATE monthly_surplus.month_records SET consumed = true WHERE user_id = ? AND goal_id = ? AND NOT consumed", userId, goalId);
+    }
 }

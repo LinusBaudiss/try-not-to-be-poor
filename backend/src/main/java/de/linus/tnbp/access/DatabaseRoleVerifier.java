@@ -33,10 +33,10 @@ class DatabaseRoleVerifier implements InitializingBean {
             throw new IllegalStateException("Die Laufzeitrolle darf weder privilegiert noch Tabellenbesitzer sein.");
         }
         Boolean protectedFinance = jdbc.queryForObject("""
-            SELECT count(*) = 6 AND bool_and(c.relrowsecurity AND c.relforcerowsecurity
+            SELECT count(*) = 7 AND bool_and(c.relrowsecurity AND c.relforcerowsecurity
                 AND has_schema_privilege(current_user, n.oid, 'USAGE'))
             FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
-            WHERE (n.nspname, c.relname) IN (('expenses', 'expenses'), ('budget', 'budgets'), ('savings_goals', 'goals'), ('monthly_surplus', 'activations'), ('monthly_surplus', 'month_records'), ('monthly_surplus', 'selections'))
+            WHERE (n.nspname, c.relname) IN (('expenses', 'expenses'), ('budget', 'budgets'), ('savings_goals', 'goals'), ('monthly_surplus', 'activations'), ('monthly_surplus', 'month_records'), ('monthly_surplus', 'selections'), ('monthly_surplus', 'deleted_goals'))
             """, Boolean.class);
         if (!Boolean.TRUE.equals(protectedFinance)) {
             throw new IllegalStateException("Die Finanzschemas benötigen minimale Laufzeitrechte und erzwungene RLS.");
@@ -49,6 +49,14 @@ class DatabaseRoleVerifier implements InitializingBean {
             """, Boolean.class);
         if (!Boolean.TRUE.equals(immutableActivation))
             throw new IllegalStateException("Der Aktivierungsbeginn benötigt unveränderliche minimale Laufzeitrechte.");
+        Boolean immutableDeletedGoals = jdbc.queryForObject("""
+            SELECT has_table_privilege(current_user, 'monthly_surplus.deleted_goals', 'SELECT')
+                AND has_table_privilege(current_user, 'monthly_surplus.deleted_goals', 'INSERT')
+                AND NOT has_table_privilege(current_user, 'monthly_surplus.deleted_goals', 'UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER')
+                AND NOT has_any_column_privilege(current_user, 'monthly_surplus.deleted_goals', 'UPDATE,REFERENCES')
+            """, Boolean.class);
+        if (!Boolean.TRUE.equals(immutableDeletedGoals))
+            throw new IllegalStateException("Der dauerhafte Zielverbrauch benötigt unveränderliche minimale Laufzeitrechte.");
         Boolean immutableRecords = jdbc.queryForObject("""
             SELECT has_table_privilege(current_user, 'monthly_surplus.month_records', 'SELECT')
                 AND has_table_privilege(current_user, 'monthly_surplus.month_records', 'INSERT')

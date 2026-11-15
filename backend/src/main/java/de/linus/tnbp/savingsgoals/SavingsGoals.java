@@ -59,8 +59,13 @@ public class SavingsGoals {
         context.requireWrite();
         Money.exact(differenceCents);
         long current = goals.currentProgress(context.userId(), id).orElseThrow(NotFound::new);
-        long result = Money.exact(java.math.BigDecimal.valueOf(current).add(java.math.BigDecimal.valueOf(differenceCents)));
+        long result = progressAfterDifference(current, differenceCents);
         goals.setProgress(context.userId(), id, result);
+    }
+    /** Reine Korrekturentscheidung: positive wie negative Differenzen auf dem tatsächlichen Stand. */
+    static long progressAfterDifference(long currentProgressCents, long differenceCents) {
+        return Money.exact(java.math.BigDecimal.valueOf(currentProgressCents)
+            .add(java.math.BigDecimal.valueOf(differenceCents)));
     }
     public static void validateSignedProgress(Long progressCents) {
         if (progressCents == null || progressCents < -Money.MAX_CENTS || progressCents > Money.MAX_CENTS)

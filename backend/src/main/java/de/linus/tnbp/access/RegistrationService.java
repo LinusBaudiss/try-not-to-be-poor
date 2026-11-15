@@ -2,11 +2,9 @@ package de.linus.tnbp.access;
 
 import java.time.Clock;
 import java.util.LinkedHashMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 import jakarta.validation.Validator;
-import jakarta.validation.constraints.Email;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -35,12 +33,10 @@ public class RegistrationService {
     }
 
     public void register(String token, String email, String password) {
-        String normalizedEmail = email == null ? "" : email.strip().toLowerCase(Locale.ROOT);
+        String normalizedEmail = RegistrationEmailPolicy.normalize(email);
         String normalizedPassword = passwords.normalize(password);
         Map<String, String> errors = new LinkedHashMap<>();
-        if (normalizedEmail.isEmpty() || normalizedEmail.length() > 254
-                || !validator.validate(new EmailAddress(normalizedEmail)).isEmpty()
-                || !normalizedEmail.matches("[^@\\s]+@[^@\\s]+\\.[^@\\s]+")) {
+        if (!RegistrationEmailPolicy.valid(normalizedEmail, validator)) {
             errors.put("email", "Gib eine gültige E-Mail-Adresse mit höchstens 254 Zeichen ein.");
         }
         String passwordError = passwords.error(normalizedPassword);
@@ -61,6 +57,4 @@ public class RegistrationService {
             throw new RegistrationFailure(Map.of());
         }
     }
-
-    private record EmailAddress(@Email String value) {}
 }

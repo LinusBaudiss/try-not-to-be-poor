@@ -46,4 +46,22 @@ class MonthlySurplusTest {
         var noBudget = new MonthlySurplus.MonthRecord(null,null,false);
         assertThat(MonthlySurplus.replacementPending(java.math.BigDecimal.ZERO,noBudget,null)).isZero();
     }
+
+    @Test void offeneSummeUndVormerkungBleibenExaktUndUnterscheidenFehlendenBetrag() {
+        var goal = java.util.UUID.randomUUID();
+        assertThat(MonthlySurplus.checkedPending(java.math.BigDecimal.ZERO)).isZero();
+        assertThat(MonthlySurplus.checkedPending(java.math.BigDecimal.valueOf(Money.MAX_CENTS))).isEqualTo(Money.MAX_CENTS);
+        assertThat(MonthlySurplus.pendingAfterClosure(java.math.BigDecimal.ZERO, null, null)).isZero();
+        assertThat(MonthlySurplus.pendingAfterClosure(java.math.BigDecimal.ZERO, 20000L, null)).isEqualTo(20000);
+        assertThat(MonthlySurplus.pendingAfterClosure(java.math.BigDecimal.valueOf(20000), 10000L, null)).isEqualTo(30000);
+        assertThat(MonthlySurplus.pendingAfterClosure(java.math.BigDecimal.valueOf(100), 50L, null)).isEqualTo(150);
+        assertThat(MonthlySurplus.pendingAfterClosure(java.math.BigDecimal.valueOf(100), 50L, goal)).isEqualTo(100);
+        assertThat(MonthlySurplus.pendingAfterClosure(java.math.BigDecimal.ZERO, 0L, null)).isZero();
+        assertThatThrownBy(() -> MonthlySurplus.checkedPending(java.math.BigDecimal.valueOf(Money.MAX_CENTS).add(java.math.BigDecimal.ONE)))
+            .isInstanceOf(ArithmeticException.class);
+        assertThatThrownBy(() -> MonthlySurplus.pendingAfterClosure(java.math.BigDecimal.valueOf(Money.MAX_CENTS), 1L, null))
+            .isInstanceOf(ArithmeticException.class);
+        assertThatThrownBy(() -> MonthlySurplus.checkedPending(java.math.BigDecimal.valueOf(-1)))
+            .isInstanceOf(ArithmeticException.class);
+    }
 }

@@ -20,7 +20,9 @@ import time
 import xml.etree.ElementTree as ET
 
 ROOT = Path(__file__).resolve().parents[1]
-TARGET_SECONDS = 15 * 60
+REFERENCE_MEDIAN_SECONDS = 1755.1326350740055
+TARGET_REDUCTION = 0.30
+TARGET_SECONDS = REFERENCE_MEDIAN_SECONDS * (1 - TARGET_REDUCTION)
 GROUPS = (
     ('python', ['python3', '-m', 'unittest', 'discover', '-s', 'scripts/tests', '-v']),
     ('contract', ['./scripts/check-contract.sh']),
@@ -288,7 +290,12 @@ def expected_backend_tests():
         return inherited
     expected = {'surefire': Counter(), 'failsafe': Counter()}
     for name, (package, own, parent) in classes.items():
-        group = 'surefire' if name.endswith('Test') else 'failsafe' if name.endswith('IT') else None
+        # This process-cleanup regression must remain in verify but must not
+        # contaminate the isolated Surefire unit group.
+        if name == 'MonthlyAutomationE2eServerTest':
+            group = 'failsafe'
+        else:
+            group = 'surefire' if name.endswith('Test') else 'failsafe' if name.endswith('IT') else None
         if group is None:
             raise ValueError(f'Test source outside intended Maven discovery: {name}')
         for method, count in methods_of(name).items():

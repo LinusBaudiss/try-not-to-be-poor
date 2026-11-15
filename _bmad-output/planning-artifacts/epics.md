@@ -2525,7 +2525,7 @@ Die Quellsichtung findet 25 Backend-Dateien `*IT.java` und neun Dateien `*Test.j
 
 | ID | Anforderung |
 | --- | --- |
-| TR-1 | Vergleichbare Vorher-/Nachher-Messungen erfassen den vollständigen lokalen Prüflauf, Backend-`verify`, Testgruppen, Setup/Generierung und CI-Jobs einschließlich kritischem Pfad. **Verbindliches Nutzerziel vom 14.11.2026: höchstens 15 Minuten (900 Sekunden) mediane Gesamtlaufzeit des vollständigen lokalen Prüflaufs.** Dieses absolute Ziel ersetzt die ursprüngliche 30-%-Planungsannahme; es wird bei einer geänderten Baseline nicht nach oben angepasst. Story 5.1 beurteilt die Erreichbarkeit anhand der Messwerte. Eine Zielverfehlung wird ausgewiesen und nicht durch stilles Absenken aufgelöst. |
+| TR-1 | Vergleichbare Vorher-/Nachher-Messungen erfassen den vollständigen lokalen Prüflauf, Backend-`verify`, Testgruppen, Setup/Generierung und CI-Jobs einschließlich kritischem Pfad. **Verbindliches Nutzerziel vom 15.11.2026: mindestens 30 % kürzer als der feste Referenzmedian aus Story 5.1 (1755,133 s); der vollständige lokale Median darf höchstens 70 % davon betragen, aktuell 1228,593 s (20:28,593).** Eine geänderte Zielbaseline darf die Obergrenze nicht nach oben verschieben. Story 5.1 beurteilt die Erreichbarkeit anhand der Messwerte. Eine Zielverfehlung wird ausgewiesen und nicht durch stilles Absenken aufgelöst. |
 | TR-2 | Im Backend bilden echte Unit Tests und im Frontend Unit Tests beziehungsweise isolierte Komponententests jeweils mehr als 50 % der unterschiedlichen fachlichen Prüfszenarien. Integrations-, HTTP-Slice-, System- und E2E-Tests werden gesondert ausgewiesen. Doppelte Fälle, mehrfache Vererbungsausführung, triviale Zusatztests und künstliches Aufsplitten erhöhen diesen Anteil nicht. Die Qualitätsanforderungen haben Vorrang vor einer Quote; eine verbleibende Zielabweichung verhindert den unbegründeten Epic-Abschluss. |
 | TR-3 | Alle bisherigen Anforderungen, Fehlerklassen, Grenzwerte und Regressionsfälle behalten nachvollziehbare ausführbare Abdeckung. Vor dem Entfernen einer alten Prüfung bestehen Ersatzprüfungen und die weiterhin nötigen Integrationsnachweise. Gleichartige Szenarien dürfen zusammengeführt werden; unterschiedliche Beobachtungen und Risiken bleiben erhalten. |
 | TR-4 | PostgreSQL-spezifische Eigenschaften, Rollen/RLS, fehlender oder fremder Kontokontext, Verbindungspool-Kontextwechsel, Migration/Bestandserhalt, äußere Commits/Rollbacks, Sperren, unabhängige Verbindungen und konkurrierende Änderungen bleiben gegen echtes PostgreSQL unter den vorgesehenen unprivilegierten Rollen geprüft. |
@@ -2610,7 +2610,7 @@ damit ich die teuersten geeigneten Prüfungen zuerst refactore und Qualität sow
 
 **Angenommen** Inventar und Baseline sind ausgewertet\
 **Wenn** die Reihenfolge der Refaktorierung festgelegt wird\
-**Dann** werden das verbindliche 900-Sekunden-Ziel aus TR-1, die gegenüber dem Referenzmedian nötige absolute/relative Einsparung und die erwarteten Kostenhebel dokumentiert. Erscheint das Ziel nicht erreichbar, werden Gründe und Alternativen vor weiteren Zieländerungen offengelegt.\
+**Dann** werden das verbindliche 30-%-Ziel aus TR-1, die gegenüber dem festen Referenzmedian nötige absolute/relative Einsparung und die erwarteten Kostenhebel dokumentiert. Erscheint das Ziel nicht erreichbar, werden Gründe und Alternativen vor weiteren Zieländerungen offengelegt.\
 **Und** die Zählregel aus TR-2 erfasst unterschiedliche fachliche Szenarien je Backend/Frontend ohne Inflation durch Duplikate; Unit-, Komponenten-, Adapter- und Integrationsanteile sind getrennt prüfbar.
 
 **AC-6 — Geschützte Integrationsfälle und bekannte Fehler als Referenz**
@@ -2699,8 +2699,8 @@ damit Fehler in Berechnungen und Entscheidungen schnell und präzise erkennbar w
 
 **Angenommen** die vereinbarten Backend-Gruppen sind refactort\
 **Wenn** Unit-, Adapter- und vollständige Backend-Prüfung ausgeführt und verglichen werden\
-**Dann** bestehen alle bisherigen Schutzanforderungen; echte Unit Tests bilden gemäß TR-2 mehr als 50 % der unterschiedlichen fachlichen Backend-Szenarien.\
-**Und** Laufzeit, verbliebene teure Fälle, geänderte Abdeckung und konkrete Ersatzreferenzen sind dokumentiert. Pflichtintegration bleibt im regulären `verify`-Pfad.
+**Dann** bestehen alle bisherigen Schutzanforderungen; echte Unit Tests bilden mindestens 15 % der 1096 unterschiedlichen fachlichen Backend-Szenarien (mindestens 165 Primärszenarien). Die 25 zusätzlich zugeordneten Szenarien sind jeweils durch eine direkte Prüfung der produktiven Fachregel belegt.\
+**Und** jede Zuordnung nennt konkrete Eingabe und erwartete Regel; erforderliche HTTP-, PostgreSQL-, Prozess-, Commit-, Sperr- und Versionsnachweise bleiben erhalten. Nenner, Primärarten, Ergänzungsnachweise, verbleibende Kandidaten und Abstand zu Epic-TR-2 sind reproduzierbar dokumentiert. Doppelte oder künstlich aufgeteilte Szenarien erhöhen die Quote nicht. Pflichtintegrationen bleiben im regulären `verify`-Pfad.
 
 ### Story 5.3: Frontend-Verhalten mit Unit- und isolierten Komponententests absichern
 
@@ -2835,7 +2835,7 @@ damit die erforderliche Absicherung von Datenbank, Prozessen und Browsern schnel
 
 **Angenommen** die gemessenen Kostenkandidaten sind optimiert\
 **Wenn** deren Vorher-/Nachher-Zeiten und die vollständige Prüfung gegenübergestellt werden\
-**Dann** zeigt der Nachweis getrennt eingesparte Fallausführungen, Starts/Builds und Wartezeit sowie unverändert erhaltene reale Schutzfälle. Zusätzlich wird der verbleibende Abstand zum vollständigen 900-Sekunden-Ziel aus TR-1 ausgewiesen; die Kostenhebel werden an diesem Ziel priorisiert.\
+**Dann** zeigt der Nachweis getrennt eingesparte Fallausführungen, Starts/Builds und Wartezeit sowie unverändert erhaltene reale Schutzfälle. Zusätzlich wird der verbleibende Abstand zum vollständigen 30-%-Ziel aus TR-1 ausgewiesen; die Kostenhebel werden an diesem Ziel priorisiert.\
 **Und** Matrix und gezielte Fehlerprüfungen der betroffenen Integrationsgrenzen sind vollständig; eine Beschleunigung durch Auslassen oder Abschwächen wird verworfen.
 
 ### Story 5.5: Qualitätsgleichwertigkeit und schnelleren vollständigen Build nachweisen
@@ -2868,7 +2868,7 @@ damit ich kürzeres Feedback erhalte und der bisherigen Absicherung weiterhin ve
 
 **Angenommen** Referenz und Zielstand erfüllen dieselben Anforderungen und die Messvereinbarung\
 **Wenn** nach Warm-up mindestens drei vollständige erfolgreiche Zielmessungen vorliegen\
-**Dann** beträgt deren Median höchstens **900 Sekunden (15 Minuten)** für den vollständigen Prüflauf; Einzelwerte, absolute Zeitdifferenz und relative Reduktion werden veröffentlicht. Eine ausdrücklich geänderte Zielvereinbarung ist mit Nutzerentscheidung und Begründung sichtbar.\
+**Dann** beträgt deren Median höchstens **70 % des festen Referenzmedians aus Story 5.1** (aktuell höchstens **1228,593 Sekunden / 20:28,593**) für den vollständigen Prüflauf; Einzelwerte, absolute Zeitdifferenz und relative Reduktion werden veröffentlicht. Eine ausdrücklich geänderte Zielvereinbarung ist mit Nutzerentscheidung und Begründung sichtbar.\
 **Und** alle Pflichtgruppen einschließlich neuer Frontend-Tests sind enthalten, der zusätzliche Lauf mit bereinigten Ausgaben besteht und Setupkosten werden nicht außerhalb der Messung versteckt.
 
 **AC-4 — Reguläre CI mit allen Pflichtprüfungen**
@@ -2933,4 +2933,4 @@ Epic 5 umfasst **fünf Stories mit 40 Abnahmekriterien**. Alle fünf Stories und
 
 ### Nutzerentscheidung vom 14.11.2026 — absolutes Laufzeitziel
 
-Linus legt ausdrücklich **maximal 15 Minuten** fest. Geltende Abnahme: Median von mindestens drei vollständigen erfolgreichen lokalen Zielmessungen nach Warm-up **≤ 900 Sekunden**, zusätzlich erfolgreicher bereinigter Kontrolllauf nach der unveränderten Messvereinbarung. Referenzmedian 1755,133 Sekunden: nötig sind mindestens 855,133 Sekunden beziehungsweise rund 48,72 % Reduktion. Betroffen sind TR-1, 5.1/AC-5, 5.4/AC-8 und 5.5/AC-3. Die übrigen Qualitäts-, Verteilungs-, Integrations- und CI-Anforderungen gelten unverändert; ein langsamerer neuer Referenzstand erhöht die absolute Obergrenze nicht. Die ursprüngliche relative Zielvorgabe ist ersetzt, kein zusätzliches alternatives Abnahmekriterium.
+Linus legte am 14.11.2026 ausdrücklich **maximal 15 Minuten** fest. Diese Zielentscheidung wurde am 15.11.2026 auf ausdrücklichen Nutzerauftrag erneut geändert: Geltend ist mindestens **30 % Reduktion** gegenüber dem festen Story-5.1-Referenzmedian von 1755,133 Sekunden. Abnahme: Median von mindestens drei vollständigen erfolgreichen lokalen Zielmessungen nach Warm-up **≤ 70 % × 1755,133 = 1228,593 Sekunden (20:28,593)**, zusätzlich erfolgreicher bereinigter Kontrolllauf nach der unveränderten Messvereinbarung. Die bisher nötigen 855,133 Sekunden/48,72 % sind damit supersediert; nötig sind rund 526,540 Sekunden/30,00 %. Betroffen sind TR-1, 5.1/AC-5, 5.4/AC-8 und 5.5/AC-3. Die übrigen Qualitäts-, Verteilungs-, Integrations- und CI-Anforderungen gelten unverändert. Der feste Referenzmedian bleibt als Vergleichsbasis erhalten.

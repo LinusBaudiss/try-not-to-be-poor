@@ -372,6 +372,17 @@ Neuladen, Abmeldung, Sitzungsende und Kontowechsel verwerfen offene Entwürfe.
 
 ## Prüfen
 
+Die schnelle, vom Anwendungsstart getrennte Backend-Gruppe läuft mit
+`./backend/mvnw -f backend/pom.xml test`. Maven Surefire führt dabei die
+`*Test`-Klassen ohne die explizit als Prozessprüfung geführte
+`MonthlyAutomationE2eServerTest`-Klasse aus; HTTP-/PostgreSQL-Integrationen
+(`*IT`) und diese Prozessprüfung laufen erst mit
+`./backend/mvnw -f backend/pom.xml verify`. Die Unit-Gruppe verwendet produktive
+Fachentscheidungen direkt und benötigt weder freie Anwendungsports noch eine
+laufende Datenbank oder externe Prozesse.
+Die Architekturschutztests laufen separat ausgewiesen ebenfalls in diesem
+Maven-Testziel.
+
 Die Aktivierungsgrundlage der Monatsautomatik (Story 4.1) besitzt eigene
 v2-GET-/POST-Routen unter `/api/v2/monthly-surplus/activation`. Lesen erzeugt
 keinen Start. Eine zulässige Erstaktivierung speichert den gesamten laufenden
@@ -722,7 +733,7 @@ python3 scripts/test-baseline.py \
 
 Historische Rohbelege sind im [geprüften Nachweisarchiv](_bmad-output/implementation-artifacts/test-baseline/ARCHIVE.md) erhalten; dort stehen Download, Hashprüfung und sicheres Entpacken. Neue lokale Läufe unter `.local/test-baseline/` sind ignoriert. Der Ausgabepfad muss neu sein. Der Befehl führt **Warm-up → drei vollständige Messungen → bereinigten Lauf** aus. Jeweils in dieser Reihenfolge: Python, vollständiger Vertragscheck (beide Versionen, Generatoren, Java-/TypeScript-Kompilierung und SPA), Backend-`verify`, Browser normal, Übergang, Automatik. Ein neuer Frontend-Unitbefehl existiert noch nicht und muss nach Einführung ergänzt werden. Downloads und wiederholte Builds bleiben innerhalb der Gruppenzeit; Erstdownloads vorher als gesonderten Setupversuch dokumentieren. Alle Abhängigkeitscaches bleiben erhalten. Der letzte Lauf entfernt nur die im Ergebnis angegebenen Build-/Testausgaben, keine Datenbanken oder Abhängigkeitscaches.
 
-`results.json` enthält Revision/Dirty-Status, Umgebung, ausgeführte Befehle, Einzelzeiten, Fehlerstatus, Median ausschließlich erfolgreicher vollständiger Messungen sowie `target_seconds` (fest 900 Sekunden) und `target_met` (nur bei vollständiger Messserie bewertet). Logs bleiben je Gruppe erhalten; optionale Vertragsphasendateien unterscheiden Abhängigkeitssetup, Validierung/Generierung und Kompilierung einschließlich des zusätzlichen SPA-`prebuild`. Diese Phasen sind inklusive Teilzeiten, keine reinen Compiler-/CPU-Kosten. `--preflight-only` prüft Voraussetzungen ohne Prüfgruppen; fehlende Werkzeuge/Ports führen zu Exit 2, Gruppenfehler zu Exit 1. Der erste Gruppenfehler beendet die Serie und bleibt als Fehlversuch erhalten; anschließend neuen Ausgabepfad verwenden. Gruppen haben eine Zweistunden-Grenze; Abbruch/Timeout beendet ihre Prozessgruppe und liefert keinen Leistungsnachweis. Messergebnisse immer zusammen mit Revision und Eingabeprüfsummen beurteilen; für endgültige Vergleiche einen sauberen veröffentlichten Referenz-/Zielstand verwenden.
+`results.json` enthält Revision/Dirty-Status, Umgebung, ausgeführte Befehle, Einzelzeiten, Fehlerstatus, Median ausschließlich erfolgreicher vollständiger Messungen sowie `target_seconds` (70 % des festen Story-5.1-Referenzmedians, derzeit 1228,593 Sekunden) und `target_met` (nur bei vollständiger Messserie bewertet). Logs bleiben je Gruppe erhalten; optionale Vertragsphasendateien unterscheiden Abhängigkeitssetup, Validierung/Generierung und Kompilierung einschließlich des zusätzlichen SPA-`prebuild`. Diese Phasen sind inklusive Teilzeiten, keine reinen Compiler-/CPU-Kosten. `--preflight-only` prüft Voraussetzungen ohne Prüfgruppen; fehlende Werkzeuge/Ports führen zu Exit 2, Gruppenfehler zu Exit 1. Der erste Gruppenfehler beendet die Serie und bleibt als Fehlversuch erhalten; anschließend neuen Ausgabepfad verwenden. Gruppen haben eine Zweistunden-Grenze; Abbruch/Timeout beendet ihre Prozessgruppe und liefert keinen Leistungsnachweis. Messergebnisse immer zusammen mit Revision und Eingabeprüfsummen beurteilen; für endgültige Vergleiche einen sauberen veröffentlichten Referenz-/Zielstand verwenden.
 
 Separat instrumentierte Backend-Abdeckung, **niemals Laufzeit-Baseline**:
 
@@ -736,8 +747,8 @@ Gezählt werden fachlich unterschiedliche Kombinationen aus Regel, Eingabe/Zusta
 
 Der abgeschlossene statische [Szenario-Abgleich](_bmad-output/implementation-artifacts/test-baseline/SCENARIO-REVIEW.md) enthält die fachliche Zählregel, konkrete Zusammenführungen und geschützte Unterschiede. `python3 _bmad-output/implementation-artifacts/test-baseline/semantic-scenarios.py` prüft die expliziten Zuordnungen und erzeugt die kanonische Matrix samt getrennter Backend-/Frontendverteilung; es führt keine Produkttests aus.
 
-Die erfolgreiche lokale Referenzserie ist in [LOCAL-BASELINE.md](_bmad-output/implementation-artifacts/test-baseline/LOCAL-BASELINE.md) ausgewertet: Median 1755,133 Sekunden; verbindliches Nutzerziel höchstens 900 Sekunden (15 Minuten), entsprechend 48,72 % Einsparung. Die Auswertung enthält geprüfte Gruppen-/Klassenzeiten, den gemessenen Quellstand einschließlich Korrekturpatch und die Vergleichsgrenzen.
+Die erfolgreiche lokale Referenzserie ist in [LOCAL-BASELINE.md](_bmad-output/implementation-artifacts/test-baseline/LOCAL-BASELINE.md) ausgewertet: Median 1755,133 Sekunden; verbindliches Nutzerziel mindestens 30 % Einsparung, also höchstens 1228,593 Sekunden (20:28,593). Die Auswertung enthält geprüfte Gruppen-/Klassenzeiten, den gemessenen Quellstand einschließlich Korrekturpatch und die Vergleichsgrenzen.
 
-Das absolute 15-Minuten-Ziel ersetzt die frühere 30-%-Planungsannahme. Es gilt für den vollständigen Median nach Warm-up und mindestens drei erfolgreichen Messungen samt zusätzlichem erfolgreichem bereinigtem Kontrolllauf. `status: passed` belegt erfolgreiche Prüfungen; `target_met` bewertet separat den Zeitgrenzwert. Historische `results.json` im Schema 1 bleiben unverändert und können noch die ersetzte relative Zielangabe enthalten; neue Berichte verwenden Schema 3.
+Das Ziel von mindestens 30 % Laufzeitreduktion gilt für den vollständigen Median nach Warm-up und mindestens drei erfolgreichen Messungen samt zusätzlichem erfolgreichem bereinigtem Kontrolllauf. `status: passed` belegt erfolgreiche Prüfungen; `target_met` bewertet separat den Zeitgrenzwert. Historische `results.json` bleiben unverändert und können noch frühere Zielmetadaten enthalten; neue Berichte verwenden Schema 3.
 
 Schema 3 erfasst zusätzlich einen gehashten Hostfingerabdruck, CPU-Modell, Affinität, Speicher-/cgroup-Werte und Ressourcen an jeder Laufgrenze. Relevante unversionierte Laufzeiteingaben werden mit Dateimodus gesichert; geänderte Eingabeidentität invalidiert die Probe. Nach erfolgreichem Exit werden dynamischer Backendumfang sowie Browseridentitäten gegen frische Discovery geprüft; leere/reduzierte/übersprungene/ungültige Berichte gelten als Fehler. Timeout/SIGTERM beenden die Prozessgruppe einschließlich verbleibender Kinder und erhalten den Fehlerstatus. Diese Härtung ergänzt die historische Baseline; sie behauptet keine rückwirkend erhobenen Metadaten.

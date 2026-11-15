@@ -38,11 +38,11 @@ class BaselineTest(unittest.TestCase):
         result = baseline.summarize([run(seconds=90), run(seconds=100), run(seconds=200),
                                      run(seconds=1, status='failed'), run('warmup', 1000), run('clean', 2000)])
         self.assertEqual(result['median_seconds'], 100)
-        self.assertEqual(result['target_seconds'], 900)
+        self.assertEqual(result['target_seconds'], baseline.TARGET_SECONDS)
         self.assertTrue(result['target_met'])
-        for seconds, expected in [(900, True), (900.001, False)]:
+        for seconds, expected in [(baseline.TARGET_SECONDS, True), (baseline.TARGET_SECONDS + 0.001, False)]:
             measured = baseline.summarize([run(seconds=seconds) for _ in range(3)] + [run('warmup'), run('clean')])
-            self.assertEqual(measured['target_seconds'], 900)
+            self.assertEqual(measured['target_seconds'], baseline.TARGET_SECONDS)
             self.assertEqual(measured['target_met'], expected)
         self.assertTrue(result['local_evidence_complete'])
 
@@ -62,7 +62,7 @@ class BaselineTest(unittest.TestCase):
         self.assertFalse(baseline.summarize([run(), run('clean'), run('warmup')])['local_evidence_complete'])
         self.assertIsNone(baseline.summarize([run()])['median_seconds'])
         self.assertIsNone(baseline.summarize([run(), run()])['target_met'])
-        self.assertEqual(baseline.summarize([run(), run()])['target_seconds'], 900)
+        self.assertEqual(baseline.summarize([run(), run()])['target_seconds'], baseline.TARGET_SECONDS)
 
     def test_duplicate_execution_is_not_a_new_case(self):
         with tempfile.TemporaryDirectory() as tmp:

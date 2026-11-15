@@ -14,7 +14,7 @@ Historische Rohbelege (Logs, Patches, XML-/Coverage-Berichte und Versuche) sind 
 | 3 – measurement | 29:26.059 | 1766,059 | Medianstichprobe |
 | 4 – clean | 26:51.958 | 1611,958 | Erfolgreicher Kontrolllauf, nicht im Median |
 
-**Referenzmedian: 1755,133 s = 29:15.133.** Die ausdrückliche Nutzerentscheidung vom 14.11.2026 verlangt später **höchstens 900 Sekunden = 15:00 Minuten**, also mindestens **855,133 Sekunden = 14:15,133 Minuten (48,72 %)** Einsparung. Dieses absolute Ziel ersetzt die frühere relative 30-%-Planungsannahme und bleibt auch bei einer neuen Baseline auf 900 Sekunden begrenzt. Das ist eine Zielvorgabe, noch kein erzielter Refactoring-Erfolg.
+**Referenzmedian: 1755,133 s = 29:15.133.** Die Nutzerentscheidung vom 15.11.2026 verlangt mindestens **30 % Laufzeitreduktion** gegenüber diesem festen Referenzmedian, also einen vollständigen lokalen Median von höchstens **1228,593 Sekunden = 20:28.593**. Die vorherige Entscheidung vom 14.11.2026 für 900 Sekunden ist damit supersediert. Das ist eine Zielvorgabe, noch kein erzielter Refactoring-Erfolg.
 
 Die drei Messwerte liegen zwischen 28:09.182 und 29:26.059; Spannweite 76,877 s beziehungsweise 4.38 % des Medians. Der bereinigte Lauf ist rund 8.16 % schneller als der Median. Das widerlegt die Ausführbarkeit nicht, zeigt aber wechselnde Laufzeitbedingungen. Mangels laufbezogener Last-/Temperaturdaten lässt sich dafür keine Ursache nachweisen.
 
@@ -48,7 +48,7 @@ Alle Gruppen liefen sequenziell; Unterbuilds, Server-/Datenbank-/Browseraufbau, 
 
 `ReleaseTransitionIT` (59 Ausführungen) und `AdministrativeSerializationIT` (20) benötigen im Medianlauf zusammen **1145,868 s = 19:05.868**. Das sind **65.29 %** der vollständigen Laufzeit und **94.20 %** der Backend-Gruppe.
 
-Alle übrigen Backend-Klassen **einschließlich restlichem Backend-Buildaufwand** liegen im Medianlauf zusammen nur bei rund **70,553 s (4.02 % des Gesamtlaufs)**. Selbst deren vollständige, unzulässige Entfernung würde das 15-Minuten-Ziel nicht erreichen. Fachliche Unit-Verlagerung in 5.2 bleibt für schnelle Rückmeldung und die Testverteilung wichtig, ist allein aber kein ausreichender Laufzeithebel.
+Alle übrigen Backend-Klassen **einschließlich restlichem Backend-Buildaufwand** liegen im Medianlauf zusammen nur bei rund **70,553 s (4.02 % des Gesamtlaufs)**. Selbst deren vollständige, unzulässige Entfernung würde das 30-%-Gesamtziel nicht erreichen. Fachliche Unit-Verlagerung in 5.2 bleibt für schnelle Rückmeldung und die Testverteilung wichtig, ist allein aber kein ausreichender Laufzeithebel.
 
 Falls alle anderen Kosten gleich blieben, müssten die beiden Prozessklassen zusammen rund **74,63 %** ihrer Zeit einsparen, um das Gesamtziel zu erreichen. Das ist eine Rechenbedingung, keine Zusage. Quellen zeigen wiederholte echte alte/neue Releases, Datenbanken, Guards und Builds; aus XML-Summen lässt sich deren interne Zeit nicht exakt aufteilen.
 
@@ -58,7 +58,7 @@ Priorität für die Umsetzung:
 2. **5.3:** UI-Eingaben, Zustände und Antwortreihenfolgen schnell absichern. Die Browsergruppen kosten im Medianlauf gemeinsam rund 08:35.300. Reale Cookies, Interceptor, Fokus, Reflow und vollständige Wege bleiben erforderlich.
 3. **5.4:** den dominanten Prozessharness priorisieren: unveränderliche Release-/Generator-/Buildartefakte nur mit nachgewiesener Invalidierung wiederverwenden; vermeidbare Mehrfachaufbauten und Wartebedingungen prüfen. Fachlicher Datenbankzustand, Rollen/RLS, unabhängige Verbindungen, tatsächlicher Prozesslebenszyklus und Versionsbarriere dürfen nicht gecacht oder vorgetäuscht werden. Doppelte Surefire-Ausführung in den zwei CI-Backendjobs bleibt ein gesonderter CI-Kandidat.
 
-Das verbindliche 15-Minuten-Ziel erfordert gegenüber der Baseline 48,72 % Gesamtersparnis. Es ist deutlich anspruchsvoller als die frühere Annahme und durch die Baseline noch nicht als erreichbar bewiesen. Wenn sich dort keine sichere ausreichende Einsparung ergibt, Zielverfehlung offenlegen; keine stille Zielsenkung und kein Auslassen von Integration.
+Das verbindliche Ziel erfordert gegenüber der Baseline mindestens 30 % Gesamtersparnis. Es ist durch die Baseline noch nicht als erreichbar bewiesen. Wenn sich dort keine sichere ausreichende Einsparung ergibt, Zielverfehlung offenlegen; keine stille Zielsenkung und kein Auslassen von Integration.
 
 ## Vertragsphasen
 
@@ -97,4 +97,4 @@ Rohdaten: [results.json](local-reference-02/results.json). Geprüfte Auswertung,
 
 ## Zieländerung durch Nutzerentscheidung
 
-Am 14.11.2026 hat Linus ausdrücklich maximal 15 Minuten festgelegt. Die drei gemessenen Rohwerte, ihr Median und die Prüfergebnisse bleiben unverändert. `local-reference-02/results.json` ist ein unveränderter historischer Messbericht im alten Schema und enthält noch das damalige relative Ziel; das gilt nicht mehr als Abnahme. Die abgeleitete `analysis.json`, diese Auswertung, Epic TR-1 und neue Messberichte verwenden das absolute 900-Sekunden-Ziel. `target_met` bewertet nur die Zielerfüllung; erfolgreiche Prüfungen bleiben auch bei Zielverfehlung als erfolgreiche Referenzmessung gültig.
+Am 14.11.2026 hatte Linus ausdrücklich maximal 15 Minuten festgelegt. Am 15.11.2026 änderte er das Ziel erneut auf mindestens 30 % Reduktion gegenüber dem festen Referenzmedian. Die drei gemessenen Rohwerte, ihr Median und die Prüfergebnisse bleiben unverändert. `local-reference-02/results.json` ist ein unveränderter historischer Messbericht und enthält noch seine damaligen Zielmetadaten; das gilt nicht mehr als aktuelle Abnahme. Die aktuellen Zielvorgaben in Epic TR-1, Runner und Dokumentation verwenden höchstens 70 % des Referenzmedians. `target_met` bewertet nur die Zielerfüllung; erfolgreiche Prüfungen bleiben auch bei Zielverfehlung als erfolgreiche Referenzmessung gültig.

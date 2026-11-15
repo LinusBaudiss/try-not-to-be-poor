@@ -9,8 +9,8 @@ Stand: 2026-11-14. Die technische Umsetzung und das Abschlussreview sind abgesch
 | Nachweis | Ergebnis |
 | --- | --- |
 | Vollständige lokale Serie | Warm-up, drei Messungen und bereinigter Kontrolllauf erfolgreich; Median **1755,133 s = 29:15,133** |
-| Verbindliches Nutzerziel | Vollständiger Median **≤ 900 s = 15:00**; noch nicht erreicht und erst in 5.5 nachzuweisen |
-| Nötige Einsparung | **855,133 s = 14:15,133 beziehungsweise 48,72 %** gegenüber der Baseline |
+| Verbindliches Nutzerziel (Entscheidung 15.11.2026) | Vollständiger Median **≤ 1228,593 s = 20:28,593** (70 % des festen Referenzmedians); noch nicht erreicht und erst in 5.5 nachzuweisen |
+| Nötige Einsparung | **526,540 s = 8:46,540 beziehungsweise mindestens 30 %** gegenüber der Baseline |
 | Tatsächliche Ausführung je Baseline-Lauf | 33 Python-, 49 Surefire-, 433 Failsafe-, 224 normale Browser-, 5 Übergangs- und 91 Automatikfälle; beide Verträge und SPA erfolgreich |
 | Identitäten/Fehler | Dieselben 482 Backend-Identitäten in allen fünf Läufen, keine doppelten Identitäten/Fehler/Skips; alle 320 Browserausführungen bestätigt |
 | Separate Coverage | 96,816 % Zeilen und 86,053 % Zweige; generierter Vertragscode ausgeschlossen, Nenner und Unter-JVM-/Frontend-Lücken ausdrücklich dokumentiert |
@@ -39,13 +39,13 @@ Drei erfolgreiche CI-Vorläufe mit identischem damaligem ausführbarem Scope: kr
 
 ## Refactoring-Reihenfolge
 
-1. **5.2:** fachliche Backendvarianten direkt prüfen; Grenzen aus der Matrix erhalten. Isolierte Kernklassen kosten bereits wenig; allein damit ist das 15-Minuten-Gesamtziel nicht erreichbar.
+1. **5.2:** fachliche Backendvarianten direkt prüfen; Grenzen aus der Matrix erhalten. Isolierte Kernklassen kosten bereits wenig; allein damit ist das 30-%-Gesamtziel nicht erreichbar.
 2. **5.3:** schnelle UI-Eingabe-/Zustands-/Antwortreihenfolgetests einführen. Tatsächliche Cookies, Interceptor, Fokus, Reflow und vollständige Nutzerwege bleiben Browserprüfungen.
 3. **5.4:** dominanten Prozessharness und wiederholte unveränderliche Buildaufbauten optimieren; echte alte/neue Releases, PostgreSQL und Commit-/Rücknahmebarrieren bewahren. Die aktuelle Zielannahme verlangt bei unveränderten anderen Kosten rund 74,63 % Einsparung im Prozesspaar; Erreichbarkeit ist noch zu belegen.
-4. **5.5:** Gleichwertigkeit, >50-%-Testverteilung pro Bereich, vollständigen Median ≤ 900 s und nicht verschlechterten CI-Pfad nachweisen. Kein Auslassen oder Abschwächen als Leistungsgewinn zählen.
+4. **5.5:** Gleichwertigkeit, >50-%-Testverteilung pro Bereich, vollständigen Median ≤ 70 % des festen Referenzmedians (derzeit 1228,593 s) und nicht verschlechterten CI-Pfad nachweisen. Kein Auslassen oder Abschwächen als Leistungsgewinn zählen.
 
 ## Historische Versuche
 
 `attempt-2026-11-14-*` und `recheck-*` dokumentieren Sandbox-/Download-/Socketfehler. `local-reference-01` endete im Python-Warm-up wegen einer an isolierte Vertragsfixtures vererbten Phasenvariable; der Fehler wurde korrigiert. Diese Versuche gehen in keinen Leistungsmedian ein. Sie sind durch die erfolgreiche Serie **kein aktueller Messblocker mehr**.
 
-Die ursprüngliche 30-%-Planungsannahme wurde auf ausdrücklichen Nutzerauftrag durch das absolute 15-Minuten-Ziel ersetzt. Historische Rohberichte im Schema 1 behalten ihre damalige Zielangabe. Schema 3 neuer Runnerberichte enthält das feste `target_seconds: 900`, getrenntes `target_met`, ausgeführte Befehle, Ressourcen-/Inputidentität und Discoveryvalidierung. Eine erfolgreiche Referenz kann `target_met: false` haben; eine unvollständige Serie hat `target_met: null`.
+Die Nutzerentscheidung vom 14.11.2026 für 15 Minuten wurde am 15.11.2026 auf ausdrücklichen Nutzerauftrag durch mindestens 30 % Reduktion gegenüber dem festen Referenzmedian ersetzt. Historische Rohberichte und die damalige AC-5-Abnahmetabelle bewahren ihre Zielangabe. Neue Schema-3-Runnerberichte verwenden 70 % des Referenzmedians (derzeit `target_seconds: 1228.5928445518`), getrenntes `target_met`, ausgeführte Befehle, Ressourcen-/Inputidentität und Discoveryvalidierung. Eine erfolgreiche Referenz kann `target_met: false` haben; eine unvollständige Serie hat `target_met: null`.

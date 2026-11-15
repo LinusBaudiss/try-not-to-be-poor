@@ -160,8 +160,12 @@ public class FinanceApplication {
         return transactions.read(userId, context -> {
             Long budget = budgets.current(context, context.month());
             long total = expenses.monthTotal(context, context.month());
-            return new Summary(context.month(), budget, total, budget == null ? null : Money.subtract(budget, total));
+            return new Summary(context.month(), budget, total, remainingCents(budget, total));
         });
+    }
+
+    static Long remainingCents(Long budgetCents, long expensesCents) {
+        return budgetCents == null ? null : Money.subtract(budgetCents, expensesCents);
     }
     public List<SavingsGoals.Goal> allGoals(UUID userId) {
         return transactions.read(userId, goals::all);

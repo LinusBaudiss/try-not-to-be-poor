@@ -1,5 +1,7 @@
 # Story 5.1 — Abnahmeprüfung
 
+> **Zieländerung 15.11.2026:** Die Laufzeitvorgabe von 900 Sekunden in der untenstehenden historischen AC-5-Bewertung wurde auf ausdrücklichen Nutzerauftrag supersediert. Aktuell gilt mindestens 30 % Reduktion gegenüber dem festen Referenzmedian 1755,133 s, entsprechend höchstens 1228,593 s. Die historische Messung und damalige AC-Prüfung bleiben unverändert; das neue Ziel ist erst in Story 5.5 nachzuweisen.
+
 Historische Rohbelege (Logs, Patches, XML-/Coverage-Berichte und Versuche) sind unverändert im [geprüften Nachweisarchiv](ARCHIVE.md) erhalten. Pfade zu diesen Belegen beziehen sich auf den dort wiederhergestellten alten Verzeichnisbaum.
 
 Stand: 2026-11-14. Alle acht Abnahmekriterien sind für die Inventar-/Baseline-Story technisch erfüllt. Das ist keine Erfüllung des 15-Minuten-Refactoringziels, keine Produktionsfreigabe und keine Abnahme der offenen Produktstories 4.6–4.8. Formales Projekttracking: Umsetzung abgeschlossen, Story zur Abnahme in `review`.

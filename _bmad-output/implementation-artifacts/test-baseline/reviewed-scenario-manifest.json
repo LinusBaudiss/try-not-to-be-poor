@@ -131,6 +131,14 @@
     "ReleaseTransitionIT": {
       "domain": "API version lifecycle",
       "primary_test_type": "process/PostgreSQL"
+    },
+    "FinanceApplicationTest": {
+      "domain": "finance summary arithmetic",
+      "primary_test_type": "unit"
+    },
+    "RegistrationEmailTest": {
+      "domain": "access",
+      "primary_test_type": "unit"
     }
   },
   "cases": {
@@ -23001,6 +23009,663 @@
       ],
       "canonical_scenarios": [
         "INF-1e5823e0014d92f6"
+      ]
+    },
+    "BE:ExpenseTest#monatsgesamtstandAkzeptiertNurGanzeNichtnegativeSichereCent": {
+      "scenarios": [
+        "SC:BE:ExpenseTest#monatsgesamtstandAkzeptiertNurGanzeNichtnegativeSichereCent:44136fa355b3"
+      ],
+      "requirements": [
+        "3.4/AC-4"
+      ],
+      "domain": "isolierte fachliche Geld-/Fortschritts-/Kalenderentscheidung",
+      "current_type": "unit",
+      "target_type": "unit; Integration bleibt zusätzlicher Grenznachweis",
+      "remaining_integration": "actual expense HTTP and source month/owner persistence, row/account locks, exact aggregate replacement and outer rollback",
+      "observation": [
+        "Expenses.checkedTotal(0) == 0; Expenses.checkedTotal(1) == 1; Expenses.checkedTotal(MAX) == MAX",
+        "Expenses.checkedTotal(-1, MAX+1, 1.5, 9223372036854775808) throws MonthLimit"
+      ],
+      "expected_variant": "default",
+      "discovery_status": "statische Zuordnung aus Testquelle; JUnit-Discovery und Lauf noch offen",
+      "risks": [
+        "HTTP adapter/security",
+        "account isolation/RLS",
+        "commit/rollback"
+      ],
+      "canonical_scenarios": [
+        "BE-d9f80335548620e3"
+      ]
+    },
+    "BE:ExpenseTest#monatsänderungBerechnetNeuenGesamtstandMitExakterDifferenz": {
+      "scenarios": [
+        "SC:BE:ExpenseTest#monatsänderungBerechnetNeuenGesamtstandMitExakterDifferenz:44136fa355b3"
+      ],
+      "requirements": [
+        "4.4/AC-4",
+        "M-04"
+      ],
+      "domain": "isolierte fachliche Geld-/Fortschritts-/Kalenderentscheidung",
+      "current_type": "unit",
+      "target_type": "unit; Integration bleibt zusätzlicher Grenznachweis",
+      "remaining_integration": "real historical monthly provenance/selection/deletion markers, forced RLS, atomic expense/goal/record/usage commit and independent account locks",
+      "observation": [
+        "replacementTotal(80000, 80000, 85000) == 85000; replacement at MAX remains MAX; a result above MAX throws MonthLimit"
+      ],
+      "expected_variant": "default",
+      "discovery_status": "statische Zuordnung aus Testquelle; JUnit-Discovery und Lauf noch offen",
+      "risks": [
+        "HTTP adapter/security",
+        "account isolation/RLS",
+        "commit/rollback"
+      ],
+      "canonical_scenarios": [
+        "BE-ad93fa77c6d7e858"
+      ]
+    },
+    "BE:SavingsGoalTest#signierterFortschrittLehntFehlendenWertAb": {
+      "scenarios": [
+        "SC:BE:SavingsGoalTest#signierterFortschrittLehntFehlendenWertAb:44136fa355b3"
+      ],
+      "requirements": [
+        "3.6/AC-5"
+      ],
+      "domain": "isolierte fachliche Geld-/Fortschritts-/Kalenderentscheidung",
+      "current_type": "unit",
+      "target_type": "unit; Integration bleibt zusätzlicher Grenznachweis",
+      "remaining_integration": "retain real aggregate/HTTP/commit probes and account-lock calendar capture in financial integration matrices",
+      "observation": [
+        "SavingsGoals.validateSignedProgress(null) throws InvalidGoal"
+      ],
+      "expected_variant": "default",
+      "discovery_status": "statische Zuordnung aus Testquelle; JUnit-Discovery und Lauf noch offen",
+      "risks": [
+        "exact money/calendar/validation or access policy, as specified by expectations"
+      ],
+      "canonical_scenarios": [
+        "BE-004a5470cb45820b"
+      ]
+    },
+    "BE:FinanceApplicationTest#fehlendesNullUndPositivesBudgetBleibenImRestbudgetUnterschieden": {
+      "scenarios": [
+        "SC:BE:FinanceApplicationTest#fehlendesNullUndPositivesBudgetBleibenImRestbudgetUnterschieden:44136fa355b3"
+      ],
+      "requirements": [
+        "3.5/AC-5"
+      ],
+      "domain": "isolierte fachliche Geld-/Fortschritts-/Kalenderentscheidung",
+      "current_type": "unit",
+      "target_type": "unit; Integration bleibt zusätzlicher Grenznachweis",
+      "remaining_integration": "actual account-scoped read-only repeatable-read snapshot across budget and expense projections",
+      "observation": [
+        "remainingCents(null,100)=null; (0,0)=0; (10000,0)=10000; (10000,1234)=8766; (0,1234)=-1234; (99999,55555)=44444; (99999,0)=99999"
+      ],
+      "expected_variant": "default",
+      "discovery_status": "statische Zuordnung aus Testquelle; JUnit-Discovery und Lauf noch offen",
+      "risks": [
+        "HTTP adapter/security",
+        "account isolation/RLS",
+        "commit/rollback"
+      ],
+      "canonical_scenarios": [
+        "BE-1f217e0b66d357e4"
+      ]
+    },
+    "BE:FinanceApplicationTest#restbudgetBleibtExaktBisZurSicherenGrenzeUndLehntUeberlaufAb": {
+      "scenarios": [
+        "SC:BE:FinanceApplicationTest#restbudgetBleibtExaktBisZurSicherenGrenzeUndLehntUeberlaufAb:44136fa355b3"
+      ],
+      "requirements": [
+        "3.5/AC-4",
+        "3.5/AC-5"
+      ],
+      "domain": "isolierte fachliche Geld-/Fortschritts-/Kalenderentscheidung",
+      "current_type": "unit",
+      "target_type": "unit; Integration bleibt zusätzlicher Grenznachweis",
+      "remaining_integration": "actual account-scoped read-only repeatable-read snapshot across budget and expense projections",
+      "observation": [
+        "remainingCents(MAX,0)=MAX; remainingCents(0,MAX)=-MAX; remainingCents(MAX,-1) throws ArithmeticException"
+      ],
+      "expected_variant": "default",
+      "discovery_status": "statische Zuordnung aus Testquelle; JUnit-Discovery und Lauf noch offen",
+      "risks": [
+        "HTTP adapter/security",
+        "account isolation/RLS",
+        "commit/rollback"
+      ],
+      "canonical_scenarios": [
+        "BE-fa0492cf3dee1bfa"
+      ]
+    },
+    "BE:MonthlySurplusTest#offeneSummeUndVormerkungBleibenExaktUndUnterscheidenFehlendenBetrag": {
+      "scenarios": [
+        "SC:BE:MonthlySurplusTest#offeneSummeUndVormerkungBleibenExaktUndUnterscheidenFehlendenBetrag:44136fa355b3"
+      ],
+      "requirements": [
+        "4.2/AC-2",
+        "4.2/AC-3",
+        "4.2/AC-6",
+        "M-02",
+        "M-07"
+      ],
+      "domain": "isolierte fachliche Geld-/Fortschritts-/Kalenderentscheidung",
+      "current_type": "unit",
+      "target_type": "unit; Integration bleibt zusätzlicher Grenznachweis",
+      "remaining_integration": "real historical monthly provenance/selection/deletion markers, forced RLS, atomic expense/goal/record/usage commit and independent account locks",
+      "observation": [
+        "checkedPending(0)=0; checkedPending(MAX)=MAX; no-budget contributes 0; 20000+10000=30000; selection binding does not increase pending; total above MAX and negative total throw ArithmeticException"
+      ],
+      "expected_variant": "default",
+      "discovery_status": "statische Zuordnung aus Testquelle; JUnit-Discovery und Lauf noch offen",
+      "risks": [
+        "HTTP adapter/security",
+        "account isolation/RLS",
+        "commit/rollback"
+      ],
+      "canonical_scenarios": [
+        "BE-ff75f96ef66b60d8",
+        "BE-06ed7d54777297f0"
+      ],
+      "line": 50
+    },
+    "BE:RegistrationEmailTest#normalisiertVorDerFachpruefungOhneLocaleAbhaengigkeit": {
+      "scenarios": [
+        "SC:BE:RegistrationEmailTest#normalisiertVorDerFachpruefungOhneLocaleAbhaengigkeit:44136fa355b3"
+      ],
+      "requirements": [
+        "3.1/AC-3"
+      ],
+      "domain": "access",
+      "current_type": "unit",
+      "target_type": "unit email policy + retain HTTP/DB boundaries",
+      "remaining_integration": "HTTP cookie/CSRF/Origin/JWT routing and real account/session persistence, commit/replay races and startup role verification",
+      "observation": "normalisiertVorDerFachpruefungOhneLocaleAbhaengigkeit",
+      "expected_variant": "default",
+      "discovery_status": "Matched to captured JUnit Launcher discovery/backend.tsv; method body/loop inputs reviewed explicitly",
+      "risks": [
+        "HTTP adapter/security",
+        "account isolation/RLS",
+        "commit/rollback"
+      ],
+      "canonical_scenarios": [
+        "BE-6802302bd4c46afb"
+      ]
+    },
+    "BE:RegistrationEmailTest#gueltigkeitsregelBehaelt254ZeichenGrenzeUndFormatbeispiele": {
+      "scenarios": [
+        "SC:BE:RegistrationEmailTest#gueltigkeitsregelBehaelt254ZeichenGrenzeUndFormatbeispiele:44136fa355b3",
+        "SC:BE:RegistrationEmailTest#gueltigkeitsregelBehaelt254ZeichenGrenzeUndFormatbeispiele:1a4038057f82",
+        "SC:BE:RegistrationEmailTest#gueltigkeitsregelBehaelt254ZeichenGrenzeUndFormatbeispiele:4d2722f172e4",
+        "SC:BE:RegistrationEmailTest#gueltigkeitsregelBehaelt254ZeichenGrenzeUndFormatbeispiele:a30723d08342",
+        "SC:BE:RegistrationEmailTest#gueltigkeitsregelBehaelt254ZeichenGrenzeUndFormatbeispiele:9c44346ad065"
+      ],
+      "requirements": [
+        "3.1/AC-3"
+      ],
+      "domain": "access",
+      "current_type": "unit",
+      "target_type": "unit email policy + retain HTTP/DB boundaries",
+      "remaining_integration": "HTTP cookie/CSRF/Origin/JWT routing and real account/session persistence, commit/replay races and startup role verification",
+      "observation": "gueltigkeitsregelBehaelt254ZeichenGrenzeUndFormatbeispiele",
+      "expected_variant": "default",
+      "discovery_status": "Matched to captured JUnit Launcher discovery/backend.tsv; method body/loop inputs reviewed explicitly",
+      "risks": [
+        "HTTP adapter/security",
+        "account isolation/RLS",
+        "commit/rollback"
+      ],
+      "canonical_scenarios": [
+        "BE-49a7b931ce60f8b1",
+        "BE-e32f25dd70033ad3",
+        "BE-2e4b1e88f7d75919",
+        "BE-fc6dd1d77a516e97",
+        "BE-d11a81b70a6b632e",
+        "BE-0d9b7c687364db27"
+      ]
+    },
+    "BE:SavingsGoalTest#signierterFortschrittErlaubtVorzeichenUndBeideSicherenGrenzen:ba85c5ce4aac": {
+      "scenarios": [
+        "SC:BE:SavingsGoalTest#signierterFortschrittErlaubtVorzeichenUndBeideSicherenGrenzen:ba85c5ce4aac:44136fa355b3"
+      ],
+      "requirements": [
+        "3.8/AC-3",
+        "3.8/AC-4",
+        "M-11",
+        "M-16"
+      ],
+      "domain": "isolierte fachliche Geld-/Fortschritts-/Kalenderentscheidung",
+      "current_type": "unit",
+      "target_type": "unit; Integration bleibt zusätzlicher Grenznachweis",
+      "remaining_integration": "actual version capability check and atomic signed progress/irreversible usage marker, true rollback and version lock ordering",
+      "observation": [
+        "SavingsGoals.validateSignedProgress(-9007199254740991) completes without error"
+      ],
+      "expected_variant": "\"-9007199254740991\"",
+      "discovery_status": "statische Zuordnung aus Testquelle; JUnit-Discovery und Lauf noch offen",
+      "risks": [
+        "HTTP adapter/security",
+        "account isolation/RLS",
+        "commit/rollback"
+      ],
+      "canonical_scenarios": [
+        "BE-737751881d793ec6"
+      ]
+    },
+    "BE:SavingsGoalTest#signierterFortschrittErlaubtVorzeichenUndBeideSicherenGrenzen:7d583ea3babe": {
+      "scenarios": [
+        "SC:BE:SavingsGoalTest#signierterFortschrittErlaubtVorzeichenUndBeideSicherenGrenzen:7d583ea3babe:44136fa355b3"
+      ],
+      "requirements": [
+        "3.8/AC-3",
+        "3.8/AC-4",
+        "M-11",
+        "M-16"
+      ],
+      "domain": "isolierte fachliche Geld-/Fortschritts-/Kalenderentscheidung",
+      "current_type": "unit",
+      "target_type": "unit; Integration bleibt zusätzlicher Grenznachweis",
+      "remaining_integration": "actual version capability check and atomic signed progress/irreversible usage marker, true rollback and version lock ordering",
+      "observation": [
+        "SavingsGoals.validateSignedProgress(-3000) completes without error"
+      ],
+      "expected_variant": "\"-3000\"",
+      "discovery_status": "statische Zuordnung aus Testquelle; JUnit-Discovery und Lauf noch offen",
+      "risks": [
+        "HTTP adapter/security",
+        "account isolation/RLS",
+        "commit/rollback"
+      ],
+      "canonical_scenarios": [
+        "BE-007ef7ec03579457"
+      ]
+    },
+    "BE:SavingsGoalTest#signierterFortschrittErlaubtVorzeichenUndBeideSicherenGrenzen:98089e6d36f7": {
+      "scenarios": [
+        "SC:BE:SavingsGoalTest#signierterFortschrittErlaubtVorzeichenUndBeideSicherenGrenzen:98089e6d36f7:44136fa355b3"
+      ],
+      "requirements": [
+        "3.8/AC-3",
+        "3.8/AC-4",
+        "M-11",
+        "M-16"
+      ],
+      "domain": "isolierte fachliche Geld-/Fortschritts-/Kalenderentscheidung",
+      "current_type": "unit",
+      "target_type": "unit; Integration bleibt zusätzlicher Grenznachweis",
+      "remaining_integration": "actual version capability check and atomic signed progress/irreversible usage marker, true rollback and version lock ordering",
+      "observation": [
+        "SavingsGoals.validateSignedProgress(0) completes without error"
+      ],
+      "expected_variant": "\"0\"",
+      "discovery_status": "statische Zuordnung aus Testquelle; JUnit-Discovery und Lauf noch offen",
+      "risks": [
+        "HTTP adapter/security",
+        "account isolation/RLS",
+        "commit/rollback"
+      ],
+      "canonical_scenarios": [
+        "BE-f3175f9cb70556e5"
+      ]
+    },
+    "BE:SavingsGoalTest#signierterFortschrittErlaubtVorzeichenUndBeideSicherenGrenzen:1b6d2e96d30a": {
+      "scenarios": [
+        "SC:BE:SavingsGoalTest#signierterFortschrittErlaubtVorzeichenUndBeideSicherenGrenzen:1b6d2e96d30a:44136fa355b3"
+      ],
+      "requirements": [
+        "3.8/AC-3",
+        "3.8/AC-4",
+        "M-11",
+        "M-16"
+      ],
+      "domain": "isolierte fachliche Geld-/Fortschritts-/Kalenderentscheidung",
+      "current_type": "unit",
+      "target_type": "unit; Integration bleibt zusätzlicher Grenznachweis",
+      "remaining_integration": "actual version capability check and atomic signed progress/irreversible usage marker, true rollback and version lock ordering",
+      "observation": [
+        "SavingsGoals.validateSignedProgress(7000) completes without error"
+      ],
+      "expected_variant": "\"7000\"",
+      "discovery_status": "statische Zuordnung aus Testquelle; JUnit-Discovery und Lauf noch offen",
+      "risks": [
+        "HTTP adapter/security",
+        "account isolation/RLS",
+        "commit/rollback"
+      ],
+      "canonical_scenarios": [
+        "BE-6f34061352bd9782"
+      ]
+    },
+    "BE:SavingsGoalTest#signierterFortschrittErlaubtVorzeichenUndBeideSicherenGrenzen:3bc0f6e22232": {
+      "scenarios": [
+        "SC:BE:SavingsGoalTest#signierterFortschrittErlaubtVorzeichenUndBeideSicherenGrenzen:3bc0f6e22232:44136fa355b3"
+      ],
+      "requirements": [
+        "3.8/AC-3",
+        "3.8/AC-4",
+        "M-11",
+        "M-16"
+      ],
+      "domain": "isolierte fachliche Geld-/Fortschritts-/Kalenderentscheidung",
+      "current_type": "unit",
+      "target_type": "unit; Integration bleibt zusätzlicher Grenznachweis",
+      "remaining_integration": "actual version capability check and atomic signed progress/irreversible usage marker, true rollback and version lock ordering",
+      "observation": [
+        "SavingsGoals.validateSignedProgress(15000) completes without error"
+      ],
+      "expected_variant": "\"15000\"",
+      "discovery_status": "statische Zuordnung aus Testquelle; JUnit-Discovery und Lauf noch offen",
+      "risks": [
+        "HTTP adapter/security",
+        "account isolation/RLS",
+        "commit/rollback"
+      ],
+      "canonical_scenarios": [
+        "BE-461a5b3112e75d73"
+      ]
+    },
+    "BE:SavingsGoalTest#signierterFortschrittErlaubtVorzeichenUndBeideSicherenGrenzen:c9b6149ddff7": {
+      "scenarios": [
+        "SC:BE:SavingsGoalTest#signierterFortschrittErlaubtVorzeichenUndBeideSicherenGrenzen:c9b6149ddff7:44136fa355b3"
+      ],
+      "requirements": [
+        "3.8/AC-3",
+        "3.8/AC-4",
+        "M-11",
+        "M-16"
+      ],
+      "domain": "isolierte fachliche Geld-/Fortschritts-/Kalenderentscheidung",
+      "current_type": "unit",
+      "target_type": "unit; Integration bleibt zusätzlicher Grenznachweis",
+      "remaining_integration": "actual version capability check and atomic signed progress/irreversible usage marker, true rollback and version lock ordering",
+      "observation": [
+        "SavingsGoals.validateSignedProgress(9007199254740991) completes without error"
+      ],
+      "expected_variant": "\"9007199254740991\"",
+      "discovery_status": "statische Zuordnung aus Testquelle; JUnit-Discovery und Lauf noch offen",
+      "risks": [
+        "HTTP adapter/security",
+        "account isolation/RLS",
+        "commit/rollback"
+      ],
+      "canonical_scenarios": [
+        "BE-5bd466eaeaa4578b"
+      ]
+    },
+    "BE:SavingsGoalTest#signierterFortschrittLehntGrenzueberschreitungAb:eadea71416c1": {
+      "scenarios": [
+        "SC:BE:SavingsGoalTest#signierterFortschrittLehntGrenzueberschreitungAb:eadea71416c1:44136fa355b3"
+      ],
+      "requirements": [
+        "3.8/AC-5"
+      ],
+      "domain": "isolierte fachliche Geld-/Fortschritts-/Kalenderentscheidung",
+      "current_type": "unit",
+      "target_type": "unit; Integration bleibt zusätzlicher Grenznachweis",
+      "remaining_integration": "actual version capability check and atomic signed progress/irreversible usage marker, true rollback and version lock ordering",
+      "observation": [
+        "SavingsGoals.validateSignedProgress(-9007199254740992) throws InvalidGoal with only progressCents field error"
+      ],
+      "expected_variant": "\"-9007199254740992\"",
+      "discovery_status": "statische Zuordnung aus Testquelle; JUnit-Discovery und Lauf noch offen",
+      "risks": [
+        "HTTP adapter/security",
+        "account isolation/RLS",
+        "commit/rollback"
+      ],
+      "canonical_scenarios": [
+        "BE-2abe8b9aaa5206fd"
+      ]
+    },
+    "BE:SavingsGoalTest#signierterFortschrittLehntGrenzueberschreitungAb:4ba9bf7656a3": {
+      "scenarios": [
+        "SC:BE:SavingsGoalTest#signierterFortschrittLehntGrenzueberschreitungAb:4ba9bf7656a3:44136fa355b3"
+      ],
+      "requirements": [
+        "3.8/AC-5"
+      ],
+      "domain": "isolierte fachliche Geld-/Fortschritts-/Kalenderentscheidung",
+      "current_type": "unit",
+      "target_type": "unit; Integration bleibt zusätzlicher Grenznachweis",
+      "remaining_integration": "actual version capability check and atomic signed progress/irreversible usage marker, true rollback and version lock ordering",
+      "observation": [
+        "SavingsGoals.validateSignedProgress(9007199254740992) throws InvalidGoal with only progressCents field error"
+      ],
+      "expected_variant": "\"9007199254740992\"",
+      "discovery_status": "statische Zuordnung aus Testquelle; JUnit-Discovery und Lauf noch offen",
+      "risks": [
+        "HTTP adapter/security",
+        "account isolation/RLS",
+        "commit/rollback"
+      ],
+      "canonical_scenarios": [
+        "BE-b97c2bbb87af6180"
+      ]
+    },
+    "BE:SavingsGoalTest#v1FortschrittBleibtNichtnegativBisZumSicherenMaximum:20b117d8fcad": {
+      "scenarios": [
+        "SC:BE:SavingsGoalTest#v1FortschrittBleibtNichtnegativBisZumSicherenMaximum:20b117d8fcad:44136fa355b3"
+      ],
+      "requirements": [
+        "3.6/AC-5"
+      ],
+      "domain": "isolierte fachliche Geld-/Fortschritts-/Kalenderentscheidung",
+      "current_type": "unit",
+      "target_type": "unit; Integration bleibt zusätzlicher Grenznachweis",
+      "remaining_integration": "actual authenticated target/progress CRUD, retained fields and calendar dates, forced RLS and concurrent/outer commit boundaries",
+      "observation": [
+        "SavingsGoals.validateProgress(0) accepted=true"
+      ],
+      "expected_variant": "\"0,true\"",
+      "discovery_status": "statische Zuordnung aus Testquelle; JUnit-Discovery und Lauf noch offen",
+      "risks": [
+        "HTTP adapter/security",
+        "account isolation/RLS",
+        "commit/rollback"
+      ],
+      "canonical_scenarios": [
+        "BE-1bee2842ef9c9192"
+      ]
+    },
+    "BE:SavingsGoalTest#v1FortschrittBleibtNichtnegativBisZumSicherenMaximum:d6e47b3885e3": {
+      "scenarios": [
+        "SC:BE:SavingsGoalTest#v1FortschrittBleibtNichtnegativBisZumSicherenMaximum:d6e47b3885e3:44136fa355b3"
+      ],
+      "requirements": [
+        "3.6/AC-5"
+      ],
+      "domain": "isolierte fachliche Geld-/Fortschritts-/Kalenderentscheidung",
+      "current_type": "unit",
+      "target_type": "unit; Integration bleibt zusätzlicher Grenznachweis",
+      "remaining_integration": "actual authenticated target/progress CRUD, retained fields and calendar dates, forced RLS and concurrent/outer commit boundaries",
+      "observation": [
+        "SavingsGoals.validateProgress(2000) accepted=true"
+      ],
+      "expected_variant": "\"2000,true\"",
+      "discovery_status": "statische Zuordnung aus Testquelle; JUnit-Discovery und Lauf noch offen",
+      "risks": [
+        "HTTP adapter/security",
+        "account isolation/RLS",
+        "commit/rollback"
+      ],
+      "canonical_scenarios": [
+        "BE-c3f80fbde30de4cf"
+      ]
+    },
+    "BE:SavingsGoalTest#v1FortschrittBleibtNichtnegativBisZumSicherenMaximum:1aa25e5666a1": {
+      "scenarios": [
+        "SC:BE:SavingsGoalTest#v1FortschrittBleibtNichtnegativBisZumSicherenMaximum:1aa25e5666a1:44136fa355b3"
+      ],
+      "requirements": [
+        "3.6/AC-5"
+      ],
+      "domain": "isolierte fachliche Geld-/Fortschritts-/Kalenderentscheidung",
+      "current_type": "unit",
+      "target_type": "unit; Integration bleibt zusätzlicher Grenznachweis",
+      "remaining_integration": "actual authenticated target/progress CRUD, retained fields and calendar dates, forced RLS and concurrent/outer commit boundaries",
+      "observation": [
+        "SavingsGoals.validateProgress(9007199254740991) accepted=true"
+      ],
+      "expected_variant": "\"9007199254740991,true\"",
+      "discovery_status": "statische Zuordnung aus Testquelle; JUnit-Discovery und Lauf noch offen",
+      "risks": [
+        "HTTP adapter/security",
+        "account isolation/RLS",
+        "commit/rollback"
+      ],
+      "canonical_scenarios": [
+        "BE-74fe424bf38065be"
+      ]
+    },
+    "BE:SavingsGoalTest#v1FortschrittBleibtNichtnegativBisZumSicherenMaximum:04a2f659bc97": {
+      "scenarios": [
+        "SC:BE:SavingsGoalTest#v1FortschrittBleibtNichtnegativBisZumSicherenMaximum:04a2f659bc97:44136fa355b3"
+      ],
+      "requirements": [
+        "3.6/AC-5"
+      ],
+      "domain": "isolierte fachliche Geld-/Fortschritts-/Kalenderentscheidung",
+      "current_type": "unit",
+      "target_type": "unit; Integration bleibt zusätzlicher Grenznachweis",
+      "remaining_integration": "retain real aggregate/HTTP/commit probes and account-lock calendar capture in financial integration matrices",
+      "observation": [
+        "SavingsGoals.validateProgress(-1) accepted=false"
+      ],
+      "expected_variant": "\"-1,false\"",
+      "discovery_status": "statische Zuordnung aus Testquelle; JUnit-Discovery und Lauf noch offen",
+      "risks": [
+        "exact money/calendar/validation or access policy, as specified by expectations"
+      ],
+      "canonical_scenarios": [
+        "BE-b98f8bfe63ceae5a"
+      ]
+    },
+    "BE:SavingsGoalTest#v1FortschrittBleibtNichtnegativBisZumSicherenMaximum:24d98f38a638": {
+      "scenarios": [
+        "SC:BE:SavingsGoalTest#v1FortschrittBleibtNichtnegativBisZumSicherenMaximum:24d98f38a638:44136fa355b3"
+      ],
+      "requirements": [
+        "3.6/AC-5"
+      ],
+      "domain": "isolierte fachliche Geld-/Fortschritts-/Kalenderentscheidung",
+      "current_type": "unit",
+      "target_type": "unit; Integration bleibt zusätzlicher Grenznachweis",
+      "remaining_integration": "retain real aggregate/HTTP/commit probes and account-lock calendar capture in financial integration matrices",
+      "observation": [
+        "SavingsGoals.validateProgress(9007199254740992) accepted=false"
+      ],
+      "expected_variant": "\"9007199254740992,false\"",
+      "discovery_status": "statische Zuordnung aus Testquelle; JUnit-Discovery und Lauf noch offen",
+      "risks": [
+        "exact money/calendar/validation or access policy, as specified by expectations"
+      ],
+      "canonical_scenarios": [
+        "BE-c0ca1a74fab909f9"
+      ]
+    },
+    "BE:SavingsGoalTest#korrekturdifferenzWirdAufDenTatsaechlichenFortschrittAngewandt:970ef45943c4": {
+      "scenarios": [
+        "SC:BE:SavingsGoalTest#korrekturdifferenzWirdAufDenTatsaechlichenFortschrittAngewandt:970ef45943c4:44136fa355b3"
+      ],
+      "requirements": [
+        "4.4/AC-5",
+        "M-08",
+        "M-10",
+        "M-11",
+        "M-12",
+        "M-13"
+      ],
+      "domain": "isolierte fachliche Geld-/Fortschritts-/Kalenderentscheidung",
+      "current_type": "unit",
+      "target_type": "unit; Integration bleibt zusätzlicher Grenznachweis",
+      "remaining_integration": "real historical monthly provenance/selection/deletion markers, forced RLS, atomic expense/goal/record/usage commit and independent account locks",
+      "observation": [
+        "progressAfterDifference(2000, -5000) == -3000"
+      ],
+      "expected_variant": "\"2000,-5000,-3000\"",
+      "discovery_status": "statische Zuordnung aus Testquelle; JUnit-Discovery und Lauf noch offen",
+      "risks": [
+        "HTTP adapter/security",
+        "account isolation/RLS",
+        "commit/rollback"
+      ],
+      "canonical_scenarios": [
+        "BE-fda4892f421cc67b"
+      ]
+    },
+    "BE:SavingsGoalTest#korrekturdifferenzWirdAufDenTatsaechlichenFortschrittAngewandt:5591aaa0f417": {
+      "scenarios": [
+        "SC:BE:SavingsGoalTest#korrekturdifferenzWirdAufDenTatsaechlichenFortschrittAngewandt:5591aaa0f417:44136fa355b3"
+      ],
+      "requirements": [
+        "4.4/AC-5",
+        "M-08",
+        "M-10",
+        "M-11",
+        "M-12",
+        "M-13"
+      ],
+      "domain": "isolierte fachliche Geld-/Fortschritts-/Kalenderentscheidung",
+      "current_type": "unit",
+      "target_type": "unit; Integration bleibt zusätzlicher Grenznachweis",
+      "remaining_integration": "real historical monthly provenance/selection/deletion markers, forced RLS, atomic expense/goal/record/usage commit and independent account locks",
+      "observation": [
+        "progressAfterDifference(30000, -5000) == 25000"
+      ],
+      "expected_variant": "\"30000,-5000,25000\"",
+      "discovery_status": "statische Zuordnung aus Testquelle; JUnit-Discovery und Lauf noch offen",
+      "risks": [
+        "HTTP adapter/security",
+        "account isolation/RLS",
+        "commit/rollback"
+      ],
+      "canonical_scenarios": [
+        "BE-4cae31c94cf07f9a"
+      ]
+    },
+    "BE:SavingsGoalTest#korrekturdifferenzLehntUnsicherenGesamtstandAb:77a914e960e1": {
+      "scenarios": [
+        "SC:BE:SavingsGoalTest#korrekturdifferenzLehntUnsicherenGesamtstandAb:77a914e960e1:44136fa355b3"
+      ],
+      "requirements": [
+        "3.3/AC-8"
+      ],
+      "domain": "isolierte fachliche Geld-/Fortschritts-/Kalenderentscheidung",
+      "current_type": "unit",
+      "target_type": "unit; Integration bleibt zusätzlicher Grenznachweis",
+      "remaining_integration": "retain real aggregate/HTTP/commit probes and account-lock calendar capture in financial integration matrices",
+      "observation": [
+        "progressAfterDifference(9007199254740991,1) throws ArithmeticException at the safe cent limit"
+      ],
+      "expected_variant": "\"9007199254740991,1\"",
+      "discovery_status": "statische Zuordnung aus Testquelle; JUnit-Discovery und Lauf noch offen",
+      "risks": [
+        "exact money/calendar/validation or access policy, as specified by expectations"
+      ],
+      "canonical_scenarios": [
+        "BE-75c0fd15050ed9ed"
+      ]
+    },
+    "BE:SavingsGoalTest#korrekturdifferenzLehntUnsicherenGesamtstandAb:1539f09c52c0": {
+      "scenarios": [
+        "SC:BE:SavingsGoalTest#korrekturdifferenzLehntUnsicherenGesamtstandAb:1539f09c52c0:44136fa355b3"
+      ],
+      "requirements": [
+        "3.3/AC-8"
+      ],
+      "domain": "isolierte fachliche Geld-/Fortschritts-/Kalenderentscheidung",
+      "current_type": "unit",
+      "target_type": "unit; Integration bleibt zusätzlicher Grenznachweis",
+      "remaining_integration": "retain real aggregate/HTTP/commit probes and account-lock calendar capture in financial integration matrices",
+      "observation": [
+        "progressAfterDifference(-9007199254740991,-1) throws ArithmeticException at the safe cent limit"
+      ],
+      "expected_variant": "\"-9007199254740991,-1\"",
+      "discovery_status": "statische Zuordnung aus Testquelle; JUnit-Discovery und Lauf noch offen",
+      "risks": [
+        "exact money/calendar/validation or access policy, as specified by expectations"
+      ],
+      "canonical_scenarios": [
+        "BE-13cea904982bad39"
       ]
     }
   },
@@ -69428,6 +70093,801 @@
       "risk_groups": [
         "tooling/infrastructure regression"
       ]
+    },
+    "SC:BE:ExpenseTest#monatsgesamtstandAkzeptiertNurGanzeNichtnegativeSichereCent:44136fa355b3": {
+      "domain": "isolierte fachliche Geld-/Fortschritts-/Kalenderentscheidung",
+      "requirements": [
+        "3.4/AC-4"
+      ],
+      "input_state": {
+        "parameter_variant": "default",
+        "loop_bindings": {},
+        "fixture": "backend/src/test/java/de/linus/tnbp/expenses/ExpenseTest.java#monatsgesamtstandAkzeptiertNurGanzeNichtnegativeSichereCent"
+      },
+      "expected_property": [
+        "Expenses.checkedTotal(0) == 0; Expenses.checkedTotal(1) == 1; Expenses.checkedTotal(MAX) == MAX",
+        "Expenses.checkedTotal(-1, MAX+1, 1.5, 9223372036854775808) throws MonthLimit"
+      ],
+      "primary_test_type": "unit",
+      "primary_source": "BE:ExpenseTest#monatsgesamtstandAkzeptiertNurGanzeNichtnegativeSichereCent",
+      "supplementary_sources": [],
+      "supplementary_boundaries": [],
+      "target_test_type": "unit; Integration bleibt zusätzlicher Grenznachweis",
+      "remaining_integration": "actual expense HTTP and source month/owner persistence, row/account locks, exact aggregate replacement and outer rollback",
+      "replacement_evidence": "OPEN; ergänzender Unit-Schritt, bestehender Integrationsnachweis bleibt erhalten",
+      "risk_groups": [
+        "HTTP adapter/security",
+        "account isolation/RLS",
+        "commit/rollback"
+      ]
+    },
+    "SC:BE:ExpenseTest#monatsänderungBerechnetNeuenGesamtstandMitExakterDifferenz:44136fa355b3": {
+      "domain": "isolierte fachliche Geld-/Fortschritts-/Kalenderentscheidung",
+      "requirements": [
+        "4.4/AC-4",
+        "M-04"
+      ],
+      "input_state": {
+        "parameter_variant": "default",
+        "loop_bindings": {},
+        "fixture": "backend/src/test/java/de/linus/tnbp/expenses/ExpenseTest.java#monatsänderungBerechnetNeuenGesamtstandMitExakterDifferenz"
+      },
+      "expected_property": [
+        "replacementTotal(80000, 80000, 85000) == 85000; replacement at MAX remains MAX; a result above MAX throws MonthLimit"
+      ],
+      "primary_test_type": "unit",
+      "primary_source": "BE:ExpenseTest#monatsänderungBerechnetNeuenGesamtstandMitExakterDifferenz",
+      "supplementary_sources": [],
+      "supplementary_boundaries": [],
+      "target_test_type": "unit; Integration bleibt zusätzlicher Grenznachweis",
+      "remaining_integration": "real historical monthly provenance/selection/deletion markers, forced RLS, atomic expense/goal/record/usage commit and independent account locks",
+      "replacement_evidence": "OPEN; ergänzender Unit-Schritt, bestehender Integrationsnachweis bleibt erhalten",
+      "risk_groups": [
+        "HTTP adapter/security",
+        "account isolation/RLS",
+        "commit/rollback"
+      ]
+    },
+    "SC:BE:SavingsGoalTest#signierterFortschrittLehntFehlendenWertAb:44136fa355b3": {
+      "domain": "isolierte fachliche Geld-/Fortschritts-/Kalenderentscheidung",
+      "requirements": [
+        "3.6/AC-5"
+      ],
+      "input_state": {
+        "parameter_variant": "default",
+        "loop_bindings": {},
+        "fixture": "backend/src/test/java/de/linus/tnbp/savingsgoals/SavingsGoalTest.java#signierterFortschrittLehntFehlendenWertAb"
+      },
+      "expected_property": [
+        "SavingsGoals.validateSignedProgress(null) throws InvalidGoal"
+      ],
+      "primary_test_type": "unit",
+      "primary_source": "BE:SavingsGoalTest#signierterFortschrittLehntFehlendenWertAb",
+      "supplementary_sources": [],
+      "supplementary_boundaries": [],
+      "target_test_type": "unit; Integration bleibt zusätzlicher Grenznachweis",
+      "remaining_integration": "retain real aggregate/HTTP/commit probes and account-lock calendar capture in financial integration matrices",
+      "replacement_evidence": "OPEN; ergänzender Unit-Schritt, bestehender Integrationsnachweis bleibt erhalten",
+      "risk_groups": [
+        "exact money/calendar/validation or access policy, as specified by expectations"
+      ]
+    },
+    "SC:BE:FinanceApplicationTest#fehlendesNullUndPositivesBudgetBleibenImRestbudgetUnterschieden:44136fa355b3": {
+      "domain": "isolierte fachliche Geld-/Fortschritts-/Kalenderentscheidung",
+      "requirements": [
+        "3.5/AC-5"
+      ],
+      "input_state": {
+        "parameter_variant": "default",
+        "loop_bindings": {},
+        "fixture": "backend/src/test/java/de/linus/tnbp/finance/FinanceApplicationTest.java#fehlendesNullUndPositivesBudgetBleibenImRestbudgetUnterschieden"
+      },
+      "expected_property": [
+        "remainingCents(null,100)=null; (0,0)=0; (10000,0)=10000; (10000,1234)=8766; (0,1234)=-1234; (99999,55555)=44444; (99999,0)=99999"
+      ],
+      "primary_test_type": "unit",
+      "primary_source": "BE:FinanceApplicationTest#fehlendesNullUndPositivesBudgetBleibenImRestbudgetUnterschieden",
+      "supplementary_sources": [],
+      "supplementary_boundaries": [],
+      "target_test_type": "unit; Integration bleibt zusätzlicher Grenznachweis",
+      "remaining_integration": "actual account-scoped read-only repeatable-read snapshot across budget and expense projections",
+      "replacement_evidence": "OPEN; ergänzender Unit-Schritt, bestehender Integrationsnachweis bleibt erhalten",
+      "risk_groups": [
+        "HTTP adapter/security",
+        "account isolation/RLS",
+        "commit/rollback"
+      ]
+    },
+    "SC:BE:FinanceApplicationTest#restbudgetBleibtExaktBisZurSicherenGrenzeUndLehntUeberlaufAb:44136fa355b3": {
+      "domain": "isolierte fachliche Geld-/Fortschritts-/Kalenderentscheidung",
+      "requirements": [
+        "3.5/AC-4",
+        "3.5/AC-5"
+      ],
+      "input_state": {
+        "parameter_variant": "default",
+        "loop_bindings": {},
+        "fixture": "backend/src/test/java/de/linus/tnbp/finance/FinanceApplicationTest.java#restbudgetBleibtExaktBisZurSicherenGrenzeUndLehntUeberlaufAb"
+      },
+      "expected_property": [
+        "remainingCents(MAX,0)=MAX; remainingCents(0,MAX)=-MAX; remainingCents(MAX,-1) throws ArithmeticException"
+      ],
+      "primary_test_type": "unit",
+      "primary_source": "BE:FinanceApplicationTest#restbudgetBleibtExaktBisZurSicherenGrenzeUndLehntUeberlaufAb",
+      "supplementary_sources": [],
+      "supplementary_boundaries": [],
+      "target_test_type": "unit; Integration bleibt zusätzlicher Grenznachweis",
+      "remaining_integration": "actual account-scoped read-only repeatable-read snapshot across budget and expense projections",
+      "replacement_evidence": "OPEN; ergänzender Unit-Schritt, bestehender Integrationsnachweis bleibt erhalten",
+      "risk_groups": [
+        "HTTP adapter/security",
+        "account isolation/RLS",
+        "commit/rollback"
+      ]
+    },
+    "SC:BE:MonthlySurplusTest#offeneSummeUndVormerkungBleibenExaktUndUnterscheidenFehlendenBetrag:44136fa355b3": {
+      "domain": "isolierte fachliche Geld-/Fortschritts-/Kalenderentscheidung",
+      "requirements": [
+        "4.2/AC-2",
+        "4.2/AC-3",
+        "4.2/AC-6",
+        "M-02",
+        "M-07"
+      ],
+      "input_state": {
+        "parameter_variant": "default",
+        "loop_bindings": {},
+        "fixture": "backend/src/test/java/de/linus/tnbp/monthlysurplus/MonthlySurplusTest.java#offeneSummeUndVormerkungBleibenExaktUndUnterscheidenFehlendenBetrag"
+      },
+      "expected_property": [
+        "checkedPending(0)=0; checkedPending(MAX)=MAX; no-budget contributes 0; 20000+10000=30000; selection binding does not increase pending; total above MAX and negative total throw ArithmeticException"
+      ],
+      "primary_test_type": "unit",
+      "primary_source": "BE:MonthlySurplusTest#offeneSummeUndVormerkungBleibenExaktUndUnterscheidenFehlendenBetrag",
+      "supplementary_sources": [],
+      "supplementary_boundaries": [],
+      "target_test_type": "unit; Integration bleibt zusätzlicher Grenznachweis",
+      "remaining_integration": "real historical monthly provenance/selection/deletion markers, forced RLS, atomic expense/goal/record/usage commit and independent account locks",
+      "replacement_evidence": "OPEN; ergänzender Unit-Schritt, bestehender Integrationsnachweis bleibt erhalten",
+      "risk_groups": [
+        "HTTP adapter/security",
+        "account isolation/RLS",
+        "commit/rollback"
+      ]
+    },
+    "SC:BE:RegistrationEmailTest#normalisiertVorDerFachpruefungOhneLocaleAbhaengigkeit:44136fa355b3": {
+      "domain": "access",
+      "requirements": [
+        "3.1/AC-3"
+      ],
+      "input_state": {
+        "parameter_variant": "default",
+        "loop_bindings": {},
+        "fixture": "backend/src/test/java/de/linus/tnbp/access/RegistrationEmailTest.java#normalisiertVorDerFachpruefungOhneLocaleAbhaengigkeit"
+      },
+      "expected_property": [
+        "assertThat(RegistrationEmailPolicy.normalize(\"  PERSON@EXAMPLE.ORG  \")).isEqualTo(\"person@example.org\")"
+      ],
+      "primary_test_type": "unit",
+      "primary_source": "BE:RegistrationEmailTest#normalisiertVorDerFachpruefungOhneLocaleAbhaengigkeit",
+      "supplementary_sources": [],
+      "supplementary_boundaries": [],
+      "target_test_type": "unit email policy; retain HTTP adapter and persisted-account integration",
+      "remaining_integration": "HTTP cookie/CSRF/Origin/JWT routing and real account/session persistence, commit/replay races and startup role verification",
+      "replacement_evidence": "OPEN; existing integration is retained",
+      "counting": "business",
+      "risk_groups": [
+        "HTTP adapter/security",
+        "account isolation/RLS",
+        "commit/rollback"
+      ]
+    },
+    "SC:BE:RegistrationEmailTest#gueltigkeitsregelBehaelt254ZeichenGrenzeUndFormatbeispiele:44136fa355b3": {
+      "domain": "access",
+      "requirements": [
+        "3.1/AC-3"
+      ],
+      "input_state": {
+        "parameter_variant": "default",
+        "loop_bindings": {},
+        "fixture": "backend/src/test/java/de/linus/tnbp/access/RegistrationEmailTest.java#gueltigkeitsregelBehaelt254ZeichenGrenzeUndFormatbeispiele"
+      },
+      "expected_property": [
+        "assertThat(boundary).hasSize(254)",
+        "assertThat(RegistrationEmailPolicy.valid(boundary, VALIDATOR)).isTrue()",
+        "assertThat(RegistrationEmailPolicy.valid(boundary + \"d\", VALIDATOR)).isFalse()"
+      ],
+      "primary_test_type": "unit",
+      "primary_source": "BE:RegistrationEmailTest#gueltigkeitsregelBehaelt254ZeichenGrenzeUndFormatbeispiele",
+      "supplementary_sources": [],
+      "supplementary_boundaries": [],
+      "target_test_type": "unit email policy; retain HTTP adapter and persisted-account integration",
+      "remaining_integration": "HTTP cookie/CSRF/Origin/JWT routing and real account/session persistence, commit/replay races and startup role verification",
+      "replacement_evidence": "OPEN; existing integration is retained",
+      "counting": "business",
+      "risk_groups": [
+        "HTTP adapter/security",
+        "account isolation/RLS",
+        "commit/rollback"
+      ]
+    },
+    "SC:BE:RegistrationEmailTest#gueltigkeitsregelBehaelt254ZeichenGrenzeUndFormatbeispiele:1a4038057f82": {
+      "domain": "access",
+      "requirements": [
+        "3.1/AC-3"
+      ],
+      "input_state": {
+        "parameter_variant": "default",
+        "loop_bindings": {
+          "email": "\"\""
+        },
+        "fixture": "backend/src/test/java/de/linus/tnbp/access/RegistrationEmailTest.java#gueltigkeitsregelBehaelt254ZeichenGrenzeUndFormatbeispiele"
+      },
+      "expected_property": [
+        "assertThat(RegistrationEmailPolicy.valid(RegistrationEmailPolicy.normalize(email), VALIDATOR)).isFalse()"
+      ],
+      "primary_test_type": "unit",
+      "primary_source": "BE:RegistrationEmailTest#gueltigkeitsregelBehaelt254ZeichenGrenzeUndFormatbeispiele",
+      "supplementary_sources": [],
+      "supplementary_boundaries": [],
+      "target_test_type": "unit email policy; retain HTTP adapter and persisted-account integration",
+      "remaining_integration": "HTTP cookie/CSRF/Origin/JWT routing and real account/session persistence, commit/replay races and startup role verification",
+      "replacement_evidence": "OPEN; existing integration is retained",
+      "counting": "business",
+      "risk_groups": [
+        "HTTP adapter/security",
+        "account isolation/RLS",
+        "commit/rollback"
+      ]
+    },
+    "SC:BE:RegistrationEmailTest#gueltigkeitsregelBehaelt254ZeichenGrenzeUndFormatbeispiele:4d2722f172e4": {
+      "domain": "access",
+      "requirements": [
+        "3.1/AC-3"
+      ],
+      "input_state": {
+        "parameter_variant": "default",
+        "loop_bindings": {
+          "email": "\"kaputt\""
+        },
+        "fixture": "backend/src/test/java/de/linus/tnbp/access/RegistrationEmailTest.java#gueltigkeitsregelBehaelt254ZeichenGrenzeUndFormatbeispiele"
+      },
+      "expected_property": [
+        "assertThat(RegistrationEmailPolicy.valid(RegistrationEmailPolicy.normalize(email), VALIDATOR)).isFalse()"
+      ],
+      "primary_test_type": "unit",
+      "primary_source": "BE:RegistrationEmailTest#gueltigkeitsregelBehaelt254ZeichenGrenzeUndFormatbeispiele",
+      "supplementary_sources": [],
+      "supplementary_boundaries": [],
+      "target_test_type": "unit email policy; retain HTTP adapter and persisted-account integration",
+      "remaining_integration": "HTTP cookie/CSRF/Origin/JWT routing and real account/session persistence, commit/replay races and startup role verification",
+      "replacement_evidence": "OPEN; existing integration is retained",
+      "counting": "business",
+      "risk_groups": [
+        "HTTP adapter/security",
+        "account isolation/RLS",
+        "commit/rollback"
+      ]
+    },
+    "SC:BE:RegistrationEmailTest#gueltigkeitsregelBehaelt254ZeichenGrenzeUndFormatbeispiele:a30723d08342": {
+      "domain": "access",
+      "requirements": [
+        "3.1/AC-3"
+      ],
+      "input_state": {
+        "parameter_variant": "default",
+        "loop_bindings": {
+          "email": "\"zwei@@example.org\""
+        },
+        "fixture": "backend/src/test/java/de/linus/tnbp/access/RegistrationEmailTest.java#gueltigkeitsregelBehaelt254ZeichenGrenzeUndFormatbeispiele"
+      },
+      "expected_property": [
+        "assertThat(RegistrationEmailPolicy.valid(RegistrationEmailPolicy.normalize(email), VALIDATOR)).isFalse()"
+      ],
+      "primary_test_type": "unit",
+      "primary_source": "BE:RegistrationEmailTest#gueltigkeitsregelBehaelt254ZeichenGrenzeUndFormatbeispiele",
+      "supplementary_sources": [],
+      "supplementary_boundaries": [],
+      "target_test_type": "unit email policy; retain HTTP adapter and persisted-account integration",
+      "remaining_integration": "HTTP cookie/CSRF/Origin/JWT routing and real account/session persistence, commit/replay races and startup role verification",
+      "replacement_evidence": "OPEN; existing integration is retained",
+      "counting": "business",
+      "risk_groups": [
+        "HTTP adapter/security",
+        "account isolation/RLS",
+        "commit/rollback"
+      ]
+    },
+    "SC:BE:RegistrationEmailTest#gueltigkeitsregelBehaelt254ZeichenGrenzeUndFormatbeispiele:9c44346ad065": {
+      "domain": "access",
+      "requirements": [
+        "3.1/AC-3"
+      ],
+      "input_state": {
+        "parameter_variant": "default",
+        "loop_bindings": {
+          "email": "\"a b@example.org\""
+        },
+        "fixture": "backend/src/test/java/de/linus/tnbp/access/RegistrationEmailTest.java#gueltigkeitsregelBehaelt254ZeichenGrenzeUndFormatbeispiele"
+      },
+      "expected_property": [
+        "assertThat(RegistrationEmailPolicy.valid(RegistrationEmailPolicy.normalize(email), VALIDATOR)).isFalse()"
+      ],
+      "primary_test_type": "unit",
+      "primary_source": "BE:RegistrationEmailTest#gueltigkeitsregelBehaelt254ZeichenGrenzeUndFormatbeispiele",
+      "supplementary_sources": [],
+      "supplementary_boundaries": [],
+      "target_test_type": "unit email policy; retain HTTP adapter and persisted-account integration",
+      "remaining_integration": "HTTP cookie/CSRF/Origin/JWT routing and real account/session persistence, commit/replay races and startup role verification",
+      "replacement_evidence": "OPEN; existing integration is retained",
+      "counting": "business",
+      "risk_groups": [
+        "HTTP adapter/security",
+        "account isolation/RLS",
+        "commit/rollback"
+      ]
+    },
+    "SC:BE:SavingsGoalTest#signierterFortschrittErlaubtVorzeichenUndBeideSicherenGrenzen:ba85c5ce4aac:44136fa355b3": {
+      "domain": "isolierte fachliche Geld-/Fortschritts-/Kalenderentscheidung",
+      "requirements": [
+        "3.8/AC-3",
+        "3.8/AC-4",
+        "M-11",
+        "M-16"
+      ],
+      "input_state": {
+        "parameter_variant": "\"-9007199254740991\"",
+        "loop_bindings": {},
+        "fixture": "backend/src/test/java/de/linus/tnbp/savingsgoals/SavingsGoalTest.java#signierterFortschrittErlaubtVorzeichenUndBeideSicherenGrenzen"
+      },
+      "expected_property": [
+        "SavingsGoals.validateSignedProgress(-9007199254740991) completes without error"
+      ],
+      "primary_test_type": "unit",
+      "primary_source": "BE:SavingsGoalTest#signierterFortschrittErlaubtVorzeichenUndBeideSicherenGrenzen:ba85c5ce4aac",
+      "supplementary_sources": [],
+      "supplementary_boundaries": [],
+      "target_test_type": "unit; Integration bleibt zusätzlicher Grenznachweis",
+      "remaining_integration": "actual version capability check and atomic signed progress/irreversible usage marker, true rollback and version lock ordering",
+      "replacement_evidence": "OPEN; ergänzender Unit-Schritt, bestehender Integrationsnachweis bleibt erhalten",
+      "risk_groups": [
+        "HTTP adapter/security",
+        "account isolation/RLS",
+        "commit/rollback"
+      ]
+    },
+    "SC:BE:SavingsGoalTest#signierterFortschrittErlaubtVorzeichenUndBeideSicherenGrenzen:7d583ea3babe:44136fa355b3": {
+      "domain": "isolierte fachliche Geld-/Fortschritts-/Kalenderentscheidung",
+      "requirements": [
+        "3.8/AC-3",
+        "3.8/AC-4",
+        "M-11",
+        "M-16"
+      ],
+      "input_state": {
+        "parameter_variant": "\"-3000\"",
+        "loop_bindings": {},
+        "fixture": "backend/src/test/java/de/linus/tnbp/savingsgoals/SavingsGoalTest.java#signierterFortschrittErlaubtVorzeichenUndBeideSicherenGrenzen"
+      },
+      "expected_property": [
+        "SavingsGoals.validateSignedProgress(-3000) completes without error"
+      ],
+      "primary_test_type": "unit",
+      "primary_source": "BE:SavingsGoalTest#signierterFortschrittErlaubtVorzeichenUndBeideSicherenGrenzen:7d583ea3babe",
+      "supplementary_sources": [],
+      "supplementary_boundaries": [],
+      "target_test_type": "unit; Integration bleibt zusätzlicher Grenznachweis",
+      "remaining_integration": "actual version capability check and atomic signed progress/irreversible usage marker, true rollback and version lock ordering",
+      "replacement_evidence": "OPEN; ergänzender Unit-Schritt, bestehender Integrationsnachweis bleibt erhalten",
+      "risk_groups": [
+        "HTTP adapter/security",
+        "account isolation/RLS",
+        "commit/rollback"
+      ]
+    },
+    "SC:BE:SavingsGoalTest#signierterFortschrittErlaubtVorzeichenUndBeideSicherenGrenzen:98089e6d36f7:44136fa355b3": {
+      "domain": "isolierte fachliche Geld-/Fortschritts-/Kalenderentscheidung",
+      "requirements": [
+        "3.8/AC-3",
+        "3.8/AC-4",
+        "M-11",
+        "M-16"
+      ],
+      "input_state": {
+        "parameter_variant": "\"0\"",
+        "loop_bindings": {},
+        "fixture": "backend/src/test/java/de/linus/tnbp/savingsgoals/SavingsGoalTest.java#signierterFortschrittErlaubtVorzeichenUndBeideSicherenGrenzen"
+      },
+      "expected_property": [
+        "SavingsGoals.validateSignedProgress(0) completes without error"
+      ],
+      "primary_test_type": "unit",
+      "primary_source": "BE:SavingsGoalTest#signierterFortschrittErlaubtVorzeichenUndBeideSicherenGrenzen:98089e6d36f7",
+      "supplementary_sources": [],
+      "supplementary_boundaries": [],
+      "target_test_type": "unit; Integration bleibt zusätzlicher Grenznachweis",
+      "remaining_integration": "actual version capability check and atomic signed progress/irreversible usage marker, true rollback and version lock ordering",
+      "replacement_evidence": "OPEN; ergänzender Unit-Schritt, bestehender Integrationsnachweis bleibt erhalten",
+      "risk_groups": [
+        "HTTP adapter/security",
+        "account isolation/RLS",
+        "commit/rollback"
+      ]
+    },
+    "SC:BE:SavingsGoalTest#signierterFortschrittErlaubtVorzeichenUndBeideSicherenGrenzen:1b6d2e96d30a:44136fa355b3": {
+      "domain": "isolierte fachliche Geld-/Fortschritts-/Kalenderentscheidung",
+      "requirements": [
+        "3.8/AC-3",
+        "3.8/AC-4",
+        "M-11",
+        "M-16"
+      ],
+      "input_state": {
+        "parameter_variant": "\"7000\"",
+        "loop_bindings": {},
+        "fixture": "backend/src/test/java/de/linus/tnbp/savingsgoals/SavingsGoalTest.java#signierterFortschrittErlaubtVorzeichenUndBeideSicherenGrenzen"
+      },
+      "expected_property": [
+        "SavingsGoals.validateSignedProgress(7000) completes without error"
+      ],
+      "primary_test_type": "unit",
+      "primary_source": "BE:SavingsGoalTest#signierterFortschrittErlaubtVorzeichenUndBeideSicherenGrenzen:1b6d2e96d30a",
+      "supplementary_sources": [],
+      "supplementary_boundaries": [],
+      "target_test_type": "unit; Integration bleibt zusätzlicher Grenznachweis",
+      "remaining_integration": "actual version capability check and atomic signed progress/irreversible usage marker, true rollback and version lock ordering",
+      "replacement_evidence": "OPEN; ergänzender Unit-Schritt, bestehender Integrationsnachweis bleibt erhalten",
+      "risk_groups": [
+        "HTTP adapter/security",
+        "account isolation/RLS",
+        "commit/rollback"
+      ]
+    },
+    "SC:BE:SavingsGoalTest#signierterFortschrittErlaubtVorzeichenUndBeideSicherenGrenzen:3bc0f6e22232:44136fa355b3": {
+      "domain": "isolierte fachliche Geld-/Fortschritts-/Kalenderentscheidung",
+      "requirements": [
+        "3.8/AC-3",
+        "3.8/AC-4",
+        "M-11",
+        "M-16"
+      ],
+      "input_state": {
+        "parameter_variant": "\"15000\"",
+        "loop_bindings": {},
+        "fixture": "backend/src/test/java/de/linus/tnbp/savingsgoals/SavingsGoalTest.java#signierterFortschrittErlaubtVorzeichenUndBeideSicherenGrenzen"
+      },
+      "expected_property": [
+        "SavingsGoals.validateSignedProgress(15000) completes without error"
+      ],
+      "primary_test_type": "unit",
+      "primary_source": "BE:SavingsGoalTest#signierterFortschrittErlaubtVorzeichenUndBeideSicherenGrenzen:3bc0f6e22232",
+      "supplementary_sources": [],
+      "supplementary_boundaries": [],
+      "target_test_type": "unit; Integration bleibt zusätzlicher Grenznachweis",
+      "remaining_integration": "actual version capability check and atomic signed progress/irreversible usage marker, true rollback and version lock ordering",
+      "replacement_evidence": "OPEN; ergänzender Unit-Schritt, bestehender Integrationsnachweis bleibt erhalten",
+      "risk_groups": [
+        "HTTP adapter/security",
+        "account isolation/RLS",
+        "commit/rollback"
+      ]
+    },
+    "SC:BE:SavingsGoalTest#signierterFortschrittErlaubtVorzeichenUndBeideSicherenGrenzen:c9b6149ddff7:44136fa355b3": {
+      "domain": "isolierte fachliche Geld-/Fortschritts-/Kalenderentscheidung",
+      "requirements": [
+        "3.8/AC-3",
+        "3.8/AC-4",
+        "M-11",
+        "M-16"
+      ],
+      "input_state": {
+        "parameter_variant": "\"9007199254740991\"",
+        "loop_bindings": {},
+        "fixture": "backend/src/test/java/de/linus/tnbp/savingsgoals/SavingsGoalTest.java#signierterFortschrittErlaubtVorzeichenUndBeideSicherenGrenzen"
+      },
+      "expected_property": [
+        "SavingsGoals.validateSignedProgress(9007199254740991) completes without error"
+      ],
+      "primary_test_type": "unit",
+      "primary_source": "BE:SavingsGoalTest#signierterFortschrittErlaubtVorzeichenUndBeideSicherenGrenzen:c9b6149ddff7",
+      "supplementary_sources": [],
+      "supplementary_boundaries": [],
+      "target_test_type": "unit; Integration bleibt zusätzlicher Grenznachweis",
+      "remaining_integration": "actual version capability check and atomic signed progress/irreversible usage marker, true rollback and version lock ordering",
+      "replacement_evidence": "OPEN; ergänzender Unit-Schritt, bestehender Integrationsnachweis bleibt erhalten",
+      "risk_groups": [
+        "HTTP adapter/security",
+        "account isolation/RLS",
+        "commit/rollback"
+      ]
+    },
+    "SC:BE:SavingsGoalTest#signierterFortschrittLehntGrenzueberschreitungAb:eadea71416c1:44136fa355b3": {
+      "domain": "isolierte fachliche Geld-/Fortschritts-/Kalenderentscheidung",
+      "requirements": [
+        "3.8/AC-5"
+      ],
+      "input_state": {
+        "parameter_variant": "\"-9007199254740992\"",
+        "loop_bindings": {},
+        "fixture": "backend/src/test/java/de/linus/tnbp/savingsgoals/SavingsGoalTest.java#signierterFortschrittLehntGrenzueberschreitungAb"
+      },
+      "expected_property": [
+        "SavingsGoals.validateSignedProgress(-9007199254740992) throws InvalidGoal with only progressCents field error"
+      ],
+      "primary_test_type": "unit",
+      "primary_source": "BE:SavingsGoalTest#signierterFortschrittLehntGrenzueberschreitungAb:eadea71416c1",
+      "supplementary_sources": [],
+      "supplementary_boundaries": [],
+      "target_test_type": "unit; Integration bleibt zusätzlicher Grenznachweis",
+      "remaining_integration": "actual version capability check and atomic signed progress/irreversible usage marker, true rollback and version lock ordering",
+      "replacement_evidence": "OPEN; ergänzender Unit-Schritt, bestehender Integrationsnachweis bleibt erhalten",
+      "risk_groups": [
+        "HTTP adapter/security",
+        "account isolation/RLS",
+        "commit/rollback"
+      ]
+    },
+    "SC:BE:SavingsGoalTest#signierterFortschrittLehntGrenzueberschreitungAb:4ba9bf7656a3:44136fa355b3": {
+      "domain": "isolierte fachliche Geld-/Fortschritts-/Kalenderentscheidung",
+      "requirements": [
+        "3.8/AC-5"
+      ],
+      "input_state": {
+        "parameter_variant": "\"9007199254740992\"",
+        "loop_bindings": {},
+        "fixture": "backend/src/test/java/de/linus/tnbp/savingsgoals/SavingsGoalTest.java#signierterFortschrittLehntGrenzueberschreitungAb"
+      },
+      "expected_property": [
+        "SavingsGoals.validateSignedProgress(9007199254740992) throws InvalidGoal with only progressCents field error"
+      ],
+      "primary_test_type": "unit",
+      "primary_source": "BE:SavingsGoalTest#signierterFortschrittLehntGrenzueberschreitungAb:4ba9bf7656a3",
+      "supplementary_sources": [],
+      "supplementary_boundaries": [],
+      "target_test_type": "unit; Integration bleibt zusätzlicher Grenznachweis",
+      "remaining_integration": "actual version capability check and atomic signed progress/irreversible usage marker, true rollback and version lock ordering",
+      "replacement_evidence": "OPEN; ergänzender Unit-Schritt, bestehender Integrationsnachweis bleibt erhalten",
+      "risk_groups": [
+        "HTTP adapter/security",
+        "account isolation/RLS",
+        "commit/rollback"
+      ]
+    },
+    "SC:BE:SavingsGoalTest#v1FortschrittBleibtNichtnegativBisZumSicherenMaximum:20b117d8fcad:44136fa355b3": {
+      "domain": "isolierte fachliche Geld-/Fortschritts-/Kalenderentscheidung",
+      "requirements": [
+        "3.6/AC-5"
+      ],
+      "input_state": {
+        "parameter_variant": "\"0,true\"",
+        "loop_bindings": {},
+        "fixture": "backend/src/test/java/de/linus/tnbp/savingsgoals/SavingsGoalTest.java#v1FortschrittBleibtNichtnegativBisZumSicherenMaximum"
+      },
+      "expected_property": [
+        "SavingsGoals.validateProgress(0) accepted=true"
+      ],
+      "primary_test_type": "unit",
+      "primary_source": "BE:SavingsGoalTest#v1FortschrittBleibtNichtnegativBisZumSicherenMaximum:20b117d8fcad",
+      "supplementary_sources": [],
+      "supplementary_boundaries": [],
+      "target_test_type": "unit; Integration bleibt zusätzlicher Grenznachweis",
+      "remaining_integration": "actual authenticated target/progress CRUD, retained fields and calendar dates, forced RLS and concurrent/outer commit boundaries",
+      "replacement_evidence": "OPEN; ergänzender Unit-Schritt, bestehender Integrationsnachweis bleibt erhalten",
+      "risk_groups": [
+        "HTTP adapter/security",
+        "account isolation/RLS",
+        "commit/rollback"
+      ]
+    },
+    "SC:BE:SavingsGoalTest#v1FortschrittBleibtNichtnegativBisZumSicherenMaximum:d6e47b3885e3:44136fa355b3": {
+      "domain": "isolierte fachliche Geld-/Fortschritts-/Kalenderentscheidung",
+      "requirements": [
+        "3.6/AC-5"
+      ],
+      "input_state": {
+        "parameter_variant": "\"2000,true\"",
+        "loop_bindings": {},
+        "fixture": "backend/src/test/java/de/linus/tnbp/savingsgoals/SavingsGoalTest.java#v1FortschrittBleibtNichtnegativBisZumSicherenMaximum"
+      },
+      "expected_property": [
+        "SavingsGoals.validateProgress(2000) accepted=true"
+      ],
+      "primary_test_type": "unit",
+      "primary_source": "BE:SavingsGoalTest#v1FortschrittBleibtNichtnegativBisZumSicherenMaximum:d6e47b3885e3",
+      "supplementary_sources": [],
+      "supplementary_boundaries": [],
+      "target_test_type": "unit; Integration bleibt zusätzlicher Grenznachweis",
+      "remaining_integration": "actual authenticated target/progress CRUD, retained fields and calendar dates, forced RLS and concurrent/outer commit boundaries",
+      "replacement_evidence": "OPEN; ergänzender Unit-Schritt, bestehender Integrationsnachweis bleibt erhalten",
+      "risk_groups": [
+        "HTTP adapter/security",
+        "account isolation/RLS",
+        "commit/rollback"
+      ]
+    },
+    "SC:BE:SavingsGoalTest#v1FortschrittBleibtNichtnegativBisZumSicherenMaximum:1aa25e5666a1:44136fa355b3": {
+      "domain": "isolierte fachliche Geld-/Fortschritts-/Kalenderentscheidung",
+      "requirements": [
+        "3.6/AC-5"
+      ],
+      "input_state": {
+        "parameter_variant": "\"9007199254740991,true\"",
+        "loop_bindings": {},
+        "fixture": "backend/src/test/java/de/linus/tnbp/savingsgoals/SavingsGoalTest.java#v1FortschrittBleibtNichtnegativBisZumSicherenMaximum"
+      },
+      "expected_property": [
+        "SavingsGoals.validateProgress(9007199254740991) accepted=true"
+      ],
+      "primary_test_type": "unit",
+      "primary_source": "BE:SavingsGoalTest#v1FortschrittBleibtNichtnegativBisZumSicherenMaximum:1aa25e5666a1",
+      "supplementary_sources": [],
+      "supplementary_boundaries": [],
+      "target_test_type": "unit; Integration bleibt zusätzlicher Grenznachweis",
+      "remaining_integration": "actual authenticated target/progress CRUD, retained fields and calendar dates, forced RLS and concurrent/outer commit boundaries",
+      "replacement_evidence": "OPEN; ergänzender Unit-Schritt, bestehender Integrationsnachweis bleibt erhalten",
+      "risk_groups": [
+        "HTTP adapter/security",
+        "account isolation/RLS",
+        "commit/rollback"
+      ]
+    },
+    "SC:BE:SavingsGoalTest#v1FortschrittBleibtNichtnegativBisZumSicherenMaximum:04a2f659bc97:44136fa355b3": {
+      "domain": "isolierte fachliche Geld-/Fortschritts-/Kalenderentscheidung",
+      "requirements": [
+        "3.6/AC-5"
+      ],
+      "input_state": {
+        "parameter_variant": "\"-1,false\"",
+        "loop_bindings": {},
+        "fixture": "backend/src/test/java/de/linus/tnbp/savingsgoals/SavingsGoalTest.java#v1FortschrittBleibtNichtnegativBisZumSicherenMaximum"
+      },
+      "expected_property": [
+        "SavingsGoals.validateProgress(-1) accepted=false"
+      ],
+      "primary_test_type": "unit",
+      "primary_source": "BE:SavingsGoalTest#v1FortschrittBleibtNichtnegativBisZumSicherenMaximum:04a2f659bc97",
+      "supplementary_sources": [],
+      "supplementary_boundaries": [],
+      "target_test_type": "unit; Integration bleibt zusätzlicher Grenznachweis",
+      "remaining_integration": "retain real aggregate/HTTP/commit probes and account-lock calendar capture in financial integration matrices",
+      "replacement_evidence": "OPEN; ergänzender Unit-Schritt, bestehender Integrationsnachweis bleibt erhalten",
+      "risk_groups": [
+        "exact money/calendar/validation or access policy, as specified by expectations"
+      ]
+    },
+    "SC:BE:SavingsGoalTest#v1FortschrittBleibtNichtnegativBisZumSicherenMaximum:24d98f38a638:44136fa355b3": {
+      "domain": "isolierte fachliche Geld-/Fortschritts-/Kalenderentscheidung",
+      "requirements": [
+        "3.6/AC-5"
+      ],
+      "input_state": {
+        "parameter_variant": "\"9007199254740992,false\"",
+        "loop_bindings": {},
+        "fixture": "backend/src/test/java/de/linus/tnbp/savingsgoals/SavingsGoalTest.java#v1FortschrittBleibtNichtnegativBisZumSicherenMaximum"
+      },
+      "expected_property": [
+        "SavingsGoals.validateProgress(9007199254740992) accepted=false"
+      ],
+      "primary_test_type": "unit",
+      "primary_source": "BE:SavingsGoalTest#v1FortschrittBleibtNichtnegativBisZumSicherenMaximum:24d98f38a638",
+      "supplementary_sources": [],
+      "supplementary_boundaries": [],
+      "target_test_type": "unit; Integration bleibt zusätzlicher Grenznachweis",
+      "remaining_integration": "retain real aggregate/HTTP/commit probes and account-lock calendar capture in financial integration matrices",
+      "replacement_evidence": "OPEN; ergänzender Unit-Schritt, bestehender Integrationsnachweis bleibt erhalten",
+      "risk_groups": [
+        "exact money/calendar/validation or access policy, as specified by expectations"
+      ]
+    },
+    "SC:BE:SavingsGoalTest#korrekturdifferenzWirdAufDenTatsaechlichenFortschrittAngewandt:970ef45943c4:44136fa355b3": {
+      "domain": "isolierte fachliche Geld-/Fortschritts-/Kalenderentscheidung",
+      "requirements": [
+        "4.4/AC-5",
+        "M-08",
+        "M-10",
+        "M-11",
+        "M-12",
+        "M-13"
+      ],
+      "input_state": {
+        "parameter_variant": "\"2000,-5000,-3000\"",
+        "loop_bindings": {},
+        "fixture": "backend/src/test/java/de/linus/tnbp/savingsgoals/SavingsGoalTest.java#korrekturdifferenzWirdAufDenTatsaechlichenFortschrittAngewandt"
+      },
+      "expected_property": [
+        "progressAfterDifference(2000, -5000) == -3000"
+      ],
+      "primary_test_type": "unit",
+      "primary_source": "BE:SavingsGoalTest#korrekturdifferenzWirdAufDenTatsaechlichenFortschrittAngewandt:970ef45943c4",
+      "supplementary_sources": [],
+      "supplementary_boundaries": [],
+      "target_test_type": "unit; Integration bleibt zusätzlicher Grenznachweis",
+      "remaining_integration": "real historical monthly provenance/selection/deletion markers, forced RLS, atomic expense/goal/record/usage commit and independent account locks",
+      "replacement_evidence": "OPEN; ergänzender Unit-Schritt, bestehender Integrationsnachweis bleibt erhalten",
+      "risk_groups": [
+        "HTTP adapter/security",
+        "account isolation/RLS",
+        "commit/rollback"
+      ]
+    },
+    "SC:BE:SavingsGoalTest#korrekturdifferenzWirdAufDenTatsaechlichenFortschrittAngewandt:5591aaa0f417:44136fa355b3": {
+      "domain": "isolierte fachliche Geld-/Fortschritts-/Kalenderentscheidung",
+      "requirements": [
+        "4.4/AC-5",
+        "M-08",
+        "M-10",
+        "M-11",
+        "M-12",
+        "M-13"
+      ],
+      "input_state": {
+        "parameter_variant": "\"30000,-5000,25000\"",
+        "loop_bindings": {},
+        "fixture": "backend/src/test/java/de/linus/tnbp/savingsgoals/SavingsGoalTest.java#korrekturdifferenzWirdAufDenTatsaechlichenFortschrittAngewandt"
+      },
+      "expected_property": [
+        "progressAfterDifference(30000, -5000) == 25000"
+      ],
+      "primary_test_type": "unit",
+      "primary_source": "BE:SavingsGoalTest#korrekturdifferenzWirdAufDenTatsaechlichenFortschrittAngewandt:5591aaa0f417",
+      "supplementary_sources": [],
+      "supplementary_boundaries": [],
+      "target_test_type": "unit; Integration bleibt zusätzlicher Grenznachweis",
+      "remaining_integration": "real historical monthly provenance/selection/deletion markers, forced RLS, atomic expense/goal/record/usage commit and independent account locks",
+      "replacement_evidence": "OPEN; ergänzender Unit-Schritt, bestehender Integrationsnachweis bleibt erhalten",
+      "risk_groups": [
+        "HTTP adapter/security",
+        "account isolation/RLS",
+        "commit/rollback"
+      ]
+    },
+    "SC:BE:SavingsGoalTest#korrekturdifferenzLehntUnsicherenGesamtstandAb:77a914e960e1:44136fa355b3": {
+      "domain": "isolierte fachliche Geld-/Fortschritts-/Kalenderentscheidung",
+      "requirements": [
+        "3.3/AC-8"
+      ],
+      "input_state": {
+        "parameter_variant": "\"9007199254740991,1\"",
+        "loop_bindings": {},
+        "fixture": "backend/src/test/java/de/linus/tnbp/savingsgoals/SavingsGoalTest.java#korrekturdifferenzLehntUnsicherenGesamtstandAb"
+      },
+      "expected_property": [
+        "progressAfterDifference(9007199254740991,1) throws ArithmeticException at the safe cent limit"
+      ],
+      "primary_test_type": "unit",
+      "primary_source": "BE:SavingsGoalTest#korrekturdifferenzLehntUnsicherenGesamtstandAb:77a914e960e1",
+      "supplementary_sources": [],
+      "supplementary_boundaries": [],
+      "target_test_type": "unit; Integration bleibt zusätzlicher Grenznachweis",
+      "remaining_integration": "retain real aggregate/HTTP/commit probes and account-lock calendar capture in financial integration matrices",
+      "replacement_evidence": "OPEN; ergänzender Unit-Schritt, bestehender Integrationsnachweis bleibt erhalten",
+      "risk_groups": [
+        "exact money/calendar/validation or access policy, as specified by expectations"
+      ]
+    },
+    "SC:BE:SavingsGoalTest#korrekturdifferenzLehntUnsicherenGesamtstandAb:1539f09c52c0:44136fa355b3": {
+      "domain": "isolierte fachliche Geld-/Fortschritts-/Kalenderentscheidung",
+      "requirements": [
+        "3.3/AC-8"
+      ],
+      "input_state": {
+        "parameter_variant": "\"-9007199254740991,-1\"",
+        "loop_bindings": {},
+        "fixture": "backend/src/test/java/de/linus/tnbp/savingsgoals/SavingsGoalTest.java#korrekturdifferenzLehntUnsicherenGesamtstandAb"
+      },
+      "expected_property": [
+        "progressAfterDifference(-9007199254740991,-1) throws ArithmeticException at the safe cent limit"
+      ],
+      "primary_test_type": "unit",
+      "primary_source": "BE:SavingsGoalTest#korrekturdifferenzLehntUnsicherenGesamtstandAb:1539f09c52c0",
+      "supplementary_sources": [],
+      "supplementary_boundaries": [],
+      "target_test_type": "unit; Integration bleibt zusätzlicher Grenznachweis",
+      "remaining_integration": "retain real aggregate/HTTP/commit probes and account-lock calendar capture in financial integration matrices",
+      "replacement_evidence": "OPEN; ergänzender Unit-Schritt, bestehender Integrationsnachweis bleibt erhalten",
+      "risk_groups": [
+        "exact money/calendar/validation or access policy, as specified by expectations"
+      ]
     }
   },
   "requirement_catalog": {
@@ -70057,7 +71517,7 @@
     "backend/src/test/java/de/linus/tnbp/expensebudget/ExpenseV2IT.java": "d6c7cf4bb3474ca80d1f4ae3ff077ea74aa93a28941dd37029e8f555567e6c94",
     "backend/src/test/java/de/linus/tnbp/expensebudget/MonthSummaryIT.java": "3d6e8cfd7134de7da6f8425da8b5cfa7eb6a93c6ab6b780f0ad93215d350354d",
     "backend/src/test/java/de/linus/tnbp/expensebudget/MonthSummaryV2IT.java": "9eb72725a739cfc8ef700e6dbc99ba41f9daddae66dc7139e39e8612de672842",
-    "backend/src/test/java/de/linus/tnbp/expenses/ExpenseTest.java": "09165b423863216f2e3d7c35114d0d5647cb6083a3d00dc5e609dc42d452489d",
+    "backend/src/test/java/de/linus/tnbp/expenses/ExpenseTest.java": "7a45fc5f8d2164c147438807d305b2d7531c6e121b2a628772091fdce26f4879",
     "backend/src/test/java/de/linus/tnbp/finance/ArchitectureTest.java": "8ef3fb36d59299c09db59a5322538a552a6985e47eee71f124ac6ea58590f54c",
     "backend/src/test/java/de/linus/tnbp/finance/FinanceCoordinationIT.java": "7069239a23947a3257b5e64cfc4743785db37dfac420699ba6303623b318e91c",
     "backend/src/test/java/de/linus/tnbp/finance/FinanceMigrationIT.java": "0535e54c4e3789a81c70ca977fb6f38afe27d9e57f9f657230b6b688db372cbe",
@@ -70066,9 +71526,9 @@
     "backend/src/test/java/de/linus/tnbp/monthlysurplus/MonthlyPendingIT.java": "3316389dc0976b32cfca73017f3f98bfa7895a2c213a3ae46b73122d592ad154",
     "backend/src/test/java/de/linus/tnbp/monthlysurplus/MonthlySelectionIT.java": "e87a34cd543feb1435d515e37a9b0dc369358a6e69104f426a2e119ac3e6b077",
     "backend/src/test/java/de/linus/tnbp/monthlysurplus/MonthlySurplusIT.java": "222b657f68b4c8d940c5bc5bc6e9e0c85e85b2cbe672a690932bbb5314ef3ee3",
-    "backend/src/test/java/de/linus/tnbp/monthlysurplus/MonthlySurplusTest.java": "8835437b34862781ede07656b4ec29cb5eaf431ac0451e754977751a2e6c54f6",
+    "backend/src/test/java/de/linus/tnbp/monthlysurplus/MonthlySurplusTest.java": "2d24e3f2147c7bbd4381a27b84347a6a602557f28b1df55c7d61c0b7eb3f3d51",
     "backend/src/test/java/de/linus/tnbp/savingsgoals/SavingsGoalIT.java": "f67fb7480a3fef02adb63f4dcf68fc103584f2bc5e10633a6ea6a04f781226a5",
-    "backend/src/test/java/de/linus/tnbp/savingsgoals/SavingsGoalTest.java": "194006bff4ef96cd019e5beb9278fb8df4815ca9b6033521d7cf73eb9c1aae3c",
+    "backend/src/test/java/de/linus/tnbp/savingsgoals/SavingsGoalTest.java": "7a637198d58c8e08048f6b3c71346bb7e1b5fd556452688893c0c0b0a6c7c48c",
     "backend/src/test/java/de/linus/tnbp/savingsgoals/SavingsGoalV2IT.java": "fecb6944425d682d8864b02b9666d16298c1ae6b87cfa280188e28d3396bbaa8",
     "backend/src/test/java/de/linus/tnbp/savingsgoals/SignedProgressIT.java": "89106eafb42a333dc344d57069351949f6b8e9a2c21ef5b00d5c75cf341e2eb6",
     "backend/src/test/java/de/linus/tnbp/shared/MoneyTest.java": "db731472e06e5deadcfea53ba87a89addbdb2b5d04f3c0fff5fe2b678518b812",
@@ -70105,7 +71565,9 @@
     "frontend/e2e/support/complete-v2-flow.ts": "41bea29fecf1a8dca92e4d5a4211f5c5d3d3fd05ec1c17faa3aad3708a9d125a",
     "frontend/playwright.transition.config.ts": "1bd908e104d5abb13984e5a202793732ca611aaff1eda847113476217c578037",
     "frontend/playwright.config.ts": "7354416b6db13e4f6cf7331e3f1e0ddb7e4e2516152027345077b295c266e1df",
-    "frontend/playwright.automation.config.ts": "cc60253a5a3c98d02a0475efb67a9365ddd28f3441475c623e63007d80a46e15"
+    "frontend/playwright.automation.config.ts": "cc60253a5a3c98d02a0475efb67a9365ddd28f3441475c623e63007d80a46e15",
+    "backend/src/test/java/de/linus/tnbp/finance/FinanceApplicationTest.java": "9bb253ff43049eff4c4f47032e072ef126d4a6ba9a78e64722a79ceaa5caff21",
+    "backend/src/test/java/de/linus/tnbp/access/RegistrationEmailTest.java": "32c5b6a140ca33f83b1f0ebab0f814b79b69aafc5c4bb0f9a9faff13f4c6dfdf"
   },
   "semantic_review_complete": true,
   "canonical_scenarios": {
@@ -72414,7 +73876,8 @@
       ],
       "members": [
         "SC:BE:RegistrationIT#mehrereLinkinhaberErhaltenUnabhaengigePersistenteKontenOhneSitzung:44136fa355b3",
-        "SC:BE:RegistrationIT#mehrereLinkinhaberErhaltenUnabhaengigePersistenteKontenOhneSitzung:dcf50da39548"
+        "SC:BE:RegistrationIT#mehrereLinkinhaberErhaltenUnabhaengigePersistenteKontenOhneSitzung:dcf50da39548",
+        "SC:BE:RegistrationEmailTest#normalisiertVorDerFachpruefungOhneLocaleAbhaengigkeit:44136fa355b3"
       ],
       "requirements": [
         "3.1/AC-3"
@@ -72431,7 +73894,8 @@
       "primary_test_type": "HTTP/PostgreSQL",
       "counting": "business",
       "supplementary_members": [
-        "SC:BE:RegistrationIT#mehrereLinkinhaberErhaltenUnabhaengigePersistenteKontenOhneSitzung:dcf50da39548"
+        "SC:BE:RegistrationIT#mehrereLinkinhaberErhaltenUnabhaengigePersistenteKontenOhneSitzung:dcf50da39548",
+        "SC:BE:RegistrationEmailTest#normalisiertVorDerFachpruefungOhneLocaleAbhaengigkeit:44136fa355b3"
       ],
       "risks": [
         "HTTP adapter/security",
@@ -73197,7 +74661,8 @@
         "assertThat(result.body()).contains(\"email\")"
       ],
       "members": [
-        "SC:BE:RegistrationIT#ungueltigeEmailUndGrenzenErzeugenKeinKonto:1a4038057f82"
+        "SC:BE:RegistrationIT#ungueltigeEmailUndGrenzenErzeugenKeinKonto:1a4038057f82",
+        "SC:BE:RegistrationEmailTest#gueltigkeitsregelBehaelt254ZeichenGrenzeUndFormatbeispiele:1a4038057f82"
       ],
       "requirements": [
         "3.1/AC-3"
@@ -73206,13 +74671,15 @@
         "HTTP cookie/CSRF/Origin/JWT routing and real account/session persistence, commit/replay races and startup role verification"
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Isolierte E-Mail-Normalisierungs-/Validierungsregel mit echter Validator-Implementierung als Primärnachweis; HTTP-Fehlerabbildung, Kontosperre und tatsächliche Persistenz bleiben ergänzende verpflichtende Integrationen."
       ],
       "boundary_only": false,
-      "primary_member": "SC:BE:RegistrationIT#ungueltigeEmailUndGrenzenErzeugenKeinKonto:1a4038057f82",
-      "primary_test_type": "HTTP/PostgreSQL",
+      "primary_member": "SC:BE:RegistrationEmailTest#gueltigkeitsregelBehaelt254ZeichenGrenzeUndFormatbeispiele:1a4038057f82",
+      "primary_test_type": "unit",
       "counting": "business",
-      "supplementary_members": [],
+      "supplementary_members": [
+        "SC:BE:RegistrationIT#ungueltigeEmailUndGrenzenErzeugenKeinKonto:1a4038057f82"
+      ],
       "risks": [
         "HTTP adapter/security",
         "account isolation/RLS",
@@ -73234,7 +74701,8 @@
         "assertThat(result.body()).contains(\"email\")"
       ],
       "members": [
-        "SC:BE:RegistrationIT#ungueltigeEmailUndGrenzenErzeugenKeinKonto:4d2722f172e4"
+        "SC:BE:RegistrationIT#ungueltigeEmailUndGrenzenErzeugenKeinKonto:4d2722f172e4",
+        "SC:BE:RegistrationEmailTest#gueltigkeitsregelBehaelt254ZeichenGrenzeUndFormatbeispiele:4d2722f172e4"
       ],
       "requirements": [
         "3.1/AC-3"
@@ -73243,13 +74711,15 @@
         "HTTP cookie/CSRF/Origin/JWT routing and real account/session persistence, commit/replay races and startup role verification"
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Isolierte E-Mail-Normalisierungs-/Validierungsregel mit echter Validator-Implementierung als Primärnachweis; HTTP-Fehlerabbildung, Kontosperre und tatsächliche Persistenz bleiben ergänzende verpflichtende Integrationen."
       ],
       "boundary_only": false,
-      "primary_member": "SC:BE:RegistrationIT#ungueltigeEmailUndGrenzenErzeugenKeinKonto:4d2722f172e4",
-      "primary_test_type": "HTTP/PostgreSQL",
+      "primary_member": "SC:BE:RegistrationEmailTest#gueltigkeitsregelBehaelt254ZeichenGrenzeUndFormatbeispiele:4d2722f172e4",
+      "primary_test_type": "unit",
       "counting": "business",
-      "supplementary_members": [],
+      "supplementary_members": [
+        "SC:BE:RegistrationIT#ungueltigeEmailUndGrenzenErzeugenKeinKonto:4d2722f172e4"
+      ],
       "risks": [
         "HTTP adapter/security",
         "account isolation/RLS",
@@ -73271,7 +74741,8 @@
         "assertThat(result.body()).contains(\"email\")"
       ],
       "members": [
-        "SC:BE:RegistrationIT#ungueltigeEmailUndGrenzenErzeugenKeinKonto:a30723d08342"
+        "SC:BE:RegistrationIT#ungueltigeEmailUndGrenzenErzeugenKeinKonto:a30723d08342",
+        "SC:BE:RegistrationEmailTest#gueltigkeitsregelBehaelt254ZeichenGrenzeUndFormatbeispiele:a30723d08342"
       ],
       "requirements": [
         "3.1/AC-3"
@@ -73280,13 +74751,15 @@
         "HTTP cookie/CSRF/Origin/JWT routing and real account/session persistence, commit/replay races and startup role verification"
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Isolierte E-Mail-Normalisierungs-/Validierungsregel mit echter Validator-Implementierung als Primärnachweis; HTTP-Fehlerabbildung, Kontosperre und tatsächliche Persistenz bleiben ergänzende verpflichtende Integrationen."
       ],
       "boundary_only": false,
-      "primary_member": "SC:BE:RegistrationIT#ungueltigeEmailUndGrenzenErzeugenKeinKonto:a30723d08342",
-      "primary_test_type": "HTTP/PostgreSQL",
+      "primary_member": "SC:BE:RegistrationEmailTest#gueltigkeitsregelBehaelt254ZeichenGrenzeUndFormatbeispiele:a30723d08342",
+      "primary_test_type": "unit",
       "counting": "business",
-      "supplementary_members": [],
+      "supplementary_members": [
+        "SC:BE:RegistrationIT#ungueltigeEmailUndGrenzenErzeugenKeinKonto:a30723d08342"
+      ],
       "risks": [
         "HTTP adapter/security",
         "account isolation/RLS",
@@ -73308,7 +74781,8 @@
         "assertThat(result.body()).contains(\"email\")"
       ],
       "members": [
-        "SC:BE:RegistrationIT#ungueltigeEmailUndGrenzenErzeugenKeinKonto:9c44346ad065"
+        "SC:BE:RegistrationIT#ungueltigeEmailUndGrenzenErzeugenKeinKonto:9c44346ad065",
+        "SC:BE:RegistrationEmailTest#gueltigkeitsregelBehaelt254ZeichenGrenzeUndFormatbeispiele:9c44346ad065"
       ],
       "requirements": [
         "3.1/AC-3"
@@ -73317,13 +74791,15 @@
         "HTTP cookie/CSRF/Origin/JWT routing and real account/session persistence, commit/replay races and startup role verification"
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Isolierte E-Mail-Normalisierungs-/Validierungsregel mit echter Validator-Implementierung als Primärnachweis; HTTP-Fehlerabbildung, Kontosperre und tatsächliche Persistenz bleiben ergänzende verpflichtende Integrationen."
       ],
       "boundary_only": false,
-      "primary_member": "SC:BE:RegistrationIT#ungueltigeEmailUndGrenzenErzeugenKeinKonto:9c44346ad065",
-      "primary_test_type": "HTTP/PostgreSQL",
+      "primary_member": "SC:BE:RegistrationEmailTest#gueltigkeitsregelBehaelt254ZeichenGrenzeUndFormatbeispiele:9c44346ad065",
+      "primary_test_type": "unit",
       "counting": "business",
-      "supplementary_members": [],
+      "supplementary_members": [
+        "SC:BE:RegistrationIT#ungueltigeEmailUndGrenzenErzeugenKeinKonto:9c44346ad065"
+      ],
       "risks": [
         "HTTP adapter/security",
         "account isolation/RLS",
@@ -73345,7 +74821,8 @@
         "assertThat(result.body()).contains(\"email\")"
       ],
       "members": [
-        "SC:BE:RegistrationIT#ungueltigeEmailUndGrenzenErzeugenKeinKonto:6de9677cfdc2"
+        "SC:BE:RegistrationIT#ungueltigeEmailUndGrenzenErzeugenKeinKonto:6de9677cfdc2",
+        "SC:BE:RegistrationEmailTest#gueltigkeitsregelBehaelt254ZeichenGrenzeUndFormatbeispiele:44136fa355b3"
       ],
       "requirements": [
         "3.1/AC-3"
@@ -73354,13 +74831,15 @@
         "HTTP cookie/CSRF/Origin/JWT routing and real account/session persistence, commit/replay races and startup role verification"
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Die isolierte E-Mail-Policy prüft die konkrete 255-Zeichen-Grenze als ungültig; HTTP-Fehlerabbildung, Ablehnung ohne Kontoeintrag, Kontosperre und Persistenz bleiben durch den ursprünglichen Integrationstest verpflichtend abgesichert."
       ],
       "boundary_only": false,
-      "primary_member": "SC:BE:RegistrationIT#ungueltigeEmailUndGrenzenErzeugenKeinKonto:6de9677cfdc2",
-      "primary_test_type": "HTTP/PostgreSQL",
+      "primary_member": "SC:BE:RegistrationEmailTest#gueltigkeitsregelBehaelt254ZeichenGrenzeUndFormatbeispiele:44136fa355b3",
+      "primary_test_type": "unit",
       "counting": "business",
-      "supplementary_members": [],
+      "supplementary_members": [
+        "SC:BE:RegistrationIT#ungueltigeEmailUndGrenzenErzeugenKeinKonto:6de9677cfdc2"
+      ],
       "risks": [
         "HTTP adapter/security",
         "account isolation/RLS",
@@ -73416,7 +74895,8 @@
         "assertThat(count()).isEqualTo(1)"
       ],
       "members": [
-        "SC:BE:RegistrationIT#emailMit254ZeichenWirdAngenommenUnd255Abgelehnt:44136fa355b3"
+        "SC:BE:RegistrationIT#emailMit254ZeichenWirdAngenommenUnd255Abgelehnt:44136fa355b3",
+        "SC:BE:RegistrationEmailTest#gueltigkeitsregelBehaelt254ZeichenGrenzeUndFormatbeispiele:44136fa355b3"
       ],
       "requirements": [
         "3.1/AC-3"
@@ -73425,13 +74905,15 @@
         "HTTP cookie/CSRF/Origin/JWT routing and real account/session persistence, commit/replay races and startup role verification"
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Isolierte E-Mail-Normalisierungs-/Validierungsregel mit echter Validator-Implementierung als Primärnachweis; HTTP-Fehlerabbildung, Kontosperre und tatsächliche Persistenz bleiben ergänzende verpflichtende Integrationen."
       ],
       "boundary_only": false,
-      "primary_member": "SC:BE:RegistrationIT#emailMit254ZeichenWirdAngenommenUnd255Abgelehnt:44136fa355b3",
-      "primary_test_type": "HTTP/PostgreSQL",
+      "primary_member": "SC:BE:RegistrationEmailTest#gueltigkeitsregelBehaelt254ZeichenGrenzeUndFormatbeispiele:44136fa355b3",
+      "primary_test_type": "unit",
       "counting": "business",
-      "supplementary_members": [],
+      "supplementary_members": [
+        "SC:BE:RegistrationIT#emailMit254ZeichenWirdAngenommenUnd255Abgelehnt:44136fa355b3"
+      ],
       "risks": [
         "HTTP adapter/security",
         "account isolation/RLS",
@@ -80986,7 +82468,8 @@
         "assertThat(PostgresFixture.ADMIN.queryForObject(\"SELECT sum(amount_cents) FROM expenses.expenses WHERE user_id = ? AND recorded_on = DATE '2026-11-01'\", java.math.BigDecimal.class, first))\n            .isEqualByComparingTo(java.math.BigDecimal.valueOf(max))"
       ],
       "members": [
-        "SC:BE:ExpenseIT#monatssummeUndRestBleibenExaktUndAndereKontenOderMonateSindUnabhaengig:44136fa355b3"
+        "SC:BE:ExpenseIT#monatssummeUndRestBleibenExaktUndAndereKontenOderMonateSindUnabhaengig:44136fa355b3",
+        "SC:BE:ExpenseTest#monatsgesamtstandAkzeptiertNurGanzeNichtnegativeSichereCent:44136fa355b3"
       ],
       "requirements": [
         "3.4/AC-4"
@@ -80995,13 +82478,16 @@
         "actual expense HTTP and source month/owner persistence, row/account locks, exact aggregate replacement and outer rollback"
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Die im Primärnachweis getestete Fachregel wird isoliert gegen ihre konkrete Cent-/Zustandsvariante geprüft. Alle bisherigen HTTP-/PostgreSQL-/Sperr-/Commit-Beobachtungen bleiben als ergänzende Mitglieder und verpflichtende Integrationsgrenzen erhalten."
       ],
       "boundary_only": false,
-      "primary_member": "SC:BE:ExpenseIT#monatssummeUndRestBleibenExaktUndAndereKontenOderMonateSindUnabhaengig:44136fa355b3",
-      "primary_test_type": "HTTP/PostgreSQL",
+      "primary_member": "SC:BE:ExpenseTest#monatsgesamtstandAkzeptiertNurGanzeNichtnegativeSichereCent:44136fa355b3",
+      "primary_test_type": "unit",
       "counting": "business",
-      "supplementary_members": [],
+      "supplementary_members": [
+        "SC:BE:ExpenseIT#monatssummeUndRestBleibenExaktUndAndereKontenOderMonateSindUnabhaengig:44136fa355b3"
+      ],
       "risks": [
         "HTTP adapter/security",
         "account isolation/RLS",
@@ -84922,7 +86408,8 @@
         "assertThat(output.getAll()).doesNotContain(\"9007199254740991\", \"SELECT amount_cents\")"
       ],
       "members": [
-        "SC:BE:MonthSummaryIT#nullbudgetUndCentgrenzenBleibenExaktUndUngueltigeSummenScheiternSicher:44136fa355b3"
+        "SC:BE:MonthSummaryIT#nullbudgetUndCentgrenzenBleibenExaktUndUngueltigeSummenScheiternSicher:44136fa355b3",
+        "SC:BE:FinanceApplicationTest#restbudgetBleibtExaktBisZurSicherenGrenzeUndLehntUeberlaufAb:44136fa355b3"
       ],
       "requirements": [
         "3.5/AC-4",
@@ -84932,13 +86419,16 @@
         "actual account-scoped read-only repeatable-read snapshot across budget and expense projections"
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Die im Primärnachweis getestete Fachregel wird isoliert gegen ihre konkrete Cent-/Zustandsvariante geprüft. Alle bisherigen HTTP-/PostgreSQL-/Sperr-/Commit-Beobachtungen bleiben als ergänzende Mitglieder und verpflichtende Integrationsgrenzen erhalten."
       ],
       "boundary_only": false,
-      "primary_member": "SC:BE:MonthSummaryIT#nullbudgetUndCentgrenzenBleibenExaktUndUngueltigeSummenScheiternSicher:44136fa355b3",
-      "primary_test_type": "HTTP/PostgreSQL",
+      "primary_member": "SC:BE:FinanceApplicationTest#restbudgetBleibtExaktBisZurSicherenGrenzeUndLehntUeberlaufAb:44136fa355b3",
+      "primary_test_type": "unit",
       "counting": "business",
-      "supplementary_members": [],
+      "supplementary_members": [
+        "SC:BE:MonthSummaryIT#nullbudgetUndCentgrenzenBleibenExaktUndUngueltigeSummenScheiternSicher:44136fa355b3"
+      ],
       "risks": [
         "HTTP adapter/security",
         "account isolation/RLS",
@@ -89261,7 +90751,8 @@
         "assertThat(row.get(\"goal_id\")).isEqualTo(goal));\n    }"
       ],
       "members": [
-        "SC:BE:MonthlyCorrectionIT#offeneOktoberkorrekturErsetztNurDiesenMonatUndUebernimmtSpaeterEinmalig250Euro:44136fa355b3"
+        "SC:BE:MonthlyCorrectionIT#offeneOktoberkorrekturErsetztNurDiesenMonatUndUebernimmtSpaeterEinmalig250Euro:44136fa355b3",
+        "SC:BE:ExpenseTest#monatsänderungBerechnetNeuenGesamtstandMitExakterDifferenz:44136fa355b3"
       ],
       "requirements": [
         "4.4/AC-4",
@@ -89271,13 +90762,16 @@
         "real historical monthly provenance/selection/deletion markers, forced RLS, atomic expense/goal/record/usage commit and independent account locks"
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Die im Primärnachweis getestete Fachregel wird isoliert gegen ihre konkrete Cent-/Zustandsvariante geprüft. Alle bisherigen HTTP-/PostgreSQL-/Sperr-/Commit-Beobachtungen bleiben als ergänzende Mitglieder und verpflichtende Integrationsgrenzen erhalten."
       ],
       "boundary_only": false,
-      "primary_member": "SC:BE:MonthlyCorrectionIT#offeneOktoberkorrekturErsetztNurDiesenMonatUndUebernimmtSpaeterEinmalig250Euro:44136fa355b3",
-      "primary_test_type": "HTTP/PostgreSQL",
+      "primary_member": "SC:BE:ExpenseTest#monatsänderungBerechnetNeuenGesamtstandMitExakterDifferenz:44136fa355b3",
+      "primary_test_type": "unit",
       "counting": "business",
-      "supplementary_members": [],
+      "supplementary_members": [
+        "SC:BE:MonthlyCorrectionIT#offeneOktoberkorrekturErsetztNurDiesenMonatUndUebernimmtSpaeterEinmalig250Euro:44136fa355b3"
+      ],
       "risks": [
         "HTTP adapter/security",
         "account isolation/RLS",
@@ -89301,7 +90795,8 @@
         "assertThat(progress(second,goal(second,999))).isEqualTo(999)"
       ],
       "members": [
-        "SC:BE:MonthlyCorrectionIT#differenzAmAktuellenStandBleibtAnAUndKannNegativWerden:891937cb3350:44136fa355b3"
+        "SC:BE:MonthlyCorrectionIT#differenzAmAktuellenStandBleibtAnAUndKannNegativWerden:891937cb3350:44136fa355b3",
+        "SC:BE:SavingsGoalTest#korrekturdifferenzWirdAufDenTatsaechlichenFortschrittAngewandt:5591aaa0f417:44136fa355b3"
       ],
       "requirements": [
         "4.4/AC-5",
@@ -89315,13 +90810,16 @@
         "real historical monthly provenance/selection/deletion markers, forced RLS, atomic expense/goal/record/usage commit and independent account locks"
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Die im Primärnachweis getestete Fachregel wird isoliert gegen ihre konkrete Cent-/Zustandsvariante geprüft. Alle bisherigen HTTP-/PostgreSQL-/Sperr-/Commit-Beobachtungen bleiben als ergänzende Mitglieder und verpflichtende Integrationsgrenzen erhalten."
       ],
       "boundary_only": false,
-      "primary_member": "SC:BE:MonthlyCorrectionIT#differenzAmAktuellenStandBleibtAnAUndKannNegativWerden:891937cb3350:44136fa355b3",
-      "primary_test_type": "HTTP/PostgreSQL",
+      "primary_member": "SC:BE:SavingsGoalTest#korrekturdifferenzWirdAufDenTatsaechlichenFortschrittAngewandt:5591aaa0f417:44136fa355b3",
+      "primary_test_type": "unit",
       "counting": "business",
-      "supplementary_members": [],
+      "supplementary_members": [
+        "SC:BE:MonthlyCorrectionIT#differenzAmAktuellenStandBleibtAnAUndKannNegativWerden:891937cb3350:44136fa355b3"
+      ],
       "risks": [
         "HTTP adapter/security",
         "account isolation/RLS",
@@ -89345,7 +90843,8 @@
         "assertThat(progress(second,goal(second,999))).isEqualTo(999)"
       ],
       "members": [
-        "SC:BE:MonthlyCorrectionIT#differenzAmAktuellenStandBleibtAnAUndKannNegativWerden:81a83544cf93:44136fa355b3"
+        "SC:BE:MonthlyCorrectionIT#differenzAmAktuellenStandBleibtAnAUndKannNegativWerden:81a83544cf93:44136fa355b3",
+        "SC:BE:SavingsGoalTest#korrekturdifferenzWirdAufDenTatsaechlichenFortschrittAngewandt:970ef45943c4:44136fa355b3"
       ],
       "requirements": [
         "4.4/AC-5",
@@ -89359,13 +90858,16 @@
         "real historical monthly provenance/selection/deletion markers, forced RLS, atomic expense/goal/record/usage commit and independent account locks"
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Die im Primärnachweis getestete Fachregel wird isoliert gegen ihre konkrete Cent-/Zustandsvariante geprüft. Alle bisherigen HTTP-/PostgreSQL-/Sperr-/Commit-Beobachtungen bleiben als ergänzende Mitglieder und verpflichtende Integrationsgrenzen erhalten."
       ],
       "boundary_only": false,
-      "primary_member": "SC:BE:MonthlyCorrectionIT#differenzAmAktuellenStandBleibtAnAUndKannNegativWerden:81a83544cf93:44136fa355b3",
-      "primary_test_type": "HTTP/PostgreSQL",
+      "primary_member": "SC:BE:SavingsGoalTest#korrekturdifferenzWirdAufDenTatsaechlichenFortschrittAngewandt:970ef45943c4:44136fa355b3",
+      "primary_test_type": "unit",
       "counting": "business",
-      "supplementary_members": [],
+      "supplementary_members": [
+        "SC:BE:MonthlyCorrectionIT#differenzAmAktuellenStandBleibtAnAUndKannNegativWerden:81a83544cf93:44136fa355b3"
+      ],
       "risks": [
         "HTTP adapter/security",
         "account isolation/RLS",
@@ -92284,7 +93786,8 @@
         "assertThatThrownBy(()->ADMIN.execute(\"SELECT api_version.set_retirement(false,gen_random_uuid(),repeat('a',64),repeat('a',64),repeat('a',64))\")).isInstanceOf(org.springframework.dao.DataAccessException.class)"
       ],
       "members": [
-        "SC:BE:MonthlyPendingIT#zweiHistorischeMonateGetrenntMitLueckeEinmalwirkungUndUnveraendertemZiel:44136fa355b3"
+        "SC:BE:MonthlyPendingIT#zweiHistorischeMonateGetrenntMitLueckeEinmalwirkungUndUnveraendertemZiel:44136fa355b3",
+        "SC:BE:MonthlySurplusTest#offeneSummeUndVormerkungBleibenExaktUndUnterscheidenFehlendenBetrag:44136fa355b3"
       ],
       "requirements": [
         "4.2/AC-2",
@@ -92296,13 +93799,16 @@
         "real historical monthly provenance/selection/deletion markers, forced RLS, atomic expense/goal/record/usage commit and independent account locks"
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Die im Primärnachweis getestete Fachregel wird isoliert gegen ihre konkrete Cent-/Zustandsvariante geprüft. Alle bisherigen HTTP-/PostgreSQL-/Sperr-/Commit-Beobachtungen bleiben als ergänzende Mitglieder und verpflichtende Integrationsgrenzen erhalten."
       ],
       "boundary_only": false,
-      "primary_member": "SC:BE:MonthlyPendingIT#zweiHistorischeMonateGetrenntMitLueckeEinmalwirkungUndUnveraendertemZiel:44136fa355b3",
-      "primary_test_type": "HTTP/PostgreSQL",
+      "primary_member": "SC:BE:MonthlySurplusTest#offeneSummeUndVormerkungBleibenExaktUndUnterscheidenFehlendenBetrag:44136fa355b3",
+      "primary_test_type": "unit",
       "counting": "business",
-      "supplementary_members": [],
+      "supplementary_members": [
+        "SC:BE:MonthlyPendingIT#zweiHistorischeMonateGetrenntMitLueckeEinmalwirkungUndUnveraendertemZiel:44136fa355b3"
+      ],
       "risks": [
         "HTTP adapter/security",
         "account isolation/RLS",
@@ -92610,7 +94116,8 @@
         "assertThat(failed.body()).contains(\"MONTHLY_SURPLUS_UNAVAILABLE\",\"Vormerkung konnte nicht geladen\").doesNotContain(first.toString(),\"9007199\",\"SELECT\",\"postgres\",\"Synthetisch\")"
       ],
       "members": [
-        "SC:BE:MonthlyPendingIT#einzelUndOffeneSummengrenzeSindExaktUndFehlerLassenManuellePflegeZu:44136fa355b3"
+        "SC:BE:MonthlyPendingIT#einzelUndOffeneSummengrenzeSindExaktUndFehlerLassenManuellePflegeZu:44136fa355b3",
+        "SC:BE:MonthlySurplusTest#offeneSummeUndVormerkungBleibenExaktUndUnterscheidenFehlendenBetrag:44136fa355b3"
       ],
       "requirements": [
         "4.2/AC-6"
@@ -92619,13 +94126,16 @@
         "real historical monthly provenance/selection/deletion markers, forced RLS, atomic expense/goal/record/usage commit and independent account locks"
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Die im Primärnachweis getestete Fachregel wird isoliert gegen ihre konkrete Cent-/Zustandsvariante geprüft. Alle bisherigen HTTP-/PostgreSQL-/Sperr-/Commit-Beobachtungen bleiben als ergänzende Mitglieder und verpflichtende Integrationsgrenzen erhalten."
       ],
       "boundary_only": false,
-      "primary_member": "SC:BE:MonthlyPendingIT#einzelUndOffeneSummengrenzeSindExaktUndFehlerLassenManuellePflegeZu:44136fa355b3",
-      "primary_test_type": "HTTP/PostgreSQL",
+      "primary_member": "SC:BE:MonthlySurplusTest#offeneSummeUndVormerkungBleibenExaktUndUnterscheidenFehlendenBetrag:44136fa355b3",
+      "primary_test_type": "unit",
       "counting": "business",
-      "supplementary_members": [],
+      "supplementary_members": [
+        "SC:BE:MonthlyPendingIT#einzelUndOffeneSummengrenzeSindExaktUndFehlerLassenManuellePflegeZu:44136fa355b3"
+      ],
       "risks": [
         "HTTP adapter/security",
         "account isolation/RLS",
@@ -99671,7 +101181,8 @@
         "assertThat(loaded.get(0)).isEqualTo(updated)"
       ],
       "members": [
-        "SC:BE:SavingsGoalIT#fortschrittErsetztGesamtbetragIdempotentUndErhaeltAlleZielfelder:0967ff5b83e9"
+        "SC:BE:SavingsGoalIT#fortschrittErsetztGesamtbetragIdempotentUndErhaeltAlleZielfelder:0967ff5b83e9",
+        "SC:BE:SavingsGoalTest#v1FortschrittBleibtNichtnegativBisZumSicherenMaximum:d6e47b3885e3:44136fa355b3"
       ],
       "requirements": [
         "3.6/AC-5"
@@ -99680,13 +101191,16 @@
         "actual authenticated target/progress CRUD, retained fields and calendar dates, forced RLS and concurrent/outer commit boundaries"
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Die im Primärnachweis getestete Fachregel wird isoliert gegen ihre konkrete Cent-/Zustandsvariante geprüft. Alle bisherigen HTTP-/PostgreSQL-/Sperr-/Commit-Beobachtungen bleiben als ergänzende Mitglieder und verpflichtende Integrationsgrenzen erhalten."
       ],
       "boundary_only": false,
-      "primary_member": "SC:BE:SavingsGoalIT#fortschrittErsetztGesamtbetragIdempotentUndErhaeltAlleZielfelder:0967ff5b83e9",
-      "primary_test_type": "HTTP/PostgreSQL",
+      "primary_member": "SC:BE:SavingsGoalTest#v1FortschrittBleibtNichtnegativBisZumSicherenMaximum:d6e47b3885e3:44136fa355b3",
+      "primary_test_type": "unit",
       "counting": "business",
-      "supplementary_members": [],
+      "supplementary_members": [
+        "SC:BE:SavingsGoalIT#fortschrittErsetztGesamtbetragIdempotentUndErhaeltAlleZielfelder:0967ff5b83e9"
+      ],
       "risks": [
         "HTTP adapter/security",
         "account isolation/RLS",
@@ -99810,7 +101324,8 @@
         "assertThat(saved.path(\"targetDate\").isNull() || saved.path(\"targetDate\").isMissingNode()).isTrue()"
       ],
       "members": [
-        "SC:BE:SavingsGoalIT#fortschrittErsetztGesamtbetragIdempotentUndErhaeltAlleZielfelder:99efc0471de3"
+        "SC:BE:SavingsGoalIT#fortschrittErsetztGesamtbetragIdempotentUndErhaeltAlleZielfelder:99efc0471de3",
+        "SC:BE:SavingsGoalTest#v1FortschrittBleibtNichtnegativBisZumSicherenMaximum:20b117d8fcad:44136fa355b3"
       ],
       "requirements": [
         "3.6/AC-5"
@@ -99819,13 +101334,16 @@
         "actual authenticated target/progress CRUD, retained fields and calendar dates, forced RLS and concurrent/outer commit boundaries"
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Die im Primärnachweis getestete Fachregel wird isoliert gegen ihre konkrete Cent-/Zustandsvariante geprüft. Alle bisherigen HTTP-/PostgreSQL-/Sperr-/Commit-Beobachtungen bleiben als ergänzende Mitglieder und verpflichtende Integrationsgrenzen erhalten."
       ],
       "boundary_only": false,
-      "primary_member": "SC:BE:SavingsGoalIT#fortschrittErsetztGesamtbetragIdempotentUndErhaeltAlleZielfelder:99efc0471de3",
-      "primary_test_type": "HTTP/PostgreSQL",
+      "primary_member": "SC:BE:SavingsGoalTest#v1FortschrittBleibtNichtnegativBisZumSicherenMaximum:20b117d8fcad:44136fa355b3",
+      "primary_test_type": "unit",
       "counting": "business",
-      "supplementary_members": [],
+      "supplementary_members": [
+        "SC:BE:SavingsGoalIT#fortschrittErsetztGesamtbetragIdempotentUndErhaeltAlleZielfelder:99efc0471de3"
+      ],
       "risks": [
         "HTTP adapter/security",
         "account isolation/RLS",
@@ -99853,7 +101371,8 @@
         "assertThat(loaded.get(0)).isEqualTo(updated)"
       ],
       "members": [
-        "SC:BE:SavingsGoalIT#fortschrittErsetztGesamtbetragIdempotentUndErhaeltAlleZielfelder:bd7ec1e53dcd"
+        "SC:BE:SavingsGoalIT#fortschrittErsetztGesamtbetragIdempotentUndErhaeltAlleZielfelder:bd7ec1e53dcd",
+        "SC:BE:SavingsGoalTest#v1FortschrittBleibtNichtnegativBisZumSicherenMaximum:1aa25e5666a1:44136fa355b3"
       ],
       "requirements": [
         "3.6/AC-5"
@@ -99862,13 +101381,16 @@
         "actual authenticated target/progress CRUD, retained fields and calendar dates, forced RLS and concurrent/outer commit boundaries"
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Die im Primärnachweis getestete Fachregel wird isoliert gegen ihre konkrete Cent-/Zustandsvariante geprüft. Alle bisherigen HTTP-/PostgreSQL-/Sperr-/Commit-Beobachtungen bleiben als ergänzende Mitglieder und verpflichtende Integrationsgrenzen erhalten."
       ],
       "boundary_only": false,
-      "primary_member": "SC:BE:SavingsGoalIT#fortschrittErsetztGesamtbetragIdempotentUndErhaeltAlleZielfelder:bd7ec1e53dcd",
-      "primary_test_type": "HTTP/PostgreSQL",
+      "primary_member": "SC:BE:SavingsGoalTest#v1FortschrittBleibtNichtnegativBisZumSicherenMaximum:1aa25e5666a1:44136fa355b3",
+      "primary_test_type": "unit",
       "counting": "business",
-      "supplementary_members": [],
+      "supplementary_members": [
+        "SC:BE:SavingsGoalIT#fortschrittErsetztGesamtbetragIdempotentUndErhaeltAlleZielfelder:bd7ec1e53dcd"
+      ],
       "risks": [
         "HTTP adapter/security",
         "account isolation/RLS",
@@ -102217,7 +103739,8 @@
         "assertThat(failure.fields).containsOnlyKeys(\"progressCents\"));\n        }\n        org.mockito.Mockito.verifyNoInteractions(repository);\n    }"
       ],
       "members": [
-        "SC:BE:SavingsGoalTest#ungueltigerFortschrittWirdVorTransaktionUndDatenbankAbgewiesen:ec8b2874ed4e"
+        "SC:BE:SavingsGoalTest#ungueltigerFortschrittWirdVorTransaktionUndDatenbankAbgewiesen:ec8b2874ed4e",
+        "SC:BE:SavingsGoalTest#signierterFortschrittLehntFehlendenWertAb:44136fa355b3"
       ],
       "requirements": [
         "3.6/AC-5"
@@ -102232,7 +103755,9 @@
       "primary_member": "SC:BE:SavingsGoalTest#ungueltigerFortschrittWirdVorTransaktionUndDatenbankAbgewiesen:ec8b2874ed4e",
       "primary_test_type": "unit",
       "counting": "business",
-      "supplementary_members": [],
+      "supplementary_members": [
+        "SC:BE:SavingsGoalTest#signierterFortschrittLehntFehlendenWertAb:44136fa355b3"
+      ],
       "risks": [
         "exact money/calendar/validation or access policy, as specified by expectations"
       ]
@@ -102252,7 +103777,8 @@
         "assertThat(failure.fields).containsOnlyKeys(\"progressCents\"));\n        }\n        org.mockito.Mockito.verifyNoInteractions(repository);\n    }"
       ],
       "members": [
-        "SC:BE:SavingsGoalTest#ungueltigerFortschrittWirdVorTransaktionUndDatenbankAbgewiesen:a94c68240f44"
+        "SC:BE:SavingsGoalTest#ungueltigerFortschrittWirdVorTransaktionUndDatenbankAbgewiesen:a94c68240f44",
+        "SC:BE:SavingsGoalTest#v1FortschrittBleibtNichtnegativBisZumSicherenMaximum:04a2f659bc97:44136fa355b3"
       ],
       "requirements": [
         "3.6/AC-5"
@@ -102267,7 +103793,9 @@
       "primary_member": "SC:BE:SavingsGoalTest#ungueltigerFortschrittWirdVorTransaktionUndDatenbankAbgewiesen:a94c68240f44",
       "primary_test_type": "unit",
       "counting": "business",
-      "supplementary_members": [],
+      "supplementary_members": [
+        "SC:BE:SavingsGoalTest#v1FortschrittBleibtNichtnegativBisZumSicherenMaximum:04a2f659bc97:44136fa355b3"
+      ],
       "risks": [
         "exact money/calendar/validation or access policy, as specified by expectations"
       ]
@@ -102287,7 +103815,8 @@
         "assertThat(failure.fields).containsOnlyKeys(\"progressCents\"));\n        }\n        org.mockito.Mockito.verifyNoInteractions(repository);\n    }"
       ],
       "members": [
-        "SC:BE:SavingsGoalTest#ungueltigerFortschrittWirdVorTransaktionUndDatenbankAbgewiesen:74f1b9c1eb65"
+        "SC:BE:SavingsGoalTest#ungueltigerFortschrittWirdVorTransaktionUndDatenbankAbgewiesen:74f1b9c1eb65",
+        "SC:BE:SavingsGoalTest#v1FortschrittBleibtNichtnegativBisZumSicherenMaximum:24d98f38a638:44136fa355b3"
       ],
       "requirements": [
         "3.6/AC-5"
@@ -102302,7 +103831,9 @@
       "primary_member": "SC:BE:SavingsGoalTest#ungueltigerFortschrittWirdVorTransaktionUndDatenbankAbgewiesen:74f1b9c1eb65",
       "primary_test_type": "unit",
       "counting": "business",
-      "supplementary_members": [],
+      "supplementary_members": [
+        "SC:BE:SavingsGoalTest#v1FortschrittBleibtNichtnegativBisZumSicherenMaximum:24d98f38a638:44136fa355b3"
+      ],
       "risks": [
         "exact money/calendar/validation or access policy, as specified by expectations"
       ]
@@ -104324,7 +105855,8 @@
       ],
       "members": [
         "SC:BE:SignedProgressIT#exakteErsetzungenErhaltenAndereFelderKontenUndMonatsrestUndSperrenRueckfallDauerhaft:1d5d3cec8e4e",
-        "SC:BE:SignedProgressIT#exakteErsetzungenErhaltenAndereFelderKontenUndMonatsrestUndSperrenRueckfallDauerhaft:a36c5cae8cb9"
+        "SC:BE:SignedProgressIT#exakteErsetzungenErhaltenAndereFelderKontenUndMonatsrestUndSperrenRueckfallDauerhaft:a36c5cae8cb9",
+        "SC:BE:SavingsGoalTest#signierterFortschrittErlaubtVorzeichenUndBeideSicherenGrenzen:7d583ea3babe:44136fa355b3"
       ],
       "requirements": [
         "3.8/AC-3",
@@ -104337,13 +105869,15 @@
       ],
       "decision_reasons": [
         "Wiederholte Ergebniszeilen/Verbindungsproben/Bestandsfelder gehören zu derselben beobachteten Eigenschaft.",
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Die im Primärnachweis getestete Fachregel wird isoliert gegen ihre konkrete Cent-/Zustandsvariante geprüft. Alle bisherigen HTTP-/PostgreSQL-/Sperr-/Commit-Beobachtungen bleiben als ergänzende Mitglieder und verpflichtende Integrationsgrenzen erhalten."
       ],
       "boundary_only": false,
-      "primary_member": "SC:BE:SignedProgressIT#exakteErsetzungenErhaltenAndereFelderKontenUndMonatsrestUndSperrenRueckfallDauerhaft:1d5d3cec8e4e",
-      "primary_test_type": "HTTP/PostgreSQL",
+      "primary_member": "SC:BE:SavingsGoalTest#signierterFortschrittErlaubtVorzeichenUndBeideSicherenGrenzen:7d583ea3babe:44136fa355b3",
+      "primary_test_type": "unit",
       "counting": "business",
       "supplementary_members": [
+        "SC:BE:SignedProgressIT#exakteErsetzungenErhaltenAndereFelderKontenUndMonatsrestUndSperrenRueckfallDauerhaft:1d5d3cec8e4e",
         "SC:BE:SignedProgressIT#exakteErsetzungenErhaltenAndereFelderKontenUndMonatsrestUndSperrenRueckfallDauerhaft:a36c5cae8cb9"
       ],
       "risks": [
@@ -104373,7 +105907,8 @@
       ],
       "members": [
         "SC:BE:SignedProgressIT#exakteErsetzungenErhaltenAndereFelderKontenUndMonatsrestUndSperrenRueckfallDauerhaft:5a112982eb6c",
-        "SC:BE:SignedProgressIT#exakteErsetzungenErhaltenAndereFelderKontenUndMonatsrestUndSperrenRueckfallDauerhaft:67432654245b"
+        "SC:BE:SignedProgressIT#exakteErsetzungenErhaltenAndereFelderKontenUndMonatsrestUndSperrenRueckfallDauerhaft:67432654245b",
+        "SC:BE:SavingsGoalTest#signierterFortschrittErlaubtVorzeichenUndBeideSicherenGrenzen:98089e6d36f7:44136fa355b3"
       ],
       "requirements": [
         "3.8/AC-3",
@@ -104386,13 +105921,15 @@
       ],
       "decision_reasons": [
         "Wiederholte Ergebniszeilen/Verbindungsproben/Bestandsfelder gehören zu derselben beobachteten Eigenschaft.",
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Die im Primärnachweis getestete Fachregel wird isoliert gegen ihre konkrete Cent-/Zustandsvariante geprüft. Alle bisherigen HTTP-/PostgreSQL-/Sperr-/Commit-Beobachtungen bleiben als ergänzende Mitglieder und verpflichtende Integrationsgrenzen erhalten."
       ],
       "boundary_only": false,
-      "primary_member": "SC:BE:SignedProgressIT#exakteErsetzungenErhaltenAndereFelderKontenUndMonatsrestUndSperrenRueckfallDauerhaft:5a112982eb6c",
-      "primary_test_type": "HTTP/PostgreSQL",
+      "primary_member": "SC:BE:SavingsGoalTest#signierterFortschrittErlaubtVorzeichenUndBeideSicherenGrenzen:98089e6d36f7:44136fa355b3",
+      "primary_test_type": "unit",
       "counting": "business",
       "supplementary_members": [
+        "SC:BE:SignedProgressIT#exakteErsetzungenErhaltenAndereFelderKontenUndMonatsrestUndSperrenRueckfallDauerhaft:5a112982eb6c",
         "SC:BE:SignedProgressIT#exakteErsetzungenErhaltenAndereFelderKontenUndMonatsrestUndSperrenRueckfallDauerhaft:67432654245b"
       ],
       "risks": [
@@ -104422,7 +105959,8 @@
       ],
       "members": [
         "SC:BE:SignedProgressIT#exakteErsetzungenErhaltenAndereFelderKontenUndMonatsrestUndSperrenRueckfallDauerhaft:3c081fb55fa3",
-        "SC:BE:SignedProgressIT#exakteErsetzungenErhaltenAndereFelderKontenUndMonatsrestUndSperrenRueckfallDauerhaft:c320682b9b82"
+        "SC:BE:SignedProgressIT#exakteErsetzungenErhaltenAndereFelderKontenUndMonatsrestUndSperrenRueckfallDauerhaft:c320682b9b82",
+        "SC:BE:SavingsGoalTest#signierterFortschrittErlaubtVorzeichenUndBeideSicherenGrenzen:1b6d2e96d30a:44136fa355b3"
       ],
       "requirements": [
         "3.8/AC-3",
@@ -104435,13 +105973,15 @@
       ],
       "decision_reasons": [
         "Wiederholte Ergebniszeilen/Verbindungsproben/Bestandsfelder gehören zu derselben beobachteten Eigenschaft.",
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Die im Primärnachweis getestete Fachregel wird isoliert gegen ihre konkrete Cent-/Zustandsvariante geprüft. Alle bisherigen HTTP-/PostgreSQL-/Sperr-/Commit-Beobachtungen bleiben als ergänzende Mitglieder und verpflichtende Integrationsgrenzen erhalten."
       ],
       "boundary_only": false,
-      "primary_member": "SC:BE:SignedProgressIT#exakteErsetzungenErhaltenAndereFelderKontenUndMonatsrestUndSperrenRueckfallDauerhaft:3c081fb55fa3",
-      "primary_test_type": "HTTP/PostgreSQL",
+      "primary_member": "SC:BE:SavingsGoalTest#signierterFortschrittErlaubtVorzeichenUndBeideSicherenGrenzen:1b6d2e96d30a:44136fa355b3",
+      "primary_test_type": "unit",
       "counting": "business",
       "supplementary_members": [
+        "SC:BE:SignedProgressIT#exakteErsetzungenErhaltenAndereFelderKontenUndMonatsrestUndSperrenRueckfallDauerhaft:3c081fb55fa3",
         "SC:BE:SignedProgressIT#exakteErsetzungenErhaltenAndereFelderKontenUndMonatsrestUndSperrenRueckfallDauerhaft:c320682b9b82"
       ],
       "risks": [
@@ -104471,7 +106011,8 @@
       ],
       "members": [
         "SC:BE:SignedProgressIT#exakteErsetzungenErhaltenAndereFelderKontenUndMonatsrestUndSperrenRueckfallDauerhaft:ebfcadff34a5",
-        "SC:BE:SignedProgressIT#exakteErsetzungenErhaltenAndereFelderKontenUndMonatsrestUndSperrenRueckfallDauerhaft:f5b1267044ba"
+        "SC:BE:SignedProgressIT#exakteErsetzungenErhaltenAndereFelderKontenUndMonatsrestUndSperrenRueckfallDauerhaft:f5b1267044ba",
+        "SC:BE:SavingsGoalTest#signierterFortschrittErlaubtVorzeichenUndBeideSicherenGrenzen:3bc0f6e22232:44136fa355b3"
       ],
       "requirements": [
         "3.8/AC-3",
@@ -104484,13 +106025,15 @@
       ],
       "decision_reasons": [
         "Wiederholte Ergebniszeilen/Verbindungsproben/Bestandsfelder gehören zu derselben beobachteten Eigenschaft.",
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Die im Primärnachweis getestete Fachregel wird isoliert gegen ihre konkrete Cent-/Zustandsvariante geprüft. Alle bisherigen HTTP-/PostgreSQL-/Sperr-/Commit-Beobachtungen bleiben als ergänzende Mitglieder und verpflichtende Integrationsgrenzen erhalten."
       ],
       "boundary_only": false,
-      "primary_member": "SC:BE:SignedProgressIT#exakteErsetzungenErhaltenAndereFelderKontenUndMonatsrestUndSperrenRueckfallDauerhaft:ebfcadff34a5",
-      "primary_test_type": "HTTP/PostgreSQL",
+      "primary_member": "SC:BE:SavingsGoalTest#signierterFortschrittErlaubtVorzeichenUndBeideSicherenGrenzen:3bc0f6e22232:44136fa355b3",
+      "primary_test_type": "unit",
       "counting": "business",
       "supplementary_members": [
+        "SC:BE:SignedProgressIT#exakteErsetzungenErhaltenAndereFelderKontenUndMonatsrestUndSperrenRueckfallDauerhaft:ebfcadff34a5",
         "SC:BE:SignedProgressIT#exakteErsetzungenErhaltenAndereFelderKontenUndMonatsrestUndSperrenRueckfallDauerhaft:f5b1267044ba"
       ],
       "risks": [
@@ -104520,7 +106063,8 @@
       ],
       "members": [
         "SC:BE:SignedProgressIT#exakteErsetzungenErhaltenAndereFelderKontenUndMonatsrestUndSperrenRueckfallDauerhaft:010b40627a04",
-        "SC:BE:SignedProgressIT#exakteErsetzungenErhaltenAndereFelderKontenUndMonatsrestUndSperrenRueckfallDauerhaft:ba56ac09a6d9"
+        "SC:BE:SignedProgressIT#exakteErsetzungenErhaltenAndereFelderKontenUndMonatsrestUndSperrenRueckfallDauerhaft:ba56ac09a6d9",
+        "SC:BE:SavingsGoalTest#signierterFortschrittErlaubtVorzeichenUndBeideSicherenGrenzen:ba85c5ce4aac:44136fa355b3"
       ],
       "requirements": [
         "3.8/AC-3",
@@ -104533,13 +106077,15 @@
       ],
       "decision_reasons": [
         "Wiederholte Ergebniszeilen/Verbindungsproben/Bestandsfelder gehören zu derselben beobachteten Eigenschaft.",
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Die im Primärnachweis getestete Fachregel wird isoliert gegen ihre konkrete Cent-/Zustandsvariante geprüft. Alle bisherigen HTTP-/PostgreSQL-/Sperr-/Commit-Beobachtungen bleiben als ergänzende Mitglieder und verpflichtende Integrationsgrenzen erhalten."
       ],
       "boundary_only": false,
-      "primary_member": "SC:BE:SignedProgressIT#exakteErsetzungenErhaltenAndereFelderKontenUndMonatsrestUndSperrenRueckfallDauerhaft:010b40627a04",
-      "primary_test_type": "HTTP/PostgreSQL",
+      "primary_member": "SC:BE:SavingsGoalTest#signierterFortschrittErlaubtVorzeichenUndBeideSicherenGrenzen:ba85c5ce4aac:44136fa355b3",
+      "primary_test_type": "unit",
       "counting": "business",
       "supplementary_members": [
+        "SC:BE:SignedProgressIT#exakteErsetzungenErhaltenAndereFelderKontenUndMonatsrestUndSperrenRueckfallDauerhaft:010b40627a04",
         "SC:BE:SignedProgressIT#exakteErsetzungenErhaltenAndereFelderKontenUndMonatsrestUndSperrenRueckfallDauerhaft:ba56ac09a6d9"
       ],
       "risks": [
@@ -104569,7 +106115,8 @@
       ],
       "members": [
         "SC:BE:SignedProgressIT#exakteErsetzungenErhaltenAndereFelderKontenUndMonatsrestUndSperrenRueckfallDauerhaft:56e823600013",
-        "SC:BE:SignedProgressIT#exakteErsetzungenErhaltenAndereFelderKontenUndMonatsrestUndSperrenRueckfallDauerhaft:583f3f53cd7b"
+        "SC:BE:SignedProgressIT#exakteErsetzungenErhaltenAndereFelderKontenUndMonatsrestUndSperrenRueckfallDauerhaft:583f3f53cd7b",
+        "SC:BE:SavingsGoalTest#signierterFortschrittErlaubtVorzeichenUndBeideSicherenGrenzen:c9b6149ddff7:44136fa355b3"
       ],
       "requirements": [
         "3.8/AC-3",
@@ -104582,13 +106129,15 @@
       ],
       "decision_reasons": [
         "Wiederholte Ergebniszeilen/Verbindungsproben/Bestandsfelder gehören zu derselben beobachteten Eigenschaft.",
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Die im Primärnachweis getestete Fachregel wird isoliert gegen ihre konkrete Cent-/Zustandsvariante geprüft. Alle bisherigen HTTP-/PostgreSQL-/Sperr-/Commit-Beobachtungen bleiben als ergänzende Mitglieder und verpflichtende Integrationsgrenzen erhalten."
       ],
       "boundary_only": false,
-      "primary_member": "SC:BE:SignedProgressIT#exakteErsetzungenErhaltenAndereFelderKontenUndMonatsrestUndSperrenRueckfallDauerhaft:56e823600013",
-      "primary_test_type": "HTTP/PostgreSQL",
+      "primary_member": "SC:BE:SavingsGoalTest#signierterFortschrittErlaubtVorzeichenUndBeideSicherenGrenzen:c9b6149ddff7:44136fa355b3",
+      "primary_test_type": "unit",
       "counting": "business",
       "supplementary_members": [
+        "SC:BE:SignedProgressIT#exakteErsetzungenErhaltenAndereFelderKontenUndMonatsrestUndSperrenRueckfallDauerhaft:56e823600013",
         "SC:BE:SignedProgressIT#exakteErsetzungenErhaltenAndereFelderKontenUndMonatsrestUndSperrenRueckfallDauerhaft:583f3f53cd7b"
       ],
       "risks": [
@@ -104611,7 +106160,8 @@
         "assertThat(progress(id,value,first).statusCode()).as(value).isEqualTo(400)"
       ],
       "members": [
-        "SC:BE:SignedProgressIT#ungueltigeTypenGrenzenUndAndereGeldfelderBleibenOhneWirkung:4a86e733f595"
+        "SC:BE:SignedProgressIT#ungueltigeTypenGrenzenUndAndereGeldfelderBleibenOhneWirkung:4a86e733f595",
+        "SC:BE:SavingsGoalTest#signierterFortschrittLehntGrenzueberschreitungAb:eadea71416c1:44136fa355b3"
       ],
       "requirements": [
         "3.8/AC-5"
@@ -104620,13 +106170,16 @@
         "actual version capability check and atomic signed progress/irreversible usage marker, true rollback and version lock ordering"
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Die im Primärnachweis getestete Fachregel wird isoliert gegen ihre konkrete Cent-/Zustandsvariante geprüft. Alle bisherigen HTTP-/PostgreSQL-/Sperr-/Commit-Beobachtungen bleiben als ergänzende Mitglieder und verpflichtende Integrationsgrenzen erhalten."
       ],
       "boundary_only": false,
-      "primary_member": "SC:BE:SignedProgressIT#ungueltigeTypenGrenzenUndAndereGeldfelderBleibenOhneWirkung:4a86e733f595",
-      "primary_test_type": "HTTP/PostgreSQL",
+      "primary_member": "SC:BE:SavingsGoalTest#signierterFortschrittLehntGrenzueberschreitungAb:eadea71416c1:44136fa355b3",
+      "primary_test_type": "unit",
       "counting": "business",
-      "supplementary_members": [],
+      "supplementary_members": [
+        "SC:BE:SignedProgressIT#ungueltigeTypenGrenzenUndAndereGeldfelderBleibenOhneWirkung:4a86e733f595"
+      ],
       "risks": [
         "HTTP adapter/security",
         "account isolation/RLS",
@@ -104647,7 +106200,8 @@
         "assertThat(progress(id,value,first).statusCode()).as(value).isEqualTo(400)"
       ],
       "members": [
-        "SC:BE:SignedProgressIT#ungueltigeTypenGrenzenUndAndereGeldfelderBleibenOhneWirkung:b2f3c19c5ad8"
+        "SC:BE:SignedProgressIT#ungueltigeTypenGrenzenUndAndereGeldfelderBleibenOhneWirkung:b2f3c19c5ad8",
+        "SC:BE:SavingsGoalTest#signierterFortschrittLehntGrenzueberschreitungAb:4ba9bf7656a3:44136fa355b3"
       ],
       "requirements": [
         "3.8/AC-5"
@@ -104656,13 +106210,16 @@
         "actual version capability check and atomic signed progress/irreversible usage marker, true rollback and version lock ordering"
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Die im Primärnachweis getestete Fachregel wird isoliert gegen ihre konkrete Cent-/Zustandsvariante geprüft. Alle bisherigen HTTP-/PostgreSQL-/Sperr-/Commit-Beobachtungen bleiben als ergänzende Mitglieder und verpflichtende Integrationsgrenzen erhalten."
       ],
       "boundary_only": false,
-      "primary_member": "SC:BE:SignedProgressIT#ungueltigeTypenGrenzenUndAndereGeldfelderBleibenOhneWirkung:b2f3c19c5ad8",
-      "primary_test_type": "HTTP/PostgreSQL",
+      "primary_member": "SC:BE:SavingsGoalTest#signierterFortschrittLehntGrenzueberschreitungAb:4ba9bf7656a3:44136fa355b3",
+      "primary_test_type": "unit",
       "counting": "business",
-      "supplementary_members": [],
+      "supplementary_members": [
+        "SC:BE:SignedProgressIT#ungueltigeTypenGrenzenUndAndereGeldfelderBleibenOhneWirkung:b2f3c19c5ad8"
+      ],
       "risks": [
         "HTTP adapter/security",
         "account isolation/RLS",
@@ -105220,7 +106777,8 @@
         "ArithmeticException"
       ],
       "members": [
-        "SC:BE:MoneyTest#summenUndDifferenzenBleibenExaktInnerhalbDerSicherenCentgrenze:44136fa355b3"
+        "SC:BE:MoneyTest#summenUndDifferenzenBleibenExaktInnerhalbDerSicherenCentgrenze:44136fa355b3",
+        "SC:BE:SavingsGoalTest#korrekturdifferenzLehntUnsicherenGesamtstandAb:77a914e960e1:44136fa355b3"
       ],
       "requirements": [
         "3.3/AC-8"
@@ -105235,7 +106793,9 @@
       "primary_member": "SC:BE:MoneyTest#summenUndDifferenzenBleibenExaktInnerhalbDerSicherenCentgrenze:44136fa355b3",
       "primary_test_type": "unit",
       "counting": "business",
-      "supplementary_members": [],
+      "supplementary_members": [
+        "SC:BE:SavingsGoalTest#korrekturdifferenzLehntUnsicherenGesamtstandAb:77a914e960e1:44136fa355b3"
+      ],
       "risks": [
         "exact money/calendar/validation or access policy, as specified by expectations"
       ]
@@ -105251,7 +106811,8 @@
         "ArithmeticException"
       ],
       "members": [
-        "SC:BE:MoneyTest#summenUndDifferenzenBleibenExaktInnerhalbDerSicherenCentgrenze:44136fa355b3"
+        "SC:BE:MoneyTest#summenUndDifferenzenBleibenExaktInnerhalbDerSicherenCentgrenze:44136fa355b3",
+        "SC:BE:SavingsGoalTest#korrekturdifferenzLehntUnsicherenGesamtstandAb:1539f09c52c0:44136fa355b3"
       ],
       "requirements": [
         "3.3/AC-8"
@@ -105266,7 +106827,9 @@
       "primary_member": "SC:BE:MoneyTest#summenUndDifferenzenBleibenExaktInnerhalbDerSicherenCentgrenze:44136fa355b3",
       "primary_test_type": "unit",
       "counting": "business",
-      "supplementary_members": [],
+      "supplementary_members": [
+        "SC:BE:SavingsGoalTest#korrekturdifferenzLehntUnsicherenGesamtstandAb:1539f09c52c0:44136fa355b3"
+      ],
       "risks": [
         "exact money/calendar/validation or access policy, as specified by expectations"
       ]
@@ -123828,7 +125391,8 @@
         "SC:BE:MonthSummary.current-own:missing-with-expense",
         "SC:BE:MonthSummary.current-own:own-current",
         "SC:BE:MonthSummary.current-own:year-boundary",
-        "SC:BE:MonthSummary.current-own:zero-budget"
+        "SC:BE:MonthSummary.current-own:zero-budget",
+        "SC:BE:FinanceApplicationTest#fehlendesNullUndPositivesBudgetBleibenImRestbudgetUnterschieden:44136fa355b3"
       ],
       "requirements": [
         "3.5/AC-5"
@@ -123837,20 +125401,22 @@
         "actual account-scoped read-only repeatable-read snapshot across budget and expense projections"
       ],
       "decision_reasons": [
-        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit."
+        "Eigenständige konkrete Fach-/Sicherheits-/Transaktions-/Prozessbeobachtung. Ähnliche Statuscodes allein begründen keine Gleichwertigkeit.",
+        "Die im Primärnachweis getestete Fachregel wird isoliert gegen ihre konkrete Cent-/Zustandsvariante geprüft. Alle bisherigen HTTP-/PostgreSQL-/Sperr-/Commit-Beobachtungen bleiben als ergänzende Mitglieder und verpflichtende Integrationsgrenzen erhalten."
       ],
       "boundary_only": false,
-      "primary_member": "SC:BE:MonthSummary.current-own:after-winter-boundary",
-      "primary_test_type": "HTTP/PostgreSQL",
+      "primary_member": "SC:BE:FinanceApplicationTest#fehlendesNullUndPositivesBudgetBleibenImRestbudgetUnterschieden:44136fa355b3",
+      "primary_test_type": "unit",
       "counting": "business",
       "supplementary_members": [
+        "SC:BE:MonthSummary.current-own:after-winter-boundary",
+        "SC:BE:MonthSummary.current-own:before-winter-boundary",
+        "SC:BE:MonthSummary.current-own:carried",
         "SC:BE:MonthSummary.current-own:missing-empty",
         "SC:BE:MonthSummary.current-own:missing-with-expense",
-        "SC:BE:MonthSummary.current-own:carried",
         "SC:BE:MonthSummary.current-own:own-current",
-        "SC:BE:MonthSummary.current-own:zero-budget",
-        "SC:BE:MonthSummary.current-own:before-winter-boundary",
-        "SC:BE:MonthSummary.current-own:year-boundary"
+        "SC:BE:MonthSummary.current-own:year-boundary",
+        "SC:BE:MonthSummary.current-own:zero-budget"
       ],
       "risks": [
         "HTTP adapter/security",
@@ -139455,6 +141021,182 @@
         "INF-1e5823e0014d92f6"
       ],
       "reason": "Explizite Reviewzuordnung der ausgeführten Messwerkzeugregression; Infrastruktur außerhalb des Fachnenners."
+    },
+    "SC:BE:ExpenseTest#monatsgesamtstandAkzeptiertNurGanzeNichtnegativeSichereCent:44136fa355b3": {
+      "canonical_scenarios": [
+        "BE-d9f80335548620e3"
+      ],
+      "reason": "Ergänzender Unit-Nachweis für die konkrete Berechnungs-/Grenzentscheidung; die zusammengesetzte HTTP-/Datenbank-/Commitbeobachtung bleibt primär integriert."
+    },
+    "SC:BE:ExpenseTest#monatsänderungBerechnetNeuenGesamtstandMitExakterDifferenz:44136fa355b3": {
+      "canonical_scenarios": [
+        "BE-ad93fa77c6d7e858"
+      ],
+      "reason": "Ergänzender Unit-Nachweis für die konkrete Berechnungs-/Grenzentscheidung; die zusammengesetzte HTTP-/Datenbank-/Commitbeobachtung bleibt primär integriert."
+    },
+    "SC:BE:SavingsGoalTest#signierterFortschrittLehntFehlendenWertAb:44136fa355b3": {
+      "canonical_scenarios": [
+        "BE-004a5470cb45820b"
+      ],
+      "reason": "Ergänzender Unit-Nachweis für die konkrete Berechnungs-/Grenzentscheidung; die zusammengesetzte HTTP-/Datenbank-/Commitbeobachtung bleibt primär integriert."
+    },
+    "SC:BE:FinanceApplicationTest#fehlendesNullUndPositivesBudgetBleibenImRestbudgetUnterschieden:44136fa355b3": {
+      "canonical_scenarios": [
+        "BE-1f217e0b66d357e4"
+      ],
+      "reason": "Ergänzender Unit-Nachweis für die konkrete Berechnungs-/Grenzentscheidung; die zusammengesetzte HTTP-/Datenbank-/Commitbeobachtung bleibt primär integriert."
+    },
+    "SC:BE:FinanceApplicationTest#restbudgetBleibtExaktBisZurSicherenGrenzeUndLehntUeberlaufAb:44136fa355b3": {
+      "canonical_scenarios": [
+        "BE-fa0492cf3dee1bfa"
+      ],
+      "reason": "Ergänzender Unit-Nachweis für die konkrete Berechnungs-/Grenzentscheidung; die zusammengesetzte HTTP-/Datenbank-/Commitbeobachtung bleibt primär integriert."
+    },
+    "SC:BE:MonthlySurplusTest#offeneSummeUndVormerkungBleibenExaktUndUnterscheidenFehlendenBetrag:44136fa355b3": {
+      "canonical_scenarios": [
+        "BE-ff75f96ef66b60d8",
+        "BE-06ed7d54777297f0"
+      ],
+      "reason": "Ergänzender Unit-Nachweis für die konkrete Berechnungs-/Grenzentscheidung; die zusammengesetzte HTTP-/Datenbank-/Commitbeobachtung bleibt primär integriert."
+    },
+    "SC:BE:RegistrationEmailTest#normalisiertVorDerFachpruefungOhneLocaleAbhaengigkeit:44136fa355b3": {
+      "canonical_scenarios": [
+        "BE-6802302bd4c46afb"
+      ],
+      "reason": "E-Mail-Fachregel bei gleicher konkreter Eingabe isoliert geprüft; bisheriger HTTP-/Persistenznachweis bleibt ergänzend."
+    },
+    "SC:BE:RegistrationEmailTest#gueltigkeitsregelBehaelt254ZeichenGrenzeUndFormatbeispiele:44136fa355b3": {
+      "canonical_scenarios": [
+        "BE-49a7b931ce60f8b1",
+        "BE-0d9b7c687364db27"
+      ],
+      "reason": "E-Mail-Fachregel bei gleicher konkreter Eingabe isoliert geprüft; bisheriger HTTP-/Persistenznachweis bleibt ergänzend."
+    },
+    "SC:BE:RegistrationEmailTest#gueltigkeitsregelBehaelt254ZeichenGrenzeUndFormatbeispiele:1a4038057f82": {
+      "canonical_scenarios": [
+        "BE-e32f25dd70033ad3"
+      ],
+      "reason": "E-Mail-Fachregel bei gleicher konkreter Eingabe isoliert geprüft; bisheriger HTTP-/Persistenznachweis bleibt ergänzend."
+    },
+    "SC:BE:RegistrationEmailTest#gueltigkeitsregelBehaelt254ZeichenGrenzeUndFormatbeispiele:4d2722f172e4": {
+      "canonical_scenarios": [
+        "BE-2e4b1e88f7d75919"
+      ],
+      "reason": "E-Mail-Fachregel bei gleicher konkreter Eingabe isoliert geprüft; bisheriger HTTP-/Persistenznachweis bleibt ergänzend."
+    },
+    "SC:BE:RegistrationEmailTest#gueltigkeitsregelBehaelt254ZeichenGrenzeUndFormatbeispiele:a30723d08342": {
+      "canonical_scenarios": [
+        "BE-fc6dd1d77a516e97"
+      ],
+      "reason": "E-Mail-Fachregel bei gleicher konkreter Eingabe isoliert geprüft; bisheriger HTTP-/Persistenznachweis bleibt ergänzend."
+    },
+    "SC:BE:RegistrationEmailTest#gueltigkeitsregelBehaelt254ZeichenGrenzeUndFormatbeispiele:9c44346ad065": {
+      "canonical_scenarios": [
+        "BE-d11a81b70a6b632e"
+      ],
+      "reason": "E-Mail-Fachregel bei gleicher konkreter Eingabe isoliert geprüft; bisheriger HTTP-/Persistenznachweis bleibt ergänzend."
+    },
+    "SC:BE:SavingsGoalTest#signierterFortschrittErlaubtVorzeichenUndBeideSicherenGrenzen:ba85c5ce4aac:44136fa355b3": {
+      "canonical_scenarios": [
+        "BE-737751881d793ec6"
+      ],
+      "reason": "Ergänzender Unit-Nachweis für die konkrete Berechnungs-/Grenzentscheidung; die zusammengesetzte HTTP-/Datenbank-/Commitbeobachtung bleibt primär integriert."
+    },
+    "SC:BE:SavingsGoalTest#signierterFortschrittErlaubtVorzeichenUndBeideSicherenGrenzen:7d583ea3babe:44136fa355b3": {
+      "canonical_scenarios": [
+        "BE-007ef7ec03579457"
+      ],
+      "reason": "Ergänzender Unit-Nachweis für die konkrete Berechnungs-/Grenzentscheidung; die zusammengesetzte HTTP-/Datenbank-/Commitbeobachtung bleibt primär integriert."
+    },
+    "SC:BE:SavingsGoalTest#signierterFortschrittErlaubtVorzeichenUndBeideSicherenGrenzen:98089e6d36f7:44136fa355b3": {
+      "canonical_scenarios": [
+        "BE-f3175f9cb70556e5"
+      ],
+      "reason": "Ergänzender Unit-Nachweis für die konkrete Berechnungs-/Grenzentscheidung; die zusammengesetzte HTTP-/Datenbank-/Commitbeobachtung bleibt primär integriert."
+    },
+    "SC:BE:SavingsGoalTest#signierterFortschrittErlaubtVorzeichenUndBeideSicherenGrenzen:1b6d2e96d30a:44136fa355b3": {
+      "canonical_scenarios": [
+        "BE-6f34061352bd9782"
+      ],
+      "reason": "Ergänzender Unit-Nachweis für die konkrete Berechnungs-/Grenzentscheidung; die zusammengesetzte HTTP-/Datenbank-/Commitbeobachtung bleibt primär integriert."
+    },
+    "SC:BE:SavingsGoalTest#signierterFortschrittErlaubtVorzeichenUndBeideSicherenGrenzen:3bc0f6e22232:44136fa355b3": {
+      "canonical_scenarios": [
+        "BE-461a5b3112e75d73"
+      ],
+      "reason": "Ergänzender Unit-Nachweis für die konkrete Berechnungs-/Grenzentscheidung; die zusammengesetzte HTTP-/Datenbank-/Commitbeobachtung bleibt primär integriert."
+    },
+    "SC:BE:SavingsGoalTest#signierterFortschrittErlaubtVorzeichenUndBeideSicherenGrenzen:c9b6149ddff7:44136fa355b3": {
+      "canonical_scenarios": [
+        "BE-5bd466eaeaa4578b"
+      ],
+      "reason": "Ergänzender Unit-Nachweis für die konkrete Berechnungs-/Grenzentscheidung; die zusammengesetzte HTTP-/Datenbank-/Commitbeobachtung bleibt primär integriert."
+    },
+    "SC:BE:SavingsGoalTest#signierterFortschrittLehntGrenzueberschreitungAb:eadea71416c1:44136fa355b3": {
+      "canonical_scenarios": [
+        "BE-2abe8b9aaa5206fd"
+      ],
+      "reason": "Ergänzender Unit-Nachweis für die konkrete Berechnungs-/Grenzentscheidung; die zusammengesetzte HTTP-/Datenbank-/Commitbeobachtung bleibt primär integriert."
+    },
+    "SC:BE:SavingsGoalTest#signierterFortschrittLehntGrenzueberschreitungAb:4ba9bf7656a3:44136fa355b3": {
+      "canonical_scenarios": [
+        "BE-b97c2bbb87af6180"
+      ],
+      "reason": "Ergänzender Unit-Nachweis für die konkrete Berechnungs-/Grenzentscheidung; die zusammengesetzte HTTP-/Datenbank-/Commitbeobachtung bleibt primär integriert."
+    },
+    "SC:BE:SavingsGoalTest#v1FortschrittBleibtNichtnegativBisZumSicherenMaximum:20b117d8fcad:44136fa355b3": {
+      "canonical_scenarios": [
+        "BE-1bee2842ef9c9192"
+      ],
+      "reason": "Ergänzender Unit-Nachweis für die konkrete Berechnungs-/Grenzentscheidung; die zusammengesetzte HTTP-/Datenbank-/Commitbeobachtung bleibt primär integriert."
+    },
+    "SC:BE:SavingsGoalTest#v1FortschrittBleibtNichtnegativBisZumSicherenMaximum:d6e47b3885e3:44136fa355b3": {
+      "canonical_scenarios": [
+        "BE-c3f80fbde30de4cf"
+      ],
+      "reason": "Ergänzender Unit-Nachweis für die konkrete Berechnungs-/Grenzentscheidung; die zusammengesetzte HTTP-/Datenbank-/Commitbeobachtung bleibt primär integriert."
+    },
+    "SC:BE:SavingsGoalTest#v1FortschrittBleibtNichtnegativBisZumSicherenMaximum:1aa25e5666a1:44136fa355b3": {
+      "canonical_scenarios": [
+        "BE-74fe424bf38065be"
+      ],
+      "reason": "Ergänzender Unit-Nachweis für die konkrete Berechnungs-/Grenzentscheidung; die zusammengesetzte HTTP-/Datenbank-/Commitbeobachtung bleibt primär integriert."
+    },
+    "SC:BE:SavingsGoalTest#v1FortschrittBleibtNichtnegativBisZumSicherenMaximum:04a2f659bc97:44136fa355b3": {
+      "canonical_scenarios": [
+        "BE-b98f8bfe63ceae5a"
+      ],
+      "reason": "Ergänzender Unit-Nachweis für die konkrete Berechnungs-/Grenzentscheidung; die zusammengesetzte HTTP-/Datenbank-/Commitbeobachtung bleibt primär integriert."
+    },
+    "SC:BE:SavingsGoalTest#v1FortschrittBleibtNichtnegativBisZumSicherenMaximum:24d98f38a638:44136fa355b3": {
+      "canonical_scenarios": [
+        "BE-c0ca1a74fab909f9"
+      ],
+      "reason": "Ergänzender Unit-Nachweis für die konkrete Berechnungs-/Grenzentscheidung; die zusammengesetzte HTTP-/Datenbank-/Commitbeobachtung bleibt primär integriert."
+    },
+    "SC:BE:SavingsGoalTest#korrekturdifferenzWirdAufDenTatsaechlichenFortschrittAngewandt:970ef45943c4:44136fa355b3": {
+      "canonical_scenarios": [
+        "BE-fda4892f421cc67b"
+      ],
+      "reason": "Ergänzender Unit-Nachweis für die konkrete Berechnungs-/Grenzentscheidung; die zusammengesetzte HTTP-/Datenbank-/Commitbeobachtung bleibt primär integriert."
+    },
+    "SC:BE:SavingsGoalTest#korrekturdifferenzWirdAufDenTatsaechlichenFortschrittAngewandt:5591aaa0f417:44136fa355b3": {
+      "canonical_scenarios": [
+        "BE-4cae31c94cf07f9a"
+      ],
+      "reason": "Ergänzender Unit-Nachweis für die konkrete Berechnungs-/Grenzentscheidung; die zusammengesetzte HTTP-/Datenbank-/Commitbeobachtung bleibt primär integriert."
+    },
+    "SC:BE:SavingsGoalTest#korrekturdifferenzLehntUnsicherenGesamtstandAb:77a914e960e1:44136fa355b3": {
+      "canonical_scenarios": [
+        "BE-75c0fd15050ed9ed"
+      ],
+      "reason": "Ergänzender Unit-Nachweis für die konkrete Berechnungs-/Grenzentscheidung; die zusammengesetzte HTTP-/Datenbank-/Commitbeobachtung bleibt primär integriert."
+    },
+    "SC:BE:SavingsGoalTest#korrekturdifferenzLehntUnsicherenGesamtstandAb:1539f09c52c0:44136fa355b3": {
+      "canonical_scenarios": [
+        "BE-13cea904982bad39"
+      ],
+      "reason": "Ergänzender Unit-Nachweis für die konkrete Berechnungs-/Grenzentscheidung; die zusammengesetzte HTTP-/Datenbank-/Commitbeobachtung bleibt primär integriert."
     }
   },
   "browser_inner_loops": [

@@ -59,7 +59,7 @@ public class MonthlySurplus {
     }
     public long pending(FinanceContext context) {
         context.requireRead();
-        return Money.nonnegativeExact(records.pending(context.userId()));
+        return checkedPending(records.pending(context.userId()));
     }
     public boolean requiresCorrection(FinanceContext context, LocalDate month) {
         context.requireWrite();
@@ -92,9 +92,16 @@ public class MonthlySurplus {
         if (!needsClosing(context, month)) return false;
         Long surplus = surplus(budgetCents, expensesCents);
         // Auch bei fehlendem Budget und Nullmonaten den gesamten Bestand vor dem Commit prüfen.
-        Money.nonnegativeExact(records.pending(context.userId()).add(BigDecimal.valueOf(surplus == null || goalId != null ? 0 : surplus)));
+        pendingAfterClosure(records.pending(context.userId()), surplus, goalId);
         records.insert(context.userId(), month, surplus, goalId, consumed);
         return true;
+    }
+    static long checkedPending(BigDecimal pending) {
+        return Money.nonnegativeExact(pending);
+    }
+    static long pendingAfterClosure(BigDecimal pending, Long surplus, UUID goalId) {
+        if (surplus != null && !Money.nonnegative(surplus)) throw new ArithmeticException("Ungültige Centgrenze");
+        return checkedPending(pending.add(BigDecimal.valueOf(surplus == null || goalId != null ? 0 : surplus)));
     }
     static long replacementPending(BigDecimal pending, MonthRecord previous, Long surplus) {
         BigDecimal result = pending;

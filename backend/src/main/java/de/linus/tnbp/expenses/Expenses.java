@@ -33,7 +33,7 @@ public class Expenses {
     public Expense save(FinanceContext context, String name, Long amountCents) {
         validate(name, amountCents);
         context.requireWrite();
-        checkTotal(expenses.monthTotal(context.userId(), context.month()).add(BigDecimal.valueOf(amountCents)));
+        checkedTotal(expenses.monthTotal(context.userId(), context.month()).add(BigDecimal.valueOf(amountCents)));
         var expense = new Expense(UUID.randomUUID(), trimName(name), amountCents, context.day());
         expenses.insert(context.userId(), expense);
         return expense;
@@ -42,8 +42,8 @@ public class Expenses {
         validate(name, amountCents);
         context.requireWrite();
         var previous = expenses.find(context.userId(), expenseId);
-        checkTotal(expenses.monthTotal(context.userId(), previous.recordedOn().withDayOfMonth(1))
-            .subtract(BigDecimal.valueOf(previous.amountCents())).add(BigDecimal.valueOf(amountCents)));
+        replacementTotal(expenses.monthTotal(context.userId(), previous.recordedOn().withDayOfMonth(1)),
+            previous.amountCents(), amountCents);
         var updated = new Expense(previous.id(), trimName(name), amountCents, previous.recordedOn());
         expenses.update(context.userId(), updated);
         return updated;
@@ -52,9 +52,16 @@ public class Expenses {
         context.requireWrite();
         expenses.delete(context.userId(), expenseId);
     }
-    private static void checkTotal(BigDecimal total) {
+    /** Pure Monatsentscheidung, auch für bestehende Ausgabenänderungen verwendet. */
+    static long checkedTotal(BigDecimal total) {
         try { Money.nonnegativeExact(total); }
         catch (ArithmeticException failure) { throw new MonthLimit(); }
+        return total.longValueExact();
+    }
+
+    static long replacementTotal(BigDecimal currentTotal, long previousAmountCents, long nextAmountCents) {
+        return checkedTotal(currentTotal.subtract(BigDecimal.valueOf(previousAmountCents))
+            .add(BigDecimal.valueOf(nextAmountCents)));
     }
 
     public static void validate(String name, Long amountCents) {

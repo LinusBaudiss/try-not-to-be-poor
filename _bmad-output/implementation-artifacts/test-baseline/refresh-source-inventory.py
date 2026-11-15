@@ -168,7 +168,9 @@ for path in sorted((ROOT / 'backend/src/test/java').rglob('*.java')):
             entry = {'id': f'BE:{classname}#{name}' + (':' + digest(variant) if variant != 'default' else ''),
                      'path': relative, 'line': source.count('\n', 0, match.start()) + 1,
                      'method': name, 'class': classname, 'variant': variant, 'provider': provider,
-                     'current_type': current, 'execution_paths': ['maven:verify/surefire' if classname.endswith('Test') else 'maven:verify/failsafe'],
+                     'current_type': current, 'execution_paths': [
+                         'maven:verify/failsafe' if classname == 'MonthlyAutomationE2eServerTest' or classname.endswith('IT')
+                         else 'maven:verify/surefire'],
                      'requirement': req, 'observation': name, 'risks': risks, 'target_type': target,
                      'remaining_integration': remain, 'replacement_evidence': 'OPEN; no replacement or removal in 5.1',
                      'source_body_sha256': hashlib.sha256(body.encode()).hexdigest(),

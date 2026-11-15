@@ -1,0 +1,16 @@
+
+> try-not-to-be-poor@0.1.0 build
+> ng build
+
+❯ Building...
+✔ Building...
+Initial chunk files | Names         |  Raw size | Estimated transfer size
+main-RKQQ5IWE.js    | main          | 458.12 kB |               104.86 kB
+styles-7AAGOGT3.css | styles        |   9.71 kB |                 1.90 kB
+
+                    | Initial total | 467.83 kB |               106.75 kB
+
+Application bundle generation complete. [2.576 seconds] - 2026-11-15T14:39:25.535Z
+
+Output location: /home/linus/dev/try-not-to-be-poor/frontend/dist/tnbp
+

@@ -1,0 +1,22 @@
+{
+  "entries": 1104,
+  "by_type": {
+    "HTTP/PostgreSQL": 229,
+    "PostgreSQL": 36,
+    "architecture": 5,
+    "browser": 320,
+    "component": 281,
+    "process/PostgreSQL": 79,
+    "tool/infrastructure": 43,
+    "unit": 111
+  },
+  "inherited_classes": {
+    "RegistrationV2IT": "RegistrationIT",
+    "SessionV2IT": "SessionIT",
+    "BudgetV2IT": "BudgetIT",
+    "ExpenseV2IT": "ExpenseIT",
+    "MonthSummaryV2IT": "MonthSummaryIT",
+    "SavingsGoalV2IT": "SavingsGoalIT"
+  }
+}
+3651 distinct assertion/binding observations; never use this count as business scenario denominator

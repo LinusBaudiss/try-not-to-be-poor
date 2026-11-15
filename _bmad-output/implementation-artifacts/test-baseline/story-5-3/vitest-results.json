@@ -1,0 +1,3703 @@
+{
+  "numTotalTestSuites": 24,
+  "numPassedTestSuites": 24,
+  "numFailedTestSuites": 0,
+  "numPendingTestSuites": 0,
+  "numTotalTests": 324,
+  "numPassedTests": 324,
+  "numFailedTests": 0,
+  "numPendingTests": 0,
+  "numTodoTests": 0,
+  "snapshot": {
+    "added": 0,
+    "failure": false,
+    "filesAdded": 0,
+    "filesRemoved": 0,
+    "filesRemovedList": [],
+    "filesUnmatched": 0,
+    "filesUpdated": 0,
+    "matched": 0,
+    "total": 0,
+    "unchecked": 0,
+    "uncheckedKeysByFile": [],
+    "unmatched": 0,
+    "updated": 0,
+    "didUpdate": false
+  },
+  "startTime": 1794753397236,
+  "success": true,
+  "testResults": [
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Expenses template with authenticated HTTP"
+          ],
+          "fullName": "Expenses template with authenticated HTTP renders empty state, labels and preserves calendar dates and user text",
+          "status": "passed",
+          "title": "renders empty state, labels and preserves calendar dates and user text",
+          "duration": 165.62444800000003,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Expenses template with authenticated HTTP"
+          ],
+          "fullName": "Expenses template with authenticated HTTP rejects invalid positive amount 0 accessibly",
+          "status": "passed",
+          "title": "rejects invalid positive amount 0 accessibly",
+          "duration": 25.288902000000007,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Expenses template with authenticated HTTP"
+          ],
+          "fullName": "Expenses template with authenticated HTTP rejects invalid positive amount -1 accessibly",
+          "status": "passed",
+          "title": "rejects invalid positive amount -1 accessibly",
+          "duration": 15.83909400000016,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Expenses template with authenticated HTTP"
+          ],
+          "fullName": "Expenses template with authenticated HTTP rejects invalid positive amount 1,001 accessibly",
+          "status": "passed",
+          "title": "rejects invalid positive amount 1,001 accessibly",
+          "duration": 18.582611000000043,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Expenses template with authenticated HTTP"
+          ],
+          "fullName": "Expenses template with authenticated HTTP rejects invalid positive amount 90071992547409,92 accessibly",
+          "status": "passed",
+          "title": "rejects invalid positive amount 90071992547409,92 accessibly",
+          "duration": 17.060023,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Expenses template with authenticated HTTP"
+          ],
+          "fullName": "Expenses template with authenticated HTTP retains a draft on field errors and clears the error on edit",
+          "status": "passed",
+          "title": "retains a draft on field errors and clears the error on edit",
+          "duration": 17.321789999999964,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Expenses template with authenticated HTTP"
+          ],
+          "fullName": "Expenses template with authenticated HTTP keeps uncertain writes blocked until a reload and explicit review",
+          "status": "passed",
+          "title": "keeps uncertain writes blocked until a reload and explicit review",
+          "duration": 24.19834199999991,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Expenses template with authenticated HTTP"
+          ],
+          "fullName": "Expenses template with authenticated HTTP keeps offline input in the open tab and prevents sending",
+          "status": "passed",
+          "title": "keeps offline input in the open tab and prevents sending",
+          "duration": 15.364469999999983,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Expenses template with authenticated HTTP"
+          ],
+          "fullName": "Expenses template with authenticated HTTP sends deletion only after confirmation and changes the list after response",
+          "status": "passed",
+          "title": "sends deletion only after confirmation and changes the list after response",
+          "duration": 32.753243999999995,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Expenses template with authenticated HTTP"
+          ],
+          "fullName": "Expenses template with authenticated HTTP discards an old account mutation after a real account login succeeds",
+          "status": "passed",
+          "title": "discards an old account mutation after a real account login succeeds",
+          "duration": 14.871749000000136,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Expenses template with authenticated HTTP"
+          ],
+          "fullName": "Expenses template with authenticated HTTP discards a late response and all drafts after the session ends",
+          "status": "passed",
+          "title": "discards a late response and all drafts after the session ends",
+          "duration": 11.92855499999996,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Expenses template with authenticated HTTP"
+          ],
+          "fullName": "Expenses template with authenticated HTTP FE-2d60f3258d64b7f7 rejects the original expense input 0 before HTTP",
+          "status": "passed",
+          "title": "FE-2d60f3258d64b7f7 rejects the original expense input 0 before HTTP",
+          "duration": 10.556994000000032,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Expenses template with authenticated HTTP"
+          ],
+          "fullName": "Expenses template with authenticated HTTP FE-dfeb43baf6163f50 rejects the original expense input -1 before HTTP",
+          "status": "passed",
+          "title": "FE-dfeb43baf6163f50 rejects the original expense input -1 before HTTP",
+          "duration": 10.256697000000031,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Expenses template with authenticated HTTP"
+          ],
+          "fullName": "Expenses template with authenticated HTTP FE-8ea82b54f2a149bd rejects the original expense input 1,001 before HTTP",
+          "status": "passed",
+          "title": "FE-8ea82b54f2a149bd rejects the original expense input 1,001 before HTTP",
+          "duration": 10.300252,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Expenses template with authenticated HTTP"
+          ],
+          "fullName": "Expenses template with authenticated HTTP FE-83256bf1cbec8ae0 rejects the original expense input 1.009 before HTTP",
+          "status": "passed",
+          "title": "FE-83256bf1cbec8ae0 rejects the original expense input 1.009 before HTTP",
+          "duration": 9.211422999999968,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Expenses template with authenticated HTTP"
+          ],
+          "fullName": "Expenses template with authenticated HTTP FE-8819b488cd0c486a rejects the original expense input 90071992547409,92 before HTTP",
+          "status": "passed",
+          "title": "FE-8819b488cd0c486a rejects the original expense input 90071992547409,92 before HTTP",
+          "duration": 11.30334300000004,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Expenses template with authenticated HTTP"
+          ],
+          "fullName": "Expenses template with authenticated HTTP FE-49ecbc5e7a30c888 rejects the original expense input 1.000,00 before HTTP",
+          "status": "passed",
+          "title": "FE-49ecbc5e7a30c888 rejects the original expense input 1.000,00 before HTTP",
+          "duration": 10.566970000000083,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Expenses template with authenticated HTTP"
+          ],
+          "fullName": "Expenses template with authenticated HTTP FE-e948b7362796ab11 rejects the original expense input NaN before HTTP",
+          "status": "passed",
+          "title": "FE-e948b7362796ab11 rejects the original expense input NaN before HTTP",
+          "duration": 13.762386000000106,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Expenses template with authenticated HTTP"
+          ],
+          "fullName": "Expenses template with authenticated HTTP FE-128b514ccb31a242 rejects the original expense input  before HTTP",
+          "status": "passed",
+          "title": "FE-128b514ccb31a242 rejects the original expense input  before HTTP",
+          "duration": 14.876281999999946,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Expenses template with authenticated HTTP"
+          ],
+          "fullName": "Expenses template with authenticated HTTP FE-8be342db74f23aa1 rejects the original expense input 1.001 before HTTP",
+          "status": "passed",
+          "title": "FE-8be342db74f23aa1 rejects the original expense input 1.001 before HTTP",
+          "duration": 9.699823999999808,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Expenses template with authenticated HTTP"
+          ],
+          "fullName": "Expenses template with authenticated HTTP FE-f5c5e2fbe0de6629 rejects the original expense input 1e2 before HTTP",
+          "status": "passed",
+          "title": "FE-f5c5e2fbe0de6629 rejects the original expense input 1e2 before HTTP",
+          "duration": 8.251618000000008,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Expenses template with authenticated HTTP"
+          ],
+          "fullName": "Expenses template with authenticated HTTP FE-c36f41e084565e4b rejects unconfirmed expense create response server",
+          "status": "passed",
+          "title": "FE-c36f41e084565e4b rejects unconfirmed expense create response server",
+          "duration": 10.079764999999952,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Expenses template with authenticated HTTP"
+          ],
+          "fullName": "Expenses template with authenticated HTTP FE-0fb418954be5ea57 rejects unconfirmed expense create response network",
+          "status": "passed",
+          "title": "FE-0fb418954be5ea57 rejects unconfirmed expense create response network",
+          "duration": 9.358083000000079,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Expenses template with authenticated HTTP"
+          ],
+          "fullName": "Expenses template with authenticated HTTP FE-4a3f7ed87244161b rejects unconfirmed expense create response invalid",
+          "status": "passed",
+          "title": "FE-4a3f7ed87244161b rejects unconfirmed expense create response invalid",
+          "duration": 9.11191800000006,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Expenses template with authenticated HTTP"
+          ],
+          "fullName": "Expenses template with authenticated HTTP FE-21f2f86246f1beaf rejects unconfirmed expense create response different-name",
+          "status": "passed",
+          "title": "FE-21f2f86246f1beaf rejects unconfirmed expense create response different-name",
+          "duration": 8.200738000000001,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Expenses template with authenticated HTTP"
+          ],
+          "fullName": "Expenses template with authenticated HTTP FE-c999230101cb6088 rejects unconfirmed expense create response different-amount",
+          "status": "passed",
+          "title": "FE-c999230101cb6088 rejects unconfirmed expense create response different-amount",
+          "duration": 8.481882999999925,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Expenses template with authenticated HTTP"
+          ],
+          "fullName": "Expenses template with authenticated HTTP FE-db5850f49e20cc78 rejects unconfirmed expense create response wrong-status",
+          "status": "passed",
+          "title": "FE-db5850f49e20cc78 rejects unconfirmed expense create response wrong-status",
+          "duration": 7.69004300000006,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Expenses template with authenticated HTTP"
+          ],
+          "fullName": "Expenses template with authenticated HTTP FE-c834a44207f03f43 rejects unconfirmed expense create response extra-field",
+          "status": "passed",
+          "title": "FE-c834a44207f03f43 rejects unconfirmed expense create response extra-field",
+          "duration": 8.477846999999883,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Expenses template with authenticated HTTP"
+          ],
+          "fullName": "Expenses template with authenticated HTTP FE-430ee60b2df3bb7e retains draft and history for rejected expense edit response network",
+          "status": "passed",
+          "title": "FE-430ee60b2df3bb7e retains draft and history for rejected expense edit response network",
+          "duration": 16.320903000000044,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Expenses template with authenticated HTTP"
+          ],
+          "fullName": "Expenses template with authenticated HTTP FE-8c70bd7be759c620 retains draft and history for rejected expense edit response server",
+          "status": "passed",
+          "title": "FE-8c70bd7be759c620 retains draft and history for rejected expense edit response server",
+          "duration": 12.35273200000006,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Expenses template with authenticated HTTP"
+          ],
+          "fullName": "Expenses template with authenticated HTTP FE-17945a60ce564c98 retains draft and history for rejected expense edit response missing",
+          "status": "passed",
+          "title": "FE-17945a60ce564c98 retains draft and history for rejected expense edit response missing",
+          "duration": 15.787538999999924,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Expenses template with authenticated HTTP"
+          ],
+          "fullName": "Expenses template with authenticated HTTP FE-c1dcf7a9c845b449 retains draft and history for rejected expense edit response id",
+          "status": "passed",
+          "title": "FE-c1dcf7a9c845b449 retains draft and history for rejected expense edit response id",
+          "duration": 15.856470000000172,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Expenses template with authenticated HTTP"
+          ],
+          "fullName": "Expenses template with authenticated HTTP FE-f896d21b15007652 retains draft and history for rejected expense edit response date",
+          "status": "passed",
+          "title": "FE-f896d21b15007652 retains draft and history for rejected expense edit response date",
+          "duration": 16.35010599999987,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Expenses template with authenticated HTTP"
+          ],
+          "fullName": "Expenses template with authenticated HTTP FE-cd0a4955498abd9e retains draft and history for rejected expense edit response name",
+          "status": "passed",
+          "title": "FE-cd0a4955498abd9e retains draft and history for rejected expense edit response name",
+          "duration": 15.7630979999999,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Expenses template with authenticated HTTP"
+          ],
+          "fullName": "Expenses template with authenticated HTTP FE-497dd84891379b27 retains draft and history for rejected expense edit response amount",
+          "status": "passed",
+          "title": "FE-497dd84891379b27 retains draft and history for rejected expense edit response amount",
+          "duration": 14.142401999999947,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Expenses template with authenticated HTTP"
+          ],
+          "fullName": "Expenses template with authenticated HTTP FE-37a634c768613c37 retains draft and history for rejected expense edit response invalid-date",
+          "status": "passed",
+          "title": "FE-37a634c768613c37 retains draft and history for rejected expense edit response invalid-date",
+          "duration": 14.83274100000017,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Expenses template with authenticated HTTP"
+          ],
+          "fullName": "Expenses template with authenticated HTTP FE-ce629af28bb166a2 retains draft and history for rejected expense edit response fraction",
+          "status": "passed",
+          "title": "FE-ce629af28bb166a2 retains draft and history for rejected expense edit response fraction",
+          "duration": 15.358872000000247,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Expenses template with authenticated HTTP"
+          ],
+          "fullName": "Expenses template with authenticated HTTP FE-68a1eb5fc75d0320 retains draft and history for rejected expense edit response wrong-status",
+          "status": "passed",
+          "title": "FE-68a1eb5fc75d0320 retains draft and history for rejected expense edit response wrong-status",
+          "duration": 14.94971200000009,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Expenses template with authenticated HTTP"
+          ],
+          "fullName": "Expenses template with authenticated HTTP FE-bc7eb34895dd28d7 retains draft and history for rejected expense edit response extra-field",
+          "status": "passed",
+          "title": "FE-bc7eb34895dd28d7 retains draft and history for rejected expense edit response extra-field",
+          "duration": 14.097673000000214,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Expenses template with authenticated HTTP"
+          ],
+          "fullName": "Expenses template with authenticated HTTP FE-d6ffa7e338459f14 retains history on rejected expense deletion network",
+          "status": "passed",
+          "title": "FE-d6ffa7e338459f14 retains history on rejected expense deletion network",
+          "duration": 12.968029000000115,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Expenses template with authenticated HTTP"
+          ],
+          "fullName": "Expenses template with authenticated HTTP FE-77e2499cb142ac45 retains history on rejected expense deletion server",
+          "status": "passed",
+          "title": "FE-77e2499cb142ac45 retains history on rejected expense deletion server",
+          "duration": 11.903012000000217,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Expenses template with authenticated HTTP"
+          ],
+          "fullName": "Expenses template with authenticated HTTP FE-425b222b286c1204 retains history on rejected expense deletion missing",
+          "status": "passed",
+          "title": "FE-425b222b286c1204 retains history on rejected expense deletion missing",
+          "duration": 19.474924999999985,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Expenses template with authenticated HTTP"
+          ],
+          "fullName": "Expenses template with authenticated HTTP FE-143f79293e8d5f21 retains history on rejected expense deletion wrong-status",
+          "status": "passed",
+          "title": "FE-143f79293e8d5f21 retains history on rejected expense deletion wrong-status",
+          "duration": 10.668687999999747,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Expenses template with authenticated HTTP"
+          ],
+          "fullName": "Expenses template with authenticated HTTP FE-0ef24908f50702a3 keeps uncertain expense writes locked after malformed review partial",
+          "status": "passed",
+          "title": "FE-0ef24908f50702a3 keeps uncertain expense writes locked after malformed review partial",
+          "duration": 9.850724000000355,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Expenses template with authenticated HTTP"
+          ],
+          "fullName": "Expenses template with authenticated HTTP FE-4367f1b1dfd35574 keeps uncertain expense writes locked after malformed review extra-field",
+          "status": "passed",
+          "title": "FE-4367f1b1dfd35574 keeps uncertain expense writes locked after malformed review extra-field",
+          "duration": 7.725296999999955,
+          "failureMessages": [],
+          "meta": {}
+        }
+      ],
+      "startTime": 1794753398756,
+      "endTime": 1794753399524.7253,
+      "status": "passed",
+      "message": "",
+      "name": "frontend/src/app/expenses/expenses.spec.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Login template"
+          ],
+          "fullName": "Login template links empty-field errors to their inputs without sending HTTP",
+          "status": "passed",
+          "title": "links empty-field errors to their inputs without sending HTTP",
+          "duration": 110.967308,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Login template"
+          ],
+          "fullName": "Login template prevents duplicate logins and retains credentials on rejected login",
+          "status": "passed",
+          "title": "prevents duplicate logins and retains credentials on rejected login",
+          "duration": 21.663518000000067,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Login template"
+          ],
+          "fullName": "Login template retains open-tab drafts offline without sending",
+          "status": "passed",
+          "title": "retains open-tab drafts offline without sending",
+          "duration": 13.310284000000138,
+          "failureMessages": [],
+          "meta": {}
+        }
+      ],
+      "startTime": 1794753398771,
+      "endTime": 1794753398916.3103,
+      "status": "passed",
+      "message": "",
+      "name": "frontend/src/app/login/login.spec.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Month summary template"
+          ],
+          "fullName": "Month summary template distinguishes budget null and remainder 100",
+          "status": "passed",
+          "title": "distinguishes budget null and remainder 100",
+          "duration": 147.1384559999999,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Month summary template"
+          ],
+          "fullName": "Month summary template distinguishes budget 0 and remainder 0",
+          "status": "passed",
+          "title": "distinguishes budget 0 and remainder 0",
+          "duration": 16.407157000000097,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Month summary template"
+          ],
+          "fullName": "Month summary template distinguishes budget 0 and remainder 100",
+          "status": "passed",
+          "title": "distinguishes budget 0 and remainder 100",
+          "duration": 21.319684000000052,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Month summary template"
+          ],
+          "fullName": "Month summary template distinguishes budget 9007199254740991 and remainder 0",
+          "status": "passed",
+          "title": "distinguishes budget 9007199254740991 and remainder 0",
+          "duration": 14.831325000000106,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Month summary template"
+          ],
+          "fullName": "Month summary template rejects inconsistent totals and offers retry",
+          "status": "passed",
+          "title": "rejects inconsistent totals and offers retry",
+          "duration": 19.559087999999974,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Month summary template"
+          ],
+          "fullName": "Month summary template discards a late older revision",
+          "status": "passed",
+          "title": "discards a late older revision",
+          "duration": 13.473205000000007,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Month summary template"
+          ],
+          "fullName": "Month summary template FE-9113247496b60d50 refuses malformed summary values without displaying money",
+          "status": "passed",
+          "title": "FE-9113247496b60d50 refuses malformed summary values without displaying money",
+          "duration": 13.373203999999987,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Month summary template"
+          ],
+          "fullName": "Month summary template FE-367c9171c962500a refuses malformed summary values without displaying money",
+          "status": "passed",
+          "title": "FE-367c9171c962500a refuses malformed summary values without displaying money",
+          "duration": 11.783594999999877,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Month summary template"
+          ],
+          "fullName": "Month summary template FE-a72dd1dfceb04480 refuses malformed summary values without displaying money",
+          "status": "passed",
+          "title": "FE-a72dd1dfceb04480 refuses malformed summary values without displaying money",
+          "duration": 10.055010999999922,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Month summary template"
+          ],
+          "fullName": "Month summary template FE-0b0cce363c811763 refuses malformed summary values without displaying money",
+          "status": "passed",
+          "title": "FE-0b0cce363c811763 refuses malformed summary values without displaying money",
+          "duration": 10.405732999999827,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Month summary template"
+          ],
+          "fullName": "Month summary template FE-de6431aec57bf086 refuses malformed summary values without displaying money",
+          "status": "passed",
+          "title": "FE-de6431aec57bf086 refuses malformed summary values without displaying money",
+          "duration": 9.139396000000033,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Month summary template"
+          ],
+          "fullName": "Month summary template FE-4c306961ea6bdc08 refuses malformed summary values without displaying money",
+          "status": "passed",
+          "title": "FE-4c306961ea6bdc08 refuses malformed summary values without displaying money",
+          "duration": 9.690285999999787,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Month summary template"
+          ],
+          "fullName": "Month summary template FE-335ec21a78c3af4c refuses malformed summary values without displaying money",
+          "status": "passed",
+          "title": "FE-335ec21a78c3af4c refuses malformed summary values without displaying money",
+          "duration": 8.725994000000128,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Month summary template"
+          ],
+          "fullName": "Month summary template FE-aeb5e091805ab33d refuses malformed summary values without displaying money",
+          "status": "passed",
+          "title": "FE-aeb5e091805ab33d refuses malformed summary values without displaying money",
+          "duration": 9.318222999999989,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Month summary template"
+          ],
+          "fullName": "Month summary template FE-55848d86e10e7eaa refuses malformed summary values without displaying money",
+          "status": "passed",
+          "title": "FE-55848d86e10e7eaa refuses malformed summary values without displaying money",
+          "duration": 11.121406999999863,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Month summary template"
+          ],
+          "fullName": "Month summary template FE-bdf5e283eefcc853 refuses malformed summary values without displaying money",
+          "status": "passed",
+          "title": "FE-bdf5e283eefcc853 refuses malformed summary values without displaying money",
+          "duration": 9.49045000000001,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Month summary template"
+          ],
+          "fullName": "Month summary template FE-ea55d98ed47057a0 renders exact summary totals",
+          "status": "passed",
+          "title": "FE-ea55d98ed47057a0 renders exact summary totals",
+          "duration": 6.664974999999913,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Month summary template"
+          ],
+          "fullName": "Month summary template FE-289a1ee88fbcf285 renders exact summary totals",
+          "status": "passed",
+          "title": "FE-289a1ee88fbcf285 renders exact summary totals",
+          "duration": 7.720293000000083,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Month summary template"
+          ],
+          "fullName": "Month summary template FE-8a99606d556504c4 renders exact summary totals",
+          "status": "passed",
+          "title": "FE-8a99606d556504c4 renders exact summary totals",
+          "duration": 8.5334170000001,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Month summary template"
+          ],
+          "fullName": "Month summary template FE-5020de80520b864d renders exact summary totals",
+          "status": "passed",
+          "title": "FE-5020de80520b864d renders exact summary totals",
+          "duration": 6.682876999999962,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Month summary template"
+          ],
+          "fullName": "Month summary template FE-3314ceb0a45f8bc8 catches a missed server-month boundary once through focus and discards the older response",
+          "status": "passed",
+          "title": "FE-3314ceb0a45f8bc8 catches a missed server-month boundary once through focus and discards the older response",
+          "duration": 11.300301999999874,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Month summary template"
+          ],
+          "fullName": "Month summary template FE-482fa274bc122ff9 catches a missed server-month boundary once through visibilitychange and discards the older response",
+          "status": "passed",
+          "title": "FE-482fa274bc122ff9 catches a missed server-month boundary once through visibilitychange and discards the older response",
+          "duration": 9.342245999999932,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Month summary template"
+          ],
+          "fullName": "Month summary template FE-78f1c4dd1cbdb91c reconnect requests exactly one current server month after an offline boundary",
+          "status": "passed",
+          "title": "FE-78f1c4dd1cbdb91c reconnect requests exactly one current server month after an offline boundary",
+          "duration": 7.349083999999948,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Month summary template"
+          ],
+          "fullName": "Month summary template FE-c332204edabf4ac4 removes stale summary values on network failure and retries without inventing zero",
+          "status": "passed",
+          "title": "FE-c332204edabf4ac4 removes stale summary values on network failure and retries without inventing zero",
+          "duration": 10.726746000000048,
+          "failureMessages": [],
+          "meta": {}
+        }
+      ],
+      "startTime": 1794753398615,
+      "endTime": 1794753399019.7268,
+      "status": "passed",
+      "message": "",
+      "name": "frontend/src/app/month/month-summary.spec.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Month budget template"
+          ],
+          "fullName": "Month budget template distinguishes missing budget from zero and saves zero only after response",
+          "status": "passed",
+          "title": "distinguishes missing budget from zero and saves zero only after response",
+          "duration": 152.2081310000001,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Month budget template"
+          ],
+          "fullName": "Month budget template rejects invalid budget -1",
+          "status": "passed",
+          "title": "rejects invalid budget -1",
+          "duration": 25.348838999999998,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Month budget template"
+          ],
+          "fullName": "Month budget template rejects invalid budget 0,001",
+          "status": "passed",
+          "title": "rejects invalid budget 0,001",
+          "duration": 19.44963000000007,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Month budget template"
+          ],
+          "fullName": "Month budget template rejects invalid budget 90071992547409,92",
+          "status": "passed",
+          "title": "rejects invalid budget 90071992547409,92",
+          "duration": 20.61847700000021,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Month budget template"
+          ],
+          "fullName": "Month budget template FE-0e0aba64b1a682e0 rejects the original budget input  before HTTP",
+          "status": "passed",
+          "title": "FE-0e0aba64b1a682e0 rejects the original budget input  before HTTP",
+          "duration": 19.266385000000128,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Month budget template"
+          ],
+          "fullName": "Month budget template FE-600fbc683b4dbc3f rejects the original budget input -1 before HTTP",
+          "status": "passed",
+          "title": "FE-600fbc683b4dbc3f rejects the original budget input -1 before HTTP",
+          "duration": 17.37755399999992,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Month budget template"
+          ],
+          "fullName": "Month budget template FE-f6eb38d5c4b40e85 rejects the original budget input 1,001 before HTTP",
+          "status": "passed",
+          "title": "FE-f6eb38d5c4b40e85 rejects the original budget input 1,001 before HTTP",
+          "duration": 16.76382599999988,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Month budget template"
+          ],
+          "fullName": "Month budget template FE-46748f7d929549d4 rejects the original budget input 1.001 before HTTP",
+          "status": "passed",
+          "title": "FE-46748f7d929549d4 rejects the original budget input 1.001 before HTTP",
+          "duration": 15.853742000000011,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Month budget template"
+          ],
+          "fullName": "Month budget template FE-f3832e6eefbe87c9 rejects the original budget input 1.000,00 before HTTP",
+          "status": "passed",
+          "title": "FE-f3832e6eefbe87c9 rejects the original budget input 1.000,00 before HTTP",
+          "duration": 18.52393200000006,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Month budget template"
+          ],
+          "fullName": "Month budget template FE-4eac843ea19ffd66 rejects the original budget input 1,000.00 before HTTP",
+          "status": "passed",
+          "title": "FE-4eac843ea19ffd66 rejects the original budget input 1,000.00 before HTTP",
+          "duration": 17.07755700000007,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Month budget template"
+          ],
+          "fullName": "Month budget template FE-75ea145d6cb5b340 rejects the original budget input 1e2 before HTTP",
+          "status": "passed",
+          "title": "FE-75ea145d6cb5b340 rejects the original budget input 1e2 before HTTP",
+          "duration": 16.158185999999887,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Month budget template"
+          ],
+          "fullName": "Month budget template FE-aa24b4dd2897b072 rejects the original budget input 1 00 before HTTP",
+          "status": "passed",
+          "title": "FE-aa24b4dd2897b072 rejects the original budget input 1 00 before HTTP",
+          "duration": 15.124626000000035,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Month budget template"
+          ],
+          "fullName": "Month budget template FE-5bc8051aa244eff8 rejects the original budget input NaN before HTTP",
+          "status": "passed",
+          "title": "FE-5bc8051aa244eff8 rejects the original budget input NaN before HTTP",
+          "duration": 14.214495999999826,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Month budget template"
+          ],
+          "fullName": "Month budget template FE-57cce125ee03ee77 rejects the original budget input 90071992547409,92 before HTTP",
+          "status": "passed",
+          "title": "FE-57cce125ee03ee77 rejects the original budget input 90071992547409,92 before HTTP",
+          "duration": 14.626576999999997,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Month budget template"
+          ],
+          "fullName": "Month budget template FE-2b867da739afec36 preserves a pasted long leading-zero amount without truncation or rounding",
+          "status": "passed",
+          "title": "FE-2b867da739afec36 preserves a pasted long leading-zero amount without truncation or rounding",
+          "duration": 16.91059599999994,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Month budget template"
+          ],
+          "fullName": "Month budget template FE-7df6efdc2ab6eaf7 editing clears superseded field errors and the old success announcement",
+          "status": "passed",
+          "title": "FE-7df6efdc2ab6eaf7 editing clears superseded field errors and the old success announcement",
+          "duration": 22.15615300000013,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Month budget template"
+          ],
+          "fullName": "Month budget template FE-660bf26923dbfb08 keeps the budget draft and confirmed state while mapping API field errors",
+          "status": "passed",
+          "title": "FE-660bf26923dbfb08 keeps the budget draft and confirmed state while mapping API field errors",
+          "duration": 17.687963999999965,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Month budget template"
+          ],
+          "fullName": "Month budget template FE-054e4ecc42262e0a keeps an unconfirmed budget draft offline and requires deliberate state review",
+          "status": "passed",
+          "title": "FE-054e4ecc42262e0a keeps an unconfirmed budget draft offline and requires deliberate state review",
+          "duration": 28.491942999999992,
+          "failureMessages": [],
+          "meta": {}
+        }
+      ],
+      "startTime": 1794753398758,
+      "endTime": 1794753399226.492,
+      "status": "passed",
+      "message": "",
+      "name": "frontend/src/app/month/month.spec.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Registration template"
+          ],
+          "fullName": "Registration template removes the link secret and confirms success only after HTTP completion",
+          "status": "passed",
+          "title": "removes the link secret and confirms success only after HTTP completion",
+          "duration": 133.47858999999994,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Registration template"
+          ],
+          "fullName": "Registration template maps only known server field errors and retains the draft",
+          "status": "passed",
+          "title": "maps only known server field errors and retains the draft",
+          "duration": 22.45483400000012,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Registration template"
+          ],
+          "fullName": "Registration template explains missing confirmation and keeps the open-tab draft",
+          "status": "passed",
+          "title": "explains missing confirmation and keeps the open-tab draft",
+          "duration": 28.52277099999992,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Registration template"
+          ],
+          "fullName": "Registration template cancels its subscription on navigation and clears its draft",
+          "status": "passed",
+          "title": "cancels its subscription on navigation and clears its draft",
+          "duration": 54.472058999999945,
+          "failureMessages": [],
+          "meta": {}
+        }
+      ],
+      "startTime": 1794753398752,
+      "endTime": 1794753398991.4722,
+      "status": "passed",
+      "message": "",
+      "name": "frontend/src/app/registration/registration.spec.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP creates exact cents once and exposes the goal only after confirmation",
+          "status": "passed",
+          "title": "creates exact cents once and exposes the goal only after confirmation",
+          "duration": 192.5678620000001,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP preserves a new-goal draft on field errors and on lost confirmation",
+          "status": "passed",
+          "title": "preserves a new-goal draft on field errors and on lost confirmation",
+          "duration": 49.387549000000035,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP cancels editing without HTTP then preserves progress while editing target and clearing date",
+          "status": "passed",
+          "title": "cancels editing without HTTP then preserves progress while editing target and clearing date",
+          "duration": 44.403816000000006,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP retains target-edit drafts through field errors and blocks unconfirmed edits",
+          "status": "passed",
+          "title": "retains target-edit drafts through field errors and blocks unconfirmed edits",
+          "duration": 30.18731600000001,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP cancels progress without sending then replaces its total including negative cents",
+          "status": "passed",
+          "title": "cancels progress without sending then replaces its total including negative cents",
+          "duration": 33.15077300000007,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP keeps an uncertain progress draft blocked until state reload and explicit review",
+          "status": "passed",
+          "title": "keeps an uncertain progress draft blocked until state reload and explicit review",
+          "duration": 32.718573000000106,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP requires delete confirmation, supports cancellation and waits for deletion response",
+          "status": "passed",
+          "title": "requires delete confirmation, supports cancellation and waits for deletion response",
+          "duration": 27.646450000000186,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP keeps unconfirmed deletion blocked and preserves the visible goal",
+          "status": "passed",
+          "title": "keeps unconfirmed deletion blocked and preserves the visible goal",
+          "duration": 20.189202000000023,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP activates once, confirms only after response, then reconciles the shared overview",
+          "status": "passed",
+          "title": "activates once, confirms only after response, then reconciles the shared overview",
+          "duration": 25.074962999999798,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP blocks uncertain activation until an explicit shared-state reload",
+          "status": "passed",
+          "title": "blocks uncertain activation until an explicit shared-state reload",
+          "duration": 23.79985899999997,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP shows a rejected activation without confirming it or blindly repeating it",
+          "status": "passed",
+          "title": "shows a rejected activation without confirming it or blindly repeating it",
+          "duration": 13.445449000000053,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP commits target selection and all pending cents together after one confirmed response",
+          "status": "passed",
+          "title": "commits target selection and all pending cents together after one confirmed response",
+          "duration": 24.156805000000077,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP preserves confirmed totals and the selection draft after a field/domain rejection",
+          "status": "passed",
+          "title": "preserves confirmed totals and the selection draft after a field/domain rejection",
+          "duration": 16.062938999999915,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP keeps an uncertain selection blocked until the shared overview is reconciled",
+          "status": "passed",
+          "title": "keeps an uncertain selection blocked until the shared overview is reconciled",
+          "duration": 21.312421000000086,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-c6669c4ab4dcee58 refuses invalid name without sending a goal mutation",
+          "status": "passed",
+          "title": "FE-c6669c4ab4dcee58 refuses invalid name without sending a goal mutation",
+          "duration": 15.434997999999723,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-59f0607ed8b2d052 refuses invalid name without sending a goal mutation",
+          "status": "passed",
+          "title": "FE-59f0607ed8b2d052 refuses invalid name without sending a goal mutation",
+          "duration": 15.41190400000005,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-b0b12380ee5da553 refuses invalid name without sending a goal mutation",
+          "status": "passed",
+          "title": "FE-b0b12380ee5da553 refuses invalid name without sending a goal mutation",
+          "duration": 15.847457000000304,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-6600976d7041b1e0 refuses invalid amount without sending a goal mutation",
+          "status": "passed",
+          "title": "FE-6600976d7041b1e0 refuses invalid amount without sending a goal mutation",
+          "duration": 13.143137000000024,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-08472aba7d512f02 refuses invalid amount without sending a goal mutation",
+          "status": "passed",
+          "title": "FE-08472aba7d512f02 refuses invalid amount without sending a goal mutation",
+          "duration": 14.414385999999922,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-0a02d41e7cc6837f refuses invalid amount without sending a goal mutation",
+          "status": "passed",
+          "title": "FE-0a02d41e7cc6837f refuses invalid amount without sending a goal mutation",
+          "duration": 12.751753000000008,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-1495000f80734a6c refuses invalid amount without sending a goal mutation",
+          "status": "passed",
+          "title": "FE-1495000f80734a6c refuses invalid amount without sending a goal mutation",
+          "duration": 12.884713000000374,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-8398c5d25da36835 refuses invalid amount without sending a goal mutation",
+          "status": "passed",
+          "title": "FE-8398c5d25da36835 refuses invalid amount without sending a goal mutation",
+          "duration": 14.684780000000046,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-9d169323029c1fe5 refuses invalid amount without sending a goal mutation",
+          "status": "passed",
+          "title": "FE-9d169323029c1fe5 refuses invalid amount without sending a goal mutation",
+          "duration": 12.261426999999912,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-1bf80b47e8bf9235 refuses invalid amount without sending a goal mutation",
+          "status": "passed",
+          "title": "FE-1bf80b47e8bf9235 refuses invalid amount without sending a goal mutation",
+          "duration": 12.505801000000247,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-dc3ace8cd8cc4a12 refuses invalid amount without sending a goal mutation",
+          "status": "passed",
+          "title": "FE-dc3ace8cd8cc4a12 refuses invalid amount without sending a goal mutation",
+          "duration": 12.205155000000104,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-d92b32c20e5e02c5 refuses invalid date without sending a goal mutation",
+          "status": "passed",
+          "title": "FE-d92b32c20e5e02c5 refuses invalid date without sending a goal mutation",
+          "duration": 13.299860999999964,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-88d42aa8812e9a71 refuses invalid date without sending a goal mutation",
+          "status": "passed",
+          "title": "FE-88d42aa8812e9a71 refuses invalid date without sending a goal mutation",
+          "duration": 17.834221999999954,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-f2158e32ab761166 refuses invalid date without sending a goal mutation",
+          "status": "passed",
+          "title": "FE-f2158e32ab761166 refuses invalid date without sending a goal mutation",
+          "duration": 10.480847999999696,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-0488a483f52fb299 refuses invalid date without sending a goal mutation",
+          "status": "passed",
+          "title": "FE-0488a483f52fb299 refuses invalid date without sending a goal mutation",
+          "duration": 9.678260000000137,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-015b045920d1093a refuses invalid date without sending a goal mutation",
+          "status": "passed",
+          "title": "FE-015b045920d1093a refuses invalid date without sending a goal mutation",
+          "duration": 10.421049000000039,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-b6de6cdd2164535b refuses invalid date without sending a goal mutation",
+          "status": "passed",
+          "title": "FE-b6de6cdd2164535b refuses invalid date without sending a goal mutation",
+          "duration": 10.058512000000064,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-b60923a297cd84f0 refuses invalid date without sending a goal mutation",
+          "status": "passed",
+          "title": "FE-b60923a297cd84f0 refuses invalid date without sending a goal mutation",
+          "duration": 9.957482000000255,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-c151501521b5cdd1 refuses invalid date without sending a goal mutation",
+          "status": "passed",
+          "title": "FE-c151501521b5cdd1 refuses invalid date without sending a goal mutation",
+          "duration": 9.968280999999934,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-c7dc324b57eb8243 refuses an unconfirmed goal edit and preserves its draft",
+          "status": "passed",
+          "title": "FE-c7dc324b57eb8243 refuses an unconfirmed goal edit and preserves its draft",
+          "duration": 11.35667599999988,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-fd035163f858598f refuses an unconfirmed goal edit and preserves its draft",
+          "status": "passed",
+          "title": "FE-fd035163f858598f refuses an unconfirmed goal edit and preserves its draft",
+          "duration": 12.66265599999997,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-785b96c442518ad2 refuses an unconfirmed goal edit and preserves its draft",
+          "status": "passed",
+          "title": "FE-785b96c442518ad2 refuses an unconfirmed goal edit and preserves its draft",
+          "duration": 13.00088199999982,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-caaf53937d80077f refuses an unconfirmed goal edit and preserves its draft",
+          "status": "passed",
+          "title": "FE-caaf53937d80077f refuses an unconfirmed goal edit and preserves its draft",
+          "duration": 12.278975000000173,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-44756bddc98c03ba refuses an unconfirmed goal edit and preserves its draft",
+          "status": "passed",
+          "title": "FE-44756bddc98c03ba refuses an unconfirmed goal edit and preserves its draft",
+          "duration": 11.499332999999751,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-2359e973e5276e76 refuses an unconfirmed goal edit and preserves its draft",
+          "status": "passed",
+          "title": "FE-2359e973e5276e76 refuses an unconfirmed goal edit and preserves its draft",
+          "duration": 11.861764000000221,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-1c9cfba34d5c2874 refuses an unconfirmed goal edit and preserves its draft",
+          "status": "passed",
+          "title": "FE-1c9cfba34d5c2874 refuses an unconfirmed goal edit and preserves its draft",
+          "duration": 13.104053000000022,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-539dc69c5cd96703 refuses an unconfirmed goal deletion and preserves the goal",
+          "status": "passed",
+          "title": "FE-539dc69c5cd96703 refuses an unconfirmed goal deletion and preserves the goal",
+          "duration": 10.369676000000254,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-99381492bb41d90b refuses an unconfirmed goal deletion and preserves the goal",
+          "status": "passed",
+          "title": "FE-99381492bb41d90b refuses an unconfirmed goal deletion and preserves the goal",
+          "duration": 9.580840999999964,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-1e4b6420224f510e refuses an unconfirmed goal deletion and preserves the goal",
+          "status": "passed",
+          "title": "FE-1e4b6420224f510e refuses an unconfirmed goal deletion and preserves the goal",
+          "duration": 18.84002899999996,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-f87c1729a71b164f refuses an unconfirmed goal deletion and preserves the goal",
+          "status": "passed",
+          "title": "FE-f87c1729a71b164f refuses an unconfirmed goal deletion and preserves the goal",
+          "duration": 10.644664999999804,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-0a38eb716e400611 refuses an unconfirmed total-progress replacement",
+          "status": "passed",
+          "title": "FE-0a38eb716e400611 refuses an unconfirmed total-progress replacement",
+          "duration": 12.079869000000144,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-87fb1fc66861511a refuses an unconfirmed total-progress replacement",
+          "status": "passed",
+          "title": "FE-87fb1fc66861511a refuses an unconfirmed total-progress replacement",
+          "duration": 11.139631000000008,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-7fe26e4a63ff18db refuses an unconfirmed total-progress replacement",
+          "status": "passed",
+          "title": "FE-7fe26e4a63ff18db refuses an unconfirmed total-progress replacement",
+          "duration": 10.556758000000173,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-b5b68936fa9a164c refuses an unconfirmed total-progress replacement",
+          "status": "passed",
+          "title": "FE-b5b68936fa9a164c refuses an unconfirmed total-progress replacement",
+          "duration": 10.706785999999738,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-a1dec26d3a0026d8 refuses an unconfirmed total-progress replacement",
+          "status": "passed",
+          "title": "FE-a1dec26d3a0026d8 refuses an unconfirmed total-progress replacement",
+          "duration": 10.848826999999801,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-d2dec6100eeae9d9 refuses an unconfirmed total-progress replacement",
+          "status": "passed",
+          "title": "FE-d2dec6100eeae9d9 refuses an unconfirmed total-progress replacement",
+          "duration": 11.470961999999872,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-9cc14634e838a2ef refuses an unconfirmed total-progress replacement",
+          "status": "passed",
+          "title": "FE-9cc14634e838a2ef refuses an unconfirmed total-progress replacement",
+          "duration": 11.506235999999717,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-edcd2689c8ce75de refuses an unconfirmed total-progress replacement",
+          "status": "passed",
+          "title": "FE-edcd2689c8ce75de refuses an unconfirmed total-progress replacement",
+          "duration": 12.936102000000119,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-1af019dd611b3f09 refuses a mismatching creation confirmation and keeps every draft field",
+          "status": "passed",
+          "title": "FE-1af019dd611b3f09 refuses a mismatching creation confirmation and keeps every draft field",
+          "duration": 12.93599899999981,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-7cd19791ed36549d refuses a mismatching creation confirmation and keeps every draft field",
+          "status": "passed",
+          "title": "FE-7cd19791ed36549d refuses a mismatching creation confirmation and keeps every draft field",
+          "duration": 13.162727999999788,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-00a0b4a8647595ad refuses a mismatching creation confirmation and keeps every draft field",
+          "status": "passed",
+          "title": "FE-00a0b4a8647595ad refuses a mismatching creation confirmation and keeps every draft field",
+          "duration": 9.579690999999912,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-fff2cacddd5d58fd refuses a mismatching creation confirmation and keeps every draft field",
+          "status": "passed",
+          "title": "FE-fff2cacddd5d58fd refuses a mismatching creation confirmation and keeps every draft field",
+          "duration": 9.512170000000424,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-12cc329a1111d2d7 rejects malformed activation without confirmation or blind retry",
+          "status": "passed",
+          "title": "FE-12cc329a1111d2d7 rejects malformed activation without confirmation or blind retry",
+          "duration": 9.660901000000194,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-1c1ad3964f4aada3 rejects malformed activation without confirmation or blind retry",
+          "status": "passed",
+          "title": "FE-1c1ad3964f4aada3 rejects malformed activation without confirmation or blind retry",
+          "duration": 10.735157999999956,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-fdccb25f773c2a4e rejects malformed activation without confirmation or blind retry",
+          "status": "passed",
+          "title": "FE-fdccb25f773c2a4e rejects malformed activation without confirmation or blind retry",
+          "duration": 8.33042099999966,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-7753c81d65bd0bda rejects malformed activation without confirmation or blind retry",
+          "status": "passed",
+          "title": "FE-7753c81d65bd0bda rejects malformed activation without confirmation or blind retry",
+          "duration": 13.881186999999954,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-b827b6aafd5c11a9 rejects malformed activation without confirmation or blind retry",
+          "status": "passed",
+          "title": "FE-b827b6aafd5c11a9 rejects malformed activation without confirmation or blind retry",
+          "duration": 7.884534999999687,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-21bd8a98b7b41ded rejects malformed activation without confirmation or blind retry",
+          "status": "passed",
+          "title": "FE-21bd8a98b7b41ded rejects malformed activation without confirmation or blind retry",
+          "duration": 9.446664000000055,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-ead4fe0c9fb41a97 rejects malformed activation without confirmation or blind retry",
+          "status": "passed",
+          "title": "FE-ead4fe0c9fb41a97 rejects malformed activation without confirmation or blind retry",
+          "duration": 11.221299000000272,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-ddd6adae25cf869e rejects malformed activation without confirmation or blind retry",
+          "status": "passed",
+          "title": "FE-ddd6adae25cf869e rejects malformed activation without confirmation or blind retry",
+          "duration": 10.239516999999978,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-4a49205a56832aa2 replaces total progress with exact accepted cents",
+          "status": "passed",
+          "title": "FE-4a49205a56832aa2 replaces total progress with exact accepted cents",
+          "duration": 15.016052999999829,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-86c0790334c35c9f replaces total progress with exact accepted cents",
+          "status": "passed",
+          "title": "FE-86c0790334c35c9f replaces total progress with exact accepted cents",
+          "duration": 16.068635000000086,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-fdba3b3c50fef837 replaces total progress with exact accepted cents",
+          "status": "passed",
+          "title": "FE-fdba3b3c50fef837 replaces total progress with exact accepted cents",
+          "duration": 16.24793899999986,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-f209289494014074 validates original unsigned progress while capability is closed",
+          "status": "passed",
+          "title": "FE-f209289494014074 validates original unsigned progress while capability is closed",
+          "duration": 9.434474000000137,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-ae592d9c6e1fec19 validates original unsigned progress while capability is closed",
+          "status": "passed",
+          "title": "FE-ae592d9c6e1fec19 validates original unsigned progress while capability is closed",
+          "duration": 9.782422000000224,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-1179884ddeb58e84 validates original unsigned progress while capability is closed",
+          "status": "passed",
+          "title": "FE-1179884ddeb58e84 validates original unsigned progress while capability is closed",
+          "duration": 9.70803399999977,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-c91c4ca018fcbb63 validates original unsigned progress while capability is closed",
+          "status": "passed",
+          "title": "FE-c91c4ca018fcbb63 validates original unsigned progress while capability is closed",
+          "duration": 10.219449999999597,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-a0213c4d7b10d7f6 validates original unsigned progress while capability is closed",
+          "status": "passed",
+          "title": "FE-a0213c4d7b10d7f6 validates original unsigned progress while capability is closed",
+          "duration": 10.204592999999932,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-d07752fed1ab679a validates original unsigned progress while capability is closed",
+          "status": "passed",
+          "title": "FE-d07752fed1ab679a validates original unsigned progress while capability is closed",
+          "duration": 9.32136199999968,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-5e466e18e2e6b732 validates original unsigned progress while capability is closed",
+          "status": "passed",
+          "title": "FE-5e466e18e2e6b732 validates original unsigned progress while capability is closed",
+          "duration": 11.051488999999947,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-29417d73a413a51d keeps invalid monthly capability closed and retryable",
+          "status": "passed",
+          "title": "FE-29417d73a413a51d keeps invalid monthly capability closed and retryable",
+          "duration": 14.445964000000004,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-4f7d10afaf0b8955 keeps invalid monthly capability closed and retryable",
+          "status": "passed",
+          "title": "FE-4f7d10afaf0b8955 keeps invalid monthly capability closed and retryable",
+          "duration": 8.38120600000002,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-3f4a29f95d294e82 keeps invalid monthly capability closed and retryable",
+          "status": "passed",
+          "title": "FE-3f4a29f95d294e82 keeps invalid monthly capability closed and retryable",
+          "duration": 8.128545999999915,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-06a9096fda766408 keeps invalid monthly capability closed and retryable",
+          "status": "passed",
+          "title": "FE-06a9096fda766408 keeps invalid monthly capability closed and retryable",
+          "duration": 7.679916999999932,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-3a3327f22b1f1f45 keeps malformed signed capability closed and retryable",
+          "status": "passed",
+          "title": "FE-3a3327f22b1f1f45 keeps malformed signed capability closed and retryable",
+          "duration": 9.584329000000253,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-f30f2390b86e4e6d keeps malformed signed capability closed and retryable",
+          "status": "passed",
+          "title": "FE-f30f2390b86e4e6d keeps malformed signed capability closed and retryable",
+          "duration": 10.46307999999999,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-d0f45d306c3fde4a keeps malformed signed capability closed and retryable",
+          "status": "passed",
+          "title": "FE-d0f45d306c3fde4a keeps malformed signed capability closed and retryable",
+          "duration": 9.609171999999944,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-edb206cfaa06bb3d keeps malformed signed capability closed and retryable",
+          "status": "passed",
+          "title": "FE-edb206cfaa06bb3d keeps malformed signed capability closed and retryable",
+          "duration": 10.377876999999899,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-46dee2a5f42ccbc2 refuses an unconfirmed common pending total",
+          "status": "passed",
+          "title": "FE-46dee2a5f42ccbc2 refuses an unconfirmed common pending total",
+          "duration": 8.011410999999953,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-1834a4fccec7fa58 refuses an unconfirmed common pending total",
+          "status": "passed",
+          "title": "FE-1834a4fccec7fa58 refuses an unconfirmed common pending total",
+          "duration": 8.704313000000184,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-4493345b28af9f98 refuses an unconfirmed common pending total",
+          "status": "passed",
+          "title": "FE-4493345b28af9f98 refuses an unconfirmed common pending total",
+          "duration": 8.059385999999904,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-c35235334f28be41 refuses an unconfirmed common pending total",
+          "status": "passed",
+          "title": "FE-c35235334f28be41 refuses an unconfirmed common pending total",
+          "duration": 8.640851999999995,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-a4109d96a6acd3a2 refuses an unconfirmed common pending total",
+          "status": "passed",
+          "title": "FE-a4109d96a6acd3a2 refuses an unconfirmed common pending total",
+          "duration": 8.202588999999989,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-daa6181a7d4faca4 refuses an unconfirmed common pending total",
+          "status": "passed",
+          "title": "FE-daa6181a7d4faca4 refuses an unconfirmed common pending total",
+          "duration": 8.118463000000247,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-aab602d6cca42e7e refuses an invalid common field while retaining independent manual access",
+          "status": "passed",
+          "title": "FE-aab602d6cca42e7e refuses an invalid common field while retaining independent manual access",
+          "duration": 7.260538999999881,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-8dca926901171550 refuses an invalid common field while retaining independent manual access",
+          "status": "passed",
+          "title": "FE-8dca926901171550 refuses an invalid common field while retaining independent manual access",
+          "duration": 7.978137999999944,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-69ee36df5862b54e refuses an invalid common field while retaining independent manual access",
+          "status": "passed",
+          "title": "FE-69ee36df5862b54e refuses an invalid common field while retaining independent manual access",
+          "duration": 9.219295999999758,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-2e538abb393b2d67 refuses an invalid common field while retaining independent manual access",
+          "status": "passed",
+          "title": "FE-2e538abb393b2d67 refuses an invalid common field while retaining independent manual access",
+          "duration": 8.067506000000321,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-c7a99a8bf5e390cb distinguishes confirmed pending zero from failed loading and retries",
+          "status": "passed",
+          "title": "FE-c7a99a8bf5e390cb distinguishes confirmed pending zero from failed loading and retries",
+          "duration": 19.609224999999697,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-d6bb00660d2098fb maps the original server field error and keeps its draft",
+          "status": "passed",
+          "title": "FE-d6bb00660d2098fb maps the original server field error and keeps its draft",
+          "duration": 8.938632999999754,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-38f8fa228b1ae7ae maps the original server field error and keeps its draft",
+          "status": "passed",
+          "title": "FE-38f8fa228b1ae7ae maps the original server field error and keeps its draft",
+          "duration": 9.146041999999852,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-eaf6dee6a4c2cf57 maps the original server field error and keeps its draft",
+          "status": "passed",
+          "title": "FE-eaf6dee6a4c2cf57 maps the original server field error and keeps its draft",
+          "duration": 9.151562000000013,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-91b23f664fda832b reloads the independent overview after safe manual rejection and keeps its create draft",
+          "status": "passed",
+          "title": "FE-91b23f664fda832b reloads the independent overview after safe manual rejection and keeps its create draft",
+          "duration": 12.32828900000004,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-e0560c0b720a7ebc reloads the independent overview after safe manual rejection and keeps its target draft",
+          "status": "passed",
+          "title": "FE-e0560c0b720a7ebc reloads the independent overview after safe manual rejection and keeps its target draft",
+          "duration": 14.099639999999908,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-4392f3881fb822d4 reloads the independent overview after safe manual rejection and keeps its progress draft",
+          "status": "passed",
+          "title": "FE-4392f3881fb822d4 reloads the independent overview after safe manual rejection and keeps its progress draft",
+          "duration": 13.345924000000196,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-c711e8d64cb6a094 reloads the independent overview after safe manual rejection and keeps its progress draft",
+          "status": "passed",
+          "title": "FE-c711e8d64cb6a094 reloads the independent overview after safe manual rejection and keeps its progress draft",
+          "duration": 12.981122000000141,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-9f5a0cf665e3dd13 blocks mismatching selection confirmation until successful common reconciliation",
+          "status": "passed",
+          "title": "FE-9f5a0cf665e3dd13 blocks mismatching selection confirmation until successful common reconciliation",
+          "duration": 16.954681000000164,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-0e76349beb9e2b29 blocks mismatching selection confirmation until successful common reconciliation",
+          "status": "passed",
+          "title": "FE-0e76349beb9e2b29 blocks mismatching selection confirmation until successful common reconciliation",
+          "duration": 17.12166699999989,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-1a0ebc543c139d6e reconnect supersedes the old pending overview and ignores its late response",
+          "status": "passed",
+          "title": "FE-1a0ebc543c139d6e reconnect supersedes the old pending overview and ignores its late response",
+          "duration": 9.311318000000028,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-e3c63e07ca899b82 recognizes activation elsewhere on returning from inactive",
+          "status": "passed",
+          "title": "FE-e3c63e07ca899b82 recognizes activation elsewhere on returning from inactive",
+          "duration": 10.622989999999845,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-c649dd5a4e9d21ac recognizes activation elsewhere on returning from not-loaded",
+          "status": "passed",
+          "title": "FE-c649dd5a4e9d21ac recognizes activation elsewhere on returning from not-loaded",
+          "duration": 9.469892999999956,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-d7cfadc81f9a277b safe selection failure preserves confirmed values and an independent progress draft",
+          "status": "passed",
+          "title": "FE-d7cfadc81f9a277b safe selection failure preserves confirmed values and an independent progress draft",
+          "duration": 11.749812999999904,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-6f30cc1eb992907f confirmed manual progress invalidates an older overview and retains the selection draft",
+          "status": "passed",
+          "title": "FE-6f30cc1eb992907f confirmed manual progress invalidates an older overview and retains the selection draft",
+          "duration": 20.75470099999984,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-04623014002ce111 times out target after thirty seconds with preserved draft and explicit review requirement",
+          "status": "passed",
+          "title": "FE-04623014002ce111 times out target after thirty seconds with preserved draft and explicit review requirement",
+          "duration": 16.35217499999999,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-506d479e06b52be6 times out delete after thirty seconds with preserved draft and explicit review requirement",
+          "status": "passed",
+          "title": "FE-506d479e06b52be6 times out delete after thirty seconds with preserved draft and explicit review requirement",
+          "duration": 10.35671400000001,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-76e2574483e740e4 times out progress after thirty seconds with preserved draft and explicit review requirement",
+          "status": "passed",
+          "title": "FE-76e2574483e740e4 times out progress after thirty seconds with preserved draft and explicit review requirement",
+          "duration": 10.914054999999735,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-aae07c79f4dc66f1 progress field errors retain the draft while offline and global pending prevent every mutation",
+          "status": "passed",
+          "title": "FE-aae07c79f4dc66f1 progress field errors retain the draft while offline and global pending prevent every mutation",
+          "duration": 11.559791000000132,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-920c02a9ffdeedd7 target and progress drafts mutually lock actions until explicit cancellation",
+          "status": "passed",
+          "title": "FE-920c02a9ffdeedd7 target and progress drafts mutually lock actions until explicit cancellation",
+          "duration": 11.605330999999751,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-c4a8a2b090f57538 deletion prevents offline sends, duplicates and dialog cancellation while pending",
+          "status": "passed",
+          "title": "FE-c4a8a2b090f57538 deletion prevents offline sends, duplicates and dialog cancellation while pending",
+          "duration": 12.387001000000055,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-c6669c4ab4dcee58 also rejects the original name in the target editor without sending",
+          "status": "passed",
+          "title": "FE-c6669c4ab4dcee58 also rejects the original name in the target editor without sending",
+          "duration": 9.262396999999964,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-59f0607ed8b2d052 also rejects the original name in the target editor without sending",
+          "status": "passed",
+          "title": "FE-59f0607ed8b2d052 also rejects the original name in the target editor without sending",
+          "duration": 9.772598000000016,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-b0b12380ee5da553 also rejects the original name in the target editor without sending",
+          "status": "passed",
+          "title": "FE-b0b12380ee5da553 also rejects the original name in the target editor without sending",
+          "duration": 9.564813000000413,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-6600976d7041b1e0 also rejects the original amount in the target editor without sending",
+          "status": "passed",
+          "title": "FE-6600976d7041b1e0 also rejects the original amount in the target editor without sending",
+          "duration": 9.537766999999803,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-08472aba7d512f02 also rejects the original amount in the target editor without sending",
+          "status": "passed",
+          "title": "FE-08472aba7d512f02 also rejects the original amount in the target editor without sending",
+          "duration": 10.213780999999926,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-0a02d41e7cc6837f also rejects the original amount in the target editor without sending",
+          "status": "passed",
+          "title": "FE-0a02d41e7cc6837f also rejects the original amount in the target editor without sending",
+          "duration": 9.439024000000245,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-1495000f80734a6c also rejects the original amount in the target editor without sending",
+          "status": "passed",
+          "title": "FE-1495000f80734a6c also rejects the original amount in the target editor without sending",
+          "duration": 10.28904700000021,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-8398c5d25da36835 also rejects the original amount in the target editor without sending",
+          "status": "passed",
+          "title": "FE-8398c5d25da36835 also rejects the original amount in the target editor without sending",
+          "duration": 16.46578499999987,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-9d169323029c1fe5 also rejects the original amount in the target editor without sending",
+          "status": "passed",
+          "title": "FE-9d169323029c1fe5 also rejects the original amount in the target editor without sending",
+          "duration": 11.216658999999709,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-1bf80b47e8bf9235 also rejects the original amount in the target editor without sending",
+          "status": "passed",
+          "title": "FE-1bf80b47e8bf9235 also rejects the original amount in the target editor without sending",
+          "duration": 9.152301999999963,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-dc3ace8cd8cc4a12 also rejects the original amount in the target editor without sending",
+          "status": "passed",
+          "title": "FE-dc3ace8cd8cc4a12 also rejects the original amount in the target editor without sending",
+          "duration": 12.03491699999995,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-d92b32c20e5e02c5 also rejects the original date in the target editor without sending",
+          "status": "passed",
+          "title": "FE-d92b32c20e5e02c5 also rejects the original date in the target editor without sending",
+          "duration": 11.29440599999998,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-88d42aa8812e9a71 also rejects the original date in the target editor without sending",
+          "status": "passed",
+          "title": "FE-88d42aa8812e9a71 also rejects the original date in the target editor without sending",
+          "duration": 10.763836000000083,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-f2158e32ab761166 also rejects the original date in the target editor without sending",
+          "status": "passed",
+          "title": "FE-f2158e32ab761166 also rejects the original date in the target editor without sending",
+          "duration": 10.201129999999921,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-0488a483f52fb299 also rejects the original date in the target editor without sending",
+          "status": "passed",
+          "title": "FE-0488a483f52fb299 also rejects the original date in the target editor without sending",
+          "duration": 10.067253000000164,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-015b045920d1093a also rejects the original date in the target editor without sending",
+          "status": "passed",
+          "title": "FE-015b045920d1093a also rejects the original date in the target editor without sending",
+          "duration": 11.022686000000249,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-b6de6cdd2164535b also rejects the original date in the target editor without sending",
+          "status": "passed",
+          "title": "FE-b6de6cdd2164535b also rejects the original date in the target editor without sending",
+          "duration": 10.20542899999964,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-b60923a297cd84f0 also rejects the original date in the target editor without sending",
+          "status": "passed",
+          "title": "FE-b60923a297cd84f0 also rejects the original date in the target editor without sending",
+          "duration": 9.421041999999943,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "SavingsGoals actions through real templates and authenticated HTTP"
+          ],
+          "fullName": "SavingsGoals actions through real templates and authenticated HTTP FE-c151501521b5cdd1 also rejects the original date in the target editor without sending",
+          "status": "passed",
+          "title": "FE-c151501521b5cdd1 also rejects the original date in the target editor without sending",
+          "duration": 9.959969999999885,
+          "failureMessages": [],
+          "meta": {}
+        }
+      ],
+      "startTime": 1794753398822,
+      "endTime": 1794753400720.96,
+      "status": "passed",
+      "message": "",
+      "name": "frontend/src/app/savings-goals/savings-actions.spec.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Savings goals actual template"
+          ],
+          "fullName": "Savings goals actual template displays actual progress -5000 and clamps only the bar",
+          "status": "passed",
+          "title": "displays actual progress -5000 and clamps only the bar",
+          "duration": 153.716052,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Savings goals actual template"
+          ],
+          "fullName": "Savings goals actual template displays actual progress 15000 and clamps only the bar",
+          "status": "passed",
+          "title": "displays actual progress 15000 and clamps only the bar",
+          "duration": 32.85078999999996,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Savings goals actual template"
+          ],
+          "fullName": "Savings goals actual template renders an empty list after confirmed fallback and keeps automatic activation unavailable",
+          "status": "passed",
+          "title": "renders an empty list after confirmed fallback and keeps automatic activation unavailable",
+          "duration": 23.34767899999997,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Savings goals actual template"
+          ],
+          "fullName": "Savings goals actual template FE-ffc44d4f6f2dc455 displays signed actual amount/percent and only clamps the bar",
+          "status": "passed",
+          "title": "FE-ffc44d4f6f2dc455 displays signed actual amount/percent and only clamps the bar",
+          "duration": 32.61305400000015,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Savings goals actual template"
+          ],
+          "fullName": "Savings goals actual template FE-046fd7c4528faf0d displays signed actual amount/percent and only clamps the bar",
+          "status": "passed",
+          "title": "FE-046fd7c4528faf0d displays signed actual amount/percent and only clamps the bar",
+          "duration": 29.226949000000104,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Savings goals actual template"
+          ],
+          "fullName": "Savings goals actual template FE-614bab1b5b1fd34f displays signed actual amount/percent and only clamps the bar",
+          "status": "passed",
+          "title": "FE-614bab1b5b1fd34f displays signed actual amount/percent and only clamps the bar",
+          "duration": 27.037154999999984,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Savings goals actual template"
+          ],
+          "fullName": "Savings goals actual template FE-9a7cab381dd10b58 displays signed actual amount/percent and only clamps the bar",
+          "status": "passed",
+          "title": "FE-9a7cab381dd10b58 displays signed actual amount/percent and only clamps the bar",
+          "duration": 26.05371100000002,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Savings goals actual template"
+          ],
+          "fullName": "Savings goals actual template FE-585304240f4423ea displays signed actual amount/percent and only clamps the bar",
+          "status": "passed",
+          "title": "FE-585304240f4423ea displays signed actual amount/percent and only clamps the bar",
+          "duration": 26.71413000000007,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Savings goals actual template"
+          ],
+          "fullName": "Savings goals actual template FE-956578875340d1ff displays signed actual amount/percent and only clamps the bar",
+          "status": "passed",
+          "title": "FE-956578875340d1ff displays signed actual amount/percent and only clamps the bar",
+          "duration": 27.33828299999982,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Savings goals actual template"
+          ],
+          "fullName": "Savings goals actual template FE-b2ecd244453591a3 displays signed actual amount/percent and only clamps the bar",
+          "status": "passed",
+          "title": "FE-b2ecd244453591a3 displays signed actual amount/percent and only clamps the bar",
+          "duration": 28.40111999999999,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Savings goals actual template"
+          ],
+          "fullName": "Savings goals actual template FE-544351230d088b72 displays signed actual amount/percent and only clamps the bar",
+          "status": "passed",
+          "title": "FE-544351230d088b72 displays signed actual amount/percent and only clamps the bar",
+          "duration": 25.590005999999903,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Savings goals actual template"
+          ],
+          "fullName": "Savings goals actual template FE-55802ac6ccab6e9d refuses unvalidated list items and shows no personal data",
+          "status": "passed",
+          "title": "FE-55802ac6ccab6e9d refuses unvalidated list items and shows no personal data",
+          "duration": 21.033817999999883,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Savings goals actual template"
+          ],
+          "fullName": "Savings goals actual template FE-afc496c1b6c30b21 refuses unvalidated list items and shows no personal data",
+          "status": "passed",
+          "title": "FE-afc496c1b6c30b21 refuses unvalidated list items and shows no personal data",
+          "duration": 19.226941000000124,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Savings goals actual template"
+          ],
+          "fullName": "Savings goals actual template FE-ac20289aa09c3655 refuses unvalidated list items and shows no personal data",
+          "status": "passed",
+          "title": "FE-ac20289aa09c3655 refuses unvalidated list items and shows no personal data",
+          "duration": 18.335053000000016,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Savings goals actual template"
+          ],
+          "fullName": "Savings goals actual template FE-ab34582e5a5fe4a1 keeps uncertain writes locked after unconfirmed review partial",
+          "status": "passed",
+          "title": "FE-ab34582e5a5fe4a1 keeps uncertain writes locked after unconfirmed review partial",
+          "duration": 37.80737700000009,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Savings goals actual template"
+          ],
+          "fullName": "Savings goals actual template FE-49d8edf4d1ea7a25 keeps uncertain writes locked after unconfirmed review extra-field",
+          "status": "passed",
+          "title": "FE-49d8edf4d1ea7a25 keeps uncertain writes locked after unconfirmed review extra-field",
+          "duration": 24.6194559999999,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Savings goals actual template"
+          ],
+          "fullName": "Savings goals actual template FE-3e01b9fdb3596e37 keeps uncertain writes locked after unconfirmed review failed",
+          "status": "passed",
+          "title": "FE-3e01b9fdb3596e37 keeps uncertain writes locked after unconfirmed review failed",
+          "duration": 28.86228600000004,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Savings goals actual template"
+          ],
+          "fullName": "Savings goals actual template FE-59baacf05c1c68e4 keeps uncertain writes locked after unconfirmed review out-of-range",
+          "status": "passed",
+          "title": "FE-59baacf05c1c68e4 keeps uncertain writes locked after unconfirmed review out-of-range",
+          "duration": 21.636817000000065,
+          "failureMessages": [],
+          "meta": {}
+        }
+      ],
+      "startTime": 1794753398788,
+      "endTime": 1794753399392.6367,
+      "status": "passed",
+      "message": "",
+      "name": "frontend/src/app/savings-goals/savings-goals.spec.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Session boundaries through actual finance templates"
+          ],
+          "fullName": "Session boundaries through actual finance templates FE-1976682961be2db1 clears old budget GET state after logout and rejects its late response",
+          "status": "passed",
+          "title": "FE-1976682961be2db1 clears old budget GET state after logout and rejects its late response",
+          "duration": 175.36319100000014,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Session boundaries through actual finance templates"
+          ],
+          "fullName": "Session boundaries through actual finance templates FE-3a6d606dba4c7e5e clears old budget PUT state after logout and rejects its late response",
+          "status": "passed",
+          "title": "FE-3a6d606dba4c7e5e clears old budget PUT state after logout and rejects its late response",
+          "duration": 32.62465300000008,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Session boundaries through actual finance templates"
+          ],
+          "fullName": "Session boundaries through actual finance templates FE-fce40c4ec84b86df clears old budget PUT state after switch and rejects its late response",
+          "status": "passed",
+          "title": "FE-fce40c4ec84b86df clears old budget PUT state after switch and rejects its late response",
+          "duration": 28.90820399999984,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Session boundaries through actual finance templates"
+          ],
+          "fullName": "Session boundaries through actual finance templates FE-f89703ac35b0ceb5 clears old budget PUT state after expiry and rejects its late response",
+          "status": "passed",
+          "title": "FE-f89703ac35b0ceb5 clears old budget PUT state after expiry and rejects its late response",
+          "duration": 27.334924,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Session boundaries through actual finance templates"
+          ],
+          "fullName": "Session boundaries through actual finance templates FE-a301ad32e8eabbfe clears old expenses GET state after logout and rejects its late response",
+          "status": "passed",
+          "title": "FE-a301ad32e8eabbfe clears old expenses GET state after logout and rejects its late response",
+          "duration": 24.361503000000084,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Session boundaries through actual finance templates"
+          ],
+          "fullName": "Session boundaries through actual finance templates FE-0e87bdeb82dbc104 clears old expenses POST state after switch and rejects its late response",
+          "status": "passed",
+          "title": "FE-0e87bdeb82dbc104 clears old expenses POST state after switch and rejects its late response",
+          "duration": 32.17538800000011,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Session boundaries through actual finance templates"
+          ],
+          "fullName": "Session boundaries through actual finance templates FE-bdc48f2be3ff049e clears old expenses POST state after expiry and rejects its late response",
+          "status": "passed",
+          "title": "FE-bdc48f2be3ff049e clears old expenses POST state after expiry and rejects its late response",
+          "duration": 26.04302000000007,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Session boundaries through actual finance templates"
+          ],
+          "fullName": "Session boundaries through actual finance templates FE-8f7c0c80cbefdcc0 clears old expenses PUT state after switch and rejects its late response",
+          "status": "passed",
+          "title": "FE-8f7c0c80cbefdcc0 clears old expenses PUT state after switch and rejects its late response",
+          "duration": 32.376670000000104,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Session boundaries through actual finance templates"
+          ],
+          "fullName": "Session boundaries through actual finance templates FE-ea760b638723cdb2 clears old expenses DELETE state after switch and rejects its late response",
+          "status": "passed",
+          "title": "FE-ea760b638723cdb2 clears old expenses DELETE state after switch and rejects its late response",
+          "duration": 29.952166000000034,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Session boundaries through actual finance templates"
+          ],
+          "fullName": "Session boundaries through actual finance templates FE-c094bbcaae77bfa2 clears old expenses PUT state after expiry and rejects its late response",
+          "status": "passed",
+          "title": "FE-c094bbcaae77bfa2 clears old expenses PUT state after expiry and rejects its late response",
+          "duration": 30.293204999999944,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Session boundaries through actual finance templates"
+          ],
+          "fullName": "Session boundaries through actual finance templates FE-5eae39e7cf52234b clears old expenses DELETE state after expiry and rejects its late response",
+          "status": "passed",
+          "title": "FE-5eae39e7cf52234b clears old expenses DELETE state after expiry and rejects its late response",
+          "duration": 25.145473999999922,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Session boundaries through actual finance templates"
+          ],
+          "fullName": "Session boundaries through actual finance templates FE-a464bdf1e76cba26 clears old goals GET state after logout and rejects its late response",
+          "status": "passed",
+          "title": "FE-a464bdf1e76cba26 clears old goals GET state after logout and rejects its late response",
+          "duration": 26.951323999999886,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Session boundaries through actual finance templates"
+          ],
+          "fullName": "Session boundaries through actual finance templates FE-3b723d1848674474 clears old goals POST state after switch and rejects its late response",
+          "status": "passed",
+          "title": "FE-3b723d1848674474 clears old goals POST state after switch and rejects its late response",
+          "duration": 46.51744399999984,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Session boundaries through actual finance templates"
+          ],
+          "fullName": "Session boundaries through actual finance templates FE-2cad0f8626c19159 clears old goals POST state after expiry and rejects its late response",
+          "status": "passed",
+          "title": "FE-2cad0f8626c19159 clears old goals POST state after expiry and rejects its late response",
+          "duration": 29.860668999999916,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Session boundaries through actual finance templates"
+          ],
+          "fullName": "Session boundaries through actual finance templates FE-f250bf2d88aa2953 clears old goals PUT state after logout and rejects its late response",
+          "status": "passed",
+          "title": "FE-f250bf2d88aa2953 clears old goals PUT state after logout and rejects its late response",
+          "duration": 39.95602699999995,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Session boundaries through actual finance templates"
+          ],
+          "fullName": "Session boundaries through actual finance templates FE-3fe39f1c1b6ab41e clears old goals PUT state after switch and rejects its late response",
+          "status": "passed",
+          "title": "FE-3fe39f1c1b6ab41e clears old goals PUT state after switch and rejects its late response",
+          "duration": 34.28197399999999,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Session boundaries through actual finance templates"
+          ],
+          "fullName": "Session boundaries through actual finance templates FE-8dfee0225d794056 clears old goals PUT state after expiry and rejects its late response",
+          "status": "passed",
+          "title": "FE-8dfee0225d794056 clears old goals PUT state after expiry and rejects its late response",
+          "duration": 23.56836199999998,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Session boundaries through actual finance templates"
+          ],
+          "fullName": "Session boundaries through actual finance templates FE-0ef2b51e053730b0 clears old goals DELETE state after logout and rejects its late response",
+          "status": "passed",
+          "title": "FE-0ef2b51e053730b0 clears old goals DELETE state after logout and rejects its late response",
+          "duration": 21.721933999999692,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Session boundaries through actual finance templates"
+          ],
+          "fullName": "Session boundaries through actual finance templates FE-3c18621cf845f987 clears old goals DELETE state after switch and rejects its late response",
+          "status": "passed",
+          "title": "FE-3c18621cf845f987 clears old goals DELETE state after switch and rejects its late response",
+          "duration": 21.527852000000166,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Session boundaries through actual finance templates"
+          ],
+          "fullName": "Session boundaries through actual finance templates FE-a3168e40cca58aef clears old goals DELETE state after expiry and rejects its late response",
+          "status": "passed",
+          "title": "FE-a3168e40cca58aef clears old goals DELETE state after expiry and rejects its late response",
+          "duration": 23.566240000000107,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Session boundaries through actual finance templates"
+          ],
+          "fullName": "Session boundaries through actual finance templates FE-bb5d99ec5a06ede4 clears old summary GET state after switch and rejects its late response",
+          "status": "passed",
+          "title": "FE-bb5d99ec5a06ede4 clears old summary GET state after switch and rejects its late response",
+          "duration": 5.271581999999853,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Session boundaries through actual finance templates"
+          ],
+          "fullName": "Session boundaries through actual finance templates FE-1f4b01073a787787 clears old summary GET state after expiry and rejects its late response",
+          "status": "passed",
+          "title": "FE-1f4b01073a787787 clears old summary GET state after expiry and rejects its late response",
+          "duration": 5.397069999999985,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Session boundaries through actual finance templates"
+          ],
+          "fullName": "Session boundaries through actual finance templates FE-06acae53985adae0 clears old goals selection state after switch and rejects its late response",
+          "status": "passed",
+          "title": "FE-06acae53985adae0 clears old goals selection state after switch and rejects its late response",
+          "duration": 17.037095000000136,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Session boundaries through actual finance templates"
+          ],
+          "fullName": "Session boundaries through actual finance templates FE-91c17d7f8c794c9a clears old goals activation state after logout and rejects its late response",
+          "status": "passed",
+          "title": "FE-91c17d7f8c794c9a clears old goals activation state after logout and rejects its late response",
+          "duration": 21.172641999999996,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Session boundaries through actual finance templates"
+          ],
+          "fullName": "Session boundaries through actual finance templates FE-818527da90f13b80 clears old goals progress state after logout and rejects its late response",
+          "status": "passed",
+          "title": "FE-818527da90f13b80 clears old goals progress state after logout and rejects its late response",
+          "duration": 18.86629300000004,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Session boundaries through actual finance templates"
+          ],
+          "fullName": "Session boundaries through actual finance templates FE-91408e7331f29f28 clears old goals progress state after switch and rejects its late response",
+          "status": "passed",
+          "title": "FE-91408e7331f29f28 clears old goals progress state after switch and rejects its late response",
+          "duration": 16.550107000000025,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Session boundaries through actual finance templates"
+          ],
+          "fullName": "Session boundaries through actual finance templates FE-22ebd555c96d3f51 clears old goals progress state after expiry and rejects its late response",
+          "status": "passed",
+          "title": "FE-22ebd555c96d3f51 clears old goals progress state after expiry and rejects its late response",
+          "duration": 16.96073099999967,
+          "failureMessages": [],
+          "meta": {}
+        }
+      ],
+      "startTime": 1794753398758,
+      "endTime": 1794753399592.9607,
+      "status": "passed",
+      "message": "",
+      "name": "frontend/src/app/session/finance-lifecycle.spec.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Actual Angular navigation and operation ownership"
+          ],
+          "fullName": "Actual Angular navigation and operation ownership FE-f1fc9b87fe0283d6 retains the POST operation guard across actual route destruction and explicit review",
+          "status": "passed",
+          "title": "FE-f1fc9b87fe0283d6 retains the POST operation guard across actual route destruction and explicit review",
+          "duration": 196.59348699999987,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Actual Angular navigation and operation ownership"
+          ],
+          "fullName": "Actual Angular navigation and operation ownership FE-c698667f913e47ed retains the PUT operation guard across actual route destruction and explicit review",
+          "status": "passed",
+          "title": "FE-c698667f913e47ed retains the PUT operation guard across actual route destruction and explicit review",
+          "duration": 68.80126599999994,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Actual Angular navigation and operation ownership"
+          ],
+          "fullName": "Actual Angular navigation and operation ownership FE-7d96c2e77b720c67 retains the DELETE operation guard across actual route destruction and explicit review",
+          "status": "passed",
+          "title": "FE-7d96c2e77b720c67 retains the DELETE operation guard across actual route destruction and explicit review",
+          "duration": 48.01763499999993,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Actual Angular navigation and operation ownership"
+          ],
+          "fullName": "Actual Angular navigation and operation ownership FE-a02bfc45334c9a36 rejects the list response of a destroyed route after returning to newer data",
+          "status": "passed",
+          "title": "FE-a02bfc45334c9a36 rejects the list response of a destroyed route after returning to newer data",
+          "duration": 28.786632999999938,
+          "failureMessages": [],
+          "meta": {}
+        }
+      ],
+      "startTime": 1794753398752,
+      "endTime": 1794753399094.7866,
+      "status": "passed",
+      "message": "",
+      "name": "frontend/src/app/session/navigation.spec.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Real session and interceptor"
+          ],
+          "fullName": "Real session and interceptor keeps tokens and financial HTTP responses out of browser storage",
+          "status": "passed",
+          "title": "keeps tokens and financial HTTP responses out of browser storage",
+          "duration": 106.99985000000015,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Real session and interceptor"
+          ],
+          "fullName": "Real session and interceptor does not attach bearer credentials to external origins",
+          "status": "passed",
+          "title": "does not attach bearer credentials to external origins",
+          "duration": 12.920888999999988,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Real session and interceptor"
+          ],
+          "fullName": "Real session and interceptor rejects unauthenticated finance calls before HTTP",
+          "status": "passed",
+          "title": "rejects unauthenticated finance calls before HTTP",
+          "duration": 9.582793999999922,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Real session and interceptor"
+          ],
+          "fullName": "Real session and interceptor rejects a late account response at the interceptor boundary",
+          "status": "passed",
+          "title": "rejects a late account response at the interceptor boundary",
+          "duration": 12.551327000000128,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Real session and interceptor"
+          ],
+          "fullName": "Real session and interceptor expires using monotonic time, clears identity and revokes on the real end path",
+          "status": "passed",
+          "title": "expires using monotonic time, clears identity and revokes on the real end path",
+          "duration": 13.972991000000093,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Real session and interceptor"
+          ],
+          "fullName": "Real session and interceptor keeps a new account when an old account response arrives after real login",
+          "status": "passed",
+          "title": "keeps a new account when an old account response arrives after real login",
+          "duration": 9.663136000000122,
+          "failureMessages": [],
+          "meta": {}
+        }
+      ],
+      "startTime": 1794753398653,
+      "endTime": 1794753398819.663,
+      "status": "passed",
+      "message": "",
+      "name": "frontend/src/app/session/session.spec.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Exact EUR cents"
+          ],
+          "fullName": "Exact EUR cents parses 0 without rounding",
+          "status": "passed",
+          "title": "parses 0 without rounding",
+          "duration": 2.4055040000000645,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Exact EUR cents"
+          ],
+          "fullName": "Exact EUR cents parses 0,01 without rounding",
+          "status": "passed",
+          "title": "parses 0,01 without rounding",
+          "duration": 0.5332110000001649,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Exact EUR cents"
+          ],
+          "fullName": "Exact EUR cents parses 12.50 without rounding",
+          "status": "passed",
+          "title": "parses 12.50 without rounding",
+          "duration": 0.2736249999998108,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Exact EUR cents"
+          ],
+          "fullName": "Exact EUR cents parses  12,5  without rounding",
+          "status": "passed",
+          "title": "parses  12,5  without rounding",
+          "duration": 0.3978819999999814,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Exact EUR cents"
+          ],
+          "fullName": "Exact EUR cents parses 90071992547409,91 without rounding",
+          "status": "passed",
+          "title": "parses 90071992547409,91 without rounding",
+          "duration": 1.0845150000000103,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Exact EUR cents"
+          ],
+          "fullName": "Exact EUR cents parses 00001,02 without rounding",
+          "status": "passed",
+          "title": "parses 00001,02 without rounding",
+          "duration": 0.21626500000002125,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Exact EUR cents"
+          ],
+          "fullName": "Exact EUR cents rejects ",
+          "status": "passed",
+          "title": "rejects ",
+          "duration": 0.24506099999985054,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Exact EUR cents"
+          ],
+          "fullName": "Exact EUR cents rejects -1",
+          "status": "passed",
+          "title": "rejects -1",
+          "duration": 0.14027400000009038,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Exact EUR cents"
+          ],
+          "fullName": "Exact EUR cents rejects +1",
+          "status": "passed",
+          "title": "rejects +1",
+          "duration": 0.1776279999999133,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Exact EUR cents"
+          ],
+          "fullName": "Exact EUR cents rejects 1,001",
+          "status": "passed",
+          "title": "rejects 1,001",
+          "duration": 0.24775799999997616,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Exact EUR cents"
+          ],
+          "fullName": "Exact EUR cents rejects 1.000,00",
+          "status": "passed",
+          "title": "rejects 1.000,00",
+          "duration": 0.12744399999996858,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Exact EUR cents"
+          ],
+          "fullName": "Exact EUR cents rejects 1e2",
+          "status": "passed",
+          "title": "rejects 1e2",
+          "duration": 0.10970500000007632,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Exact EUR cents"
+          ],
+          "fullName": "Exact EUR cents rejects Infinity",
+          "status": "passed",
+          "title": "rejects Infinity",
+          "duration": 0.10144399999990128,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Exact EUR cents"
+          ],
+          "fullName": "Exact EUR cents rejects 1,",
+          "status": "passed",
+          "title": "rejects 1,",
+          "duration": 0.10950800000000527,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Exact EUR cents"
+          ],
+          "fullName": "Exact EUR cents rejects ,50",
+          "status": "passed",
+          "title": "rejects ,50",
+          "duration": 0.11368100000004233,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Exact EUR cents"
+          ],
+          "fullName": "Exact EUR cents rejects 90071992547409,92",
+          "status": "passed",
+          "title": "rejects 90071992547409,92",
+          "duration": 0.12509899999986374,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Exact EUR cents"
+          ],
+          "fullName": "Exact EUR cents round trips 0 exactly",
+          "status": "passed",
+          "title": "round trips 0 exactly",
+          "duration": 0.5900339999998323,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Exact EUR cents"
+          ],
+          "fullName": "Exact EUR cents round trips 1 exactly",
+          "status": "passed",
+          "title": "round trips 1 exactly",
+          "duration": 0.20060100000000602,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Exact EUR cents"
+          ],
+          "fullName": "Exact EUR cents round trips 99 exactly",
+          "status": "passed",
+          "title": "round trips 99 exactly",
+          "duration": 0.17337399999996705,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Exact EUR cents"
+          ],
+          "fullName": "Exact EUR cents round trips 100 exactly",
+          "status": "passed",
+          "title": "round trips 100 exactly",
+          "duration": 0.1772760000001199,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Exact EUR cents"
+          ],
+          "fullName": "Exact EUR cents round trips 100001 exactly",
+          "status": "passed",
+          "title": "round trips 100001 exactly",
+          "duration": 0.19307600000001912,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Exact EUR cents"
+          ],
+          "fullName": "Exact EUR cents round trips 9007199254740991 exactly",
+          "status": "passed",
+          "title": "round trips 9007199254740991 exactly",
+          "duration": 0.16506200000003446,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Exact EUR cents"
+          ],
+          "fullName": "Exact EUR cents formats the maximum with German grouping and a nonbreaking currency space",
+          "status": "passed",
+          "title": "formats the maximum with German grouping and a nonbreaking currency space",
+          "duration": 0.2711030000000392,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Exact EUR cents"
+          ],
+          "fullName": "Exact EUR cents retains signed extremes and uses a typographic display minus",
+          "status": "passed",
+          "title": "retains signed extremes and uses a typographic display minus",
+          "duration": 0.42529899999999543,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Exact EUR cents"
+          ],
+          "fullName": "Exact EUR cents rejects unsafe display cents NaN",
+          "status": "passed",
+          "title": "rejects unsafe display cents NaN",
+          "duration": 0.44328600000017104,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Exact EUR cents"
+          ],
+          "fullName": "Exact EUR cents rejects unsafe display cents Infinity",
+          "status": "passed",
+          "title": "rejects unsafe display cents Infinity",
+          "duration": 0.1871209999999337,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Exact EUR cents"
+          ],
+          "fullName": "Exact EUR cents rejects unsafe display cents 0.1",
+          "status": "passed",
+          "title": "rejects unsafe display cents 0.1",
+          "duration": 0.1904570000001513,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Exact EUR cents"
+          ],
+          "fullName": "Exact EUR cents rejects unsafe display cents 9007199254740992",
+          "status": "passed",
+          "title": "rejects unsafe display cents 9007199254740992",
+          "duration": 0.18767700000012155,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Exact EUR cents"
+          ],
+          "fullName": "Exact EUR cents keeps ordinary fields unsigned",
+          "status": "passed",
+          "title": "keeps ordinary fields unsigned",
+          "duration": 0.1734759999999369,
+          "failureMessages": [],
+          "meta": {}
+        }
+      ],
+      "startTime": 1794753398515,
+      "endTime": 1794753398525.1736,
+      "status": "passed",
+      "message": "",
+      "name": "frontend/src/app/shared/money.spec.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Savings progress"
+          ],
+          "fullName": "Savings progress preserves actual 0/100 and clamps only the bar",
+          "status": "passed",
+          "title": "preserves actual 0/100 and clamps only the bar",
+          "duration": 8.193130999999994,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Savings progress"
+          ],
+          "fullName": "Savings progress preserves actual -50/100 and clamps only the bar",
+          "status": "passed",
+          "title": "preserves actual -50/100 and clamps only the bar",
+          "duration": 0.532991999999922,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Savings progress"
+          ],
+          "fullName": "Savings progress preserves actual 150/100 and clamps only the bar",
+          "status": "passed",
+          "title": "preserves actual 150/100 and clamps only the bar",
+          "duration": 0.29506500000002234,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Savings progress"
+          ],
+          "fullName": "Savings progress preserves actual 1/3 and clamps only the bar",
+          "status": "passed",
+          "title": "preserves actual 1/3 and clamps only the bar",
+          "duration": 0.25844499999993786,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Savings progress"
+          ],
+          "fullName": "Savings progress preserves actual 2/3 and clamps only the bar",
+          "status": "passed",
+          "title": "preserves actual 2/3 and clamps only the bar",
+          "duration": 0.34136899999998604,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Savings progress"
+          ],
+          "fullName": "Savings progress preserves actual 1/32 and clamps only the bar",
+          "status": "passed",
+          "title": "preserves actual 1/32 and clamps only the bar",
+          "duration": 1.8772409999999127,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Savings progress"
+          ],
+          "fullName": "Savings progress preserves actual -1/32 and clamps only the bar",
+          "status": "passed",
+          "title": "preserves actual -1/32 and clamps only the bar",
+          "duration": 0.38188900000000103,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Savings progress"
+          ],
+          "fullName": "Savings progress preserves actual 9007199254740991/1 and clamps only the bar",
+          "status": "passed",
+          "title": "preserves actual 9007199254740991/1 and clamps only the bar",
+          "duration": 0.21366199999988567,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Savings progress"
+          ],
+          "fullName": "Savings progress preserves actual -9007199254740991/1 and clamps only the bar",
+          "status": "passed",
+          "title": "preserves actual -9007199254740991/1 and clamps only the bar",
+          "duration": 0.3687119999999595,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Savings progress"
+          ],
+          "fullName": "Savings progress rejects invalid 1/0",
+          "status": "passed",
+          "title": "rejects invalid 1/0",
+          "duration": 0.4859950000000026,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Savings progress"
+          ],
+          "fullName": "Savings progress rejects invalid 1/-1",
+          "status": "passed",
+          "title": "rejects invalid 1/-1",
+          "duration": 0.1682429999998476,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Savings progress"
+          ],
+          "fullName": "Savings progress rejects invalid 1.5/100",
+          "status": "passed",
+          "title": "rejects invalid 1.5/100",
+          "duration": 0.13761599999997998,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Savings progress"
+          ],
+          "fullName": "Savings progress rejects invalid 9007199254740992/1",
+          "status": "passed",
+          "title": "rejects invalid 9007199254740992/1",
+          "duration": 0.1410040000000663,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Savings progress"
+          ],
+          "fullName": "Savings progress rejects invalid 1/Infinity",
+          "status": "passed",
+          "title": "rejects invalid 1/Infinity",
+          "duration": 0.13821899999993548,
+          "failureMessages": [],
+          "meta": {}
+        }
+      ],
+      "startTime": 1794753398531,
+      "endTime": 1794753398545.1682,
+      "status": "passed",
+      "message": "",
+      "name": "frontend/src/app/shared/savings-progress.spec.ts"
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+[
+  {
+    "mutation": "format",
+    "file": "frontend/src/app/shared/money.ts",
+    "test": "app/shared/money.spec.ts",
+    "exit": 1,
+    "seconds": 1.752,
+    "detected": true
+  },
+  {
+    "mutation": "double-submit",
+    "file": "frontend/src/app/expenses/expenses.ts",
+    "test": "app/expenses/expenses.spec.ts",
+    "exit": 1,
+    "seconds": 3.197,
+    "detected": true
+  },
+  {
+    "mutation": "stale-account",
+    "file": "frontend/src/app/session/session.interceptor.ts",
+    "test": "app/session/session.spec.ts",
+    "exit": 1,
+    "seconds": 2.279,
+    "detected": true
+  },
+  {
+    "mutation": "negative-progress",
+    "file": "frontend/src/app/shared/savings-progress.ts",
+    "test": "app/savings-goals/savings-goals.spec.ts",
+    "exit": 1,
+    "seconds": 3.273,
+    "detected": true
+  }
+]

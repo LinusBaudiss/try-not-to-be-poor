@@ -1,0 +1,136 @@
+{
+  "date": "2026-11-15",
+  "commands": [
+    {
+      "command": [
+        "node",
+        "--version"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "stdout": "v24.22.0\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "npm",
+        "--version"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "stdout": "11.19.1\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "npm",
+        "config",
+        "get",
+        "registry"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "stdout": "https://registry.npmjs.org/\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "npm",
+        "config",
+        "get",
+        "proxy"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "stdout": "null\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "npm",
+        "config",
+        "get",
+        "https-proxy"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "stdout": "null\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "npm",
+        "cache",
+        "ls",
+        "vitest"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "npm",
+        "cache",
+        "ls",
+        "jsdom"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "npm",
+        "cache",
+        "ls",
+        "coverage-v8"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "curl",
+        "-I",
+        "--connect-timeout",
+        "5",
+        "https://registry.npmjs.org/vitest"
+      ],
+      "cwd": ".",
+      "exit_code": 6,
+      "stdout": "",
+      "stderr": "  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\n                                 Dload  Upload   Total   Spent    Left  Speed\n\n  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0curl: (6) Could not resolve host: registry.npmjs.org\n"
+    },
+    {
+      "command": [
+        "node",
+        "node_modules/@angular/cli/bin/ng.js",
+        "test",
+        "--watch=false",
+        "--include=app/shared/*.spec.ts"
+      ],
+      "cwd": "frontend",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "The following packages are required but were not found:\n  - vitest\n  - A DOM environment is required for non-browser tests. Please install either \"jsdom\" or \"happy-dom\".\nPlease install the missing packages and rerun the test command.\n"
+    }
+  ],
+  "loopback_bind": [
+    {
+      "host": "127.0.0.1",
+      "permitted": false,
+      "error": "[Errno 1] Operation not permitted"
+    },
+    {
+      "host": "::1",
+      "permitted": false,
+      "error": "[Errno 1] Operation not permitted"
+    }
+  ],
+  "proxy_registry_environment_keys": []
+}

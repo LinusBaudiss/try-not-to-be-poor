@@ -752,3 +752,26 @@ Die erfolgreiche lokale Referenzserie ist in [LOCAL-BASELINE.md](_bmad-output/im
 Das Ziel von mindestens 30 % Laufzeitreduktion gilt für den vollständigen Median nach Warm-up und mindestens drei erfolgreichen Messungen samt zusätzlichem erfolgreichem bereinigtem Kontrolllauf. `status: passed` belegt erfolgreiche Prüfungen; `target_met` bewertet separat den Zeitgrenzwert. Historische `results.json` bleiben unverändert und können noch frühere Zielmetadaten enthalten; neue Berichte verwenden Schema 3.
 
 Schema 3 erfasst zusätzlich einen gehashten Hostfingerabdruck, CPU-Modell, Affinität, Speicher-/cgroup-Werte und Ressourcen an jeder Laufgrenze. Relevante unversionierte Laufzeiteingaben werden mit Dateimodus gesichert; geänderte Eingabeidentität invalidiert die Probe. Nach erfolgreichem Exit werden dynamischer Backendumfang sowie Browseridentitäten gegen frische Discovery geprüft; leere/reduzierte/übersprungene/ungültige Berichte gelten als Fehler. Timeout/SIGTERM beenden die Prozessgruppe einschließlich verbleibender Kinder und erhalten den Fehlerstatus. Diese Härtung ergänzt die historische Baseline; sie behauptet keine rückwirkend erhobenen Metadaten.
+
+### Isolierte Frontendprüfungen
+
+Die Tests verwenden den Angular-Unit-Builder mit Vitest und jsdom. Sie starten weder
+API noch PostgreSQL oder die gesamte SPA. Die Komponententests verwenden produktive
+Templates, generierte HTTP-Clients, Session und Interceptor mit Angulars HTTP-Testbackend.
+
+```bash
+npm --prefix frontend run test:unit
+npm --prefix frontend run test:component
+npm --prefix frontend run test
+npm --prefix frontend run test:coverage
+# Eine Datei beziehungsweise einen benannten Fall auswählen:
+npm --prefix frontend run test -- --include=app/shared/money.spec.ts
+npm --prefix frontend run test -- --filter='Exact EUR cents'
+```
+
+Alle Befehle laufen ohne Watchmodus; die Pre-Skripte erzeugen zuvor die API-Clients
+(Java 25 und die Werkzeuge aus dem lokalen Setup erforderlich). Coverage wird separat instrumentiert gemessen;
+generierte API-Dateien und Testhilfen sind ausgeschlossen. Die nicht instrumentierte
+Frontendgruppe gehört zusätzlich zu den bisherigen Pflichtgruppen zum vollständigen
+lokalen Messpfad (`scripts/test-baseline.py`) und zum Push-/PR-Workflow. Echte Browser-
+und Integrationsprüfungen bleiben erforderlich.

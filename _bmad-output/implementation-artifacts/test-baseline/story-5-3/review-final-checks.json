@@ -1,0 +1,90 @@
+[
+  {
+    "name": "review-python",
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "scripts/tests",
+      "-v"
+    ],
+    "exit_code": 0,
+    "seconds": 2.013
+  },
+  {
+    "name": "review-semantics",
+    "command": [
+      "python3",
+      "_bmad-output/implementation-artifacts/test-baseline/semantic-scenarios.py"
+    ],
+    "exit_code": 0,
+    "seconds": 0.203
+  },
+  {
+    "name": "review-manifest",
+    "command": [
+      "python3",
+      "_bmad-output/implementation-artifacts/test-baseline/verify-manifest-refresh.py"
+    ],
+    "exit_code": 0,
+    "seconds": 2.855
+  },
+  {
+    "name": "review-unit",
+    "command": [
+      "npm",
+      "--prefix",
+      "frontend",
+      "run",
+      "test:unit"
+    ],
+    "exit_code": 0,
+    "seconds": 1.983
+  },
+  {
+    "name": "review-component",
+    "command": [
+      "npm",
+      "--prefix",
+      "frontend",
+      "run",
+      "test:component"
+    ],
+    "exit_code": 0,
+    "seconds": 6.143
+  },
+  {
+    "name": "review-coverage",
+    "command": [
+      "npm",
+      "--prefix",
+      "frontend",
+      "run",
+      "test:coverage"
+    ],
+    "exit_code": 0,
+    "seconds": 7.409
+  },
+  {
+    "name": "review-build",
+    "command": [
+      "npm",
+      "--prefix",
+      "frontend",
+      "run",
+      "build"
+    ],
+    "exit_code": 0,
+    "seconds": 3.073
+  },
+  {
+    "name": "review-contract",
+    "command": [
+      "./scripts/check-contract.sh"
+    ],
+    "exit_code": 0,
+    "seconds": 15.505
+  }
+]

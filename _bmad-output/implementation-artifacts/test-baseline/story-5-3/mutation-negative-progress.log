@@ -1,0 +1,115 @@
+❯ Building...
+✔ Building...
+Application bundle generation complete. [1.609 seconds] - 2026-11-15T13:13:51.855Z
+
+
+ RUN  v4.0.18 /home/linus/dev/try-not-to-be-poor/frontend
+
+ ❯ |tnbp| src/app/savings-goals/savings-goals.spec.ts (18 tests | 5 failed) 342ms
+     × displays actual progress -5000 and clamps only the bar 107ms
+     ✓ displays actual progress 15000 and clamps only the bar 21ms
+     ✓ renders an empty list after confirmed fallback and keeps automatic activation unavailable 15ms
+     × FE-ffc44d4f6f2dc455 displays signed actual amount/percent and only clamps the bar 15ms
+     ✓ FE-046fd7c4528faf0d displays signed actual amount/percent and only clamps the bar 14ms
+     ✓ FE-614bab1b5b1fd34f displays signed actual amount/percent and only clamps the bar 12ms
+     × FE-9a7cab381dd10b58 displays signed actual amount/percent and only clamps the bar 12ms
+     × FE-585304240f4423ea displays signed actual amount/percent and only clamps the bar 12ms
+     ✓ FE-956578875340d1ff displays signed actual amount/percent and only clamps the bar 13ms
+     × FE-b2ecd244453591a3 displays signed actual amount/percent and only clamps the bar 13ms
+     ✓ FE-544351230d088b72 displays signed actual amount/percent and only clamps the bar 12ms
+     ✓ FE-55802ac6ccab6e9d refuses unvalidated list items and shows no personal data 10ms
+     ✓ FE-afc496c1b6c30b21 refuses unvalidated list items and shows no personal data 10ms
+     ✓ FE-ac20289aa09c3655 refuses unvalidated list items and shows no personal data 11ms
+     ✓ FE-ab34582e5a5fe4a1 keeps uncertain writes locked after unconfirmed review partial 23ms
+     ✓ FE-49d8edf4d1ea7a25 keeps uncertain writes locked after unconfirmed review extra-field 14ms
+     ✓ FE-3e01b9fdb3596e37 keeps uncertain writes locked after unconfirmed review failed 11ms
+     ✓ FE-59baacf05c1c68e4 keeps uncertain writes locked after unconfirmed review out-of-range 13ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |tnbp| src/app/savings-goals/savings-goals.spec.ts > Savings goals actual template > displays actual progress -5000 and clamps only the bar
+AssertionError: expected 'SparzieleDu bist angemeldet. Deine pe…' to contain '−50 %'
+
+Expected: "−50 %"
+Received: "SparzieleDu bist angemeldet. Deine persönlichen Sparziele sind geöffnet.MonatsautomatikDie Automatik startet mit dem gesamten Monat deiner ausdrücklichen Aktivierung. Der erste Abschluss folgt nach Monatsende. Frühere Monate bleiben ausgeschlossen. Du kannst auch ohne Budget oder Sparziel aktivieren. Deine Automatikübersicht konnte nicht geladen werden. Deine Sparziele kannst du unabhängig pflegen.  Die Monatsautomatik ist derzeit nicht verfügbar. Ein gespeicherter Start bleibt erhalten. Aktivierungszustand ladenVerfügbarkeit der Monatsautomatik prüfenVorgemerkte Monatsüberschüsse Deine Vormerkung konnte nicht geladen werden. Versuche es erneut. Vormerkung aktualisierenDeine Sparziele1 Sparziel geladen.Negative Gesamtfortschritte sind verfügbar.Fortschrittseingabe erneut prüfenBerlin-FahrtZielbetrag100,00 €Fortschritt−50,00 €Anteil am Zielbetrag50 %Zieldatum28.03.2027Fortschritt aktualisierenBearbeitenLöschenSparziele aktualisierenNeues SparzielName des SparzielsZielbetrag in EuroEuro ohne Tausendertrennzeichen, z. B. 1200,50. Komma oder Punkt, höchstens zwei Nachkommastellen. Der Zielbetrag muss positiv sein.Zieldatum (optional)Kalenderdatum im Format JJJJ-MM-TT, z. B. 2028-02-29. Vergangene Daten sind erlaubt.Sparziel speichern Abmelden "
+
+ ❯ src/app/savings-goals/savings-goals.spec.ts:21:47
+     19|     expect(fixture.nativeElement.textContent).toContain('Berlin-Fahrt'…
+     20|     expect(fixture.nativeElement.textContent).toContain(amount + '\u00…
+     21|     expect(fixture.nativeElement.textContent).toContain(percent);
+       |                                               ^
+     22|     expect(fixture.nativeElement.textContent).toContain('28.03.2027');
+     23|     expect(fixture.nativeElement.querySelector('[role=progressbar]').g…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  |tnbp| src/app/savings-goals/savings-goals.spec.ts > Savings goals actual template > FE-ffc44d4f6f2dc455 displays signed actual amount/percent and only clamps the bar
+AssertionError: expected 'Berlin-FahrtZielbetrag100,00 €Fortsch…' to contain '−30 %'
+
+Expected: "−30 %"
+Received: "Berlin-FahrtZielbetrag100,00 €Fortschritt−30,00 €Anteil am Zielbetrag30 %Fortschritt aktualisierenBearbeitenLöschen"
+
+ ❯ src/app/savings-goals/savings-goals.spec.ts:44:79
+     42|     http.expectOne('/api/v2/savings-goals').flush([{ id: '22222222-222…
+     43|     expect(fixture.nativeElement.querySelector('.savings-cards').textC…
+     44|     expect(fixture.nativeElement.querySelector('.savings-cards').textC…
+       |                                                                               ^
+     45|     expect(fixture.nativeElement.querySelector('[role=progressbar]').g…
+     46|     expect(fixture.nativeElement.querySelector('[role=progressbar] spa…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  |tnbp| src/app/savings-goals/savings-goals.spec.ts > Savings goals actual template > FE-9a7cab381dd10b58 displays signed actual amount/percent and only clamps the bar
+AssertionError: expected 'Berlin-FahrtZielbetrag0,32 €Fortschri…' to contain '−3,13 %'
+
+Expected: "−3,13 %"
+Received: "Berlin-FahrtZielbetrag0,32 €Fortschritt−0,01 €Anteil am Zielbetrag3,13 %Fortschritt aktualisierenBearbeitenLöschen"
+
+ ❯ src/app/savings-goals/savings-goals.spec.ts:44:79
+     42|     http.expectOne('/api/v2/savings-goals').flush([{ id: '22222222-222…
+     43|     expect(fixture.nativeElement.querySelector('.savings-cards').textC…
+     44|     expect(fixture.nativeElement.querySelector('.savings-cards').textC…
+       |                                                                               ^
+     45|     expect(fixture.nativeElement.querySelector('[role=progressbar]').g…
+     46|     expect(fixture.nativeElement.querySelector('[role=progressbar] spa…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+ FAIL  |tnbp| src/app/savings-goals/savings-goals.spec.ts > Savings goals actual template > FE-585304240f4423ea displays signed actual amount/percent and only clamps the bar
+AssertionError: expected 'Berlin-FahrtZielbetrag90.071.992.547.…' to contain '−0 %'
+
+Expected: "−0 %"
+Received: "Berlin-FahrtZielbetrag90.071.992.547.409,91 €Fortschritt−0,01 €Anteil am Zielbetrag0 %Fortschritt aktualisierenBearbeitenLöschen"
+
+ ❯ src/app/savings-goals/savings-goals.spec.ts:44:79
+     42|     http.expectOne('/api/v2/savings-goals').flush([{ id: '22222222-222…
+     43|     expect(fixture.nativeElement.querySelector('.savings-cards').textC…
+     44|     expect(fixture.nativeElement.querySelector('.savings-cards').textC…
+       |                                                                               ^
+     45|     expect(fixture.nativeElement.querySelector('[role=progressbar]').g…
+     46|     expect(fixture.nativeElement.querySelector('[role=progressbar] spa…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+
+ FAIL  |tnbp| src/app/savings-goals/savings-goals.spec.ts > Savings goals actual template > FE-b2ecd244453591a3 displays signed actual amount/percent and only clamps the bar
+AssertionError: expected 'Berlin-FahrtZielbetrag0,01 €Fortschri…' to contain '−900.719.925.474.099.100 %'
+
+Expected: "−900.719.925.474.099.100 %"
+Received: "Berlin-FahrtZielbetrag0,01 €Fortschritt−90.071.992.547.409,91 €Anteil am Zielbetrag900.719.925.474.099.100 %Fortschritt aktualisierenBearbeitenLöschen"
+
+ ❯ src/app/savings-goals/savings-goals.spec.ts:44:79
+     42|     http.expectOne('/api/v2/savings-goals').flush([{ id: '22222222-222…
+     43|     expect(fixture.nativeElement.querySelector('.savings-cards').textC…
+     44|     expect(fixture.nativeElement.querySelector('.savings-cards').textC…
+       |                                                                               ^
+     45|     expect(fixture.nativeElement.querySelector('[role=progressbar]').g…
+     46|     expect(fixture.nativeElement.querySelector('[role=progressbar] spa…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  5 failed | 13 passed (18)
+   Start at  14:13:51
+   Duration  1.12s (transform 107ms, setup 181ms, import 191ms, tests 342ms, environment 308ms)
+

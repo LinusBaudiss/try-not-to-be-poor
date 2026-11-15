@@ -1,0 +1,165 @@
+{
+  "date": "2026-11-15",
+  "baseline_commit": "e462d25bf34970e6d9a02c41095fe8070f346ddb",
+  "status": "replacement-passed-before-removal; post-reduction-browser-run-passed-external",
+  "external_evidence": {
+    "path": "_bmad-output/implementation-artifacts/test-baseline/story-5-3/external-browser-before-reduction.log",
+    "sha256": "82fdb43a2f8769aba12dea2bfc8d0a565f14b539ebcd23ed6d93697aacbadbaf",
+    "provenance": "User-supplied external run accepted by current spec; no machine-generated external checkout fingerprint supplied. Local original source matches reviewed source hash before reduction.",
+    "counts": {
+      "e2e": 224,
+      "e2e:transition": 5,
+      "e2e:automation": 91
+    },
+    "matching_passed_line": "✓   75 e2e/month-summary.spec.ts:92:5 › Laden, Netzfehler und ungültige Antworten entfernen alte Werte und bleiben wiederholbar (851ms)"
+  },
+  "before_source": {
+    "path": "_bmad-output/implementation-artifacts/test-baseline/story-5-3/month-summary-before-reduction.ts",
+    "sha256": "d9b9c1e3ffa6438b3fffc0b065ada7e57058e4ac6a4f0342ecd8f33d9d14358c"
+  },
+  "current_source": {
+    "path": "frontend/e2e/month-summary.spec.ts",
+    "sha256": "63084401210fb5265f3edefc766f9606d01b2f3e511116e936f1e2c1727ef6aa"
+  },
+  "replacement_execution": {
+    "report": "_bmad-output/implementation-artifacts/test-baseline/story-5-3/vitest-results.json",
+    "sha256": "2b2bbe4b2d82da8ed3cb8ba4203289c1b8d7d0eb6e0f7f9c8c5aca915fa4e205",
+    "command": "npm --prefix frontend run test -- --reporters=json --output-file=/tmp/story53-review-final-results.json",
+    "passed_tests": 324
+  },
+  "retained_browser_observations": [
+    "real account/login and HTTP/interceptor wiring",
+    "initial confirmed summary",
+    "null response removes old money and details and displays failure",
+    "network failure",
+    "explicit retry restores confirmed values",
+    "all existing focus/keyboard/reflow/viewport/contrast/cookie/session cases unchanged"
+  ],
+  "removed_variants": [
+    {
+      "canonical_scenario": "FE-0b0cce363c811763",
+      "input": "{ ...initial, month: '2026-10-02' }",
+      "replacement_case": "FE:isolated:953092648b84e20a",
+      "replacement_title": "Month summary template FE-0b0cce363c811763 refuses malformed summary values without displaying money",
+      "observations": [
+        "visible load error",
+        "no summary money",
+        "no summary details",
+        "retry enabled"
+      ]
+    },
+    {
+      "canonical_scenario": "FE-335ec21a78c3af4c",
+      "input": "{ ...initial, expensesCents: -1 }",
+      "replacement_case": "FE:isolated:ba673509a7197fbe",
+      "replacement_title": "Month summary template FE-335ec21a78c3af4c refuses malformed summary values without displaying money",
+      "observations": [
+        "visible load error",
+        "no summary money",
+        "no summary details",
+        "retry enabled"
+      ]
+    },
+    {
+      "canonical_scenario": "FE-367c9171c962500a",
+      "input": "{}",
+      "replacement_case": "FE:isolated:4e460e3adc6e5a9a",
+      "replacement_title": "Month summary template FE-367c9171c962500a refuses malformed summary values without displaying money",
+      "observations": [
+        "visible load error",
+        "no summary money",
+        "no summary details",
+        "retry enabled"
+      ]
+    },
+    {
+      "canonical_scenario": "FE-4c306961ea6bdc08",
+      "input": "{ ...initial, budgetCents: null }",
+      "replacement_case": "FE:isolated:173140d1bcf2f9b7",
+      "replacement_title": "Month summary template FE-4c306961ea6bdc08 refuses malformed summary values without displaying money",
+      "observations": [
+        "visible load error",
+        "no summary money",
+        "no summary details",
+        "retry enabled"
+      ]
+    },
+    {
+      "canonical_scenario": "FE-55848d86e10e7eaa",
+      "input": "{ ...initial, budgetCents: '10000' }",
+      "replacement_case": "FE:isolated:f5cb32e9e2e503f4",
+      "replacement_title": "Month summary template FE-55848d86e10e7eaa refuses malformed summary values without displaying money",
+      "observations": [
+        "visible load error",
+        "no summary money",
+        "no summary details",
+        "retry enabled"
+      ]
+    },
+    {
+      "canonical_scenario": "FE-a72dd1dfceb04480",
+      "input": "{ ...initial, month: '2026-13-01' }",
+      "replacement_case": "FE:isolated:c8064e09d540bd64",
+      "replacement_title": "Month summary template FE-a72dd1dfceb04480 refuses malformed summary values without displaying money",
+      "observations": [
+        "visible load error",
+        "no summary money",
+        "no summary details",
+        "retry enabled"
+      ]
+    },
+    {
+      "canonical_scenario": "FE-aeb5e091805ab33d",
+      "input": "{ ...initial, expensesCents: 9007199254740992 }",
+      "replacement_case": "FE:isolated:99a8b73683be9625",
+      "replacement_title": "Month summary template FE-aeb5e091805ab33d refuses malformed summary values without displaying money",
+      "observations": [
+        "visible load error",
+        "no summary money",
+        "no summary details",
+        "retry enabled"
+      ]
+    },
+    {
+      "canonical_scenario": "FE-bdf5e283eefcc853",
+      "input": "{ ...initial, extra: true }",
+      "replacement_case": "FE:isolated:4302617f72e6646a",
+      "replacement_title": "Month summary template FE-bdf5e283eefcc853 refuses malformed summary values without displaying money",
+      "observations": [
+        "visible load error",
+        "no summary money",
+        "no summary details",
+        "retry enabled"
+      ]
+    },
+    {
+      "canonical_scenario": "FE-de6431aec57bf086",
+      "input": "{ ...initial, remainingCents: 1 }",
+      "replacement_case": "FE:isolated:c4a2d8f639a49774",
+      "replacement_title": "Month summary template FE-de6431aec57bf086 refuses malformed summary values without displaying money",
+      "observations": [
+        "visible load error",
+        "no summary money",
+        "no summary details",
+        "retry enabled"
+      ]
+    }
+  ],
+  "post_reduction_browser_execution": {
+    "path": "_bmad-output/implementation-artifacts/test-baseline/story-5-3/external-browser-after-reduction.log",
+    "sha256": "8f0f2139a7c7bcefbb2cd4db058a2330923512b5601c043b19caccf3678dd80f",
+    "command": "npm --prefix frontend run e2e",
+    "passed_tests": 224,
+    "duration": "4.1m",
+    "exit_code": 0,
+    "source_sha256": "63084401210fb5265f3edefc766f9606d01b2f3e511116e936f1e2c1727ef6aa",
+    "provenance": "User-supplied external run accepted by current spec for the reduced source state; no machine-generated external checkout fingerprint supplied. Archived without alteration; current reduced source is bound by SHA-256."
+  },
+  "historical_pre_removal_execution": {
+    "report": "_bmad-output/implementation-artifacts/test-baseline/story-5-3/vitest-results-before-review.json",
+    "sha256": "74b8752ace817ed1f2f5080af0eebaf42caa9fb01ce073323eb5e84d14036158",
+    "command": "npm --prefix frontend run test -- --reporters=json --output-file=/tmp/story53-vitest-results.json",
+    "passed_tests": 324
+  },
+  "current_execution_note": "Aktueller erfolgreicher Nachreviewlauf; unveränderter Vorentfernungsbericht separat unter historical_pre_removal_execution bewahrt."
+}

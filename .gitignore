@@ -37,3 +37,7 @@ __pycache__/
 /_bmad-output/implementation-artifacts/test-baseline/observation-ledger.json
 /_bmad-output/implementation-artifacts/test-baseline/browser-loop-evidence.json
 /_bmad-output/implementation-artifacts/test-baseline/discovery/review-*.json
+/frontend/coverage/
+
+# Story 5.3: versionierte Ersatz-, Ausführungs- und Mutationsbelege
+!/_bmad-output/implementation-artifacts/test-baseline/story-5-3/*.log

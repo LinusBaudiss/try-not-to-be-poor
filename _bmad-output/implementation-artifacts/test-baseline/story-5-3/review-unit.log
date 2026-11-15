@@ -1,0 +1,19 @@
+
+> try-not-to-be-poor@0.1.0 test:unit
+> ng test --watch=false --include="app/shared/*.spec.ts"
+
+❯ Building...
+✔ Building...
+Application bundle generation complete. [0.662 seconds] - 2026-11-15T14:39:08.107Z
+
+
+ RUN  v4.0.18 /home/linus/dev/try-not-to-be-poor/frontend
+
+ ✓ |tnbp| src/app/shared/savings-progress.spec.ts (14 tests) 6ms
+ ✓ |tnbp| src/app/shared/money.spec.ts (29 tests) 8ms
+
+ Test Files  2 passed (2)
+      Tests  43 passed (43)
+   Start at  15:39:08
+   Duration  663ms (transform 54ms, setup 399ms, import 20ms, tests 14ms, environment 686ms)
+

@@ -1,0 +1,69 @@
+❯ Building...
+✔ Building...
+Application bundle generation complete. [1.012 seconds] - 2026-11-15T13:13:48.985Z
+
+
+ RUN  v4.0.18 /home/linus/dev/try-not-to-be-poor/frontend
+
+ ❯ |tnbp| src/app/session/session.spec.ts (6 tests | 2 failed) 69ms
+     ✓ keeps tokens and financial HTTP responses out of browser storage 37ms
+     ✓ does not attach bearer credentials to external origins 5ms
+     ✓ rejects unauthenticated finance calls before HTTP 4ms
+     × rejects a late account response at the interceptor boundary 14ms
+     ✓ expires using monotonic time, clears identity and revokes on the real end path 4ms
+     × keeps a new account when an old account response arrives after real login 3ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |tnbp| src/app/session/session.spec.ts > Real session and interceptor > rejects a late account response at the interceptor boundary
+AssertionError: expected [ { name: 'old account' } ] to be undefined
+
+- Expected: 
+undefined
+
++ Received: 
+[
+  {
+    "name": "old account",
+  },
+]
+
+ ❯ src/app/session/session.spec.ts:33:22
+     31|     const request = TestBed.inject(HttpTestingController).expectOne('/…
+     32|     session.end('', false, false); request.flush([{ name: 'old account…
+     33|     expect(observed).toBeUndefined(); expect(status).toBe(401); expect…
+       |                      ^
+     34|   });
+     35|   it('expires using monotonic time, clears identity and revokes on the…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  |tnbp| src/app/session/session.spec.ts > Real session and interceptor > keeps a new account when an old account response arrives after real login
+AssertionError: expected [ { name: 'old account' } ] to be undefined
+
+- Expected: 
+undefined
+
++ Received: 
+[
+  {
+    "name": "old account",
+  },
+]
+
+ ❯ src/app/session/session.spec.ts:53:22
+     51|     await authenticate('owner-2', 'new-memory-token');
+     52|     old.flush([{ name: 'old account' }]); await settle();
+     53|     expect(observed).toBeUndefined(); expect(status).toBe(401);
+       |                      ^
+     54|     expect(session.userId()).toBe('owner-2'); expect(session.token()).…
+     55|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 4 passed (6)
+   Start at  14:13:49
+   Duration  726ms (transform 51ms, setup 187ms, import 67ms, tests 69ms, environment 311ms)
+

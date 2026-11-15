@@ -1,0 +1,48 @@
+[
+  {
+    "group": "unit",
+    "command": [
+      "npm",
+      "--prefix",
+      "frontend",
+      "run",
+      "test:unit"
+    ],
+    "exit": 0,
+    "wall_seconds": 4.22
+  },
+  {
+    "group": "component",
+    "command": [
+      "npm",
+      "--prefix",
+      "frontend",
+      "run",
+      "test:component"
+    ],
+    "exit": 0,
+    "wall_seconds": 8.024
+  },
+  {
+    "group": "coverage",
+    "command": [
+      "npm",
+      "--prefix",
+      "frontend",
+      "run",
+      "test:coverage"
+    ],
+    "exit": 0,
+    "wall_seconds": 9.113
+  },
+  {
+    "group": "discovery",
+    "command": [
+      "python3",
+      "_bmad-output/implementation-artifacts/test-baseline/refresh-source-inventory.py",
+      "--discover-isolated"
+    ],
+    "exit": 0,
+    "wall_seconds": 3.406
+  }
+]

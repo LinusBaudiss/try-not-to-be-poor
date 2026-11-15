@@ -1,0 +1,8 @@
+
+> try-not-to-be-poor@0.1.0 test:unit
+> ng test --watch=false --include="app/shared/*.spec.ts"
+
+The following packages are required but were not found:
+  - vitest
+  - A DOM environment is required for non-browser tests. Please install either "jsdom" or "happy-dom".
+Please install the missing packages and rerun the test command.

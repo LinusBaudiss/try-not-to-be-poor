@@ -1,0 +1,1 @@
+{"extends": "/home/linus/dev/try-not-to-be-poor/frontend/tsconfig.json", "compilerOptions": {"noEmit": true}, "files": ["/tmp/tnbp-vitest-types-stricter.d.ts"], "include": ["/home/linus/dev/try-not-to-be-poor/frontend/src/**/*.spec.ts"]}

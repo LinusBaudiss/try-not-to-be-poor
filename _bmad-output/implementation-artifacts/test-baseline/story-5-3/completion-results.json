@@ -1,0 +1,74 @@
+[
+  {
+    "group": "component",
+    "command": [
+      "npm",
+      "--prefix",
+      "frontend",
+      "run",
+      "test:component"
+    ],
+    "exit": 0,
+    "wall_seconds": 7.651
+  },
+  {
+    "group": "coverage",
+    "command": [
+      "npm",
+      "--prefix",
+      "frontend",
+      "run",
+      "test:coverage"
+    ],
+    "exit": 0,
+    "wall_seconds": 9.774
+  },
+  {
+    "group": "build",
+    "command": [
+      "npm",
+      "--prefix",
+      "frontend",
+      "run",
+      "build"
+    ],
+    "exit": 0,
+    "wall_seconds": 5.533
+  },
+  {
+    "group": "python",
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "scripts/tests",
+      "-v"
+    ],
+    "exit": 0,
+    "wall_seconds": 1.968
+  },
+  {
+    "group": "discovery",
+    "command": [
+      "python3",
+      "_bmad-output/implementation-artifacts/test-baseline/refresh-source-inventory.py",
+      "--discover-isolated"
+    ],
+    "exit": 0,
+    "wall_seconds": 3.676
+  },
+  {
+    "group": "e2e",
+    "command": [
+      "npm",
+      "--prefix",
+      "frontend",
+      "run",
+      "e2e"
+    ],
+    "exit": 1,
+    "wall_seconds": 7.953
+  }
+]

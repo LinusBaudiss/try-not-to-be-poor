@@ -26,6 +26,7 @@ TARGET_SECONDS = REFERENCE_MEDIAN_SECONDS * (1 - TARGET_REDUCTION)
 GROUPS = (
     ('python', ['python3', '-m', 'unittest', 'discover', '-s', 'scripts/tests', '-v']),
     ('contract', ['./scripts/check-contract.sh']),
+    ('frontend', ['npm', '--prefix', 'frontend', 'run', 'test']),
     ('backend', ['./backend/mvnw', '-B', '-f', 'backend/pom.xml', 'verify']),
     ('browser', ['npm', '--prefix', 'frontend', 'run', 'e2e']),
     ('transition', ['npm', '--prefix', 'frontend', 'run', 'e2e:transition']),
@@ -379,6 +380,59 @@ def validate_browser_report(path, expected):
         return [f'invalid browser result report: {exc}']
 
 
+def expected_frontend_tests():
+    """Reviewed case identities are valid only for the exact current source scope."""
+    manifest = json.loads((ROOT / '_bmad-output/implementation-artifacts/test-baseline/reviewed-scenario-manifest.json').read_text())
+    isolated = manifest['isolated_frontend_sources']
+    current = {str(path.relative_to(ROOT)) for path in (ROOT / 'frontend/src').rglob('*.spec.ts')}
+    if current != set(isolated['files']):
+        raise ValueError('frontend discovery differs from reviewed sources')
+    product = {str(path.relative_to(ROOT)) for path in (ROOT / 'frontend/src').rglob('*')
+               if path.is_file() and path.suffix in {'.ts', '.html', '.css', '.scss'}
+               and not path.name.endswith('.spec.ts') and '/api/' not in str(path)
+               and '/testing/' not in str(path)}
+    if product != set(isolated['product_files']):
+        raise ValueError('frontend product scope changed since discovery')
+    for name, digest in {**isolated['files'], **isolated['support_files'], **isolated['product_files']}.items():
+        if hashlib.sha256((ROOT / name).read_bytes()).hexdigest() != digest:
+            raise ValueError('frontend source changed since case discovery: ' + name)
+    expected = Counter((case['path'], case['full_name']) for case in isolated['reviewed_cases'].values())
+    if not expected or any(count != 1 for count in expected.values()) or {name for name, _ in expected} != current:
+        raise ValueError('empty, duplicate or incomplete frontend discovery')
+    return expected
+
+
+def validate_frontend_report(path, expected, started_ms):
+    try:
+        document = json.loads(path.read_text())
+        errors, actual = [], Counter()
+        if document.get('startTime', 0) < started_ms:
+            errors.append('stale frontend report')
+        if document.get('success') is not True:
+            errors.append('frontend execution not successful')
+        for source in document['testResults']:
+            name = source['name']
+            if Path(name).is_absolute():
+                name = str(Path(name).relative_to(ROOT))
+            elif name.startswith('src/'):
+                name = 'frontend/' + name
+            if source.get('status') != 'passed' or source.get('message'):
+                errors.append('frontend suite not passed: ' + name)
+            for case in source['assertionResults']:
+                identity = (name, case.get('fullName'))
+                actual[identity] += 1
+                if not identity[1] or case.get('status') != 'passed' or case.get('failureMessages'):
+                    errors.append('frontend case not passed: ' + str(identity))
+        count = sum(expected.values())
+        if (actual != expected or any(value != 1 for value in actual.values())
+                or document.get('numTotalTests') != count or document.get('numPassedTests') != count
+                or any(document.get(key) != 0 for key in ('numFailedTests', 'numPendingTests', 'numTodoTests', 'numFailedTestSuites', 'numPendingTestSuites'))):
+            errors.append('frontend incomplete, skipped, duplicate or failed case discovery')
+        return errors
+    except (OSError, ValueError, TypeError, KeyError, AttributeError) as exc:
+        return [f'invalid frontend result report: {exc}']
+
+
 def summarize(runs):
     def complete_run(run):
         return (run['status'] == 'passed'
@@ -493,14 +547,20 @@ def _main(argv=None):
                     if name == 'contract':
                         env['TEST_BASELINE_PHASE_LOG'] = str(phase_log)
                     expected_browser = None
+                    expected_frontend = None
                     validation_errors = []
                     browser_report = args.output / f'{index:02d}-{kind}-{name}-results.json'
+                    if name == 'frontend':
+                        expected_frontend = expected_frontend_tests()
+                        browser_report.unlink(missing_ok=True)
+                        frontend_started_ms = time.time_ns() // 1_000_000
+                        command = command + ['--', '--reporters=json', '--output-file=' + str(browser_report)]
                     if name in ('browser', 'transition', 'automation'):
                         expected_browser, validation_errors = prepare_browser_discovery(command, log, env, browser_report)
                         env['PLAYWRIGHT_JSON_OUTPUT_FILE'] = str(browser_report)
                         command = command + ['--', '--forbid-only', '--reporter=list,json']
                     exit_code = execute_group(command, log, env) if not validation_errors else 1
-                except OSError as exc:
+                except (OSError, ValueError, KeyError) as exc:
                     log.write(str(exc) + '\n')
                     exit_code = 127
                     validation_errors = [str(exc)]
@@ -519,6 +579,8 @@ def _main(argv=None):
                     group['validation_errors'].extend(validate_backend_reports(group))
                 except (OSError, ValueError) as exc:
                     group['validation_errors'].append(f'backend validation: {exc}')
+            if name == 'frontend' and expected_frontend is not None:
+                group['validation_errors'].extend(validate_frontend_report(browser_report, expected_frontend, frontend_started_ms))
             if name in ('browser', 'transition', 'automation') and expected_browser is not None:
                 group['validation_errors'].extend(validate_browser_report(browser_report, expected_browser))
             if group['validation_errors'] and not group['exit_code']:

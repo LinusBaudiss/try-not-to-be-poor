@@ -66,6 +66,99 @@ class SemanticReviewTest(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'Neue/entfallene Testquelle'):
                 validate_sources(MANIFEST)
 
+    def test_new_isolated_source_is_not_hidden_by_missing_vitest_discovery(self):
+        changed = copy.deepcopy(MANIFEST)
+        changed['isolated_frontend_sources']['files'].pop(next(iter(changed['isolated_frontend_sources']['files'])))
+        with self.assertRaisesRegex(ValueError, 'isolierte Frontendquelle'):
+            self.api['validate_sources'](changed)
+
+    def test_changed_isolated_source_is_rejected(self):
+        changed = copy.deepcopy(MANIFEST)
+        name = next(iter(changed['isolated_frontend_sources']['files']))
+        changed['isolated_frontend_sources']['files'][name] = 'changed'
+        with self.assertRaisesRegex(ValueError, 'Frontendquelle seit Review'):
+            self.api['validate_sources'](changed)
+
+    def test_product_source_mutation_invalidates_the_successful_execution(self):
+        name = next(iter(MANIFEST['isolated_frontend_sources']['product_files']))
+        path = HERE.parents[2] / name
+        original_bytes = Path.read_bytes
+        def read_bytes(current):
+            return original_bytes(current) + b'/* controlled product mutation */' if current == path else original_bytes(current)
+        with patch.object(Path, 'read_bytes', read_bytes):
+            with self.assertRaisesRegex(ValueError, 'Produktive Frontendquelle seit Ausführungsreview'):
+                self.api['validate_sources'](MANIFEST)
+
+    def test_successful_vitest_cases_cannot_disappear_from_review(self):
+        changed = copy.deepcopy(MANIFEST)
+        changed['isolated_frontend_sources']['reviewed_cases'].pop(next(iter(changed['isolated_frontend_sources']['reviewed_cases'])))
+        with self.assertRaisesRegex(ValueError, 'Vitest-Quellfälle'):
+            self.api['validate'](changed)
+
+    def test_a_changed_execution_report_is_rejected(self):
+        changed = copy.deepcopy(MANIFEST)
+        changed['isolated_frontend_sources']['execution']['sha256'] = 'unreviewed'
+        with self.assertRaisesRegex(ValueError, 'Ausführungsbeleg seit Review'):
+            self.api['validate'](changed)
+
+    def test_supplementary_vitest_case_cannot_become_primary_without_review(self):
+        changed = copy.deepcopy(MANIFEST)
+        primary = next(c for c in changed['canonical_scenarios'].values()
+                       if changed['scenarios'][c['primary_member']]['primary_source'].startswith('FE:isolated:'))
+        source = changed['scenarios'][primary['primary_member']]['primary_source']
+        cid = next(cid for cid, c in changed['canonical_scenarios'].items() if c is primary)
+        changed['isolated_frontend_sources']['reviewed_cases'][source]['mappings'][cid] = 'supplementary'
+        with self.assertRaisesRegex(ValueError, 'Primärnachweis ohne bestandene Hauptzuordnung'):
+            self.api['validate'](changed)
+
+    def test_reduced_browser_variants_require_the_successful_primary_replacement(self):
+        changed = copy.deepcopy(MANIFEST)
+        proof = json.loads((HERE.parents[2] / changed['browser_reduction_evidence']['path']).read_text())
+        variant = proof['removed_variants'][0]
+        changed['isolated_frontend_sources']['reviewed_cases'][variant['replacement_case']]['mappings'][variant['canonical_scenario']] = 'supplementary'
+        with self.assertRaisesRegex(ValueError, 'isolierten Hauptnachweis'):
+            self.api['validate_browser_reductions'](changed)
+
+    def test_reduced_browser_variants_require_unchanged_before_and_after_evidence(self):
+        changed = copy.deepcopy(MANIFEST)
+        changed['browser_reduction_evidence']['sha256'] = 'changed'
+        with self.assertRaisesRegex(ValueError, 'Browser-Ersatzbeleg'):
+            self.api['validate_browser_reductions'](changed)
+
+    def test_final_browser_log_cannot_change_after_review(self):
+        proof = json.loads((HERE.parents[2] / MANIFEST['browser_reduction_evidence']['path']).read_text())
+        log_path = HERE.parents[2] / proof['post_reduction_browser_execution']['path']
+        original_bytes = Path.read_bytes
+        def read_bytes(path):
+            return b'changed' if path == log_path else original_bytes(path)
+        with patch.object(Path, 'read_bytes', read_bytes):
+            with self.assertRaisesRegex(ValueError, 'Browser-Alt-/Neubeleg.*post_reduction'):
+                self.api['validate_browser_reductions'](MANIFEST)
+
+    def test_final_browser_log_requires_every_passed_case_and_successful_exit(self):
+        proof = json.loads((HERE.parents[2] / MANIFEST['browser_reduction_evidence']['path']).read_text())
+        log_path = HERE.parents[2] / proof['post_reduction_browser_execution']['path']
+        log = log_path.read_text()
+        for bad_log in (log.replace('✓    1 ', '     1 ', 1),
+                        log.replace('e2e: Exitcode 0', 'e2e: Exitcode 1'),
+                        log + '\n1 skipped\n'):
+            with self.subTest(log_tail=bad_log[-40:]):
+                def read(path, *args, **kwargs):
+                    return bad_log if path == log_path else ORIGINAL_READ(path, *args, **kwargs)
+                with patch.object(Path, 'read_text', read):
+                    with self.assertRaisesRegex(ValueError, 'Browser-Endzustandsbeleg'):
+                        self.api['validate_browser_reductions'](MANIFEST)
+
+    def test_final_browser_log_is_bound_to_reduced_source(self):
+        proof_path = HERE.parents[2] / MANIFEST['browser_reduction_evidence']['path']
+        proof = json.loads(proof_path.read_text())
+        proof['post_reduction_browser_execution']['source_sha256'] = 'another-source'
+        def read(path, *args, **kwargs):
+            return json.dumps(proof) if path == proof_path else ORIGINAL_READ(path, *args, **kwargs)
+        with patch.object(Path, 'read_text', read):
+            with self.assertRaisesRegex(ValueError, 'Browser-Endzustandsbeleg'):
+                self.api['validate_browser_reductions'](MANIFEST)
+
     def test_unassigned_source_group_is_rejected(self):
         changed = copy.deepcopy(MANIFEST)
         changed['semantic_assignments'].pop(next(iter(changed['scenarios'])))

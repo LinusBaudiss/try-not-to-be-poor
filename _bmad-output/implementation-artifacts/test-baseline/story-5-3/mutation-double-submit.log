@@ -1,0 +1,75 @@
+❯ Building...
+✔ Building...
+Application bundle generation complete. [1.424 seconds] - 2026-11-15T13:13:46.194Z
+
+
+ RUN  v4.0.18 /home/linus/dev/try-not-to-be-poor/frontend
+
+ ❯ |tnbp| src/app/expenses/expenses.spec.ts (45 tests | 1 failed) 485ms
+     × renders empty state, labels and preserves calendar dates and user text 81ms
+     ✓ rejects invalid positive amount 0 accessibly 14ms
+     ✓ rejects invalid positive amount -1 accessibly 10ms
+     ✓ rejects invalid positive amount 1,001 accessibly 9ms
+     ✓ rejects invalid positive amount 90071992547409,92 accessibly 8ms
+     ✓ retains a draft on field errors and clears the error on edit 10ms
+     ✓ keeps uncertain writes blocked until a reload and explicit review 16ms
+     ✓ keeps offline input in the open tab and prevents sending 8ms
+     ✓ sends deletion only after confirmation and changes the list after response 18ms
+     ✓ discards an old account mutation after a real account login succeeds 8ms
+     ✓ discards a late response and all drafts after the session ends 8ms
+     ✓ FE-2d60f3258d64b7f7 rejects the original expense input 0 before HTTP 7ms
+     ✓ FE-dfeb43baf6163f50 rejects the original expense input -1 before HTTP 6ms
+     ✓ FE-8ea82b54f2a149bd rejects the original expense input 1,001 before HTTP 6ms
+     ✓ FE-83256bf1cbec8ae0 rejects the original expense input 1.009 before HTTP 7ms
+     ✓ FE-8819b488cd0c486a rejects the original expense input 90071992547409,92 before HTTP 7ms
+     ✓ FE-49ecbc5e7a30c888 rejects the original expense input 1.000,00 before HTTP 7ms
+     ✓ FE-e948b7362796ab11 rejects the original expense input NaN before HTTP 7ms
+     ✓ FE-128b514ccb31a242 rejects the original expense input  before HTTP 7ms
+     ✓ FE-8be342db74f23aa1 rejects the original expense input 1.001 before HTTP 7ms
+     ✓ FE-f5c5e2fbe0de6629 rejects the original expense input 1e2 before HTTP 6ms
+     ✓ FE-c36f41e084565e4b rejects unconfirmed expense create response server 8ms
+     ✓ FE-0fb418954be5ea57 rejects unconfirmed expense create response network 8ms
+     ✓ FE-4a3f7ed87244161b rejects unconfirmed expense create response invalid 7ms
+     ✓ FE-21f2f86246f1beaf rejects unconfirmed expense create response different-name 7ms
+     ✓ FE-c999230101cb6088 rejects unconfirmed expense create response different-amount 8ms
+     ✓ FE-db5850f49e20cc78 rejects unconfirmed expense create response wrong-status 7ms
+     ✓ FE-c834a44207f03f43 rejects unconfirmed expense create response extra-field 7ms
+     ✓ FE-430ee60b2df3bb7e retains draft and history for rejected expense edit response network 13ms
+     ✓ FE-8c70bd7be759c620 retains draft and history for rejected expense edit response server 14ms
+     ✓ FE-17945a60ce564c98 retains draft and history for rejected expense edit response missing 10ms
+     ✓ FE-c1dcf7a9c845b449 retains draft and history for rejected expense edit response id 10ms
+     ✓ FE-f896d21b15007652 retains draft and history for rejected expense edit response date 10ms
+     ✓ FE-cd0a4955498abd9e retains draft and history for rejected expense edit response name 10ms
+     ✓ FE-497dd84891379b27 retains draft and history for rejected expense edit response amount 10ms
+     ✓ FE-37a634c768613c37 retains draft and history for rejected expense edit response invalid-date 10ms
+     ✓ FE-ce629af28bb166a2 retains draft and history for rejected expense edit response fraction 11ms
+     ✓ FE-68a1eb5fc75d0320 retains draft and history for rejected expense edit response wrong-status 11ms
+     ✓ FE-bc7eb34895dd28d7 retains draft and history for rejected expense edit response extra-field 11ms
+     ✓ FE-d6ffa7e338459f14 retains history on rejected expense deletion network 10ms
+     ✓ FE-77e2499cb142ac45 retains history on rejected expense deletion server 9ms
+     ✓ FE-425b222b286c1204 retains history on rejected expense deletion missing 9ms
+     ✓ FE-143f79293e8d5f21 retains history on rejected expense deletion wrong-status 9ms
+     ✓ FE-0ef24908f50702a3 keeps uncertain expense writes locked after malformed review partial 8ms
+     ✓ FE-4367f1b1dfd35574 keeps uncertain expense writes locked after malformed review extra-field 7ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |tnbp| src/app/expenses/expenses.spec.ts > Expenses template with authenticated HTTP > renders empty state, labels and preserves calendar dates and user text
+Error: Expected zero matching requests for criteria "Match URL: /api/v2/expenses", found 1.
+ ❯ HttpClientTestingBackend.expectNone node_modules/@angular/common/fesm2022/http-testing.mjs:204:13
+ ❯ src/app/expenses/expenses.spec.ts:24:27
+     22|     expect(request.request.headers.get('Authorization')).toBe('Bearer …
+     23|     expect(fixture.nativeElement.textContent).not.toContain('Deine Aus…
+     24|     submit(fixture); http.expectNone('/api/v2/expenses');
+       |                           ^
+     25|     expect(fixture.nativeElement.querySelector('[type=submit]').disabl…
+     26|     request.flush(row, { status: 201, statusText: 'Created' }); await …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 44 passed (45)
+   Start at  14:13:46
+   Duration  1.23s (transform 83ms, setup 180ms, import 148ms, tests 485ms, environment 310ms)
+

@@ -12,6 +12,8 @@ import json
 from pathlib import Path
 import re
 import runpy
+import subprocess
+import sys
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[2]
@@ -89,6 +91,29 @@ def loop_values(expression, preceding):
 
 MANIFEST = json.loads((HERE / 'reviewed-scenario-manifest.json').read_text())
 runpy.run_path(str(HERE / 'semantic-scenarios.py'))['validate_sources'](MANIFEST)
+
+
+def discover_isolated_frontend():
+    # Use Angular's actual Vitest builder discovery; source globs alone are not
+    # execution evidence, and neither discovery nor parameter count changes quotas.
+    result = subprocess.run(['npm', '--prefix', 'frontend', 'run', 'test', '--', '--list-tests'],
+                            cwd=ROOT, text=True, capture_output=True, timeout=120)
+    if result.returncode:
+        raise ValueError('Vitest discovery failed: ' + result.stdout + result.stderr)
+    files = sorted('frontend/' + line.strip().replace('\\', '/')
+                   for line in result.stdout.splitlines()
+                   if line.strip().startswith('src/') and line.strip().endswith('.spec.ts'))
+    expected = MANIFEST.get('isolated_frontend_sources', {}).get('files', {})
+    if not files or set(files) != set(expected):
+        raise ValueError('Vitest discovery differs from reviewed isolated source files')
+    evidence = {'command': result.args, 'status': 'discovery-only',
+                'files_sha256': {name: expected[name] for name in files},
+                'execution_evidence': None}
+    (HERE / 'isolated-frontend-discovery.json').write_text(json.dumps(evidence, indent=2) + '\n')
+
+
+if '--discover-isolated' in sys.argv:
+    discover_isolated_frontend()
 # Requirements and semantic assignments are reviewed data, never inferred from
 # source words, names, suffixes or assertion count.
 
@@ -226,6 +251,18 @@ for path in sorted((ROOT / 'scripts/tests').glob('test_*.py')):
                             'semantic_scenario': 'infrastructure; excluded from backend/frontend business denominator',
                             'discovery_status': 'Python AST + successful unittest discovery'})
 
+# Vitest cases are keyed by actual successful discovery names. Semantic roles are
+# explicitly reviewed data; neither assertion counts nor titles assign scenarios.
+for case_id, observed in runpy.run_path(str(HERE / 'semantic-scenarios.py'))['isolated_execution'](MANIFEST).items():
+    reviewed = MANIFEST['cases'][case_id]
+    entries.append({'id': case_id, 'path': observed['path'], 'line': 1,
+                    'variant': observed['full_name'], 'observation': observed['full_name'],
+                    'current_type': reviewed['current_type'], 'execution_paths': ['npm:test', 'npm:test:unit' if reviewed['current_type'] == 'unit' else 'npm:test:component'],
+                    'requirement': reviewed['requirements'], 'risks': reviewed['risks'],
+                    'target_type': reviewed['target_type'], 'remaining_integration': reviewed['remaining_integration'],
+                    'replacement_evidence': 'Passed Vitest report; retained browser boundaries; individual DTO reductions recorded in browser-reduction.json',
+                    'semantic_scenario': reviewed['scenarios'], 'discovery_status': 'Successful Angular/Vitest JSON execution; exact names and source hashes reviewed'})
+
 ids = [entry['id'] for entry in entries]
 assert len(set(ids)) == len(ids), 'unstable/duplicate identifiers'
 # Fail closed on new/deleted variants or changed fixtures: no auto-mapping.
@@ -246,6 +283,8 @@ for name, cls in classes.items():
         expected_methods.update((name, e['method']) for e in entries if e.get('class') == cls['inherits'])
 if actual_methods != expected_methods:
     raise ValueError(f'JUnit discovery mismatch: missing {expected_methods-actual_methods}; unexpected {actual_methods-expected_methods}')
+retired_browser_scenarios = {cid for row in MANIFEST['browser_inner_loops']
+                             for cid in row.get('retired_canonical_scenarios', [])}
 for entry in entries:
     reviewed = MANIFEST['cases'][entry['id']]
     if entry['variant'] != reviewed['expected_variant']:
@@ -259,6 +298,8 @@ for entry in entries:
         entry['requirement' if key == 'requirements' else key] = reviewed[key]
     entry['semantic_scenario'] = reviewed['scenarios']
     entry['canonical_scenarios'] = reviewed['canonical_scenarios']
+    if entry['id'].startswith('FE:month-summary.spec.ts:') and retired_browser_scenarios.intersection(entry['canonical_scenarios']):
+        entry['replacement_evidence'] = 'Nine DTO-only variants replaced after old/new success; original IDs retained as historical references; see story-5-3/browser-reduction.json; null/network/retry browser path retained'
 runpy.run_path(str(HERE / 'semantic-scenarios.py'))['validate'](MANIFEST)
 (HERE / 'source-inventory.json').write_text(json.dumps({
     'reference_commit': MANIFEST['reference_commit'],

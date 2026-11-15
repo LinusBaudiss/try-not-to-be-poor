@@ -1,0 +1,170 @@
+[
+  {
+    "name": "review-python",
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "scripts/tests",
+      "-v"
+    ],
+    "exit_code": 0,
+    "seconds": 2.013,
+    "original_output": {
+      "commit": "8f7a39714d28aa9f897df10a5a2da86d38df2b5e",
+      "path": "_bmad-output/implementation-artifacts/test-baseline/story-5-3/review-python.log",
+      "sha256": "913620836469a3bea3c21ecde2945b4da24f4fe42fd57f556e0e591aaaad261b"
+    },
+    "passed_tests": 44
+  },
+  {
+    "name": "review-semantics",
+    "command": [
+      "python3",
+      "_bmad-output/implementation-artifacts/test-baseline/semantic-scenarios.py"
+    ],
+    "exit_code": 0,
+    "seconds": 0.203,
+    "original_output": {
+      "commit": "8f7a39714d28aa9f897df10a5a2da86d38df2b5e",
+      "path": "_bmad-output/implementation-artifacts/test-baseline/story-5-3/review-semantics.log",
+      "sha256": "082253ff03d7bd849af7e43b3242422483a23f9fbbb6e8af60daeb689706fee0"
+    }
+  },
+  {
+    "name": "review-manifest",
+    "command": [
+      "python3",
+      "_bmad-output/implementation-artifacts/test-baseline/verify-manifest-refresh.py"
+    ],
+    "exit_code": 0,
+    "seconds": 2.855,
+    "original_output": {
+      "commit": "8f7a39714d28aa9f897df10a5a2da86d38df2b5e",
+      "path": "_bmad-output/implementation-artifacts/test-baseline/story-5-3/review-manifest.log",
+      "sha256": "92c0f9b645d823a248555e94bc6db6ba2beb1fdd399b03535ef48957ce7cb91f"
+    },
+    "passed_tests": 25
+  },
+  {
+    "name": "review-unit",
+    "command": [
+      "npm",
+      "--prefix",
+      "frontend",
+      "run",
+      "test:unit"
+    ],
+    "exit_code": 0,
+    "seconds": 1.983,
+    "original_output": {
+      "commit": "8f7a39714d28aa9f897df10a5a2da86d38df2b5e",
+      "path": "_bmad-output/implementation-artifacts/test-baseline/story-5-3/review-unit.log",
+      "sha256": "653f68d220e0927828d701ea632f73093da93f8d803c7947fd2bc2a6c326a22b"
+    },
+    "passed_tests": 43,
+    "passed_files": 2
+  },
+  {
+    "name": "review-component",
+    "command": [
+      "npm",
+      "--prefix",
+      "frontend",
+      "run",
+      "test:component"
+    ],
+    "exit_code": 0,
+    "seconds": 6.143,
+    "original_output": {
+      "commit": "8f7a39714d28aa9f897df10a5a2da86d38df2b5e",
+      "path": "_bmad-output/implementation-artifacts/test-baseline/story-5-3/review-component.log",
+      "sha256": "b8bf22b4085e78143316f9a16e73df1d28c4b63804e0f886c0e936237868cb0a"
+    },
+    "passed_tests": 281,
+    "passed_files": 10
+  },
+  {
+    "name": "review-coverage",
+    "command": [
+      "npm",
+      "--prefix",
+      "frontend",
+      "run",
+      "test:coverage"
+    ],
+    "exit_code": 0,
+    "seconds": 7.409,
+    "original_output": {
+      "commit": "8f7a39714d28aa9f897df10a5a2da86d38df2b5e",
+      "path": "_bmad-output/implementation-artifacts/test-baseline/story-5-3/review-coverage.log",
+      "sha256": "9d753c96d1637aaeb714ad0e9bb68c8a66629a006301db550cac4979e226f9d6"
+    },
+    "passed_tests": 324,
+    "passed_files": 12,
+    "coverage": {
+      "lines": {
+        "total": 1647,
+        "covered": 1499,
+        "skipped": 0,
+        "pct": 91.01
+      },
+      "statements": {
+        "total": 3094,
+        "covered": 2694,
+        "skipped": 0,
+        "pct": 87.07
+      },
+      "functions": {
+        "total": 354,
+        "covered": 303,
+        "skipped": 0,
+        "pct": 85.59
+      },
+      "branches": {
+        "total": 1877,
+        "covered": 1512,
+        "skipped": 0,
+        "pct": 80.55
+      },
+      "branchesTrue": {
+        "total": 0,
+        "covered": 0,
+        "skipped": 0,
+        "pct": 100
+      }
+    }
+  },
+  {
+    "name": "review-build",
+    "command": [
+      "npm",
+      "--prefix",
+      "frontend",
+      "run",
+      "build"
+    ],
+    "exit_code": 0,
+    "seconds": 3.073,
+    "original_output": {
+      "commit": "8f7a39714d28aa9f897df10a5a2da86d38df2b5e",
+      "path": "_bmad-output/implementation-artifacts/test-baseline/story-5-3/review-build.log",
+      "sha256": "7f348cfdef164dbd0e08c2fc2199cd1d973f2614d436f311fe12c57156aef3da"
+    }
+  },
+  {
+    "name": "review-contract",
+    "command": [
+      "./scripts/check-contract.sh"
+    ],
+    "exit_code": 0,
+    "seconds": 15.505,
+    "original_output": {
+      "commit": "8f7a39714d28aa9f897df10a5a2da86d38df2b5e",
+      "path": "_bmad-output/implementation-artifacts/test-baseline/story-5-3/review-contract.log",
+      "sha256": "d5589c0693bf0090326f59eb13ba9dcab2fda48bac22833b852e29000aea3b54"
+    }
+  }
+]

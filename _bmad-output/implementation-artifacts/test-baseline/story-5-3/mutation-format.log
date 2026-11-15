@@ -1,0 +1,78 @@
+❯ Building...
+✔ Building...
+Application bundle generation complete. [0.598 seconds] - 2026-11-15T13:13:43.625Z
+
+
+ RUN  v4.0.18 /home/linus/dev/try-not-to-be-poor/frontend
+
+ ❯ |tnbp| src/app/shared/money.spec.ts (29 tests | 2 failed) 12ms
+     ✓ parses 0 without rounding 1ms
+     ✓ parses 0,01 without rounding 0ms
+     ✓ parses 12.50 without rounding 0ms
+     ✓ parses  12,5  without rounding 0ms
+     ✓ parses 90071992547409,91 without rounding 0ms
+     ✓ parses 00001,02 without rounding 0ms
+     ✓ rejects  0ms
+     ✓ rejects -1 0ms
+     ✓ rejects +1 0ms
+     ✓ rejects 1,001 0ms
+     ✓ rejects 1.000,00 0ms
+     ✓ rejects 1e2 0ms
+     ✓ rejects Infinity 0ms
+     ✓ rejects 1, 0ms
+     ✓ rejects ,50 0ms
+     ✓ rejects 90071992547409,92 0ms
+     ✓ round trips 0 exactly 0ms
+     ✓ round trips 1 exactly 0ms
+     ✓ round trips 99 exactly 0ms
+     ✓ round trips 100 exactly 0ms
+     ✓ round trips 100001 exactly 0ms
+     ✓ round trips 9007199254740991 exactly 0ms
+     × formats the maximum with German grouping and a nonbreaking currency space 5ms
+     × retains signed extremes and uses a typographic display minus 1ms
+     ✓ rejects unsafe display cents NaN 0ms
+     ✓ rejects unsafe display cents Infinity 0ms
+     ✓ rejects unsafe display cents 0.1 0ms
+     ✓ rejects unsafe display cents 9007199254740992 0ms
+     ✓ keeps ordinary fields unsigned 0ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |tnbp| src/app/shared/money.spec.ts > Exact EUR cents > formats the maximum with German grouping and a nonbreaking currency space
+AssertionError: expected '90.071.992.547.409.91 €' to be '90.071.992.547.409,91 €' // Object.is equality
+
+Expected: "90.071.992.547.409,91 €"
+Received: "90.071.992.547.409.91 €"
+
+ ❯ src/app/shared/money.spec.ts:11:119
+      9|   it.each(['', '-1', '+1', '1,001', '1.000,00', '1e2', 'Infinity', '1,…
+     10|   it.each([0, 1, 99, 100, 100001, MAX_CENTS])('round trips %i exactly'…
+     11|   it('formats the maximum with German grouping and a nonbreaking curre…
+       |                                                                                                                       ^
+     12|   it('retains signed extremes and uses a typographic display minus', (…
+     13|     expect(parseSignedEuro('-90071992547409,91')).toBe(-MAX_CENTS);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  |tnbp| src/app/shared/money.spec.ts > Exact EUR cents > retains signed extremes and uses a typographic display minus
+AssertionError: expected '−90.071.992.547.409.91 €' to be '−90.071.992.547.409,91 €' // Object.is equality
+
+Expected: "−90.071.992.547.409,91 €"
+Received: "−90.071.992.547.409.91 €"
+
+ ❯ src/app/shared/money.spec.ts:15:42
+     13|     expect(parseSignedEuro('-90071992547409,91')).toBe(-MAX_CENTS);
+     14|     expect(signedEuroInput(-MAX_CENTS)).toBe('-90071992547409,91');
+     15|     expect(formatSignedEuro(-MAX_CENTS)).toBe('−90.071.992.547.409,91\…
+       |                                          ^
+     16|     expect(parseSignedEuro('-90071992547409,92')).toBeNull();
+     17|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 27 passed (29)
+   Start at  14:13:43
+   Duration  608ms (transform 27ms, setup 179ms, import 8ms, tests 12ms, environment 314ms)
+

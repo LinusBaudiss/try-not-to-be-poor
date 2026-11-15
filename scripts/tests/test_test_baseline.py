@@ -11,7 +11,7 @@ SPEC.loader.exec_module(baseline)
 
 def run(kind='measurement', seconds=100, status='passed'):
     return {'kind': kind, 'seconds': seconds, 'status': status,
-            'groups': [{'name': name, 'seconds': seconds / 6, 'exit_code': 0} for name, _ in baseline.GROUPS]}
+            'groups': [{'name': name, 'seconds': seconds / len(baseline.GROUPS), 'exit_code': 0} for name, _ in baseline.GROUPS]}
 
 
 class BaselineTest(unittest.TestCase):
@@ -144,12 +144,14 @@ class BaselineTest(unittest.TestCase):
                  patch.object(baseline, 'revision', return_value={}), \
                  patch.object(baseline, 'capture', return_value=''), \
                  patch.object(baseline.subprocess, 'check_output', return_value=b''), \
+                 patch.object(baseline, 'expected_frontend_tests', return_value=baseline.Counter({('src/fixture.spec.ts', 'case'): 1})), \
+                 patch.object(baseline, 'validate_frontend_report', return_value=[]), \
                  patch.object(baseline, 'validate_backend_reports', return_value=[]), \
                  patch.object(baseline, 'prepare_browser_discovery', return_value=(None, [])), \
                  patch.object(baseline, 'execute_group', return_value=0) as execute:
                 self.assertEqual(baseline.main(['--output', str(output), '--cache-note', 'test']), 0)
             data = json.loads((output / 'results.json').read_text())
-            self.assertEqual(execute.call_count, 30)
+            self.assertEqual(execute.call_count, 5 * len(baseline.GROUPS))
             for index, call in enumerate(execute.call_args_list):
                 group = baseline.GROUPS[index % len(baseline.GROUPS)][0]
                 self.assertEqual('TEST_BASELINE_PHASE_LOG' in call.args[2], group == 'contract')
@@ -315,6 +317,61 @@ class BaselineTest(unittest.TestCase):
             self.assertTrue(data['runs'][0]['groups'][0]['interrupted'])
             self.assertTrue(data['runs'][0]['groups'][0]['failsafe']['errors'])
             self.assertEqual((output / '00-warmup-failsafe-reports/TEST-broken.xml').read_text(), '<testsuite><testcase')
+
+    def frontend_document(self):
+        return {'startTime': 200, 'success': True, 'numTotalTests': 2, 'numPassedTests': 2,
+                'numFailedTests': 0, 'numPendingTests': 0, 'numTodoTests': 0,
+                'numFailedTestSuites': 0, 'numPendingTestSuites': 0,
+                'testResults': [{'name': 'frontend/src/fixture.spec.ts', 'status': 'passed', 'message': '',
+                                 'assertionResults': [{'fullName': name, 'status': 'passed', 'failureMessages': []}
+                                                      for name in ('first', 'second')]}]}
+
+    def test_frontend_requires_fresh_complete_identifiable_successful_report(self):
+        import copy
+        import json
+        expected = baseline.Counter({('frontend/src/fixture.spec.ts', name): 1 for name in ('first', 'second')})
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp, 'results.json')
+            self.assertTrue(baseline.validate_frontend_report(path, expected, 100))
+            good = self.frontend_document()
+            path.write_text(json.dumps(good))
+            self.assertEqual(baseline.validate_frontend_report(path, expected, 100), [])
+            bad = []
+            stale = copy.deepcopy(good); stale['startTime'] = 99; bad.append(stale)
+            for status in ('skipped', 'pending', 'todo', 'failed'):
+                changed = copy.deepcopy(good); changed['testResults'][0]['assertionResults'][0]['status'] = status; bad.append(changed)
+            reduced = copy.deepcopy(good); reduced['testResults'][0]['assertionResults'].pop(); reduced['numTotalTests'] = reduced['numPassedTests'] = 1; bad.append(reduced)
+            duplicate = copy.deepcopy(good); duplicate['testResults'][0]['assertionResults'][1] = duplicate['testResults'][0]['assertionResults'][0]; bad.append(duplicate)
+            unidentified = copy.deepcopy(good); unidentified['testResults'][0]['assertionResults'][0].pop('fullName'); bad.append(unidentified)
+            failed = copy.deepcopy(good); failed['success'] = False; bad.append(failed)
+            for document in bad:
+                with self.subTest(document=document):
+                    path.write_text(json.dumps(document))
+                    self.assertTrue(baseline.validate_frontend_report(path, expected, 100))
+
+    def test_exit_zero_without_new_frontend_report_never_counts_as_measurement(self):
+        import json
+        with tempfile.TemporaryDirectory() as tmp:
+            output = Path(tmp, 'evidence')
+            expected = baseline.Counter({('frontend/src/fixture.spec.ts', 'case'): 1})
+            stale_report = output / '00-warmup-frontend-results.json'
+            def discovery_with_stale_report():
+                stale_report.write_text(json.dumps(self.frontend_document()))
+                return expected
+            with patch.object(baseline, 'GROUPS', (('frontend', ['fixture']),)), \
+                 patch.object(baseline, 'preflight', return_value=([], {})), \
+                 patch.object(baseline, 'revision', return_value={}), \
+                 patch.object(baseline, 'capture', return_value=''), \
+                 patch.object(baseline.subprocess, 'check_output', return_value=b''), \
+                 patch.object(baseline, 'expected_frontend_tests', side_effect=discovery_with_stale_report), \
+                 patch.object(baseline, 'input_identity', return_value={}), \
+                 patch.object(baseline, 'execute_group', return_value=0):
+                self.assertEqual(baseline.main(['--output', str(output), '--cache-note', 'fixture']), 1)
+            data = json.loads((output / 'results.json').read_text())
+            self.assertEqual(data['status'], 'failed')
+            self.assertTrue(data['runs'][0]['groups'][0]['validation_errors'])
+            self.assertFalse(stale_report.exists(), 'old report must be removed before execution')
+            self.assertFalse(data['summary']['local_evidence_complete'])
 
     def browser_document(self, count=2, status='passed'):
         return {'errors': [], 'suites': [{'specs': [

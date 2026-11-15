@@ -96,9 +96,9 @@ test('Laden, Netzfehler und ungültige Antworten entfernen alte Werte und bleibe
   await login(page, await account(request));
   const summary = page.locator('app-month-summary');
   await expect(summary.locator('.summary-money')).toHaveText('87,66 €');
-  for (const invalid of [null, {}, { ...initial, month: '2026-13-01' }, { ...initial, month: '2026-10-02' },
-    { ...initial, remainingCents: 1 }, { ...initial, budgetCents: null }, { ...initial, expensesCents: -1 },
-    { ...initial, expensesCents: 9007199254740992 }, { ...initial, budgetCents: '10000' }, { ...initial, extra: true }]) {
+  // Other malformed DTO variants are covered by isolated MonthSummary tests.
+  // Individual replacements: test-baseline/story-5-3/browser-reduction.json.
+  for (const invalid of [null]) {
     value = invalid;
     await summary.getByRole('button').click();
     await expect(summary).toContainText('konnte nicht geladen werden');

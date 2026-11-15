@@ -1,7 +1,7 @@
 {
-  "source_cases": 780,
-  "source_groups": 1572,
-  "canonical_scenarios": 1633,
+  "source_cases": 1106,
+  "source_groups": 1944,
+  "canonical_scenarios": 1635,
   "inner_browser_loops": 99,
   "semantic_review_complete": true,
   "by_scope": {
@@ -20,10 +20,11 @@
     },
     "frontend": {
       "business_scenarios": 467,
-      "unit_component_scenarios": 0,
-      "unit_component_percent": 0.0,
+      "unit_component_scenarios": 234,
+      "unit_component_percent": 50.11,
       "types_including_infrastructure": {
-        "browser": 467
+        "browser": 233,
+        "component": 234
       }
     },
     "infrastructure": {
@@ -31,9 +32,9 @@
       "unit_component_scenarios": 0,
       "unit_component_percent": null,
       "types_including_infrastructure": {
-        "tool/infrastructure": 42
+        "tool/infrastructure": 44
       }
     }
   },
-  "cross_source_groups": 155
+  "cross_source_groups": 383
 }

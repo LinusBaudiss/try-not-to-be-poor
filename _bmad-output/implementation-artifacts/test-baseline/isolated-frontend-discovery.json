@@ -1,0 +1,27 @@
+{
+  "command": [
+    "npm",
+    "--prefix",
+    "frontend",
+    "run",
+    "test",
+    "--",
+    "--list-tests"
+  ],
+  "status": "discovery-only",
+  "files_sha256": {
+    "frontend/src/app/expenses/expenses.spec.ts": "140ff6426c6d7e4fb3661fba1877ce2ba74535c62ec5ec7199f543d6154cebbb",
+    "frontend/src/app/login/login.spec.ts": "8bd4e438c3bd9c23b2f0cef33644790606295a1c0b72437a260e31c8bfa8958f",
+    "frontend/src/app/month/month-summary.spec.ts": "b59f5842d788687d0af6fb6ba7b5677a6a4ac4681536fee0ae8fa0ebc5cd973a",
+    "frontend/src/app/month/month.spec.ts": "a83b575a0a739f2b63897a67555dd4b314ac701608ecf2288fef2252999489e0",
+    "frontend/src/app/registration/registration.spec.ts": "c4e781717a93383604d2f9c2fb9df995b9acf51434af5b2cfd869e35ca19118e",
+    "frontend/src/app/savings-goals/savings-actions.spec.ts": "43c63e2a342a5e3d2fa4cad146dd9591d0823ffc3f5ffacd48acc18d9be1c06e",
+    "frontend/src/app/savings-goals/savings-goals.spec.ts": "bd3283c10cba4d20d978f9a5ff772cba5f1a3b5b9736cf757f4b4c191b0168e8",
+    "frontend/src/app/session/finance-lifecycle.spec.ts": "143b68acdb216aafc8da43a7bcf7e811ce5001b6f9fcc8e0a47783f68ec57428",
+    "frontend/src/app/session/navigation.spec.ts": "f3962469ae4ff10e1d02169ce523be02bdafc1a17af56089b48cdebfa237131a",
+    "frontend/src/app/session/session.spec.ts": "90b7e8263fb34df618fda1ec776caab70a56ad94c523cb20bbc69a963c440e08",
+    "frontend/src/app/shared/money.spec.ts": "0ad2879175cc181b7c25613b9421b6d82787421c694b785e149dac89ea3c9a64",
+    "frontend/src/app/shared/savings-progress.spec.ts": "70e81f137733776e99ef9066e9f37993eb6c65124c488fec1fccf4cfd90c05d1"
+  },
+  "execution_evidence": null
+}

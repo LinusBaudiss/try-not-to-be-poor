@@ -39,5 +39,18 @@ __pycache__/
 /_bmad-output/implementation-artifacts/test-baseline/discovery/review-*.json
 /frontend/coverage/
 
-# Story 5.3: versionierte Ersatz-, Ausführungs- und Mutationsbelege
-!/_bmad-output/implementation-artifacts/test-baseline/story-5-3/*.log
+# Story 5.3: nur der kuratierte Nachweissatz; neue Rohläufe unter .local/test-baseline/
+/_bmad-output/implementation-artifacts/test-baseline/story-5-3/*
+!/_bmad-output/implementation-artifacts/test-baseline/story-5-3/browser-reduction.json
+!/_bmad-output/implementation-artifacts/test-baseline/story-5-3/coverage-summary.json
+!/_bmad-output/implementation-artifacts/test-baseline/story-5-3/external-browser-after-reduction.log
+!/_bmad-output/implementation-artifacts/test-baseline/story-5-3/external-browser-before-reduction.log
+!/_bmad-output/implementation-artifacts/test-baseline/story-5-3/month-summary-before-reduction.ts
+!/_bmad-output/implementation-artifacts/test-baseline/story-5-3/mutation-double-submit.log
+!/_bmad-output/implementation-artifacts/test-baseline/story-5-3/mutation-format.log
+!/_bmad-output/implementation-artifacts/test-baseline/story-5-3/mutation-negative-progress.log
+!/_bmad-output/implementation-artifacts/test-baseline/story-5-3/mutation-results.json
+!/_bmad-output/implementation-artifacts/test-baseline/story-5-3/mutation-stale-account.log
+!/_bmad-output/implementation-artifacts/test-baseline/story-5-3/review-final-checks.json
+!/_bmad-output/implementation-artifacts/test-baseline/story-5-3/vitest-results-before-review.json
+!/_bmad-output/implementation-artifacts/test-baseline/story-5-3/vitest-results.json

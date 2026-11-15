@@ -1,9 +1,0 @@
-
-> try-not-to-be-poor@0.1.0 test:coverage
-> ng test --watch=false --coverage
-
-The following packages are required but were not found:
-  - vitest
-  - A DOM environment is required for non-browser tests. Please install either "jsdom" or "happy-dom".
-  - Code coverage requires either "@vitest/coverage-v8" or "@vitest/coverage-istanbul" to be installed.
-Please install the missing packages and rerun the test command.
